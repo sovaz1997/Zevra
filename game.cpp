@@ -93,8 +93,8 @@ bool Game::uciHandler(std::string str) {
 			gameHash.push_back(getHash(game_board));
 
 		} else if(cmd[0] == "go") {
-			if(cmd[2] == "depth") {
-				max_depth = std::stoi(cmd[3]);
+			if(cmd[1] == "depth") {
+				max_depth = std::stoi(cmd[2]);
 				go();
 			}
 		} else if(cmd[0] == "posmoves") {
@@ -106,7 +106,7 @@ bool Game::uciHandler(std::string str) {
 			}
 
 			game_board.printBoard();
-			std::cout << "info score: " << evalute(game_board) / PAWN_EV << "\n";
+			//std::cout << "info score: " << evalute(game_board) / PAWN_EV << "\n";
 		} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
@@ -117,7 +117,7 @@ bool Game::uciHandler(std::string str) {
 }
 
 void Game::go() {
-	if(debute) {
+	/*if(debute) {
 		FILE* base_file = fopen("base.bin", "rb");
 		uint64_t hash = getColorHash(game_board);
 		std::vector<Debute>possibleMove;
@@ -155,9 +155,9 @@ void Game::go() {
 			debute = false;
 		}
 		fclose(base_file);
-	}
+	}*/
 
-	if(!debute) {
+	//if(!debute) {
 		variant.clear();
 		variant.resize(max_depth);
 		double win;
@@ -168,24 +168,24 @@ void Game::go() {
 			double start_timer = clock();
 			win = minimax_white(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true);
 			double end_timer = clock();
-			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
+			//std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
 		} else {
 			movesCounter = 0;
 			double start_timer = clock();
 			win = minimax_black(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true);
 			boardHash.clear();
 			double end_timer = clock();
-			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
+			//std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
 		}
 
 		if(win > BLACK_WIN + 10000 && win < WHITE_WIN - 10000) {
-				std::cout << "info score: " << std::fixed << std::setprecision(2) << win / PAWN_EV << "\n";
+				//std::cout << "info score: " << std::fixed << std::setprecision(2) << win / PAWN_EV << "\n";
 		} else if(win < 0) {
-			std::cout << "info score: " << "black win in " <<  abs(win - BLACK_WIN) << " plies" << "\n";
+			//std::cout << "info score: " << "black win in " <<  abs(win - BLACK_WIN) << " plies" << "\n";
 		} else {
-			std::cout << "info score: " << "white win in " <<  abs(win - WHITE_WIN) << " plies" << "\n";
+			//std::cout << "info score: " << "white win in " <<  abs(win - WHITE_WIN) << " plies" << "\n";
 		}
-	}
+	//}
 }
 
 bool Game::move(std::string mv) {
@@ -265,7 +265,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		if(depth == 0 && basis) {
-			std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
+			//std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
 		}
 
 		Board save = b;
@@ -370,7 +370,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		if(depth == 0 && basis) {
-			std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
+			//std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
 		}
 
 		Board save = b;
@@ -718,13 +718,15 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 										tmp.whiteMove = false;
 										bool shah_tmp;
 										std::vector<Move> move_test = generatePositionMoves(tmp, shah_tmp, false, 0);
-
+										
+										
+										
 										for(unsigned int i = 0; i < move_test.size(); ++i) {
 											if((move_test[i].toY == 7 && move_test[i].toX == 6) || (move_test[i].toY == 7 && move_test[i].toX == 5) || (move_test[i].toY == 7 && move_test[i].toX == 4)) {
 												break;
 											}
 
-											if(i == move_test.size() - 1) {
+											if(i == move_test.size() - 1 && !shah_tmp) {
 												result.push_back(it->move);
 											}
 										}
@@ -743,7 +745,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 												break;
 											}
 
-											if(i == move_test.size() - 1) {
+											if(i == move_test.size() - 1 && !shah_tmp) {
 												result.push_back(it->move);
 											}
 										}
@@ -762,7 +764,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 												break;
 											}
 
-											if(i == move_test.size() - 1) {
+											if(i == move_test.size() - 1 && !shah_tmp) {
 												result.push_back(it->move);
 											}
 										}
@@ -781,7 +783,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 												break;
 											}
 
-											if(i == move_test.size() - 1) {
+											if(i == move_test.size() - 1 && !shah_tmp) {
 												result.push_back(it->move);
 											}
 										}

@@ -328,7 +328,11 @@ void Board::cleanBoard() {
 }
 
 uint8_t Board::getFigure(int y, int x) {
-	return board[y][x];
+	if(y >= 0 && y < 8 && x >= 0 && x < 8) {
+		return board[y][x];
+	} else {
+		return board[0][0];
+	}
 }
 
 void Board::setFigure(uint8_t figure, int y, int x) {

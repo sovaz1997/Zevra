@@ -94,7 +94,7 @@ std::string Move::getMoveString() {
 }
 
 double Move::getAttackPrice(Board & b) {
-	if(b.getFigure(toY, toX == 0)) {
+	if(b.getFigure(toY, toX) == 0) {
 		return 0;
 	}
 
