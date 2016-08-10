@@ -255,7 +255,7 @@ void Board::putFigureOnBoard(uint8_t figure, int y, int x) {
 }
 
 void Board::printBoard() {
-	for(unsigned int y = 0; y < board.size(); ++y) {
+	/*for(unsigned int y = 0; y < board.size(); ++y) {
 		std::cout << (8 - y);
 		for(unsigned int x = 0; x < board.size(); ++x) {
 			if(board[y][x] != 0) {
@@ -306,7 +306,7 @@ void Board::printBoard() {
 		std::cout << (char)(i + 'a');
 	}
 
-	std::cout << "\n" << getFenPosition() << "\n";
+	std::cout << "\n" << getFenPosition() << "\n";*/
 }
 
 void Board::cleanBoard() {

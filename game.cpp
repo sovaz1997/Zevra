@@ -240,6 +240,9 @@ void Game::initEngine() {
 
 double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis) {
 	++movesCounter;
+	if(max_depth - real_depth > 4) {
+		std::cout << "info nodes " << movesCounter << "\n";
+	}
 
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
@@ -306,7 +309,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 		if(max >= beta) {
 			if(depth == 0 && basis) {
 				//game_board.move(local_move);
-				std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (max / PAWN_EV * 100) << "\n";
+				std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (max / PAWN_EV * 100) << " nodes " << movesCounter << "\n";
 				std::cout << "bestmove " << local_move.getMoveString() << "\n";
 				gameHash.push_back(getHash(game_board));
 			}
@@ -335,7 +338,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	if(depth == 0 && num_moves > 0 && basis) {
 		//game_board.move(local_move);
-		std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (max / PAWN_EV * 100) << "\n";
+		std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (max / PAWN_EV * 100) << " nodes " << movesCounter << "\n";
 		std::cout << "bestmove " << local_move.getMoveString() << "\n";
 		gameHash.push_back(getHash(game_board));
 	}
@@ -348,6 +351,9 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis) {
 	++movesCounter;
+	if(max_depth - real_depth > 4) {
+		std::cout << "info nodes " << movesCounter << "\n";
+	}
 
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
@@ -413,7 +419,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 			//local_move = moves[i];
 			if(depth == 0 && basis) {
 				//game_board.move(local_move);
-				std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (min / PAWN_EV * 100) << "\n";
+				std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (min / PAWN_EV * 100) << " nodes " << movesCounter << "\n";
 				std::cout << "bestmove " << local_move.getMoveString() << "\n";
 				gameHash.push_back(getHash(game_board));
 			}
@@ -440,7 +446,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	if(depth == 0 && num_moves > 0 && basis) {
 		//game_board.move(local_move);
-		std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (min / PAWN_EV * 100) << "\n";
+		std::cout << "info pv " << local_move.getMoveString() << " score cp " << (int) (min / PAWN_EV * 100) << " nodes " << movesCounter << "\n";
 		std::cout << "bestmove " << local_move.getMoveString() << "\n";
 		gameHash.push_back(getHash(game_board));
 	}
@@ -1088,8 +1094,10 @@ void Game::moveListGenerator() {
 					move_list[PAWN | BLACK][y][x].add(mv);
 					mv.figureTransform = (KNIGHT | BLACK);
 					move_list[PAWN | BLACK][y][x].add(mv);
+					bitboard[PAWN | BLACK][y][x] += cells[y + 1][x - 1];
 				} else {
 					MoveItem* pawn_atck = move_list[PAWN | BLACK][y][x].add(mv);
+					bitboard[PAWN | BLACK][y][x] += cells[y + 1][x - 1];
 					if(!usedTmp && y == 1) {
 						tmp->specialNext = pawn_atck;
 						usedTmp = true;
