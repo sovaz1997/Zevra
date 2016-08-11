@@ -253,9 +253,9 @@ void Game::initEngine() {
 
 double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
 	++movesCounter;
-	if(max_depth - real_depth > 4) {
+	/*if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
-	}
+	}*/
 
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
@@ -411,9 +411,9 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
 	++movesCounter;
-	if(max_depth - real_depth > 4) {
+	/*if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
-	}
+	}*/
 
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
