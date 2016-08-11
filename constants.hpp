@@ -27,11 +27,11 @@ const uint8_t BL_CASTLING_MV = 4;
 const uint8_t PASSANT_MV = 5;
 const uint8_t TRANSFORMATION_MV = 6;
 
-const double PAWN_EV = 100;
-const double KNIGHT_EV = 320;
-const double BISHOP_EV = 330;
-const double ROOK_EV = 500;
-const double QUEEN_EV = 900;
+const double PAWN_EV = 1000;
+const double KNIGHT_EV = 3200;
+const double BISHOP_EV = 3300;
+const double ROOK_EV = 5000;
+const double QUEEN_EV = 9000;
 
 const int hash_width = 24;
 
