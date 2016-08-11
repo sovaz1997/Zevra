@@ -17,10 +17,13 @@ public:
 	Move(uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx);
 	Move(std::string mv);
 	void go(Board* b);
+	bool operator>(Move& mv);
+	bool operator<(Move& mv);
 
 	uint8_t figureTransform;
 	uint8_t passant_x, passant_y;
 	uint8_t moveType;
+	double simple_eval;
 	void print();
 	double getAttackPrice(Board & b);
 

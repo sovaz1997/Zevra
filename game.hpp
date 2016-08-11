@@ -41,10 +41,12 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void go();
+	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
+	std::vector<Move> pv_best;
 public:
 	Game();
-	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis);
-	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis);
+	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv);
+	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv);
 
 	double force_minimax_white(Board b, int real_depth, std::vector<uint64_t> hash, bool basis);
 	double force_minimax_black(Board b, int real_depth, std::vector<uint64_t> hash, bool basis);
@@ -72,9 +74,11 @@ public:
 
 	//flags
 	bool nullMoveEnable = false;
-	bool hashEnable = false;
+	bool hashEnable = true;
 	bool print_variant_enable = false;
-	bool debute = true;
+	bool debute = false;
+
+	double getPriceCell(Board & b, int y, int x);
 
 };
 

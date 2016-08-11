@@ -138,3 +138,10 @@ bool Move::quality() {
 bool Move::bit_quality(int bit) {
 	return bit >= 0 && bit < 8;
 }
+
+bool Move::operator>(Move& mv) {
+	return this->simple_eval > mv.simple_eval;
+}
+bool Move::operator<(Move& mv) {
+	return this->simple_eval < mv.simple_eval;
+}

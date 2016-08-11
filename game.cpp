@@ -105,7 +105,8 @@ bool Game::uciHandler(std::string str) {
 				std::cout << "\n";
 			}
 
-			game_board.printBoard();
+			//game_board.printBoard();
+			std::cout << evalute(game_board) / PAWN_EV * 100 << "\n";
 			//std::cout << "info score: " << evalute(game_board) / PAWN_EV << "\n";
 		} else if(cmd[0] == "move") {
 			move(cmd[1]);
@@ -163,16 +164,21 @@ void Game::go() {
 		double win;
 		std::vector<uint64_t>hash;
 
+		pv_best.clear();
+		std::vector<Move>pv;
+		whiteUp = BLACK_WIN;
+		blackUp = WHITE_WIN;
+
 		if(game_board.isWhiteMove()) {
 			movesCounter = 0;
 			double start_timer = clock();
-			win = minimax_white(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true);
+			win = minimax_white(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
 			double end_timer = clock();
 			//std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
 		} else {
 			movesCounter = 0;
 			double start_timer = clock();
-			win = minimax_black(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true);
+			win = minimax_black(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
 			boardHash.clear();
 			double end_timer = clock();
 			//std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
@@ -186,6 +192,13 @@ void Game::go() {
 			//std::cout << "info score: " << "white win in " <<  abs(win - WHITE_WIN) << " plies" << "\n";
 		}
 	//}
+
+	for(int i = 0; i < pv_best.size(); ++i) {
+		pv_best[i].print();
+		std::cout << " ";
+	}
+
+	std::cout << "\n";
 }
 
 bool Game::move(std::string mv) {
@@ -238,7 +251,7 @@ void Game::initEngine() {
 	std::cout << "uciok\n";
 }
 
-double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis) {
+double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
 	++movesCounter;
 	if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
@@ -250,7 +263,33 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	int num_moves = 0;
 	if(depth == max_depth) {
-		return evalute(b);
+		double eval = evalute(b);
+		/*if(eval >= alpha && eval <= beta) {
+			bool printing = true;
+			if(game_board.whiteMove) {
+				if(eval > whiteUp) {
+					whiteUp = eval;
+					printing = true;
+				}
+			} else {
+				if(eval < blackUp) {
+					blackUp = eval;
+					printing = true;
+				}
+			}
+
+			pv_best = pv;
+			if(printing) {
+				std::cout << "info pv ";
+				for(int i = 0; i < pv_best.size(); ++i) {
+					pv_best[i].print();
+					std::cout << " ";
+				}
+				std::cout << "score cp " << eval / PAWN_EV * 100 << "\n";
+			}
+		}
+		//return force_minimax_white(b, real_depth + 1, hash, basis);*/
+		return eval;
 	}
 
 	double max = BLACK_WIN;
@@ -271,15 +310,15 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 			//std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
 		}
 
-		Board save = b;
-		b.move(moves[i]);
+		Board tmp_brd = b;
+		tmp_brd.move(moves[i]);
 
 		bool shah = false;
 
-		if(!shahIsNot(b, WHITE)) {
-			std::vector<Move>moves_shah = generatePositionMoves(b, shah, true, real_depth);
+		if(!shahIsNot(tmp_brd, WHITE)) {
+			std::vector<Move>moves_shah = generatePositionMoves(tmp_brd, shah, true, real_depth);
 			if(shah) {
-				b = save;
+				//b = save;
 				continue;
 			}
 		}
@@ -288,13 +327,15 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 		double tmp;
 
-		/*if(real_depth == max_depth - 1 && b.getFigure(moves[i].toY, moves[i].toX) != 0) {
-			tmp = force_minimax_black(b, real_depth + 1, hash, basis);
-		} else {*/
-			tmp = minimax_black(b, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis);
-		//}
+	//	if(real_depth == max_depth - 1 && b.getFigure(moves[i].toY, moves[i].toX) != 0) {
+	//		tmp = force_minimax_black(b, real_depth + 1, hash, basis);
+	//	} else {
+			pv.push_back(moves[i]);
+			tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
+			pv.pop_back();
+	//	}
 
-		b = save;
+		//b = save;
 		if(tmp > max) {
 			max = tmp;
 			local_move = moves[i];
@@ -312,12 +353,12 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 			//}
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
-				if(tmp > BLACK_WIN + 10000 && tmp < WHITE_WIN - 10000) {
-				std::cout << "cp " << (int) (max / PAWN_EV * 100;
-				} else if(win < 0) {
-					std::cout << "mate " <<  -abs(win - BLACK_WIN);
+				if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
+					std::cout << "cp " << (int) (max / PAWN_EV * 100);
+				} else if(max < 0) {
+					std::cout << "mate " <<  -abs(max - BLACK_WIN);
 				} else {
-					std::cout << "mate " <<  abs(win - WHITE_WIN);
+					std::cout << "mate " <<  abs(max - WHITE_WIN);
 				}
 				std::cout << " nodes " << movesCounter << "\n";
 				std::cout << "bestmove " << local_move.getMoveString() << "\n";
@@ -350,12 +391,12 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 		//game_board.move(local_move);
 		std::cout << "info pv " << local_move.getMoveString();
 		std::cout << " score ";
-		if(tmp > BLACK_WIN + 10000 && tmp < WHITE_WIN - 10000) {
-		std::cout << "cp " << (int) (max / PAWN_EV * 100;
-		} else if(win < 0) {
-			std::cout << "mate " <<  -abs(win - BLACK_WIN);
+		if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
+			std::cout << "cp " << (int) (max / PAWN_EV * 100);
+		} else if(max < 0) {
+			std::cout << "mate " <<  -abs(max - BLACK_WIN);
 		} else {
-			std::cout << "mate " <<  abs(win - WHITE_WIN);
+			std::cout << "mate " <<  abs(max - WHITE_WIN);
 		}
 		std::cout << " nodes " << movesCounter << "\n";
 		std::cout << "bestmove " << local_move.getMoveString() << "\n";
@@ -368,7 +409,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 }
 
 
-double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis) {
+double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
 	++movesCounter;
 	if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
@@ -379,7 +420,34 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	int num_moves = 0;
 	if(depth == max_depth) {
-		return evalute(b);
+		double eval = evalute(b);
+		/*if(eval >= alpha && eval <= beta) {
+			bool printing = true;
+			if(game_board.whiteMove) {
+				if(eval > whiteUp) {
+					whiteUp = eval;
+					printing = true;
+				}
+			} else {
+				if(eval < blackUp) {
+					blackUp = eval;
+					printing = true;
+				}
+			}
+
+			pv_best = pv;
+			if(printing) {
+				std::cout << "info pv ";
+				for(int i = 0; i < pv_best.size(); ++i) {
+					pv_best[i].print();
+					std::cout << " ";
+				}
+				std::cout << "score cp " << eval / PAWN_EV * 100 << "\n";
+			}
+		}
+		//return force_minimax_black(b, real_depth + 1, hash, basis);
+	//	return evalute(b);*/
+		return eval;
 	}
 
 	double min = WHITE_WIN;
@@ -400,14 +468,14 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 			//std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
 		}
 
-		Board save = b;
-		b.move(moves[i]);
+		Board tmp_brd = b;
+		tmp_brd.move(moves[i]);
 
 		bool shah = false;
-		if(!shahIsNot(b, BLACK)) {
-			std::vector<Move>moves_shah = generatePositionMoves(b, shah, true, real_depth);
+		if(!shahIsNot(tmp_brd, BLACK)) {
+			std::vector<Move>moves_shah = generatePositionMoves(tmp_brd, shah, true, real_depth);
 			if(shah) {
-				b = save;
+				//b = save;
 				continue;
 			}
 		}
@@ -415,13 +483,16 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		++num_moves;
 
 		double tmp;
-	/*	if(real_depth == max_depth - 1 && b.getFigure(moves[i].toY, moves[i].toX) != 0) {
-			tmp = force_minimax_white(b, real_depth + 1, hash, basis);
-		} else {*/
-			tmp = minimax_white(b, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis);
-		//}
+	//	if(real_depth == max_depth - 1 && b.getFigure(moves[i].toY, moves[i].toX) != 0) {
+		//	tmp = force_minimax_white(b, real_depth + 1, hash, basis);
+	//	} else {
+			pv.push_back(moves[i]);
+			tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
+			pv.pop_back();
+	//	}
 
-		b = save;
+		//b = save;
+
 		if(tmp < min) {
 			min = tmp;
 			local_move = moves[i];
@@ -440,12 +511,12 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 				//game_board.move(local_move);
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
-				if(tmp > BLACK_WIN + 10000 && tmp < WHITE_WIN - 10000) {
-				std::cout << "cp " << (int) (max / PAWN_EV * 100;
-				} else if(win < 0) {
-					std::cout << "mate " <<  abs(win - BLACK_WIN);
+				if(min > BLACK_WIN + 10000 && min < WHITE_WIN - 10000) {
+					std::cout << "cp " << (int) (min / PAWN_EV * 100);
+				} else if(min < 0) {
+					std::cout << "mate " <<  abs(min - BLACK_WIN);
 				} else {
-					std::cout << "mate " <<  -abs(win - WHITE_WIN);
+					std::cout << "mate " <<  -abs(min - WHITE_WIN);
 				}
 				std::cout << " nodes " << movesCounter << "\n";
 				std::cout << "bestmove " << local_move.getMoveString() << "\n";
@@ -476,12 +547,12 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		//game_board.move(local_move);
 		std::cout << "info pv " << local_move.getMoveString();
 		std::cout << " score ";
-		if(tmp > BLACK_WIN + 10000 && tmp < WHITE_WIN - 10000) {
-		std::cout << "cp " << (int) (max / PAWN_EV * 100;
-		} else if(win < 0) {
-			std::cout << "mate " <<  abs(win - BLACK_WIN);
+		if(min > BLACK_WIN + 10000 && min < WHITE_WIN - 10000) {
+		std::cout << "cp " << (int)(min / PAWN_EV * 100);
+		} else if(min < 0) {
+			std::cout << "mate " <<  abs(min - BLACK_WIN);
 		} else {
-			std::cout << "mate " <<  -abs(win - WHITE_WIN);
+			std::cout << "mate " <<  -abs(min - WHITE_WIN);
 		}
 		std::cout << " nodes " << movesCounter << "\n";
 		std::cout << "bestmove " << local_move.getMoveString() << "\n";
@@ -516,7 +587,7 @@ double Game::force_minimax_white(Board b, int real_depth, std::vector<uint64_t> 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		Board save = b;
 
-		if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+		if(b.getFigure(moves[i].toY, moves[i].toX) == 0 || moves[i].getAttackPrice(b) < 0) {
 			b = save;
 			break;
 		}
@@ -524,14 +595,6 @@ double Game::force_minimax_white(Board b, int real_depth, std::vector<uint64_t> 
 		b.move(moves[i]);
 
 		bool shah = false;
-
-		if(!shahIsNot(b, WHITE)) {
-			std::vector<Move>moves_shah = generatePositionMoves(b, shah, true, real_depth);
-			if(shah) {
-				b = save;
-				continue;
-			}
-		}
 
 		++num_moves;
 
@@ -591,7 +654,7 @@ double Game::force_minimax_black(Board b, int real_depth, std::vector<uint64_t> 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		Board save = b;
 
-		if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+		if(b.getFigure(moves[i].toY, moves[i].toX) == 0 || moves[i].getAttackPrice(b) < 0) {
 			b = save;
 			break;
 		}
@@ -600,14 +663,6 @@ double Game::force_minimax_black(Board b, int real_depth, std::vector<uint64_t> 
 
 		bool shah = false;
 
-		if(!shahIsNot(b, BLACK)) {
-			std::vector<Move>moves_shah = generatePositionMoves(b, shah, true, real_depth);
-			if(shah) {
-				b = save;
-				continue;
-			}
-		}
-
 		++num_moves;
 
 		double tmp;
@@ -615,7 +670,7 @@ double Game::force_minimax_black(Board b, int real_depth, std::vector<uint64_t> 
 		tmp = force_minimax_white(b, real_depth + 1, hash, basis);
 
 		b = save;
-		if(tmp > min) {
+		if(tmp < min) {
 			min = tmp;
 			local_move = moves[i];
 		}
@@ -652,6 +707,7 @@ double Game::evalute(Board b) {
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
+			int tmp = material;
 			if(b.getFigure(y, x) == 0) {
 				continue;
 			}
@@ -732,6 +788,7 @@ double Game::evalute(Board b) {
 		}
 	}
 
+//	std::cout << material << " " << position << "\n";
 	return material + position;
 }
 
@@ -772,7 +829,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 												break;
 											}
 
-											if(i == move_test.size() - 1) {	
+											if(i == move_test.size() - 1) {
 												if(!shah_tmp) {
 													result.push_back(it->move);
 												}
@@ -801,8 +858,6 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 										}
 									}
 								}
-								
-								
 
 								if(it->move.moveType == BS_CASTLING_MV && b.blackShortCastleEnable) {
 									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0) {
@@ -842,7 +897,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 												tmp.whiteMove = false;
 												bool shah_tmp;
 												std::vector<Move> move_test = generatePositionMoves(tmp, shah_tmp, false, 0);
-												if(i == move_test.size() - 1) {	
+												if(i == move_test.size() - 1) {
 													if(!shah_tmp) {
 														result.push_back(it->move);
 													}
@@ -881,7 +936,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 
 								} else {
 									if(it->move.fromX == it->move.toX) {
-										if(game_board.getFigure(it->move.toY, it->move.toX) != 0 && it->specialNext != NULL) {
+										if(b.getFigure(it->move.toY, it->move.toX) != 0 && it->specialNext != NULL) {
 											it = it->specialNext;
 											continue;
 										} else if(game_board.getFigure(it->move.toY, it->move.toX) == 0) {
@@ -970,13 +1025,35 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 		}
 	}
 
-	/*if(result.size() > 1 && killer_has) {
+	if(result.size() > 1 && killer_has) {
 		if(b.getFigure(result[1].toY, result[1].toX) != 0) {
 			Move tmp = result[0];
 			result[0] = result[1];
 			result[1] = tmp;
 		}
+	}
+
+	double eval = evalute(b);
+	int mul = 1;
+	if(!b.whiteMove) {
+		mul = -1;
+	}
+
+	/*for(int i = num_attacks; i < result.size(); ++i) {
+		Board tmp_brd = b;
+		tmp_brd.move(result[i]);
+		result[i].simple_eval = (eval - evalute(tmp_brd)) * mul;
 	}*/
+
+	/*for(int i = num_attacks + 1; i < result.size(); ++i) {
+		for(int j = i; j > num_attacks && getPriceCell(b, result[j-1].fromY, result[j-1].fromX) < getPriceCell(b, result[j].fromY, result[j].fromX); --j) {
+			Move tmp = result[j-1];
+			result[j-1] = result[j];
+			result[j] = tmp;
+		}
+	}*/
+
+	//std::sort(result.begin() + num_attacks, result.end());
 
 	/*if(boardHash[getColorHash(b) & hash_cutter].enable ) {
 		for(unsigned int i = 0; i < result.size(); ++i) {
@@ -2165,5 +2242,23 @@ void Game::printVariant() {
 		}
 
 		std::cout << "\n";
+	}
+}
+
+double Game::getPriceCell(Board & b, int y, int x) {
+	if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
+		return 0;
+	} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+		return QUEEN_EV;
+	} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+		return ROOK_EV;
+	} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+		return BISHOP_EV;
+	} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+		return KNIGHT_EV;
+	} else if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+		return PAWN_EV;
+	} else {
+		return 0;
 	}
 }
