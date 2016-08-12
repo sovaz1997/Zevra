@@ -42,36 +42,6 @@ Game::Game() {
 	startGame();
 }
 
-void Game::test() {
-	variant.clear();
-	variant.resize(max_depth);
-	double win;
-	std::vector<uint64_t>hash;
-	pv_best.clear();
-	std::vector<Move>pv;
-	whiteUp = BLACK_WIN;
-	blackUp = WHITE_WIN;
-	max_depth = 5;
-	while(true) {
-		pv.clear();
-		if(game_board.isWhiteMove()) {
-			movesCounter = 0;
-			double start_timer = clock();
-			 minimax_white(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
-			double end_timer = clock();
-			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
-		} else {
-			pv.clear();
-			movesCounter = 0;
-			double start_timer = clock();
-			minimax_black(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
-			boardHash.clear();
-			double end_timer = clock();
-			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
-		}
-	}
-}
-
 int Game::startGame() {
 	std::string str;
 	while(true) {
@@ -403,6 +373,10 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 			}
 		}
 		if(max >= beta) {
+			if(!hash[board_hash & hash_cutter].enable) {
+				hash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max);
+			}
+
 			if(depth == 0 && basis) {
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
@@ -483,6 +457,27 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 				return 0;
 			}
 		}
+	}
+
+	if(boardHash[board_hash & hash_cutter].enable && boardHash[board_hash & hash_cutter].depth == max_depth - real_depth) {
+		if(depth == 0 && num_moves > 0 && basis) {
+			//game_board.move(local_move);
+			std::cout << "info pv " << local_move.getMoveString();
+			std::cout << " score ";
+			if(boardHash[board_hash & hash_cutter].evalute > BLACK_WIN + 10000 && boardHash[board_hash & hash_cutter].evalute < WHITE_WIN - 10000) {
+			std::cout << "cp " << -(int)(min / PAWN_EV * 100);
+			} else if(boardHash[board_hash & hash_cutter].evalute < 0) {
+				std::cout << "mate " <<  abs(boardHash[board_hash & hash_cutter].evalute) - BLACK_WIN;
+			} else {
+				std::cout << "mate " <<  -abs(boardHash[board_hash & hash_cutter].evalute) - WHITE_WIN;
+			}
+			std::cout << " nodes " << movesCounter << "\n";
+			std::cout << "bestmove " << boardHash[board_hash & hash_cutter].move.getMoveString() << "\n";
+			gameHash.push_back(getHash(game_board));
+			game_board.move(local_move);
+		}
+
+		return boardHash[board_hash & hash_cutter].evalute;
 	}
 
 	int num_moves = 0;
@@ -571,6 +566,10 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		}
 
 		if(min <= alpha) {
+			if(!boardHash[board_hash & hash_cutter].enable) {
+				boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, min);
+			}
+
 			if(depth == 0 && basis) {
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
@@ -2366,5 +2365,35 @@ double Game::getPriceCell(Board & b, int y, int x) {
 		return PAWN_EV;
 	} else {
 		return 0;
+	}
+}
+
+void Game::test() {
+	variant.clear();
+	variant.resize(max_depth);
+	double win;
+	std::vector<uint64_t>hash;
+	pv_best.clear();
+	std::vector<Move>pv;
+	whiteUp = BLACK_WIN;
+	blackUp = WHITE_WIN;
+	max_depth = 5;
+	while(true) {
+		pv.clear();
+		if(game_board.isWhiteMove()) {
+			movesCounter = 0;
+			double start_timer = clock();
+			 minimax_white(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
+			double end_timer = clock();
+			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
+		} else {
+			pv.clear();
+			movesCounter = 0;
+			double start_timer = clock();
+			minimax_black(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
+			boardHash.clear();
+			double end_timer = clock();
+			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
+		}
 	}
 }

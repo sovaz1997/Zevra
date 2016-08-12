@@ -28,12 +28,13 @@ private:
 	MoveList move_list[32][BOARD_SIZE][BOARD_SIZE];
 	void moveListGenerator();
 	std::vector<Move> generatePositionMoves(Board b, bool & shah, bool withCastling, int depth);
-	int max_depth = 5;
 	unsigned long long movesCounter = 0;
 	double evalute(Board b);
 
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
+
+	int max_depth;
 
 	uint64_t cells[BOARD_SIZE][BOARD_SIZE];
 	uint64_t bitboard[32][BOARD_SIZE][BOARD_SIZE];
@@ -68,7 +69,6 @@ public:
 	uint64_t hash_cutter;
 
 	std::vector<std::string>variant;
-
 	std::vector<Killer>whiteKiller;
 	std::vector<Killer>blackKiller;
 
