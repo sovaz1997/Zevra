@@ -42,6 +42,36 @@ Game::Game() {
 	startGame();
 }
 
+void Game::test() {
+	variant.clear();
+	variant.resize(max_depth);
+	double win;
+	std::vector<uint64_t>hash;
+	pv_best.clear();
+	std::vector<Move>pv;
+	whiteUp = BLACK_WIN;
+	blackUp = WHITE_WIN;
+	max_depth = 5;
+	while(true) {
+		pv.clear();
+		if(game_board.isWhiteMove()) {
+			movesCounter = 0;
+			double start_timer = clock();
+			 minimax_white(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
+			double end_timer = clock();
+			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
+		} else {
+			pv.clear();
+			movesCounter = 0;
+			double start_timer = clock();
+			minimax_black(game_board, -INFINITY, INFINITY, 0, max_depth, 0, gameHash, true, pv);
+			boardHash.clear();
+			double end_timer = clock();
+			std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
+		}
+	}
+}
+
 int Game::startGame() {
 	std::string str;
 	while(true) {
@@ -112,6 +142,8 @@ bool Game::uciHandler(std::string str) {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
 			return false;
+		} else if(cmd[0] == "test") {
+			test();
 		}
 
 		return true;
@@ -347,7 +379,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 		double tmp;
 
-
 		pv.push_back(moves[i]);
 		hash.push_back(pos_hash);
 		tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
@@ -385,6 +416,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 				std::cout << " nodes " << movesCounter << "\n";
 				std::cout << "bestmove " << local_move.getMoveString() << "\n";
 				gameHash.push_back(getHash(game_board));
+				game_board.move(local_move);
 			}
 
 			variant[max_depth - real_depth - 1] = moves[i].getMoveString();
@@ -421,6 +453,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 		std::cout << " nodes " << movesCounter << "\n";
 		std::cout << "bestmove " << local_move.getMoveString() << "\n";
 		gameHash.push_back(getHash(game_board));
+		game_board.move(local_move);
 	}
 
 	printVariant();
@@ -521,6 +554,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 			if(value <= alpha) {
 				return alpha;
 			}
+
 			null_mv = false;
 		}
 
@@ -541,7 +575,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
 				if(min > BLACK_WIN + 10000 && min < WHITE_WIN - 10000) {
-					std::cout << "cp " << (int) (min / PAWN_EV * 100);
+					std::cout << "cp " << -(int) (min / PAWN_EV * 100);
 				} else if(min < 0) {
 					std::cout << "mate " <<  abs(min - BLACK_WIN);
 				} else {
@@ -550,6 +584,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 				std::cout << " nodes " << movesCounter << "\n";
 				std::cout << "bestmove " << local_move.getMoveString() << "\n";
 				gameHash.push_back(getHash(game_board));
+				game_board.move(local_move);
 			}
 
 			variant[max_depth - real_depth - 1] = moves[i].getMoveString();
@@ -577,7 +612,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		std::cout << "info pv " << local_move.getMoveString();
 		std::cout << " score ";
 		if(min > BLACK_WIN + 10000 && min < WHITE_WIN - 10000) {
-		std::cout << "cp " << (int)(min / PAWN_EV * 100);
+		std::cout << "cp " << -(int)(min / PAWN_EV * 100);
 		} else if(min < 0) {
 			std::cout << "mate " <<  abs(min - BLACK_WIN);
 		} else {
@@ -586,6 +621,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		std::cout << " nodes " << movesCounter << "\n";
 		std::cout << "bestmove " << local_move.getMoveString() << "\n";
 		gameHash.push_back(getHash(game_board));
+		game_board.move(local_move);
 	}
 
 	printVariant();
@@ -796,8 +832,14 @@ double Game::evalute(Board b) {
 				continue;
 			}
 
-			double whiteKingDistance = evalute_cells_size[y][x][yWhiteKingPos][xWhiteKingPos];
-			double blackKingDistance = evalute_cells_size[y][x][yBlackKingPos][xBlackKingPos];
+			double whiteKingDistance, blackKingDistance;
+			if(xWhiteKingPos >= 0 && xWhiteKingPos < 8 && yWhiteKingPos >= 0 && yWhiteKingPos < 8 && xBlackKingPos >= 0 && xBlackKingPos < 8 && yBlackKingPos >= 0 && yBlackKingPos < 8) {
+				whiteKingDistance = evalute_cells_size[y][x][yWhiteKingPos][xWhiteKingPos];
+				blackKingDistance = evalute_cells_size[y][x][yBlackKingPos][xBlackKingPos];
+			} else {
+				whiteKingDistance = 5;
+				blackKingDistance = 5;
+			}
 
 			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
