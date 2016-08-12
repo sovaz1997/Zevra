@@ -886,7 +886,6 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 										tmp.whiteMove = true;
 										bool shah_tmp = false;
 										std::vector<Move> move_test = generatePositionMoves(tmp, shah_tmp, false, 0);
-
 										for(unsigned int i = 0; i < move_test.size(); ++i) {
 											if((move_test[i].toY == 0 && move_test[i].toX == 2) || (move_test[i].toY == 0 && move_test[i].toX == 3) || (move_test[i].toY == 0 && move_test[i].toX == 4)) {
 												break;
@@ -894,13 +893,8 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 
 											if(i == move_test.size() - 1) {
 												Board tmp = b;
-												tmp.whiteMove = false;
-												bool shah_tmp;
-												std::vector<Move> move_test = generatePositionMoves(tmp, shah_tmp, false, 0);
-												if(i == move_test.size() - 1) {
-													if(!shah_tmp) {
-														result.push_back(it->move);
-													}
+												if(!shah_tmp) {
+													result.push_back(it->move);
 												}
 											}
 										}
