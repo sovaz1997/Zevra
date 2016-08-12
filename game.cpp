@@ -250,6 +250,17 @@ void Game::initEngine() {
 	boardHash.resize(pow(2, hash_width));
 	zobristGenerate();
 	hash_cutter = pow(2, hash_width) - 1;
+
+	for(int i = 0; i < BOARD_SIZE; ++i) {
+		for(int j = 0; j < BOARD_SIZE; ++j) {
+			for(int k = 0; k < BOARD_SIZE; ++k) {
+				for(int m = 0; m < BOARD_SIZE; ++m) {
+					evalute_cells_size[i][j][k][m]  = sqrt(pow(i - k, 2) + pow(j - m, 2)) + 5;
+				}
+			}
+		}
+	}
+
 	std::cout << "uciok\n";
 }
 
@@ -785,11 +796,8 @@ double Game::evalute(Board b) {
 				continue;
 			}
 
-			//double whiteKingDistance = sqrt(pow(x - xWhiteKingPos, 2) + pow(y - yWhiteKingPos, 2)) + 5;
-			//double blackKingDistance = sqrt(pow(x - xBlackKingPos, 2) + pow(y - yBlackKingPos, 2)) + 5;
-
-			double whiteKingDistance = abs(x - xWhiteKingPos) + abs(y - yWhiteKingPos);
-			double blackKingDistance = abs(x - xBlackKingPos) + abs(y - yBlackKingPos);
+			double whiteKingDistance = evalute_cells_size[y][x][yWhiteKingPos][xWhiteKingPos];
+			double blackKingDistance = evalute_cells_size[y][x][yBlackKingPos][xBlackKingPos];
 
 			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
@@ -843,10 +851,10 @@ double Game::evalute(Board b) {
 		}
 	}
 
-	if(all_material <= 25000) {
+	/*if(all_material <= 25000) {
 		material += whitePawns * PAWN_EV;
 		material -= blackPawns * PAWN_EV;
-	}
+	}*/
 
 //	std::cout << material << " " << position << "\n";
 	return material + position + security_king / 1000;
@@ -2278,12 +2286,14 @@ uint64_t Game::getHash(Board & b) {
 }
 
 void Game::zobristGenerate() {
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<unsigned long long> dis;
+
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
-				srand(time(0)* ((i+1)*(j+1)+(k+1)*17));
-
-				zobrist[i][j][k] = rand() % UINT64_MAX;
+				zobrist[i][j][k] = dis(gen);
 			}
 		}
 	}

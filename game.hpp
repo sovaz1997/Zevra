@@ -8,6 +8,7 @@
 #include <ctime>
 #include <string>
 #include <cstdlib>
+#include <random>
 #include <thread>
 #include <cstdio>
 #include <ctime>
@@ -80,6 +81,7 @@ public:
 
 	double getPriceCell(Board & b, int y, int x);
 
+	double evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 };
 
 #endif
