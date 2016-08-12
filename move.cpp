@@ -86,7 +86,7 @@ std::string Move::getMoveString() {
 		} else if((figureTransform & TYPE_SAVE) == BISHOP) {
 			res.push_back('b');
 		} else if((figureTransform & TYPE_SAVE) == KNIGHT) {
-			res.push_back('k');
+			res.push_back('n');
 		}
 	}
 

@@ -217,6 +217,8 @@ bool Game::move(std::string mv) {
 				continue;
 			}
 
+			gameHash.push_back(getHash(game_board));
+
 			return true;
 		}
 	}
@@ -260,6 +262,18 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
 
+	if(depth > 0) {
+	int third_repeat = 1;
+		for(int i = 0; i < hash.size(); ++i) {
+			if(hash[i] == pos_hash) {
+				++third_repeat;
+			}
+
+			if(third_repeat >= 3) {
+				return 0;
+			}
+		}
+	}
 
 	int num_moves = 0;
 	if(depth == max_depth) {
@@ -306,10 +320,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 	}
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
-		if(depth == 0 && basis) {
-			//std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
-		}
-
 		Board tmp_brd = b;
 		tmp_brd.move(moves[i]);
 
@@ -318,7 +328,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 		if(!shahIsNot(tmp_brd, WHITE)) {
 			std::vector<Move>moves_shah = generatePositionMoves(tmp_brd, shah, true, real_depth);
 			if(shah) {
-				//b = save;
 				continue;
 			}
 		}
@@ -327,15 +336,20 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 		double tmp;
 
-	//	if(real_depth == max_depth - 1 && b.getFigure(moves[i].toY, moves[i].toX) != 0) {
-	//		tmp = force_minimax_black(b, real_depth + 1, hash, basis);
-	//	} else {
-			pv.push_back(moves[i]);
-			tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
-			pv.pop_back();
-	//	}
 
-		//b = save;
+		pv.push_back(moves[i]);
+		hash.push_back(pos_hash);
+		tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
+		pv.pop_back();
+
+		if(null_mv && (max_depth - depth) >= 3 && b.getFigure(moves[i].toX, moves[i].toY) == 0/* && shahIsNot(b, BLACK)*/) {
+			double value = minimax_black(b, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv);
+			if(value >= beta) {
+				return beta;
+			}
+			null_mv = false;
+		}
+
 		if(tmp > max) {
 			max = tmp;
 			local_move = moves[i];
@@ -345,12 +359,9 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 			if(b.getFigure(moves[i].toY, moves[i].toX) == 0 && local_move.quality() && b.getFigure(moves[i].fromY, moves[i].fromX) | COLOR_SAVE == WHITE) {
 				whiteKiller[real_depth] = Killer(local_move);
 			}
-
 		}
 		if(max >= beta) {
 			if(depth == 0 && basis) {
-				//game_board.move(local_move);
-			//}
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
 				if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
@@ -367,7 +378,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 			variant[max_depth - real_depth - 1] = moves[i].getMoveString();
 			printVariant();
-
 			return max;
 		}
 	}
@@ -388,7 +398,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 	}
 
 	if(depth == 0 && num_moves > 0 && basis) {
-		//game_board.move(local_move);
 		std::cout << "info pv " << local_move.getMoveString();
 		std::cout << " score ";
 		if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
@@ -411,12 +420,26 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
 	++movesCounter;
+
 	/*if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
 	}*/
 
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
+
+	if(depth > 0) {
+		int third_repeat = 1;
+		for(int i = 0; i < hash.size(); ++i) {
+			if(hash[i] == pos_hash) {
+				++third_repeat;
+			}
+
+			if(third_repeat >= 3) {
+				return 0;
+			}
+		}
+	}
 
 	int num_moves = 0;
 	if(depth == max_depth) {
@@ -464,10 +487,6 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 	bool null_mv = nullMoveEnable;
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
-		if(depth == 0 && basis) {
-			//std::cout << "info progress: " << i + 1 << "/" << moves.size() << "\n";
-		}
-
 		Board tmp_brd = b;
 		tmp_brd.move(moves[i]);
 
@@ -475,23 +494,24 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		if(!shahIsNot(tmp_brd, BLACK)) {
 			std::vector<Move>moves_shah = generatePositionMoves(tmp_brd, shah, true, real_depth);
 			if(shah) {
-				//b = save;
 				continue;
 			}
 		}
 
 		++num_moves;
-
 		double tmp;
-	//	if(real_depth == max_depth - 1 && b.getFigure(moves[i].toY, moves[i].toX) != 0) {
-		//	tmp = force_minimax_white(b, real_depth + 1, hash, basis);
-	//	} else {
-			pv.push_back(moves[i]);
-			tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
-			pv.pop_back();
-	//	}
+		pv.push_back(moves[i]);
+		hash.push_back(pos_hash);
+		tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
+		pv.pop_back();
 
-		//b = save;
+		if(null_mv && (max_depth - depth) >= 3 && b.getFigure(moves[i].toX, moves[i].toY) == 0 /*&& shahIsNot(b, WHITE)*/) {
+			double value = minimax_white(b, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv);
+			if(value <= alpha) {
+				return alpha;
+			}
+			null_mv = false;
+		}
 
 		if(tmp < min) {
 			min = tmp;
@@ -506,9 +526,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		}
 
 		if(min <= alpha) {
-			//local_move = moves[i];
 			if(depth == 0 && basis) {
-				//game_board.move(local_move);
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " score ";
 				if(min > BLACK_WIN + 10000 && min < WHITE_WIN - 10000) {
@@ -704,6 +722,9 @@ double Game::evalute(Board b) {
 	double material = 0;
 	double position = 0;
 	double all_material = 0;
+	double security_king = 0;
+
+	int xWhiteKingPos, yWhiteKingPos, xBlackKingPos, yBlackKingPos, whitePawns = 0, blackPawns = 0;;
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
@@ -716,6 +737,7 @@ double Game::evalute(Board b) {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
 					material += PAWN_EV;
 					all_material += PAWN_EV;
+					++whitePawns;
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
 					material += KNIGHT_EV;
 					all_material += KNIGHT_EV;
@@ -728,11 +750,15 @@ double Game::evalute(Board b) {
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
 					material += QUEEN_EV;
 					all_material += QUEEN_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
+					xWhiteKingPos = x;
+					yWhiteKingPos = y;
 				}
 			} else {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
 					material -= PAWN_EV;
 					all_material += PAWN_EV;
+					++blackPawns;
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
 					material -= KNIGHT_EV;
 					all_material += KNIGHT_EV;
@@ -745,6 +771,9 @@ double Game::evalute(Board b) {
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
 					material -= QUEEN_EV;
 					all_material += QUEEN_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
+					xBlackKingPos = x;
+					yBlackKingPos = y;
 				}
 			}
 		}
@@ -756,31 +785,57 @@ double Game::evalute(Board b) {
 				continue;
 			}
 
+			//double whiteKingDistance = sqrt(pow(x - xWhiteKingPos, 2) + pow(y - yWhiteKingPos, 2)) + 5;
+			//double blackKingDistance = sqrt(pow(x - xBlackKingPos, 2) + pow(y - yBlackKingPos, 2)) + 5;
+
+			double whiteKingDistance = abs(x - xWhiteKingPos) + abs(y - yWhiteKingPos);
+			double blackKingDistance = abs(x - xBlackKingPos) + abs(y - yBlackKingPos);
+
 			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
 					position += whitePawnMatr[y][x];
+					security_king += (500 / whiteKingDistance);
+					security_king -= (100 / blackKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
 					position += knightMatr[y][x];
+					security_king += (300 / whiteKingDistance);
+					security_king -= (300 / blackKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
 					position += bishopMatr[y][x];
+					security_king += (400 / whiteKingDistance);
+					security_king -= (200 / blackKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
 					position += rookMatr[y][x];
+					security_king += (200 / whiteKingDistance);
+					security_king -= (400 / blackKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
 					position += queenMatr[y][x];
+					security_king += (100 / whiteKingDistance);
+					security_king -= (500 / blackKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
 					position += ((kingDebuteMatr[y][x] * (all_material / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material / ALL_MATERIAL));
 				}
 			} else {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
 					position -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
+					security_king -= (500 / blackKingDistance);
+					security_king += (100 / whiteKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
 					position -= knightMatr[BOARD_SIZE - 1 - y][x];
+					security_king -= (300 / blackKingDistance);
+					security_king += (300 / whiteKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
 					position -= bishopMatr[BOARD_SIZE - 1 - y][x];
+					security_king -= (400 / blackKingDistance);
+					security_king += (200 / whiteKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
 					position -= rookMatr[BOARD_SIZE - 1 - y][x];
+					security_king -= (200 / blackKingDistance);
+					security_king += (400 / whiteKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
 					position -= queenMatr[BOARD_SIZE - 1 - y][x];
+					security_king -= (100 / blackKingDistance);
+					security_king += (500 / whiteKingDistance);
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
 					position -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material / ALL_MATERIAL));
 				}
@@ -788,8 +843,13 @@ double Game::evalute(Board b) {
 		}
 	}
 
+	if(all_material <= 25000) {
+		material += whitePawns * PAWN_EV;
+		material -= blackPawns * PAWN_EV;
+	}
+
 //	std::cout << material << " " << position << "\n";
-	return material + position;
+	return material + position + security_king / 1000;
 }
 
 std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCastling, int depth) {
@@ -1045,11 +1105,11 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 			result[j-1] = result[j];
 			result[j] = tmp;
 		}
-	}*/
+	}
 
-	//std::sort(result.begin() + num_attacks, result.end());
+	std::sort(result.begin() + num_attacks, result.end());*/
 
-	/*if(boardHash[getColorHash(b) & hash_cutter].enable ) {
+	/*if(boardHash[getColorHash(b) & hash_cutter].enable) {
 		for(unsigned int i = 0; i < result.size(); ++i) {
 			if(result[i].equal(boardHash[getColorHash(b) & hash_cutter].move)) {
 				Move tmp = result[i];
