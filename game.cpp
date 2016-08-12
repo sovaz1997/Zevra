@@ -899,7 +899,7 @@ double Game::evalute(Board b) {
 	}*/
 
 //	std::cout << material << " " << position << "\n";
-	return material + position + security_king / 1000;
+	return material + position/* + security_king / 1000*/;
 }
 
 std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCastling, int depth) {
