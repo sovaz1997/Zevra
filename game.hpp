@@ -50,8 +50,7 @@ public:
 	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 
-	double force_minimax_white(Board b, int real_depth, std::vector<uint64_t> hash, bool basis);
-	double force_minimax_black(Board b, int real_depth, std::vector<uint64_t> hash, bool basis);
+  double quies(Board & b, double alpha, double beta);
 
 	int startGame();
 	std::vector<std::string> getStringArray(std::string str);
@@ -74,7 +73,7 @@ public:
 	void printVariant();
 
 	//flags
-	bool nullMoveEnable = false;
+	bool nullMoveEnable = true;
 	bool hashEnable = true;
 	bool print_variant_enable = false;
 	bool debute = false;
