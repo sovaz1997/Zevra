@@ -159,6 +159,12 @@ void Game::go() {
 	}*/
 
 	//if(!debute) {
+		 whiteKiller.clear();
+		 blackKiller.clear();
+		 whiteKiller.resize(100);
+		 blackKiller.resize(100);
+
+
 		variant.clear();
 		variant.resize(max_depth);
 		double win;
@@ -180,12 +186,12 @@ void Game::go() {
 			}
 
 			if(game_board.isWhiteMove()) {
-				win = minimax_white(game_board, -INFINITY, INFINITY, 0, i, 0, gameHash, basis, pv);
+				win = minimax_white(game_board, -INFINITY, INFINITY, 0, i, 0, gameHash, basis, pv, true);
 				//std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
 			} else {
 				movesCounter = 0;
 				double start_timer = clock();
-				win = minimax_black(game_board, -INFINITY, INFINITY, 0, i, 0, gameHash, basis, pv);
+				win = minimax_black(game_board, -INFINITY, INFINITY, 0, i, 0, gameHash, basis, pv, true);
 				double end_timer = clock();
 				//std::cout << "info " << movesCounter << " positions; " << (double)movesCounter / ((end_timer - start_timer) / 1000000) << " position/sec\n";
 			}
@@ -272,7 +278,7 @@ void Game::initEngine() {
 	std::cout << "uciok\n";
 }
 
-double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
+double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	++movesCounter;
 	/*if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
@@ -378,15 +384,14 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 		pv.push_back(moves[i]);
 		hash.push_back(pos_hash);
-		tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
+		tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
 		pv.pop_back();
 
-		if(null_mv && (max_depth - depth) == 3 && b.getFigure(moves[i].toX, moves[i].toY) == 0/* && shahIsNot(b, BLACK)*/) {
-			double value = minimax_black(b, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv);
+		if(nullMoveEnable && (max_depth - depth) >= 3 && tmp_brd.getFigure(moves[i].toX, moves[i].toY) == 0 && shahIsNot(tmp_brd, BLACK) && usedNullMove) {
+			double value = minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false);
 			if(value >= beta) {
 				return beta;
 			}
-			null_mv = false;
 		}
 
 		if(tmp > max) {
@@ -484,7 +489,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 }
 
 
-double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv) {
+double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	++movesCounter;
 
 	/*if(max_depth - real_depth > 4) {
@@ -569,7 +574,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		local_move = moves[0];
 	}
 
-	bool null_mv = nullMoveEnable;
+//	bool null_mv = nullMoveEnable;
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		Board tmp_brd = b;
@@ -587,16 +592,16 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		double tmp;
 		pv.push_back(moves[i]);
 		hash.push_back(pos_hash);
-		tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv);
+		tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
 		pv.pop_back();
 
-		if(null_mv && (max_depth - depth) >= 3 && b.getFigure(moves[i].toX, moves[i].toY) == 0 /*&& shahIsNot(b, WHITE)*/) {
-			double value = minimax_white(b, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv);
+		if((max_depth - depth) >= 3 && tmp_brd.getFigure(moves[i].toX, moves[i].toY) == 0 && shahIsNot(tmp_brd, WHITE) && nullMoveEnable && usedNullMove) {
+			double value = minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false);
 			if(value <= alpha) {
 				return alpha;
 			}
 
-			null_mv = false;
+			//null_mv = false;
 		}
 
 		if(tmp < min) {
@@ -1214,9 +1219,9 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 		Board tmp_brd = b;
 		tmp_brd.move(result[i]);
 		result[i].simple_eval = (eval - evalute(tmp_brd)) * mul;
-	}*/
+	}
 
-	/*for(int i = num_attacks + 1; i < result.size(); ++i) {
+	for(int i = num_attacks + 1; i < result.size(); ++i) {
 		for(int j = i; j > num_attacks && getPriceCell(b, result[j-1].fromY, result[j-1].fromX) < getPriceCell(b, result[j].fromY, result[j].fromX); --j) {
 			Move tmp = result[j-1];
 			result[j-1] = result[j];
@@ -1226,7 +1231,7 @@ std::vector<Move> Game::generatePositionMoves(Board b, bool & shah, bool withCas
 
 	std::sort(result.begin() + num_attacks, result.end());*/
 
-	if(boardHash[getColorHash(b) & hash_cutter].enable && boardHash[getColorHash(b) & hash_cutter].depth >= max_depth - depth) {
+	if(boardHash[getColorHash(b) & hash_cutter].enable && boardHash[getColorHash(b) & hash_cutter].depth >= max_depth - depth && boardHash[getColorHash(b) & hash_cutter].hash == getColorHash(b)) {
 		for(unsigned int i = 0; i < result.size(); ++i) {
 			if(result[i].equal(boardHash[getColorHash(b) & hash_cutter].move)) {
 				Move tmp = result[i];

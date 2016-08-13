@@ -47,8 +47,8 @@ private:
 	std::vector<Move> pv_best;
 public:
 	Game();
-	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv);
-	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv);
+	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 
 	double force_minimax_white(Board b, int real_depth, std::vector<uint64_t> hash, bool basis);
 	double force_minimax_black(Board b, int real_depth, std::vector<uint64_t> hash, bool basis);
