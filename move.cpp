@@ -93,12 +93,12 @@ std::string Move::getMoveString() {
 	return res;
 }
 
-double Move::getAttackPrice(Board & b) {
+float Move::getAttackPrice(Board & b) {
 	if(b.getFigure(toY, toX) == 0) {
 		return 0;
 	}
 
-	double res;
+	float res;
 
 	if((b.getFigure(toY, toX) & TYPE_SAVE) == QUEEN) {
 		res = QUEEN_EV;

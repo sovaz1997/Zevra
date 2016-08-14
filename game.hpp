@@ -27,9 +27,9 @@ private:
 	Board game_board;
 	MoveList move_list[32][BOARD_SIZE][BOARD_SIZE];
 	void moveListGenerator();
-	std::vector<Move> generatePositionMoves(Board b, bool & shah, bool withCastling, int depth);
+	std::vector<Move> generatePositionMoves(Board & b, bool & shah, bool withCastling, int depth);
 	unsigned long long movesCounter = 0;
-	double evalute(Board b);
+	float evalute(Board & b);
 
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
@@ -43,14 +43,14 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void go();
-	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
+	float whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 	std::vector<Move> pv_best;
 public:
 	Game();
-	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
-	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	float minimax_white(Board & b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	float minimax_black(Board & b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 
-  double quies(Board & b, double alpha, double beta);
+  float quies(Board & b, float alpha, float beta);
 
 	int startGame();
 	std::vector<std::string> getStringArray(std::string str);
@@ -73,14 +73,14 @@ public:
 	void printVariant();
 
 	//flags
-	bool nullMoveEnable = true;
+	bool nullMoveEnable = false;
 	bool hashEnable = true;
 	bool print_variant_enable = false;
 	bool debute = false;
 
-	double getPriceCell(Board & b, int y, int x);
+	float getPriceCell(Board & b, int y, int x);
 
-	double evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
+	float evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 };
 
 #endif

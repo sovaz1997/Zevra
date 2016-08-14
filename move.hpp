@@ -19,13 +19,14 @@ public:
 	void go(Board* b);
 	bool operator>(Move& mv);
 	bool operator<(Move& mv);
+	bool fromHash = false;
 
 	uint8_t figureTransform;
 	uint8_t passant_x, passant_y;
 	uint8_t moveType;
-	double simple_eval;
+	float simple_eval;
 	void print();
-	double getAttackPrice(Board & b);
+	float getAttackPrice(Board & b);
 
 	uint8_t fromY, fromX, toY, toX;
 
