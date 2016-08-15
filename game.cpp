@@ -286,7 +286,15 @@ void Game::initEngine() {
 	std::cout << "uciok\n";
 }
 
-float Game::minimax_white(Board & b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+float Game::minimax_white(Board b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+	if(max_depth - depth  >= 5) {
+		std::cout << "info pv ";
+		for(int i = 0; i < pv.size(); ++i) {
+			std::cout << pv[i].getMoveString() << " ";
+		}
+		std::cout << "\n";
+	}
+
 	++movesCounter;
 	/*if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
@@ -355,8 +363,8 @@ float Game::minimax_white(Board & b, float alpha, float beta, int depth, int max
 				}
 				std::cout << "score cp " << eval / PAWN_EV * 100 << "\n";
 			}
-		}
-		//return force_minimax_white(b, real_depth + 1, hash, basis);*/
+		}*/
+		//return force_minimax_white(b, real_depth + 1, hash, basis);
 		//return eval;
 		//return force_minimax_white(b, real_depth + 1, hash, basis);
 		//return quies(b, alpha, beta);
@@ -387,6 +395,10 @@ float Game::minimax_white(Board & b, float alpha, float beta, int depth, int max
 			if(shah) {
 				continue;
 			}
+		}
+
+		if(num_moves == 0) {
+			local_move = moves[i];
 		}
 
 		++num_moves;
@@ -504,7 +516,15 @@ float Game::minimax_white(Board & b, float alpha, float beta, int depth, int max
 	return max;
 }
 
-float Game::minimax_black(Board & b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+float Game::minimax_black(Board b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+	if(max_depth - depth  >= 5) {
+		std::cout << "info pv ";
+		for(int i = 0; i < pv.size(); ++i) {
+			std::cout << pv[i].getMoveString() << " ";
+		}
+		std::cout << "\n";
+	}
+
 	++movesCounter;
 	/*if(max_depth - real_depth > 4) {
 		std::cout << "info nodes " << movesCounter << "\n";
@@ -607,6 +627,10 @@ float Game::minimax_black(Board & b, float alpha, float beta, int depth, int max
 			}
 		}
 
+		if(num_moves == 0) {
+			local_move = moves[i];
+		}
+
 		++num_moves;
 
 		float tmp;
@@ -671,7 +695,6 @@ float Game::minimax_black(Board & b, float alpha, float beta, int depth, int max
 			return min;
 		}
 	}
-
 
 
 	if(num_moves == 0) {
@@ -2355,3 +2378,5 @@ float Game::getPriceCell(Board & b, int y, int x) {
 		return 0;
 	}
 }
+
+//bool Game::inCheck(Board & b, uint8_t color);

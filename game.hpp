@@ -47,8 +47,8 @@ private:
 	std::vector<Move> pv_best;
 public:
 	Game();
-	float minimax_white(Board & b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
-	float minimax_black(Board & b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	float minimax_white(Board b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	float minimax_black(Board b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 
   float quies(Board & b, float alpha, float beta);
 
@@ -77,6 +77,8 @@ public:
 	bool hashEnable = true;
 	bool print_variant_enable = false;
 	bool debute = false;
+
+	bool inCheck(Board & b, uint8_t color);
 
 	float getPriceCell(Board & b, int y, int x);
 

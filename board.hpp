@@ -13,14 +13,11 @@ class Move;
 
 class Board {
 private:
-	std::vector<std::vector<uint8_t> > board;
+	std::string savedFen;
 
 	void setFen(std::string FEN);
 	void setCastling(std::string FEN);
 	void setPassant(std::string FEN);
-
-	int numHalfMove;
-	int move_rule_num;
 public:
 	Board();
 	uint8_t createFigure(uint8_t fig, uint8_t type);
@@ -33,12 +30,14 @@ public:
 	void printBoard();
 	void cleanBoard();
 	void printStringBoard();
+	//void unMove();
 
 	uint8_t getFigure(int y, int x);
 	void setFigure(uint8_t figure, int y, int x);
 	void move(Move & mv);
 	bool isWhiteMove();
 
+	//* ------ Ситуация на доске ------*/
 	bool passant_enable;
 	int passant_x, passant_y;
 	bool whiteMove = true;
@@ -47,7 +46,11 @@ public:
 	bool blackLongCastleEnable;
 	bool whiteShortCastleEnable;
 	bool whiteLongCastleEnable;
+
+	std::vector<std::vector<uint8_t> > board;
+	int numHalfMove;
+	int move_rule_num;
+	/* ------*/
 };
 
 #endif
-

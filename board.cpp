@@ -340,6 +340,7 @@ void Board::setFigure(uint8_t figure, int y, int x) {
 }
 
 void Board::move(Move & mv) {
+	//savedFen = getFenPosition();
 	passant_enable = false;
 
 	if(getFigure(mv.fromY, mv.fromX) == (PAWN | WHITE) && mv.fromY - mv.toY == 2) {
@@ -388,10 +389,15 @@ void Board::move(Move & mv) {
 
 	mv.go(this);
 	whiteMove = !whiteMove;
+
 	if(whiteMove) {
 		++numHalfMove;
 	}
 }
+
+/*void Board::unMove() {
+	setFenPosition(savedFen);
+}*/
 
 bool Board::isWhiteMove() {
 	return whiteMove;
@@ -434,4 +440,3 @@ bool Board::isWhiteMove() {
       }
     }
   }
-  
