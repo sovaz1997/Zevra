@@ -10,10 +10,10 @@ public:
 	uint64_t hash;
 	int depth;
 	Move move;
-	float evalute;
+	double evalute;
 	int type_mv;
 
 	Hash();
-	Hash(uint64_t hsh, Move mv, int dpth, float eval, int type);
+	Hash(uint64_t hsh, Move mv, int dpth, double eval, int type);
 };
 #endif

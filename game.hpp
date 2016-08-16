@@ -29,7 +29,7 @@ private:
 	void moveListGenerator();
 	std::vector<Move> generatePositionMoves(Board & b, bool & shah, bool withCastling, int depth);
 	unsigned long long movesCounter = 0;
-	float evalute(Board & b);
+	double evalute(Board & b);
 
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
@@ -43,14 +43,17 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void go();
-	float whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
+	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 	std::vector<Move> pv_best;
+
+	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
+	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 public:
 	Game();
-	float minimax_white(Board b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
-	float minimax_black(Board b, float alpha, float beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 
-  float quies(Board & b, float alpha, float beta);
+  double quies(Board & b, double alpha, double beta);
 
 	int startGame();
 	std::vector<std::string> getStringArray(std::string str);
@@ -79,10 +82,14 @@ public:
 	bool debute = false;
 
 	bool inCheck(Board & b, uint8_t color);
+	double getPriceCell(Board & b, int y, int x);
+	double evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
+	void cleanWhiteHistory();
+	void cleanBlackHistory();
+	void flattenHistory();
 
-	float getPriceCell(Board & b, int y, int x);
-
-	float evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
+	uint64_t pawnAttackCutter[BOARD_SIZE];
+	void createPawnAttackCutter();
 };
 
 #endif

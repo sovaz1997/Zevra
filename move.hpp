@@ -24,9 +24,9 @@ public:
 	uint8_t figureTransform;
 	uint8_t passant_x, passant_y;
 	uint8_t moveType;
-	float simple_eval;
+	double simple_eval;
 	void print();
-	float getAttackPrice(Board & b);
+	double getAttackPrice(Board & b);
 
 	uint8_t fromY, fromX, toY, toX;
 

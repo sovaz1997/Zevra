@@ -27,11 +27,11 @@ const uint8_t BL_CASTLING_MV = 4;
 const uint8_t PASSANT_MV = 5;
 const uint8_t TRANSFORMATION_MV = 6;
 
-const float PAWN_EV = 1000;
-const float KNIGHT_EV = 3200;
-const float BISHOP_EV = 3300;
-const float ROOK_EV = 5000;
-const float QUEEN_EV = 9000;
+const double PAWN_EV = 1000;
+const double KNIGHT_EV = 3200;
+const double BISHOP_EV = 3300;
+const double ROOK_EV = 5000;
+const double QUEEN_EV = 9000;
 
 const int hash_width = 24;
 
@@ -39,13 +39,13 @@ const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;
 const int ALPHA_CUT_EV = 2;
 
-const float ALL_MATERIAL = 16 * PAWN_EV
+const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV
 +	4*ROOK_EV
 +	QUEEN_EV;
 
-const float whitePawnMatr[BOARD_SIZE][BOARD_SIZE] = {
+const double whitePawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 0, 0, 0, 0, 0},
 {50, 50, 50, 50, 50, 50, 50, 50},
 {10, 10, 20, 30, 30, 20, 10, 10},
@@ -56,7 +56,7 @@ const float whitePawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-const float knightMatr[BOARD_SIZE][BOARD_SIZE] {
+const double knightMatr[BOARD_SIZE][BOARD_SIZE] {
 {-50, -40, -30, -30, -30, -30, -40, -50},
 {-40, -20, 0, 0, 0, 0, -20, -40},
 {-30, 0, 10, 15, 15, 10, 0, -30},
@@ -67,7 +67,7 @@ const float knightMatr[BOARD_SIZE][BOARD_SIZE] {
 {-50, -40, -30, -30, -30, -30, -40, -50}
 };
 
-const float bishopMatr[BOARD_SIZE][BOARD_SIZE] {
+const double bishopMatr[BOARD_SIZE][BOARD_SIZE] {
 {-20, -10, -10, -10, -10, -10, -10, -20},
 {-10, 0, 0, 0, 0, 0, 0, -10},
 {-10, 0, 5, 10, 10, 5, 0, -10},
@@ -78,7 +78,7 @@ const float bishopMatr[BOARD_SIZE][BOARD_SIZE] {
 {-20, -10, -10, -10, -10, -10, -10, -20}
 };
 
-const float rookMatr[BOARD_SIZE][BOARD_SIZE] {
+const double rookMatr[BOARD_SIZE][BOARD_SIZE] {
 {0, 0, 0, 0, 0, 0, 0, 0},
 {5, 10, 10, 10, 10, 10, 10, 5},
 {-5, 0, 0, 0, 0, 0, 0, -5},
@@ -89,7 +89,7 @@ const float rookMatr[BOARD_SIZE][BOARD_SIZE] {
 {0, 0, 0, 5, 5, 0, 0, 0}
 };
 
-const float queenMatr[BOARD_SIZE][BOARD_SIZE] {
+const double queenMatr[BOARD_SIZE][BOARD_SIZE] {
 {-20, -10, -10, -5, -5, -10, -10, -20},
 {-10, 0, 0, 0, 0, 0, 0, -10},
 {-10, 0, 5, 5, 5, 5, 0, -10},
@@ -99,7 +99,7 @@ const float queenMatr[BOARD_SIZE][BOARD_SIZE] {
 {-20, -10, -10, -5, -5, -10, -10, -20}
 };
 
-const float kingDebuteMatr[BOARD_SIZE][BOARD_SIZE] {
+const double kingDebuteMatr[BOARD_SIZE][BOARD_SIZE] {
 {-30, -40, -40, -50, -50, -40, -40, -30},
 {-30, -40, -40, -50, -50, -40, -40, -30},
 {-30, -40, -40, -50, -50, -40, -40, -30},
@@ -110,7 +110,7 @@ const float kingDebuteMatr[BOARD_SIZE][BOARD_SIZE] {
 {20, 30, 10, 0, 0, 10, 30, 20}
 };
 
-const float kingEndGameMatr[BOARD_SIZE][BOARD_SIZE] {
+const double kingEndGameMatr[BOARD_SIZE][BOARD_SIZE] {
 {-50, -40, -30, -20, -20, -30, -40, -50},
 {-30, -20, -10, 0, 0, -10, -20, -30},
 {-30, -10, 20, 30, 30, 20, -10, -30},
