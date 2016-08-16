@@ -3,8 +3,8 @@ CFLAGS=-std=c++17 -Wall -pedantic -m64 -O4 -flto -march=native -funroll-loops -p
 
 GDB=-std=c++17 -Wall -pedantic -m64 -O2 -g
 
-all: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o
-	$(CC) $(CFLAGS) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o -o tiger
+all: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o
+	$(CC) $(CFLAGS) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o -o tiger
 
 gdb:  constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o
 	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o -o tiger
@@ -35,6 +35,9 @@ hash.o: hash.hpp hash.cpp
 
 debute.o: debute.hpp debute.cpp
 	$(CC) $(CFLAGS) -c debute.cpp
+
+	boardinfo.o: boardinfo.hpp boardinfo.cpp
+		$(CC) $(CFLAGS) -c boardinfo.cpp
 
 clean:
 	rm -rf *.o tiger

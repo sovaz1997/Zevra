@@ -397,10 +397,6 @@ float Game::minimax_white(Board b, float alpha, float beta, int depth, int max_d
 			}
 		}
 
-		if(num_moves == 0) {
-			local_move = moves[i];
-		}
-
 		++num_moves;
 
 		float tmp;

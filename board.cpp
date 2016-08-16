@@ -395,15 +395,15 @@ void Board::move(Move & mv) {
 	}
 }
 
-/*void Board::unMove() {
-	setFenPosition(savedFen);
-}*/
+void Board::unMove() {
+	getBoardInfo();
+}
 
 bool Board::isWhiteMove() {
 	return whiteMove;
 }
 
- void Board::printStringBoard() {
+void Board::printStringBoard() {
     for(int y = 0; y < BOARD_SIZE; ++y) {
       for(int x = 0; x < BOARD_SIZE; ++x) {
         if(getFigure(y, x) == 0) {
@@ -435,8 +435,48 @@ bool Board::isWhiteMove() {
             std::cout << "bq";
           } else if((getFigure(y, x) & TYPE_SAVE) == KING) {
             std::cout << "bk";
-          }
         }
       }
     }
   }
+}
+
+void Board::setBoardInfo() {
+	BoardInfo b_info;
+	b_info.passant_enable = passant_enable;
+	b_info.passant_x = passant_x;
+	b_info.passant_y = passant_y;
+	b_info.whiteMove = whiteMove;
+
+	b_info.blackShortCastleEnable = blackShortCastleEnable;
+	b_info.blackLongCastleEnable = blackLongCastleEnable;
+	b_info.whiteShortCastleEnable = whiteShortCastleEnable;
+	b_info.whiteLongCastleEnable = whiteLongCastleEnable;
+
+	b_info.board = board;
+	b_info.numHalfMove = numHalfMove;
+	b_info.move_rule_num = move_rule_num;
+
+	history.push(b_info);
+}
+
+void Board::getBoardInfo() {
+	if(!history.empty()) {
+		passant_enable = history.top().passant_enable;
+
+		passant_x = history.top().passant_x;
+		passant_y = history.top().passant_y;
+		whiteMove = history.top().whiteMove;
+
+		blackShortCastleEnable = history.top().blackShortCastleEnable;
+		blackLongCastleEnable = history.top().blackLongCastleEnable;
+		whiteShortCastleEnable = history.top().whiteShortCastleEnable;
+		whiteLongCastleEnable =history.top().whiteLongCastleEnable;
+
+		board = history.top().board;
+		numHalfMove = history.top().numHalfMove;
+		move_rule_num = history.top().move_rule_num;
+
+		history.pop();
+	}
+}

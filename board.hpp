@@ -3,10 +3,12 @@
 
 #include <cstdint>
 #include <vector>
+#include <stack>
 #include <string>
 #include <iostream>
 #include "move.hpp"
 #include "constants.hpp"
+#include "boardinfo.hpp"
 
 
 class Move;
@@ -18,6 +20,8 @@ private:
 	void setFen(std::string FEN);
 	void setCastling(std::string FEN);
 	void setPassant(std::string FEN);
+
+	std::stack<BoardInfo> history;
 public:
 	Board();
 	uint8_t createFigure(uint8_t fig, uint8_t type);
@@ -30,7 +34,7 @@ public:
 	void printBoard();
 	void cleanBoard();
 	void printStringBoard();
-	//void unMove();
+	void unMove();
 
 	uint8_t getFigure(int y, int x);
 	void setFigure(uint8_t figure, int y, int x);
@@ -51,6 +55,9 @@ public:
 	int numHalfMove;
 	int move_rule_num;
 	/* ------*/
+
+	void setBoardInfo();
+	void getBoardInfo();
 };
 
 #endif
