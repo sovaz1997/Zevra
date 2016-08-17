@@ -315,7 +315,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 				++third_repeat;
 			}
 
-			if(third_repeat >= 3) {
+			if(third_repeat >= 3  || b.move_rule_num >= 50) {
 				return 0;
 			}
 		}
@@ -378,8 +378,8 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	Board tmp_brd = b;
 
-	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, WHITE)&& !inZugzwang(tmp_brd, BLACK)) {
-		if(minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false) >= beta) {
+	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, WHITE) && !inZugzwang(tmp_brd, BLACK)) {
+		if(minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth, hash, basis, pv, false) >= beta) {
 			return beta;
 		}
 	}
@@ -563,7 +563,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 				++third_repeat;
 			}
 
-			if(third_repeat >= 3) {
+			if(third_repeat >= 3 || b.move_rule_num >= 50) {
 				return 0;
 			}
 		}
@@ -627,7 +627,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 	Board tmp_brd = b;
 
 	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, BLACK) && !inZugzwang(tmp_brd, WHITE)) {
-		if(minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false) <= alpha) {
+		if(minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth, hash, basis, pv, false) <= alpha) {
 			return alpha;
 		}
 	}
@@ -2724,11 +2724,11 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 		}
 	}
 
-	if(all_material < 4 * BISHOP_EV) {
+	if(all_material < 7 * BISHOP_EV) {
 		return true;
 	}
 
-	if(color == WHITE) {
+	/*if(color == WHITE) {
 		if(all_material > 4 * BISHOP_EV) {
 			if(white_mat / black_mat < 0.25) {
 				return true;
@@ -2748,7 +2748,7 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 				}
 			}
 		}
-	}
+	}*/
 
 	return false;
 }
