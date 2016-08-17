@@ -376,6 +376,14 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 		return evalute(b);
 	}
 
+	Board tmp_brd = b;
+
+	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, WHITE)&& !inZugzwang(tmp_brd, BLACK)) {
+		if(minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false) >= beta) {
+			return beta;
+		}
+	}
+
 	double max = BLACK_WIN;
 
 	bool null_mv = nullMoveEnable;
@@ -427,12 +435,13 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 		pv.pop_back();
 
-		if(nullMoveEnable && (max_depth - depth) >= 3 && tmp_brd.getFigure(moves[i].toX, moves[i].toY) == 0 && shahIsNot(tmp_brd, BLACK) && usedNullMove) {
+		/*if(nullMoveEnable && (max_depth - depth) >= 3 && tmp_brd.getFigure(moves[i].toX, moves[i].toY) == 0 && !inCheck(tmp_brd, WHITE) && usedNullMove) {
+			tmp_brd.whiteMove = false;
 			double value = minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false);
 			if(value >= beta) {
 				return beta;
 			}
-		}
+		}*/
 
 		if(tmp > max) {
 			max = tmp;
@@ -615,6 +624,14 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		return evalute(b);
 	}
 
+	Board tmp_brd = b;
+
+	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, BLACK) && !inZugzwang(tmp_brd, WHITE)) {
+		if(minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false) <= alpha) {
+			return alpha;
+		}
+	}
+
 	double min = WHITE_WIN;
 
 	bool null_mv = nullMoveEnable;
@@ -664,12 +681,13 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
 		pv.pop_back();
 
-		if(nullMoveEnable && (max_depth - depth) >= 3 && tmp_brd.getFigure(moves[i].toX, moves[i].toY) == 0 && shahIsNot(tmp_brd, WHITE) && usedNullMove) {
+		/*if(nullMoveEnable && (max_depth - depth) >= 3 && tmp_brd.getFigure(moves[i].toX, moves[i].toY) == 0 && !inCheck(tmp_brd, BLACK) && usedNullMove) {
+			tmp_brd.whiteMove = true;
 			double value = minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth + 3, hash, basis, pv, false);
 			if(value <= alpha) {
 				return alpha;
 			}
-		}
+		}*/
 
 		if(tmp < min) {
 			min = tmp;
@@ -2658,4 +2676,79 @@ void Game::createPawnAttackCutter() {
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		pawnAttackCutter[i] ^= UINT64_MAX;
 	}
+}
+
+bool Game::inZugzwang(Board & b, uint8_t color) {
+	double white_mat = 0, black_mat = 0, all_material = 0;
+	for(int y = 0; y < BOARD_SIZE; ++y) {
+		for(int x = 0; x < BOARD_SIZE; ++x) {
+			if(b.getFigure(y, x) == 0) {
+				continue;
+			}
+
+			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
+				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+					white_mat += PAWN_EV;
+					all_material += PAWN_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+					white_mat += KNIGHT_EV;
+					all_material += KNIGHT_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+					white_mat += BISHOP_EV;
+					all_material += BISHOP_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+					white_mat += ROOK_EV;
+					all_material += ROOK_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+					white_mat += QUEEN_EV;
+					all_material += QUEEN_EV;
+				}
+			} else {
+				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+					black_mat += PAWN_EV;
+					all_material += PAWN_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+					black_mat += KNIGHT_EV;
+					all_material += KNIGHT_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+					black_mat += BISHOP_EV;
+					all_material += BISHOP_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+					black_mat += ROOK_EV;
+					all_material += ROOK_EV;
+				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+					black_mat += QUEEN_EV;
+					all_material += QUEEN_EV;
+				}
+			}
+		}
+	}
+
+	if(all_material < 4 * BISHOP_EV) {
+		return true;
+	}
+
+	if(color == WHITE) {
+		if(all_material > 4 * BISHOP_EV) {
+			if(white_mat / black_mat < 0.25) {
+				return true;
+			} else {
+				if(white_mat / black_mat < 0.5) {
+					return true;
+				}
+			}
+		}
+	} else {
+		if(all_material > 4 * BISHOP_EV) {
+			if(black_mat / white_mat < 0.25) {
+				return true;
+			} else {
+				if(black_mat / white_mat < 0.5) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }

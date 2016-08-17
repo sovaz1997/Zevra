@@ -46,6 +46,8 @@ private:
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 	std::vector<Move> pv_best;
 
+	bool inZugzwang(Board & b, uint8_t color);
+
 	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 public:
@@ -76,7 +78,7 @@ public:
 	void printVariant();
 
 	//flags
-	bool nullMoveEnable = false;
+	bool nullMoveEnable = true;
 	bool hashEnable = true;
 	bool print_variant_enable = false;
 	bool debute = false;
