@@ -817,65 +817,44 @@ double Game::quies(Board & b, double alpha, double beta) {
 }
 
 double Game::evalute(Board & b) {
-	double material = 0;
-	double position = 0;
-	double all_material = 0;
-	double security_king = 0;
+	//новая функция оценки
 
-	int xWhiteKingPos, yWhiteKingPos, xBlackKingPos, yBlackKingPos, whitePawns = 0, blackPawns = 0;;
+	//оценка материального преимущества
+	double material_eval = 0, all_material_eval = 0;
+	std::vector<uint64_t> figureMask(32, 0);
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
-			int tmp = material;
-			if(b.getFigure(y, x) == 0) {
-				continue;
-			}
-
-			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
-				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
-					material += PAWN_EV;
-					all_material += PAWN_EV;
-					++whitePawns;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
-					material += KNIGHT_EV;
-					all_material += KNIGHT_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
-					material += BISHOP_EV;
-					all_material += BISHOP_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
-					material += ROOK_EV;
-					all_material += ROOK_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-					material += QUEEN_EV;
-					all_material += QUEEN_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
-					xWhiteKingPos = x;
-					yWhiteKingPos = y;
-				}
-			} else {
-				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
-					material -= PAWN_EV;
-					all_material += PAWN_EV;
-					++blackPawns;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
-					material -= KNIGHT_EV;
-					all_material += KNIGHT_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
-					material -= BISHOP_EV;
-					all_material += BISHOP_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
-					material -= ROOK_EV;
-					all_material += ROOK_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-					material -= QUEEN_EV;
-					all_material += QUEEN_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
-					xBlackKingPos = x;
-					yBlackKingPos = y;
-				}
+			if(b.getFigure(y, x) != 0) {
+				figureMask[b.getFigure(y, x)] |= cells[y][x];
 			}
 		}
 	}
+
+	material_eval += __builtin_popcountll(figureMask[PAWN | WHITE]) * PAWN_EV;
+	material_eval -= __builtin_popcountll(figureMask[PAWN | BLACK]) * PAWN_EV;
+	material_eval += __builtin_popcountll(figureMask[KNIGHT | WHITE]) * KNIGHT_EV;
+	material_eval -= __builtin_popcountll(figureMask[KNIGHT | BLACK]) * KNIGHT_EV;
+	material_eval += __builtin_popcountll(figureMask[BISHOP | WHITE]) * BISHOP_EV;
+	material_eval -= __builtin_popcountll(figureMask[BISHOP | BLACK]) * BISHOP_EV;
+	material_eval += __builtin_popcountll(figureMask[ROOK | WHITE]) * ROOK_EV;
+	material_eval -= __builtin_popcountll(figureMask[ROOK | BLACK]) * ROOK_EV;
+	material_eval += __builtin_popcountll(figureMask[QUEEN | WHITE]) * QUEEN_EV;
+	material_eval -= __builtin_popcountll(figureMask[QUEEN | BLACK]) * QUEEN_EV;
+
+	all_material_eval += __builtin_popcountll(figureMask[PAWN | WHITE]) * PAWN_EV;
+	all_material_eval += __builtin_popcountll(figureMask[PAWN | BLACK]) * PAWN_EV;
+	all_material_eval += __builtin_popcountll(figureMask[KNIGHT | WHITE]) * KNIGHT_EV;
+	all_material_eval += __builtin_popcountll(figureMask[KNIGHT | BLACK]) * KNIGHT_EV;
+	all_material_eval += __builtin_popcountll(figureMask[BISHOP | WHITE]) * BISHOP_EV;
+	all_material_eval += __builtin_popcountll(figureMask[BISHOP | BLACK]) * BISHOP_EV;
+	all_material_eval += __builtin_popcountll(figureMask[ROOK | WHITE]) * ROOK_EV;
+	all_material_eval += __builtin_popcountll(figureMask[ROOK | BLACK]) * ROOK_EV;
+	all_material_eval += __builtin_popcountll(figureMask[QUEEN | WHITE]) * QUEEN_EV;
+	all_material_eval += __builtin_popcountll(figureMask[QUEEN | BLACK]) * QUEEN_EV;
+
+	//оценка позиции (положение фигур)
+	double figure_state_eval = 0;
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
@@ -883,74 +862,69 @@ double Game::evalute(Board & b) {
 				continue;
 			}
 
-			double whiteKingDistance, blackKingDistance;
-			if(xWhiteKingPos >= 0 && xWhiteKingPos < 8 && yWhiteKingPos >= 0 && yWhiteKingPos < 8 && xBlackKingPos >= 0 && xBlackKingPos < 8 && yBlackKingPos >= 0 && yBlackKingPos < 8) {
-				whiteKingDistance = evalute_cells_size[y][x][yWhiteKingPos][xWhiteKingPos];
-				blackKingDistance = evalute_cells_size[y][x][yBlackKingPos][xBlackKingPos];
-			} else {
-				whiteKingDistance = 5;
-				blackKingDistance = 5;
-			}
-
 			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
-					position += whitePawnMatr[y][x];
-					security_king += (500 / whiteKingDistance);
-					security_king -= (100 / blackKingDistance);
+					figure_state_eval += whitePawnMatr[y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
-					position += knightMatr[y][x];
-					security_king += (300 / whiteKingDistance);
-					security_king -= (300 / blackKingDistance);
+					figure_state_eval += knightMatr[y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
-					position += bishopMatr[y][x];
-					security_king += (400 / whiteKingDistance);
-					security_king -= (200 / blackKingDistance);
+					figure_state_eval += bishopMatr[y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
-					position += rookMatr[y][x];
-					security_king += (200 / whiteKingDistance);
-					security_king -= (400 / blackKingDistance);
+					figure_state_eval += rookMatr[y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-					position += queenMatr[y][x];
-					security_king += (100 / whiteKingDistance);
-					security_king -= (500 / blackKingDistance);
+					figure_state_eval += queenMatr[y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
-					position += ((kingDebuteMatr[y][x] * (all_material / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material / ALL_MATERIAL));
+					figure_state_eval += ((kingDebuteMatr[y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material_eval / ALL_MATERIAL));
 				}
 			} else {
 				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
-					position -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
-					security_king -= (500 / blackKingDistance);
-					security_king += (100 / whiteKingDistance);
+					figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
-					position -= knightMatr[BOARD_SIZE - 1 - y][x];
-					security_king -= (300 / blackKingDistance);
-					security_king += (300 / whiteKingDistance);
+					figure_state_eval -= knightMatr[BOARD_SIZE - 1 - y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
-					position -= bishopMatr[BOARD_SIZE - 1 - y][x];
-					security_king -= (400 / blackKingDistance);
-					security_king += (200 / whiteKingDistance);
+					figure_state_eval -= bishopMatr[BOARD_SIZE - 1 - y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
-					position -= rookMatr[BOARD_SIZE - 1 - y][x];
-					security_king -= (200 / blackKingDistance);
-					security_king += (400 / whiteKingDistance);
+					figure_state_eval -= rookMatr[BOARD_SIZE - 1 - y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-					position -= queenMatr[BOARD_SIZE - 1 - y][x];
-					security_king -= (100 / blackKingDistance);
-					security_king += (500 / whiteKingDistance);
+					figure_state_eval -= queenMatr[BOARD_SIZE - 1 - y][x];
 				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
-					position -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material / ALL_MATERIAL));
+					figure_state_eval -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material_eval / ALL_MATERIAL));
 				}
 			}
 		}
 	}
 
-	/*if(all_material <= 25000) {
-		material += whitePawns * PAWN_EV;
-		material -= blackPawns * PAWN_EV;
-	}*/
+	double passedPawnBonus = 0;
 
-//	std::cout << material << " " << position << "\n";
-	return material + position/* + security_king / 1000*/;
+	uint64_t whitePassedPawnMap = 0, blackPassedPawnMap = 0;
+
+	for(int x = 0; x < BOARD_SIZE; ++x) {
+		if(((pawnAttackCutter[x] ^ UINT64_MAX) & figureMask[PAWN | WHITE]) != 0 && ((pawnAttackCutter[x] ^ UINT64_MAX) & figureMask[PAWN | BLACK]) == 0) {
+			passedPawnBonus += PASSED_PAWN_BONUS;
+			whitePassedPawnMap |= (pawnAttackCutter[x] ^ UINT64_MAX) & figureMask[PAWN | WHITE];
+		} else if(((pawnAttackCutter[x] ^ UINT64_MAX) & figureMask[PAWN | BLACK]) != 0 && ((pawnAttackCutter[x] ^ UINT64_MAX) & figureMask[PAWN | WHITE]) == 0) {
+			passedPawnBonus -= PASSED_PAWN_BONUS;
+			blackPassedPawnMap |= (pawnAttackCutter[x] ^ UINT64_MAX) & figureMask[PAWN | BLACK];
+		}
+	}
+
+	if((whitePassedPawnMap | blackPassedPawnMap) != 0) {
+		for(int y = 0; y < BOARD_SIZE; ++y) {
+			for(int x = 0; x < BOARD_SIZE; ++x) {
+				if((whitePassedPawnMap & cells[y][x]) != 0) {
+					passedPawnBonus += passed_pawn_line[y];
+					figure_state_eval -= whitePawnMatr[y][x];
+				} else if((blackPassedPawnMap & cells[y][x]) != 0) {
+					passedPawnBonus -= passed_pawn_line[BOARD_SIZE - 1 - y];
+					figure_state_eval += whitePawnMatr[BOARD_SIZE - 1 - y][x];
+				}
+			}
+		}
+	}
+
+	double pawnStructure = passedPawnBonus;
+
+	return material_eval + figure_state_eval + pawnStructure;
 }
 
 std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withCastling, int depth) {

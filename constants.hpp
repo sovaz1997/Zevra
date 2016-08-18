@@ -120,4 +120,9 @@ const double kingEndGameMatr[BOARD_SIZE][BOARD_SIZE] {
 {-50, -30, -30, -30, -30, -30, -30, -50}
 };
 
+const double PASSED_PAWN_BONUS = 50;
+const double DUAL_PAWN_BONUS = -15;
+const double ISOLATED_PAWN_BONUS = -15;
+const double passed_pawn_line[BOARD_SIZE] = {0, 90, 60, 50, 40, 30, 20, 0};
+
 #endif
