@@ -112,6 +112,12 @@ bool Game::uciHandler(std::string str) {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
 			return false;
+		} else if(cmd[0] == "uci") {
+			std::cout << "id name Zevra\n";
+			std::cout << "id author sovaz1997\n";
+			std::cout << "uciok\n";
+		} else if(cmd[0] == "quit") {
+			return false;
 		}
 
 		return true;
@@ -159,11 +165,8 @@ void Game::go() {
 	}*/
 
 	//if(!debute) {
-		 whiteKiller.clear();
-		 blackKiller.clear();
-		 whiteKiller.resize(100);
-		 blackKiller.resize(100);
 
+		//clearCash();
 
 		variant.clear();
 		variant.resize(max_depth);
@@ -287,12 +290,10 @@ void Game::initEngine() {
 	cleanWhiteHistory();
 	cleanBlackHistory();
 	createPawnAttackCutter();
-
-	std::cout << "uciok\n";
 }
 
 double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
-	if(max_depth - depth  >= 5) {
+	if(max_depth - depth  >= 7) {
 		std::cout << "info pv ";
 		for(int i = 0; i < pv.size(); ++i) {
 			std::cout << pv[i].getMoveString() << " ";
@@ -540,7 +541,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 }
 
 double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
-	if(max_depth - depth  >= 5) {
+	if(max_depth - depth  >= 7) {
 		std::cout << "info pv ";
 		for(int i = 0; i < pv.size(); ++i) {
 			std::cout << pv[i].getMoveString() << " ";
@@ -2445,8 +2446,8 @@ void Game::flattenHistory() {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
 				for(int m = 0; m < BOARD_SIZE; ++m) {
-					whiteHistorySort[i][j][k][m] /= 1000000;
-					blackHistorySort[i][j][k][m] /= 1000000;
+					whiteHistorySort[i][j][k][m] /= 1000000000;
+					blackHistorySort[i][j][k][m] /= 1000000000;
 				}
 			}
 		}
@@ -2725,4 +2726,10 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 	}*/
 
 	return false;
+}
+
+void Game::clearCash() {
+	//whiteKiller.clear();
+	//blackKiller.clear();
+	//boardHash.clear();
 }

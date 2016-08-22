@@ -4,12 +4,14 @@
 int main() {
 	std::string str;
 
-	while(str != "uci") {
+	/*while(str != "uci") {
 		std::getline(std::cin, str);
-	}
+		if(str == "isready") {
+			std::cout << "readyok\n";
+		}
+	}*/
 
-	std::cout << "id name Tiger\n";
-	std::cout << "id author sovaz1997\n";
+	
 
 	Game game;
 }

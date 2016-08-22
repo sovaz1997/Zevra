@@ -43,6 +43,7 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void go();
+	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 	std::vector<Move> pv_best;
 
