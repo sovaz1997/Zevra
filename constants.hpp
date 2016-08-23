@@ -30,8 +30,8 @@ const uint8_t TRANSFORMATION_MV = 6;
 const double PAWN_EV = 1000;
 const double KNIGHT_EV = 3200;
 const double BISHOP_EV = 3300;
-const double ROOK_EV = 5000;
-const double QUEEN_EV = 9000;
+const double ROOK_EV = 5600;
+const double QUEEN_EV = 11000;
 
 const int hash_width = 24;
 

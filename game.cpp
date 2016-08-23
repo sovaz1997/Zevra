@@ -166,7 +166,7 @@ void Game::go() {
 
 	//if(!debute) {
 
-		//clearCash();
+		clearCash();
 
 		variant.clear();
 		variant.resize(max_depth);
@@ -184,7 +184,9 @@ void Game::go() {
 		//boardHash.clear();
 
 		for(int i = max_depth; i <= max_depth; ++i) {
-			flattenHistory();
+			//flattenHistory();
+			cleanWhiteHistory();
+			cleanBlackHistory();
 			double movesCounterTmp = movesCounter;
 			if(i == max_depth) {
 				basis = true;
@@ -290,6 +292,8 @@ void Game::initEngine() {
 	cleanWhiteHistory();
 	cleanBlackHistory();
 	createPawnAttackCutter();
+
+	clearCash();
 }
 
 double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
@@ -379,11 +383,11 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	Board tmp_brd = b;
 
-	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, WHITE) && !inZugzwang(tmp_brd, BLACK)) {
-		if(minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth, hash, basis, pv, false) >= beta) {
+	/*if((max_depth - depth) >= 2 && !inCheck(tmp_brd, WHITE) && !inZugzwang(tmp_brd, BLACK)) {
+		if(minimax_black(tmp_brd, alpha, beta, depth + 2, max_depth, real_depth, hash, basis, pv, false) >= beta) {
 			return beta;
 		}
-	}
+	}*/
 
 	double max = BLACK_WIN;
 
@@ -494,7 +498,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 
 	if(num_moves == 0) {
-		bool shah = false;
 		//Board tmp = b;
 		//tmp.whiteMove = false;
 		//std::vector<Move>moves_shah = generatePositionMoves(tmp, shah, true, real_depth);
@@ -565,7 +568,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 			}
 
 			if(third_repeat >= 3 || b.move_rule_num >= 50) {
-				return 0;
+				//return 0;
 			}
 		}
 	}
@@ -627,11 +630,11 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	Board tmp_brd = b;
 
-	if((max_depth - depth) >= 3 && !inCheck(tmp_brd, BLACK) && !inZugzwang(tmp_brd, WHITE)) {
-		if(minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth, hash, basis, pv, false) <= alpha) {
+	/*if((max_depth - depth) >= 2 && !inCheck(tmp_brd, BLACK) && !inZugzwang(tmp_brd, WHITE)) {
+		if(minimax_white(tmp_brd, alpha, beta, depth + 2, max_depth, real_depth, hash, basis, pv, false) <= alpha) {
 			return alpha;
 		}
-	}
+	}*/
 
 	double min = WHITE_WIN;
 
@@ -954,7 +957,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 						if(it->move.fromX >= 0 && it->move.fromX < 8 && it->move.fromY >= 0 && it->move.fromY < 8 && it->move.toX >= 0 && it->move.toX < 8 && it->move.toY >= 0 && it->move.toY < 8) {
 							if(withCastling) {
 								if(it->move.moveType == WS_CASTLING_MV && b.whiteShortCastleEnable) {
-									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0) {
+									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0 && b.getFigure(y, x) == (KING | WHITE) && b.getFigure(y, x + 3) == (ROOK | WHITE)) {
 										Board tmp = b;
 										tmp.whiteMove = false;
 										bool shah_tmp = false;
@@ -975,7 +978,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 								}
 
 								if(it->move.moveType == WL_CASTLING_MV && b.whiteLongCastleEnable) {
-									if(b.getFigure(y, x - 1) == 0 && b.getFigure(y, x - 2) == 0 && b.getFigure(y, x - 3) == 0) {
+									if(b.getFigure(y, x - 1) == 0 && b.getFigure(y, x - 2) == 0 && b.getFigure(y, x - 3) == 0 && b.getFigure(y, x) == (KING | WHITE) && b.getFigure(y, x - 4) == (ROOK | WHITE)) {
 										Board tmp = b;
 										tmp.whiteMove = false;
 										bool shah_tmp = false;
@@ -996,7 +999,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 								}
 
 								if(it->move.moveType == BS_CASTLING_MV && b.blackShortCastleEnable) {
-									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0) {
+									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0 && b.getFigure(y, x) == (KING | BLACK) && b.getFigure(y, x + 3) == (ROOK | BLACK)) {
 										Board tmp = b;
 										tmp.whiteMove = true;
 										bool shah_tmp = false;
@@ -1017,7 +1020,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 								}
 
 								if(it->move.moveType == BL_CASTLING_MV && b.blackLongCastleEnable) {
-									if(b.getFigure(y, x - 1) == 0 && b.getFigure(y, x - 2) == 0 && b.getFigure(y, x - 3) == 0) {
+									if(b.getFigure(y, x - 1) == 0 && b.getFigure(y, x - 2) == 0 && b.getFigure(y, x - 3) == 0 && b.getFigure(y, x) == (KING | BLACK) && b.getFigure(y, x - 4) == (ROOK | BLACK)) {
 										Board tmp = b;
 										tmp.whiteMove = true;
 										bool shah_tmp = false;
@@ -2729,7 +2732,18 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 }
 
 void Game::clearCash() {
-	//whiteKiller.clear();
-	//blackKiller.clear();
-	//boardHash.clear();
+
+	for(int i = 0; i < whiteKiller.size(); ++i) {
+		whiteKiller[i] = Killer();
+	}
+
+	for(int i = 0; i < blackKiller.size(); ++i) {
+		blackKiller[i] = Killer();
+	}
+
+	for(int i = 0; i < boardHash.size(); ++i) {
+		boardHash[i].enable = false;
+	}
+
+	gameHash = std::vector<uint64_t>();
 }
