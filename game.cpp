@@ -296,7 +296,7 @@ void Game::initEngine() {
 	clearCash();
 }
 
-double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+double Game::minimax_white(Board & b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	if(max_depth - depth  >= 7) {
 		std::cout << "info pv ";
 		for(int i = 0; i < pv.size(); ++i) {
@@ -383,8 +383,8 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	Board tmp_brd = b;
 
-	/*if((max_depth - depth) >= 2 && !inCheck(tmp_brd, WHITE) && !inZugzwang(tmp_brd, BLACK)) {
-		if(minimax_black(tmp_brd, alpha, beta, depth + 2, max_depth, real_depth, hash, basis, pv, false) >= beta) {
+	/*if((max_depth - depth) >= 3 && !inCheck(tmp_brd, WHITE) && !inZugzwang(tmp_brd, BLACK)) {
+		if(minimax_black(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth, hash, basis, pv, false) >= beta) {
 			return beta;
 		}
 	}*/
@@ -543,7 +543,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 	return max;
 }
 
-double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+double Game::minimax_black(Board & b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	if(max_depth - depth  >= 7) {
 		std::cout << "info pv ";
 		for(int i = 0; i < pv.size(); ++i) {
@@ -630,8 +630,8 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	Board tmp_brd = b;
 
-	/*if((max_depth - depth) >= 2 && !inCheck(tmp_brd, BLACK) && !inZugzwang(tmp_brd, WHITE)) {
-		if(minimax_white(tmp_brd, alpha, beta, depth + 2, max_depth, real_depth, hash, basis, pv, false) <= alpha) {
+	/*if((max_depth - depth) >= 3 && !inCheck(tmp_brd, BLACK) && !inZugzwang(tmp_brd, WHITE)) {
+		if(minimax_white(tmp_brd, alpha, beta, depth + 3, max_depth, real_depth, hash, basis, pv, false) <= alpha) {
 			return alpha;
 		}
 	}*/
