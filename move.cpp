@@ -98,7 +98,7 @@ double Move::getAttackPrice(Board & b) {
 		return 0;
 	}
 
-	double res;
+	double res = 0;
 
 	if((b.getFigure(toY, toX) & TYPE_SAVE) == QUEEN) {
 		res = QUEEN_EV;
@@ -124,7 +124,7 @@ double Move::getAttackPrice(Board & b) {
 		return res - PAWN_EV;
 	}
 
-	return 0;
+	return res;
 }
 
 bool Move::equal(Move & mv) {
