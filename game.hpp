@@ -68,7 +68,6 @@ public:
 	void printBitBoard(uint64_t bit_board);
 	void cache_gen();
 	void zobristGenerate();
-	bool shahIsNot(Board & b, uint8_t color);
 	uint64_t getHash(Board & b);
 	uint64_t getColorHash(Board & b);
 
