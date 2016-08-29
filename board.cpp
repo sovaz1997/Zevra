@@ -340,7 +340,6 @@ void Board::setFigure(uint8_t figure, int y, int x) {
 }
 
 void Board::move(Move & mv) {
-	//savedFen = getFenPosition();
 	passant_enable = false;
 
 	if(getFigure(mv.fromY, mv.fromX) == (PAWN | WHITE) && mv.fromY - mv.toY == 2) {

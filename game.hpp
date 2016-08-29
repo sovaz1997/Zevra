@@ -21,6 +21,7 @@
 #include "killer.hpp"
 #include "hash.hpp"
 #include "debute.hpp"
+#include "point.hpp"
 
 class Game {
 private:
@@ -51,10 +52,13 @@ private:
 
 	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
+
+	int popcount64(uint64_t value);
 public:
 	Game();
 	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	bool insufficientMaterial(std::vector<uint64_t>figureMask);
 
   double quies(Board & b, double alpha, double beta);
 
@@ -78,11 +82,12 @@ public:
 
 	void printVariant();
 
-	//flags
+	//flags - begin
 	bool nullMoveEnable = true;
 	bool hashEnable = true;
 	bool print_variant_enable = false;
 	bool debute = false;
+	//flags - end
 
 	bool inCheck(Board & b, uint8_t color);
 	double getPriceCell(Board & b, int y, int x);
@@ -93,6 +98,10 @@ public:
 
 	uint64_t pawnAttackCutter[BOARD_SIZE];
 	void createPawnAttackCutter();
+
+	double getForcastEvalute(Board & b);
+	double getFigureEval(Board & b, int y, int x);
+	//uint8_t getFigureAttacks(Board & b, uint8_t color);
 };
 
 #endif
