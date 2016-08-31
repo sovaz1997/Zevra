@@ -6,8 +6,8 @@ GDB=-std=c++11 -Wall -pedantic -m64 -O2 -g
 all: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
 	$(CC) $(CFLAGS) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o zevra
 
-gdb:  constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o
-	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o -o zevra
+gdb: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
+	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o zevra
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp
@@ -61,4 +61,4 @@ movegenerator.o: game.hpp movegenerator.cpp
 	$(CC) $(CFLAGS) -c movegenerator.cpp
 
 clean:
-	rm -rf *.o tiger
+	rm -rf *.o zevra
