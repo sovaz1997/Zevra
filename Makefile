@@ -3,11 +3,11 @@ CFLAGS=-std=c++11 -Wall -pedantic -m64 -O4 -flto -march=native -funroll-loops -p
 
 GDB=-std=c++11 -Wall -pedantic -m64 -O2 -g
 
-all: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o
-	$(CC) $(CFLAGS) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o -o tiger
+all: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
+	$(CC) $(CFLAGS) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o zevra
 
 gdb:  constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o
-	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o -o tiger
+	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o -o zevra
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp
@@ -41,6 +41,24 @@ boardinfo.o: boardinfo.hpp boardinfo.cpp
 	
 point.o: point.hpp point.cpp
 	$(CC) $(CFLAGS) -c point.cpp
+
+uci.o: game.hpp uci.cpp
+	$(CC) $(CFLAGS) -c uci.cpp
+
+evalute.o: game.hpp evalute.cpp
+	$(CC) $(CFLAGS) -c evalute.cpp
+
+preparation.o: game.hpp preparation.cpp
+	$(CC) $(CFLAGS) -c preparation.cpp
+
+printer.o: game.hpp printer.cpp
+	$(CC) $(CFLAGS) -c printer.cpp
+
+search.o: game.hpp search.cpp
+	$(CC) $(CFLAGS) -c search.cpp
+
+movegenerator.o: game.hpp movegenerator.cpp
+	$(CC) $(CFLAGS) -c movegenerator.cpp
 
 clean:
 	rm -rf *.o tiger

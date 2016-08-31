@@ -14,6 +14,7 @@
 #include <ctime>
 #include <iomanip>
 #include <algorithm>
+#include <omp.h>
 #include "board.hpp"
 #include "move.hpp"
 #include "movelist.hpp"
@@ -47,6 +48,7 @@ private:
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 	std::vector<Move> pv_best;
+	std::vector<Move> pv_tmp;
 
 	bool inZugzwang(Board & b, uint8_t color);
 
@@ -56,8 +58,8 @@ private:
 	int popcount64(uint64_t value);
 public:
 	Game();
-	double minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
-	double minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	double minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	double minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
 
   double quies(Board & b, double alpha, double beta);
@@ -82,10 +84,9 @@ public:
 	void printVariant();
 
 	//flags - begin
-	bool nullMoveEnable = true;
+	bool nullMoveEnable = false;
 	bool hashEnable = true;
 	bool print_variant_enable = false;
-	bool debute = false;
 	//flags - end
 
 	bool inCheck(Board & b, uint8_t color);
@@ -100,6 +101,8 @@ public:
 
 	double getForcastEvalute(Board & b);
 	double getFigureEval(Board & b, int y, int x);
+
+	Move bestmove;
 	//uint8_t getFigureAttacks(Board & b, uint8_t color);
 };
 

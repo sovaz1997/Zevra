@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-double Game::minimax_white(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+double Game::minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	++movesCounter;
 
 	uint64_t pos_hash = getHash(b);
@@ -8,7 +8,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	if(depth > 0) {
 	int third_repeat = 1;
-		for(int i = 0; i < hash.size(); ++i) {
+		for(unsigned int i = 0; i < hash.size(); ++i) {
 			if(hash[i] == pos_hash) {
 				++third_repeat;
 			}
@@ -20,13 +20,13 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 
 	int num_moves = 0;
 
-	if(depth == max_depth) {
+	if(depth >= max_depth) {
 		return evalute(b);
 	}
 
 	double max = BLACK_WIN;
 
-	bool null_mv = nullMoveEnable;
+	//bool null_mv = nullMoveEnable;
 
 	bool tmp_shah;
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, real_depth);
@@ -62,7 +62,27 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 			}
 		}
 
-		tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+		/*if(num_moves <= 3 || inCheck(tmp_brd, BLACK) || depth < 3) {
+				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+		} else {
+			tmp = minimax_black(tmp_brd, alpha+1, beta, depth + 2, max_depth, real_depth + 2, hash, basis, pv, true);
+			if(tmp > alpha) {
+				//tmp_brd = b;
+				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+			}
+		}*/
+
+		if(num_moves == 1) {
+				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true);
+		} else {
+			tmp = minimax_black(tmp_brd, alpha, alpha + 1, depth + 1, real_depth + 1, hash, basis, pv, true);
+
+			if(tmp > alpha && tmp < beta) {
+				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true);
+			}
+		}
+
+		//tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
 
 		pv.pop_back();
 
@@ -74,10 +94,22 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 		if(tmp > max) {
 			max = tmp;
 			local_move = moves[i];
+
+			if(pv_tmp.size() < (unsigned int) (depth + 1)) {
+				pv_tmp.resize(depth + 1);
+			}
+			pv_tmp[depth] = local_move;
+
+			if(depth == 0) {
+				pv_best = pv_tmp;
+				pv_tmp.resize(1);
+			}
+
 		}
+
 		if(tmp > alpha) {
 			alpha = tmp;
-			if(b.getFigure(moves[i].toY, moves[i].toX) == 0 && local_move.quality() && b.getFigure(moves[i].fromY, moves[i].fromX) | COLOR_SAVE == WHITE) {
+			if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
 				whiteKiller[real_depth] = Killer(local_move);
 			}
 		}
@@ -97,6 +129,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 			}
 
 			if(depth == 0) {
+				bestmove = local_move;
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " nodes " << movesCounter;
 				if(basis) {
@@ -129,6 +162,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 	}
 
 	if(depth == 0 && num_moves > 0) {
+		bestmove = local_move;
 		std::cout << "info pv " << local_move.getMoveString();
 		std::cout << " nodes " << movesCounter;
 		if(basis) {
@@ -162,7 +196,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int ma
 	return max;
 }
 
-double Game::minimax_black(Board b, double alpha, double beta, int depth, int max_depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
+double Game::minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	++movesCounter;
 
 	uint64_t pos_hash = getHash(b);
@@ -170,7 +204,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	if(depth > 0) {
 	int third_repeat = 1;
-		for(int i = 0; i < hash.size(); ++i) {
+		for(unsigned int i = 0; i < hash.size(); ++i) {
 			if(hash[i] == pos_hash) {
 				++third_repeat;
 			}
@@ -183,13 +217,13 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	int num_moves = 0;
 
-	if(depth == max_depth) {
+	if(depth >= max_depth) {
 		return evalute(b);
 	}
 
 	double min = WHITE_WIN;
 
-	bool null_mv = nullMoveEnable;
+	//bool null_mv = nullMoveEnable;
 
 	bool tmp_shah;
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, real_depth);
@@ -224,7 +258,29 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 			}
 		}
 
-		tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+		/*if(num_moves <= 3 || inCheck(tmp_brd, WHITE) || depth < 3) {
+				tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+		} else {
+			tmp = minimax_white(tmp_brd, alpha-1, beta, depth + 2, max_depth, real_depth + 2, hash, basis, pv, true);
+			if(tmp < beta) {
+				//tmp_brd = b;
+				tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+			}
+		}*/
+
+		if(num_moves == 1) {
+				tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true);
+		} else {
+			tmp = minimax_white(tmp_brd, beta - 1, beta, depth + 1, real_depth + 1, hash, basis, pv, true);
+
+			if(tmp > alpha && tmp < beta) {
+				tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true);
+			}
+		}
+
+		//tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+
+		//tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
 		pv.pop_back();
 
 		if(depth == 0) {
@@ -235,11 +291,18 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		if(tmp < min) {
 			min = tmp;
 			local_move = moves[i];
+			if(pv_tmp.size() < (unsigned int) (depth + 1)) {
+				pv_tmp.resize(depth + 1);
+			}
+			pv_tmp[depth] = local_move;
+			if(depth == 0) {
+				pv_best = pv_tmp;
+			}
 		}
 
 		if(tmp < beta) {
 			beta = tmp;
-			if(b.getFigure(moves[i].toY, moves[i].toX) == 0 && local_move.quality() && b.getFigure(moves[i].fromY, moves[i].fromX) | COLOR_SAVE == BLACK) {
+			if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
 				blackKiller[real_depth] = Killer(local_move);
 			}
 		}
@@ -260,6 +323,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 			}
 
 			if(depth == 0) {
+				bestmove = local_move;
 				std::cout << "info pv " << local_move.getMoveString();
 				std::cout << " nodes " << movesCounter;
 				if(basis) {
@@ -284,7 +348,6 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 
 	if(num_moves == 0) {
 		if(inCheck(b, BLACK)) {
-
 			return WHITE_WIN - real_depth;
 		} else {
 			return 0;
@@ -292,6 +355,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 	}
 
 	if(depth == 0 && num_moves > 0) {
+		bestmove = local_move;
 		std::cout << "info pv " << local_move.getMoveString();
 		std::cout << " nodes " << movesCounter;
 		if(basis) {
@@ -310,7 +374,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int ma
 		std::cout << "\n";
 	}
 
-	printVariant();
+	//printVariant();
 
 	if(hashEnable) {
 		if(!boardHash[board_hash & hash_cutter].enable) {
@@ -336,7 +400,7 @@ double Game::quies(Board & b, double alpha, double beta) {
 	bool tmp_shah = false;
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, max_depth);
 
-	for(int i = 0; i < moves.size() && alpha < beta; ++i) {
+	for(unsigned int i = 0; i < moves.size() && alpha < beta; ++i) {
 		if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
 			break;
 		}

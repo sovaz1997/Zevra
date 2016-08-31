@@ -28,35 +28,30 @@ void Game::go() {
 		movesCounter = 0;
 		double start_timer, end_timer;
 		//boardHash.clear();
-
-		for(int i = max_depth; i <= max_depth; ++i) {
-			//flattenHistory();
-			cleanWhiteHistory();
-			cleanBlackHistory();
+		int max_depth_global = max_depth;
+		for(max_depth = max_depth_global; max_depth <= max_depth_global; ++max_depth) {
+			pv_tmp.resize(1);
+			pv_best.resize(1);
+			flattenHistory();
+			//cleanWhiteHistory();
+			//cleanBlackHistory();
 			double movesCounterTmp = movesCounter;
-			if(i == max_depth) {
+			if(max_depth == max_depth_global) {
 				basis = true;
 			}
 
 			if(game_board.isWhiteMove()) {
 				start_timer = clock();
-				win = minimax_white(game_board, -INFINITY, INFINITY, 0, i, 0, gameHash, basis, pv, true);
+				win = minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
 				end_timer = clock();
 			} else {
 				start_timer = clock();
-				win = minimax_black(game_board, -INFINITY, INFINITY, 0, i, 0, gameHash, basis, pv, true);
+				win = minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
 				end_timer = clock();
 			}
 
-			std::cout << "info nps " << (int)((movesCounter - movesCounterTmp) / ((end_timer - start_timer) / CLK_TCK)) << "\n";
+			std::cout << "info nps " << (int)((movesCounter - movesCounterTmp) / ((end_timer - start_timer) / CLOCKS_PER_SEC)) << "\n";
 		}
-
-	for(int i = 0; i < pv_best.size(); ++i) {
-		pv_best[i].print();
-		std::cout << " ";
-	}
-
-	std::cout << "\n";
 }
 
 bool Game::move(std::string mv) {

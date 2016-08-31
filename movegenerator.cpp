@@ -178,7 +178,6 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 										}
 									}
 								}
-
 								}
 							}
 
@@ -209,7 +208,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 	}
 
 	if(b.isWhiteMove()) {
-		for(int i = num_attacks + 1; i < result.size(); ++i) {
+		for(unsigned int i = num_attacks + 1; i < result.size(); ++i) {
 			for(int j = i; j > num_attacks && whiteHistorySort[result[j-1].fromY][result[j-1].fromX][result[j-1].toY][result[j-1].toX] < whiteHistorySort[result[j].fromY][result[j].fromX][result[j].toY][result[j].toX]; --j) {
 				Move tmp = result[j-1];
 				result[j-1] = result[j];
@@ -217,7 +216,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 			}
 		}
 	} else {
-		for(int i = num_attacks + 1; i < result.size(); ++i) {
+		for(unsigned int i = num_attacks + 1; i < result.size(); ++i) {
 			for(int j = i; j > num_attacks && blackHistorySort[result[j-1].fromY][result[j-1].fromX][result[j-1].toY][result[j-1].toX] < blackHistorySort[result[j].fromY][result[j].fromX][result[j].toY][result[j].toX]; --j) {
 				Move tmp = result[j-1];
 				result[j-1] = result[j];
@@ -226,19 +225,19 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 		}
 	}
 
-	bool killer_has = false;
+	//bool killer_has = false;
 
 	for(unsigned int i = num_attacks + 1; i < result.size(); ++i) {
 		if(b.isWhiteMove()) {
 			if(result[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable && whiteKiller[depth].move.quality()) {
 				std::swap(result[i], result[num_attacks]);
-				killer_has = true;
+				//killer_has = true;
 				break;
 			}
 		} else {
 			if(result[i].equal(blackKiller[depth].move) && blackKiller[depth].enable && blackKiller[depth].move.quality()) {
 				std::swap(result[i], result[num_attacks]);
-				killer_has = true;
+				//killer_has = true;
 				break;
 			}
 		}
@@ -255,6 +254,28 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 			}
 		}
 	}
+
+	/*if(max_depth > 1 && depth == 0) {
+		for(unsigned int i = 0; i < result.size(); ++i) {
+			if(result[i].equal(bestmove)) {
+				Move tmp = result[i];
+				result[i] = result[0];
+				result[0] = tmp;
+				break;
+			}
+		}
+	}*/
+
+	/*if(max_depth > 1 && pv_best.size() > depth) {
+		for(int i = 0; i < result.size(); ++i) {
+			if(result[i].equal(pv_best[depth])) {
+				Move tmp = result[i];
+				result[i] = result[0];
+				result[0] = tmp;
+				break;
+			}
+		}
+	}*/
 
 	return result;
 }

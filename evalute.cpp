@@ -136,7 +136,7 @@ double Game::getForcastEvalute(Board & b) {
 
 	double res = 0;
 
-	for(int i = 0; i < moves.size(); ++i) {
+	for(unsigned int i = 0; i < moves.size(); ++i) {
 		if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
 			break;
 		}
@@ -179,8 +179,7 @@ bool Game::inCheck(Board & b, uint8_t color) {
 
 	uint64_t kingPos;
 
-	int yKingPos = 0, xKingPos = 0, yEnemyKingPos = 0, xEnemyKingPos = 0;
-
+	int yKingPos = 0, xKingPos = 0;
 	uint64_t sedentaryMap = 0;
 
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
