@@ -100,7 +100,7 @@ uint64_t Game::getHash(Board & b) {
 
 			hash += res;*/
 			if(b.getFigure(y, x) != 0) {
-				hash = (hash ^ zobrist[b.getFigure(y, x)][y][x]);
+				hash = (hash ^ zobrist[b.board[y][x]][y][x]);
 			}
 		}
 	}

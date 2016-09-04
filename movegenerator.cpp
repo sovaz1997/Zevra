@@ -15,9 +15,9 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
-			if(b.getFigure(y, x) != 0) {
-				if((b.getFigure(y, x) & COLOR_SAVE) == color) {
-					MoveList current_list = move_list[b.getFigure(y, x)][y][x];
+			if(b.board[y][x] != 0) {
+				if((b.board[y][x] & COLOR_SAVE) == color) {
+					MoveList current_list = move_list[b.board[y][x]][y][x];
 					if(current_list.first == NULL) { continue; }
 					MoveItem* it = current_list.first;
 					bool stopped = false;
@@ -26,7 +26,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 						if(it->move.fromX >= 0 && it->move.fromX < 8 && it->move.fromY >= 0 && it->move.fromY < 8 && it->move.toX >= 0 && it->move.toX < 8 && it->move.toY >= 0 && it->move.toY < 8) {
 							if(withCastling) {
 								if(it->move.moveType == WS_CASTLING_MV && b.whiteShortCastleEnable) {
-									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0 && b.getFigure(y, x) == (KING | WHITE) && b.getFigure(y, x + 3) == (ROOK | WHITE)) {
+									if(b.board[y][x + 1] == 0 && b.board[y][x + 2] == 0 && b.board[y][x] == (KING | WHITE) && b.board[y][x + 3] == (ROOK | WHITE)) {
 										Board tmp = b;
 										tmp.whiteMove = false;
 										bool shah_tmp = false;
@@ -47,7 +47,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 								}
 
 								if(it->move.moveType == WL_CASTLING_MV && b.whiteLongCastleEnable) {
-									if(b.getFigure(y, x - 1) == 0 && b.getFigure(y, x - 2) == 0 && b.getFigure(y, x - 3) == 0 && b.getFigure(y, x) == (KING | WHITE) && b.getFigure(y, x - 4) == (ROOK | WHITE)) {
+									if(b.board[y][x - 1] == 0 && b.board[y][x - 2] == 0 && b.board[y][x - 3] == 0 && b.board[y][x] == (KING | WHITE) && b.board[y][x - 4] == (ROOK | WHITE)) {
 										Board tmp = b;
 										tmp.whiteMove = false;
 										bool shah_tmp = false;
@@ -68,7 +68,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 								}
 
 								if(it->move.moveType == BS_CASTLING_MV && b.blackShortCastleEnable) {
-									if(b.getFigure(y, x + 1) == 0 && b.getFigure(y, x + 2) == 0 && b.getFigure(y, x) == (KING | BLACK) && b.getFigure(y, x + 3) == (ROOK | BLACK)) {
+									if(b.board[y][x + 1] == 0 && b.board[y][x + 2] == 0 && b.board[y][x] == (KING | BLACK) && b.board[y][x + 3] == (ROOK | BLACK)) {
 										Board tmp = b;
 										tmp.whiteMove = true;
 										bool shah_tmp = false;
@@ -89,7 +89,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 								}
 
 								if(it->move.moveType == BL_CASTLING_MV && b.blackLongCastleEnable) {
-									if(b.getFigure(y, x - 1) == 0 && b.getFigure(y, x - 2) == 0 && b.getFigure(y, x - 3) == 0 && b.getFigure(y, x) == (KING | BLACK) && b.getFigure(y, x - 4) == (ROOK | BLACK)) {
+									if(b.board[y][x - 1] == 0 && b.board[y][x - 2] == 0 && b.board[y][x - 3] == 0 && b.board[y][x] == (KING | BLACK) && b.board[y][x - 4] == (ROOK | BLACK)) {
 										Board tmp = b;
 										tmp.whiteMove = true;
 										bool shah_tmp = false;
@@ -111,11 +111,11 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 							}
 
 							if(it->move.moveType != WS_CASTLING_MV && it->move.moveType != WL_CASTLING_MV && it->move.moveType != BS_CASTLING_MV && it->move.moveType != BL_CASTLING_MV) {
-								if((b.getFigure(y, x) & TYPE_SAVE) != PAWN) {
-									if(b.getFigure(it->move.toY, it->move.toX) == 0) {
+								if((b.board[y][x] & TYPE_SAVE) != PAWN) {
+									if(b.board[it->move.toY][it->move.toX] == 0) {
 										result.push_back(it->move);
-									} else if((b.getFigure(it->move.toY, it->move.toX) & COLOR_SAVE) == color || (b.getFigure(it->move.toY, it->move.toX) & TYPE_SAVE) == KING) {
-										if((b.getFigure(it->move.toY, it->move.toX) & TYPE_SAVE) == KING && (b.getFigure(it->move.toY, it->move.toX) & COLOR_SAVE) != color) {
+									} else if((b.board[it->move.toY][it->move.toX] & COLOR_SAVE) == color || (b.board[it->move.toY][it->move.toX] & TYPE_SAVE) == KING) {
+										if((b.board[it->move.toY][it->move.toX] & TYPE_SAVE) == KING && (b.board[it->move.toY][it->move.toX] & COLOR_SAVE) != color) {
 											shah = true;
 										}
 
@@ -139,16 +139,16 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 
 								} else {
 									if(it->move.fromX == it->move.toX) {
-										if(b.getFigure(it->move.toY, it->move.toX) != 0 && it->specialNext != NULL) {
+										if(b.board[it->move.toY][it->move.toX] != 0 && it->specialNext != NULL) {
 											it = it->specialNext;
 											continue;
-										} else if(b.getFigure(it->move.toY, it->move.toX) == 0) {
+										} else if(b.board[it->move.toY][it->move.toX] == 0) {
 											result.push_back(it->move);
 										}
-									} else if(b.getFigure(it->move.toY, it->move.toX) != 0) {
+									} else if(b.board[it->move.toY][it->move.toX] != 0) {
 										if(it->move.moveType != PASSANT_MV) {
-											if((b.getFigure(it->move.toY, it->move.toX) & COLOR_SAVE) == color || (b.getFigure(it->move.toY, it->move.toX) & TYPE_SAVE) == KING) {
-												if((b.getFigure(it->move.toY, it->move.toX) & TYPE_SAVE) == KING && (b.getFigure(it->move.toY, it->move.toX) & COLOR_SAVE) != color) {
+											if((b.board[it->move.toY][it->move.toX] & COLOR_SAVE) == color || (b.board[it->move.toY][it->move.toX] & TYPE_SAVE) == KING) {
+												if((b.board[it->move.toY][it->move.toX] & TYPE_SAVE) == KING && (b.board[it->move.toY][it->move.toX] & COLOR_SAVE) != color) {
 													shah = true;
 												}
 
@@ -168,9 +168,9 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 											}
 										}
 									} else if(it->move.moveType == PASSANT_MV) {
-										if(b.getFigure(it->move.toY, it->move.toX) == 0 &&
-											 (b.getFigure(it->move.passant_y, it->move.passant_x) & TYPE_SAVE) == PAWN &&
-											 (b.getFigure(it->move.passant_y, it->move.passant_x) & COLOR_SAVE) != color &&
+										if(b.board[it->move.toY][it->move.toX] == 0 &&
+											 (b.board[it->move.passant_y][it->move.passant_x] & TYPE_SAVE) == PAWN &&
+											 (b.board[it->move.passant_y][it->move.passant_x] & COLOR_SAVE) != color &&
 											 b.passant_enable &&
 											 it->move.toY == b.passant_y &&
 											 it->move.toX == b.passant_x) {

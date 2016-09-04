@@ -3,6 +3,10 @@
 double Game::minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	++movesCounter;
 
+	if(depth >= max_depth) {
+		return evalute(b);
+	}
+
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
 
@@ -19,10 +23,6 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int re
 	}
 
 	int num_moves = 0;
-
-	if(depth >= max_depth) {
-		return evalute(b);
-	}
 
 	double max = BLACK_WIN;
 
@@ -199,6 +199,10 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int re
 double Game::minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove) {
 	++movesCounter;
 
+	if(depth >= max_depth) {
+		return evalute(b);
+	}
+
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b);
 
@@ -216,10 +220,6 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int re
 	}
 
 	int num_moves = 0;
-
-	if(depth >= max_depth) {
-		return evalute(b);
-	}
 
 	double min = WHITE_WIN;
 
