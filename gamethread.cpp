@@ -29,7 +29,14 @@ void Game::go() {
 		double start_timer, end_timer;
 		//boardHash.clear();
 		int max_depth_global = max_depth;
-		for(max_depth = max_depth_global; max_depth <= max_depth_global; ++max_depth) {
+
+		if(max_depth_global % 2 == 0) {
+			max_depth = 2;
+		} else {
+			max_depth = 1;
+		}
+
+		for(; max_depth <= max_depth_global; max_depth += 2) {
 			pv_tmp.resize(1);
 			pv_best.resize(1);
 			flattenHistory();
