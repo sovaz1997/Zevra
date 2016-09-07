@@ -342,35 +342,35 @@ void Board::setFigure(uint8_t figure, int y, int x) {
 void Board::move(Move & mv) {
 	passant_enable = false;
 
-	if(getFigure(mv.fromY, mv.fromX) == (PAWN | WHITE) && mv.fromY - mv.toY == 2) {
+	if(board[mv.fromY][mv.fromX] == (PAWN | WHITE) && mv.fromY - mv.toY == 2) {
 		passant_x = mv.fromX;
 		passant_y = mv.fromY - 1;
 		passant_enable = true;
 	}
 
-	if(getFigure(mv.fromY, mv.fromX) == (PAWN | BLACK) && mv.toY - mv.fromY == 2) {
+	if(board[mv.fromY][mv.fromX] == (PAWN | BLACK) && mv.toY - mv.fromY == 2) {
 		passant_x = mv.fromX;
 		passant_y = mv.fromY + 1;
 		passant_enable = true;
 	}
 
-	if((getFigure(mv.fromY, mv.fromX) & TYPE_SAVE) != PAWN && getFigure(mv.toY, mv.toX) == 0) {
+	if((board[mv.fromY][mv.fromX] & TYPE_SAVE) != PAWN && board[mv.toY][mv.toX] == 0) {
 		++move_rule_num;
 	} else {
 		move_rule_num = 0;
 	}
 
-	if(getFigure(mv.fromY, mv.fromX) == (KING | WHITE)) {
+	if(board[mv.fromY][mv.fromX] == (KING | WHITE)) {
 		whiteShortCastleEnable = false;
 		whiteLongCastleEnable = false;
 	}
 
-	if(getFigure(mv.fromY, mv.fromX) == (KING | BLACK)) {
+	if(board[mv.fromY][mv.fromX] == (KING | BLACK)) {
 		blackShortCastleEnable = false;
 		blackLongCastleEnable = false;
 	}
 
-	if(getFigure(mv.fromY, mv.fromX) == (ROOK | WHITE)) {
+	if(board[mv.fromY][mv.fromX] == (ROOK | WHITE)) {
 		if(mv.fromY == 7 && mv.fromX == 0) {
 			whiteLongCastleEnable = false;
 		} else if(mv.fromY == 7 && mv.fromX == 7) {
@@ -378,7 +378,7 @@ void Board::move(Move & mv) {
 		}
 	}
 
-	if(getFigure(mv.fromY, mv.fromX) == (ROOK | BLACK)) {
+	if(board[mv.fromY][mv.fromX] == (ROOK | BLACK)) {
 		if(mv.fromY == 0 && mv.fromX == 0) {
 			blackLongCastleEnable = false;
 		} else if(mv.fromY == 0 && mv.fromX == 7) {
@@ -405,34 +405,34 @@ bool Board::isWhiteMove() {
 void Board::printStringBoard() {
     for(int y = 0; y < BOARD_SIZE; ++y) {
       for(int x = 0; x < BOARD_SIZE; ++x) {
-        if(getFigure(y, x) == 0) {
+        if(board[y][x] == 0) {
           std::cout << "em";
-        } else if((getFigure(y, x) & COLOR_SAVE) == WHITE) {
-          if((getFigure(y, x) & TYPE_SAVE) == PAWN) {
+        } else if((board[y][x] & COLOR_SAVE) == WHITE) {
+          if((board[y][x] & TYPE_SAVE) == PAWN) {
             std::cout << "wp";
-          } else if((getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+          } else if((board[y][x] & TYPE_SAVE) == KNIGHT) {
             std::cout << "wh";
-          } else if((getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+          } else if((board[y][x] & TYPE_SAVE) == BISHOP) {
             std::cout << "we";
-          } else if((getFigure(y, x) & TYPE_SAVE) == ROOK) {
+          } else if((board[y][x] & TYPE_SAVE) == ROOK) {
             std::cout << "wr";
-          } else if((getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+          } else if((board[y][x] & TYPE_SAVE) == QUEEN) {
             std::cout << "wq";
-          } else if((getFigure(y, x) & TYPE_SAVE) == KING) {
+          } else if((board[y][x] & TYPE_SAVE) == KING) {
             std::cout << "wk";
           }
-        } else if((getFigure(y, x) & COLOR_SAVE) == BLACK) {
-          if((getFigure(y, x) & TYPE_SAVE) == PAWN) {
+        } else if((board[y][x] & COLOR_SAVE) == BLACK) {
+          if((board[y][x] & TYPE_SAVE) == PAWN) {
             std::cout << "bp";
-          } else if((getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+          } else if((board[y][x] & TYPE_SAVE) == KNIGHT) {
             std::cout << "bh";
-          } else if((getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+          } else if((board[y][x] & TYPE_SAVE) == BISHOP) {
             std::cout << "be";
-          } else if((getFigure(y, x) & TYPE_SAVE) == ROOK) {
+          } else if((board[y][x] & TYPE_SAVE) == ROOK) {
             std::cout << "br";
-          } else if((getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+          } else if((board[y][x] & TYPE_SAVE) == QUEEN) {
             std::cout << "bq";
-          } else if((getFigure(y, x) & TYPE_SAVE) == KING) {
+          } else if((board[y][x] & TYPE_SAVE) == KING) {
             std::cout << "bk";
         }
       }

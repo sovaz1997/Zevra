@@ -109,7 +109,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int re
 
 		if(tmp > alpha) {
 			alpha = tmp;
-			if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				whiteKiller[real_depth] = Killer(local_move);
 			}
 		}
@@ -124,7 +124,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int re
 				}
 			}
 
-			if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
 			}
 
@@ -302,13 +302,13 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int re
 
 		if(tmp < beta) {
 			beta = tmp;
-			if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				blackKiller[real_depth] = Killer(local_move);
 			}
 		}
 
 		if(min <= alpha) {
-			if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
 			}
 
@@ -401,7 +401,7 @@ double Game::quies(Board & b, double alpha, double beta) {
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, max_depth);
 
 	for(unsigned int i = 0; i < moves.size() && alpha < beta; ++i) {
-		if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+		if(b.board[moves[i].toY][moves[i].toX] == 0) {
 			break;
 		}
 

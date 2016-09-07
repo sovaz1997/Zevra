@@ -94,33 +94,33 @@ std::string Move::getMoveString() {
 }
 
 double Move::getAttackPrice(Board & b) {
-	if(b.getFigure(toY, toX) == 0) {
+	if(b.board[toY][toX] == 0) {
 		return 0;
 	}
 
 	double res = 0;
 
-	if((b.getFigure(toY, toX) & TYPE_SAVE) == QUEEN) {
+	if((b.board[toY][toX] & TYPE_SAVE) == QUEEN) {
 		res = QUEEN_EV;
-	} else if((b.getFigure(toY, toX) & TYPE_SAVE) == ROOK) {
+	} else if((b.board[toY][toX] & TYPE_SAVE) == ROOK) {
 		res = ROOK_EV;
-	} else if((b.getFigure(toY, toX) & TYPE_SAVE) == BISHOP) {
+	} else if((b.board[toY][toX] & TYPE_SAVE) == BISHOP) {
 		res = BISHOP_EV;
-	} else if((b.getFigure(toY, toX) & TYPE_SAVE) == KNIGHT) {
+	} else if((b.board[toY][toX] & TYPE_SAVE) == KNIGHT) {
 		res = KNIGHT_EV;
-	} else if((b.getFigure(toY, toX) & TYPE_SAVE) == PAWN) {
+	} else if((b.board[toY][toX] & TYPE_SAVE) == PAWN) {
 		res = PAWN_EV;
 	}
 
-	if((b.getFigure(fromY, fromX) & TYPE_SAVE) == QUEEN) {
+	if((b.board[fromY][fromX] & TYPE_SAVE) == QUEEN) {
 		return res - QUEEN_EV;
-	} else if((b.getFigure(fromY, fromX) & TYPE_SAVE) == ROOK) {
+	} else if((b.board[fromY][fromX] & TYPE_SAVE) == ROOK) {
 		return res - ROOK_EV;
-	} else if((b.getFigure(fromY, fromX) & TYPE_SAVE) == BISHOP) {
+	} else if((b.board[fromY][fromX] & TYPE_SAVE) == BISHOP) {
 		return res - BISHOP_EV;
-	} else if((b.getFigure(fromY, fromX) & TYPE_SAVE) == KNIGHT) {
+	} else if((b.board[fromY][fromX] & TYPE_SAVE) == KNIGHT) {
 		return res - KNIGHT_EV;
-	} else if((b.getFigure(fromY, fromX) & TYPE_SAVE) == PAWN) {
+	} else if((b.board[fromY][fromX] & TYPE_SAVE) == PAWN) {
 		return res - PAWN_EV;
 	}
 
