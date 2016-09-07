@@ -72,5 +72,11 @@ search.o: game.hpp search.cpp
 movegenerator.o: game.hpp movegenerator.cpp
 	$(CC) $(CFLAGS) -c movegenerator.cpp
 
+gamethread.o: game.hpp gamethread.cpp
+	$(CC) $(CFLAGS) -c gamethread.cpp
+
+gameservices.o: game.hpp gameservices.cpp
+	$(CC) $(CFLAGS) -c gameservices.cpp
+
 clean:
 	rm -rf *.o zevra

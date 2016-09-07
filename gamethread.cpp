@@ -16,7 +16,6 @@ void Game::go() {
 
 		variant.clear();
 		variant.resize(max_depth);
-		double win;
 		std::vector<uint64_t>hash;
 
 		pv_best.clear();
@@ -49,11 +48,11 @@ void Game::go() {
 
 			if(game_board.isWhiteMove()) {
 				start_timer = clock();
-				win = minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
+				minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
 				end_timer = clock();
 			} else {
 				start_timer = clock();
-				win = minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
+				minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
 				end_timer = clock();
 			}
 

@@ -2,7 +2,7 @@
 
 void Game::printVariant() {
 	if(print_variant_enable) {
-		for(int i = 0; i < variant.size(); ++i) {
+		for(unsigned int i = 0; i < variant.size(); ++i) {
 			std::cout << variant[i] << " ";
 		}
 
@@ -49,15 +49,15 @@ void Game::flattenHistory() {
 
 void Game::clearCash() {
 
-	for(int i = 0; i < whiteKiller.size(); ++i) {
+	for(unsigned int i = 0; i < whiteKiller.size(); ++i) {
 		whiteKiller[i] = Killer();
 	}
 
-	for(int i = 0; i < blackKiller.size(); ++i) {
+	for(unsigned int i = 0; i < blackKiller.size(); ++i) {
 		blackKiller[i] = Killer();
 	}
 
-	for(int i = 0; i < boardHash.size(); ++i) {
+	for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].enable = false;
 	}
 
