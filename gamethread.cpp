@@ -35,29 +35,27 @@ void Game::go() {
 			max_depth = 1;
 		}
 
+		start_timer = clock();
 		for(; max_depth <= max_depth_global; max_depth += 2) {
 			pv_tmp.resize(1);
 			pv_best.resize(1);
 			flattenHistory();
 			//cleanWhiteHistory();
 			//cleanBlackHistory();
-			double movesCounterTmp = movesCounter;
 			if(max_depth == max_depth_global) {
 				basis = true;
 			}
 
 			if(game_board.isWhiteMove()) {
-				start_timer = clock();
 				minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
-				end_timer = clock();
 			} else {
-				start_timer = clock();
 				minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true);
-				end_timer = clock();
 			}
-
-			std::cout << "info nps " << (int)((movesCounter - movesCounterTmp) / ((end_timer - start_timer) / CLOCKS_PER_SEC)) << "\n";
 		}
+		end_timer = clock();
+
+		std::cout << "info nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
+		" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 }
 
 bool Game::move(std::string mv) {
