@@ -36,7 +36,7 @@ public:
 	void printStringBoard();
 	void unMove();
 
-	uint8_t getFigure(int y, int x);
+	//uint8_t getFigure(int y, int x);
 	void setFigure(uint8_t figure, int y, int x);
 	void move(Move & mv);
 	bool isWhiteMove();

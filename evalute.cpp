@@ -9,8 +9,8 @@ double Game::evalute(Board & b) {
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
-			if(b.getFigure(y, x) != 0) {
-				figureMask[b.getFigure(y, x)] |= cells[y][x];
+			if(b.board[y][x] != 0) {
+				figureMask[b.board[y][x]] |= cells[y][x];
 			}
 		}
 	}
@@ -46,36 +46,36 @@ double Game::evalute(Board & b) {
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
-			if(b.getFigure(y, x) == 0) {
+			if(b.board[y][x] == 0) {
 				continue;
 			}
 
-			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
-				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+			if((b.board[y][x] & COLOR_SAVE) == WHITE) {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 					figure_state_eval += whitePawnMatr[y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
 					figure_state_eval += knightMatr[y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
 					figure_state_eval += bishopMatr[y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
 					figure_state_eval += rookMatr[y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
 					figure_state_eval += queenMatr[y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
+				} else if((b.board[y][x] & TYPE_SAVE) == KING) {
 					figure_state_eval += ((kingDebuteMatr[y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material_eval / ALL_MATERIAL));
 				}
 			} else {
-				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 					figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
 					figure_state_eval -= knightMatr[BOARD_SIZE - 1 - y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
 					figure_state_eval -= bishopMatr[BOARD_SIZE - 1 - y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
 					figure_state_eval -= rookMatr[BOARD_SIZE - 1 - y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
 					figure_state_eval -= queenMatr[BOARD_SIZE - 1 - y][x];
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
+				} else if((b.board[y][x] & TYPE_SAVE) == KING) {
 					figure_state_eval -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material_eval / ALL_MATERIAL));
 				}
 			}
@@ -137,7 +137,7 @@ double Game::getForcastEvalute(Board & b) {
 	double res = 0;
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
-		if(b.getFigure(moves[i].toY, moves[i].toX) == 0) {
+		if(b.board[moves[i].toY][moves[i].toX] == 0) {
 			break;
 		}
 
@@ -152,15 +152,15 @@ double Game::getForcastEvalute(Board & b) {
 }
 
 double Game::getFigureEval(Board & b, int y, int x) {
-	if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+	if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 		return PAWN_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+	} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
 		return KNIGHT_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+	} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
 		return BISHOP_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+	} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
 		return ROOK_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+	} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
 		return QUEEN_EV;
 	}
 
@@ -184,25 +184,25 @@ bool Game::inCheck(Board & b, uint8_t color) {
 
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
-			if(b.getFigure(y, x) != 0 && (b.getFigure(y, x) & COLOR_SAVE) == enemyColor) {
-				mask = (mask | bitboard[b.getFigure(y, x)][y][x]);
+			if(b.board[y][x] != 0 && (b.board[y][x] & COLOR_SAVE) == enemyColor) {
+				mask = (mask | bitboard[b.board[y][x]][y][x]);
 			}
 
-			if(b.getFigure(y, x) == (KING | color)) {
+			if(b.board[y][x] == (KING | color)) {
 				kingPos = cells[y][x];
 				yKingPos = y;
 				xKingPos = x;
 			}
 
-			if(b.getFigure(y, x) == (KING | enemyColor)) {
+			if(b.board[y][x] == (KING | enemyColor)) {
 				sedentaryMap = (sedentaryMap | bitboard[KING | enemyColor][y][x]);
 			}
 
-			if(b.getFigure(y, x) == (PAWN | enemyColor)) {
+			if(b.board[y][x] == (PAWN | enemyColor)) {
 				sedentaryMap = (sedentaryMap | (bitboard[PAWN | enemyColor][y][x] & pawnAttackCutter[x]));
 			}
 
-			if(b.getFigure(y, x) == (KNIGHT | enemyColor)) {
+			if(b.board[y][x] == (KNIGHT | enemyColor)) {
 				sedentaryMap = (sedentaryMap | bitboard[KNIGHT | enemyColor][y][x]);
 			}
 		}
@@ -217,14 +217,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 			if(y == yKingPos) {
 				continue;
 			}
-			if((b.getFigure(y, xKingPos) & TYPE_SAVE) == ROOK || (b.getFigure(y, xKingPos) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(y, xKingPos) & COLOR_SAVE) == enemyColor) {
+			if((b.board[y][xKingPos] & TYPE_SAVE) == ROOK || (b.board[y][xKingPos] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][xKingPos] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(y, xKingPos) != 0) {
+			if(b.board[y][xKingPos] != 0) {
 				break;
 			}
 		}
@@ -233,14 +233,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 			if(y == yKingPos) {
 				continue;
 			}
-			if((b.getFigure(y, xKingPos) & TYPE_SAVE) == ROOK || (b.getFigure(y, xKingPos) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(y, xKingPos) & COLOR_SAVE) == enemyColor) {
+			if((b.board[y][xKingPos] & TYPE_SAVE) == ROOK || (b.board[y][xKingPos] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][xKingPos] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(y, xKingPos) != 0) {
+			if(b.board[y][xKingPos] != 0) {
 				break;
 			}
 		}
@@ -249,14 +249,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 			if(x == xKingPos) {
 				continue;
 			}
-			if((b.getFigure(yKingPos, x) & TYPE_SAVE) == ROOK || (b.getFigure(yKingPos, x) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(yKingPos, x) & COLOR_SAVE) == enemyColor) {
+			if((b.board[yKingPos][x] & TYPE_SAVE) == ROOK || (b.board[yKingPos][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[yKingPos][x] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(yKingPos, x) != 0) {
+			if(b.board[yKingPos][x] != 0) {
 				break;
 			}
 		}
@@ -265,14 +265,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 			if(x == xKingPos) {
 				continue;
 			}
-			if((b.getFigure(yKingPos, x) & TYPE_SAVE) == ROOK || (b.getFigure(yKingPos, x) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(yKingPos, x) & COLOR_SAVE) == enemyColor) {
+			if((b.board[yKingPos][x] & TYPE_SAVE) == ROOK || (b.board[yKingPos][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[yKingPos][x] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(yKingPos, x) != 0) {
+			if(b.board[yKingPos][x] != 0) {
 				break;
 			}
 		}
@@ -282,14 +282,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 				continue;
 			}
 
-			if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP || (b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(y, x) & COLOR_SAVE) == enemyColor) {
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(y, x) != 0) {
+			if(b.board[y][x] != 0) {
 				break;
 			}
 		}
@@ -299,14 +299,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 				continue;
 			}
 
-			if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP || (b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(y, x) & COLOR_SAVE) == enemyColor) {
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(y, x) != 0) {
+			if(b.board[y][x] != 0) {
 				break;
 			}
 		}
@@ -316,14 +316,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 				continue;
 			}
 
-			if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP || (b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(y, x) & COLOR_SAVE) == enemyColor) {
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(y, x) != 0) {
+			if(b.board[y][x] != 0) {
 				break;
 			}
 		}
@@ -333,14 +333,14 @@ bool Game::inCheck(Board & b, uint8_t color) {
 				continue;
 			}
 
-			if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP || (b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
-				if((b.getFigure(y, x) & COLOR_SAVE) == enemyColor) {
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
 					return true;
 				} else {
 					break;
 				}
 			}
-			if(b.getFigure(y, x) != 0) {
+			if(b.board[y][x] != 0) {
 				break;
 			}
 		}
@@ -353,41 +353,41 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 	double white_mat = 0, black_mat = 0, all_material = 0;
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
-			if(b.getFigure(y, x) == 0) {
+			if(b.board[y][x] == 0) {
 				continue;
 			}
 
-			if((b.getFigure(y, x) & COLOR_SAVE) == WHITE) {
-				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+			if((b.board[y][x] & COLOR_SAVE) == WHITE) {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 					white_mat += PAWN_EV;
 					all_material += PAWN_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
 					white_mat += KNIGHT_EV;
 					all_material += KNIGHT_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
 					white_mat += BISHOP_EV;
 					all_material += BISHOP_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
 					white_mat += ROOK_EV;
 					all_material += ROOK_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
 					white_mat += QUEEN_EV;
 					all_material += QUEEN_EV;
 				}
 			} else {
-				if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 					black_mat += PAWN_EV;
 					all_material += PAWN_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
 					black_mat += KNIGHT_EV;
 					all_material += KNIGHT_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
 					black_mat += BISHOP_EV;
 					all_material += BISHOP_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
 					black_mat += ROOK_EV;
 					all_material += ROOK_EV;
-				} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
 					black_mat += QUEEN_EV;
 					all_material += QUEEN_EV;
 				}
@@ -425,17 +425,17 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 }
 
 double Game::getPriceCell(Board & b, int y, int x) {
-	if((b.getFigure(y, x) & TYPE_SAVE) == KING) {
+	if((b.board[y][x] & TYPE_SAVE) == KING) {
 		return 0;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN) {
+	} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
 		return QUEEN_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == ROOK) {
+	} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
 		return ROOK_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == BISHOP) {
+	} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
 		return BISHOP_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == KNIGHT) {
+	} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
 		return KNIGHT_EV;
-	} else if((b.getFigure(y, x) & TYPE_SAVE) == PAWN) {
+	} else if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 		return PAWN_EV;
 	} else {
 		return 0;
@@ -456,8 +456,8 @@ uint8_t Game::getFigureAttacks(Board & b, uint8_t color) {
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
-			if(b.getFigure(y, x) != 0 && (b.getFigure(y, x) & COLOR_SAVE) == color) {
-				if((b.getFigure(y, x) & TYPE_SAVE) == QUEEN || )
+			if(b.board[y][x] != 0 && (b.board[y][x] & COLOR_SAVE) == color) {
+				if((b.board[y][x] & TYPE_SAVE) == QUEEN || )
 			}
 		}
 	}

@@ -16,7 +16,7 @@ Move::Move(std::string mv) {
 
 void Move::go(Board* b) {
 	if(moveType == STANDARD_MV || moveType == PASSANT_MV || moveType == TRANSFORMATION_MV) {
-		b->setFigure(b->getFigure(fromY, fromX), toY, toX);
+		b->setFigure(b->board[fromY][fromX], toY, toX);
 		b->setFigure(0, fromY, fromX);
 	}
 
