@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++17 -m64 -O4 -flto -march=native -funroll-loops
+CFLAGS = -Wall -pedantic -std=c++17 -m64 -O4 -flto -march=native -funroll-loops
 
 GDB = -std=c++17 -Wall -pedantic -m64 -O4 -flto -march=native -funroll-loops -pthread -g
 
