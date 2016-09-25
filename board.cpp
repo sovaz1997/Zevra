@@ -252,6 +252,7 @@ void Board::setPassant(std::string FEN) {
 
 void Board::putFigureOnBoard(uint8_t figure, int y, int x) {
 	board[y][x] = figure;
+	//figureList.push_back(Point(y, x));
 }
 
 void Board::printBoard() {
@@ -310,6 +311,7 @@ void Board::printBoard() {
 }
 
 void Board::cleanBoard() {
+	//figureList.clear();
 	for(uint8_t y = 0; y < board.size(); ++y) {
 		for(uint8_t x = 0; x < board.size(); ++x) {
 			board[y][x] = 0;
@@ -337,6 +339,7 @@ void Board::cleanBoard() {
 
 void Board::setFigure(uint8_t figure, int y, int x) {
 	board[y][x] = figure;
+	//figureList.push_back(Point(y, x));
 }
 
 void Board::move(Move & mv) {

@@ -74,6 +74,14 @@ uint64_t Game::getColorHash(Board & b) {
 	return res;
 }
 
+uint64_t Game::getColorHash(Board & b, uint64_t hash) {
+	if(!b.isWhiteMove()) {
+		hash = (hash * hash + 1);
+	}
+
+	return hash;
+}
+
 uint64_t Game::getHash(Board & b) {
 	uint64_t hash = 0;
 

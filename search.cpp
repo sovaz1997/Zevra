@@ -8,7 +8,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int re
 	}
 
 	uint64_t pos_hash = getHash(b);
-	uint64_t board_hash = getColorHash(b);
+	uint64_t board_hash = getColorHash(b, pos_hash);
 
 	if(depth > 0) {
 	int third_repeat = 1;
@@ -204,7 +204,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int re
 	}
 
 	uint64_t pos_hash = getHash(b);
-	uint64_t board_hash = getColorHash(b);
+	uint64_t board_hash = getColorHash(b, pos_hash);
 
 	if(depth > 0) {
 	int third_repeat = 1;

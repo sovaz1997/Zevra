@@ -349,6 +349,189 @@ bool Game::inCheck(Board & b, uint8_t color) {
 	return false;
 }
 
+bool Game::inCheck(Board b, uint8_t color, int yPos, int xPos)  {
+	uint8_t enemyColor;
+	if(color == WHITE) {
+		enemyColor = BLACK;
+	} else {
+		enemyColor = WHITE;
+	}
+
+	uint64_t mask = 0;
+
+	uint64_t kingPos;
+
+	int yKingPos = yPos, xKingPos = xPos;
+	uint64_t sedentaryMap = 0;
+
+	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
+		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
+			if(b.board[y][x] != 0 && (b.board[y][x] & COLOR_SAVE) == enemyColor) {
+				mask = (mask | bitboard[b.board[y][x]][y][x]);
+			}
+
+			if(b.board[y][x] == (KING | color)) {
+				b.board[y][x] = 0;
+			}
+
+			if(b.board[y][x] == (KING | enemyColor)) {
+				sedentaryMap = (sedentaryMap | bitboard[KING | enemyColor][y][x]);
+			}
+
+			if(b.board[y][x] == (PAWN | enemyColor)) {
+				sedentaryMap = (sedentaryMap | (bitboard[PAWN | enemyColor][y][x] & pawnAttackCutter[x]));
+			}
+
+			if(b.board[y][x] == (KNIGHT | enemyColor)) {
+				sedentaryMap = (sedentaryMap | bitboard[KNIGHT | enemyColor][y][x]);
+			}
+		}
+	}
+
+	b.board[yKingPos][xKingPos] = (KING | color);
+	kingPos = cells[yKingPos][xKingPos];
+
+	if((kingPos & sedentaryMap) > 0) {
+		return true;
+	}
+
+	if(mask & kingPos) {
+		for(int y = yKingPos; y < BOARD_SIZE; ++y) {
+			if(y == yKingPos) {
+				continue;
+			}
+			if((b.board[y][xKingPos] & TYPE_SAVE) == ROOK || (b.board[y][xKingPos] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][xKingPos] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[y][xKingPos] != 0) {
+				break;
+			}
+		}
+
+		for(int y = yKingPos; y >= 0; --y) {
+			if(y == yKingPos) {
+				continue;
+			}
+			if((b.board[y][xKingPos] & TYPE_SAVE) == ROOK || (b.board[y][xKingPos] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][xKingPos] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[y][xKingPos] != 0) {
+				break;
+			}
+		}
+
+		for(int x = xKingPos; x < BOARD_SIZE; ++x) {
+			if(x == xKingPos) {
+				continue;
+			}
+			if((b.board[yKingPos][x] & TYPE_SAVE) == ROOK || (b.board[yKingPos][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[yKingPos][x] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[yKingPos][x] != 0) {
+				break;
+			}
+		}
+
+		for(int x = xKingPos; x >= 0; --x) {
+			if(x == xKingPos) {
+				continue;
+			}
+			if((b.board[yKingPos][x] & TYPE_SAVE) == ROOK || (b.board[yKingPos][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[yKingPos][x] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[yKingPos][x] != 0) {
+				break;
+			}
+		}
+
+		for(int y = yKingPos, x = xKingPos; y >= 0 && x >= 0; --y, --x) {
+			if(y == yKingPos && x == xKingPos) {
+				continue;
+			}
+
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[y][x] != 0) {
+				break;
+			}
+		}
+
+		for(int y = yKingPos, x = xKingPos; y >= 0 && x < BOARD_SIZE; --y, ++x) {
+			if(y == yKingPos && x == xKingPos) {
+				continue;
+			}
+
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[y][x] != 0) {
+				break;
+			}
+		}
+
+		for(int y = yKingPos, x = xKingPos; y < BOARD_SIZE && x >= 0; ++y, --x) {
+			if(y == yKingPos && x == xKingPos) {
+				continue;
+			}
+
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[y][x] != 0) {
+				break;
+			}
+		}
+
+		for(int y = yKingPos, x = xKingPos; y < BOARD_SIZE && x < BOARD_SIZE; ++y, ++x) {
+			if(y == yKingPos && x == xKingPos) {
+				continue;
+			}
+
+			if((b.board[y][x] & TYPE_SAVE) == BISHOP || (b.board[y][x] & TYPE_SAVE) == QUEEN) {
+				if((b.board[y][x] & COLOR_SAVE) == enemyColor) {
+					return true;
+				} else {
+					break;
+				}
+			}
+			if(b.board[y][x] != 0) {
+				break;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool Game::inZugzwang(Board & b, uint8_t color) {
 	double white_mat = 0, black_mat = 0, all_material = 0;
 	for(int y = 0; y < BOARD_SIZE; ++y) {

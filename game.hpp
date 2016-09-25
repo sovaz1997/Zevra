@@ -72,6 +72,7 @@ public:
 	void zobristGenerate();
 	uint64_t getHash(Board & b);
 	uint64_t getColorHash(Board & b);
+	uint64_t getColorHash(Board & b, uint64_t hash);
 
 	std::vector<uint64_t>gameHash;
 	std::vector<Hash>boardHash;
@@ -90,6 +91,7 @@ public:
 	//flags - end
 
 	bool inCheck(Board & b, uint8_t color);
+	bool inCheck(Board b, uint8_t color, int yPos, int xPos);
 	double getPriceCell(Board & b, int y, int x);
 	double evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	void cleanWhiteHistory();

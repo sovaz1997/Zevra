@@ -9,6 +9,7 @@
 #include "move.hpp"
 #include "constants.hpp"
 #include "boardinfo.hpp"
+#include "point.hpp"
 
 
 class Move;
@@ -58,6 +59,8 @@ public:
 
 	void setBoardInfo();
 	void getBoardInfo();
+
+	//std::vector<Point>figureList;
 };
 
 #endif

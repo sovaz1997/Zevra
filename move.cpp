@@ -18,10 +18,32 @@ void Move::go(Board* b) {
 	if(moveType == STANDARD_MV || moveType == PASSANT_MV || moveType == TRANSFORMATION_MV) {
 		b->setFigure(b->board[fromY][fromX], toY, toX);
 		b->setFigure(0, fromY, fromX);
+
+
+		/*bool added = false;
+		for(int i = 0; i < b->figureList.size(); ++i) {
+			if(b->figureList[i].y == fromY && b->figureList[i].x == fromX) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+
+			if(b->figureList[i].y == toY && b->figureList[i].x == toX) {
+				added = true;
+			}
+		}
+
+		if(!added) {
+			b->figureList.push_back(Point(toY, toX));
+		}*/
 	}
 
 	if(moveType == PASSANT_MV) {
 		b->setFigure(0, passant_y, passant_x);
+
+		/*for(int i = 0; i < b->figureList.size(); ++i) {
+			if(b->figureList[i].y == passant_y && b->figureList[i].x == passant_x) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+		}*/
 	}
 
 	if(moveType == TRANSFORMATION_MV) {
@@ -33,6 +55,20 @@ void Move::go(Board* b) {
 		b->setFigure(0, 7, 4);
 		b->setFigure(KING | WHITE, 7, 6);
 		b->setFigure(ROOK | WHITE, 7, 5);
+
+		/*for(int i = 0; i < b->figureList.size(); ++i) {
+			if(b->figureList[i].y == 7 && b->figureList[i].x == 7) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+
+			if(b->figureList[i].y == 7 && b->figureList[i].x == 4) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+		}
+
+		b->figureList.push_back(Point(7, 6));
+		b->figureList.push_back(Point(7, 5));*/
+
 	}
 
 	if(moveType == WL_CASTLING_MV) {
@@ -40,6 +76,19 @@ void Move::go(Board* b) {
 		b->setFigure(0, 7, 4);
 		b->setFigure(KING | WHITE, 7, 2);
 		b->setFigure(ROOK | WHITE, 7, 3);
+
+		/*for(int i = 0; i < b->figureList.size(); ++i) {
+			if(b->figureList[i].y == 7 && b->figureList[i].x == 0) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+
+			if(b->figureList[i].y == 7 && b->figureList[i].x == 4) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+		}
+
+		b->figureList.push_back(Point(7, 2));
+		b->figureList.push_back(Point(7, 3));*/
 	}
 
 	if(moveType == BS_CASTLING_MV) {
@@ -47,6 +96,19 @@ void Move::go(Board* b) {
 		b->setFigure(0, 0, 4);
 		b->setFigure(KING | BLACK, 0, 6);
 		b->setFigure(ROOK | BLACK, 0, 5);
+
+		/*for(int i = 0; i < b->figureList.size(); ++i) {
+			if(b->figureList[i].y == 0 && b->figureList[i].x == 7) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+
+			if(b->figureList[i].y == 0 && b->figureList[i].x == 4) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+		}
+
+		b->figureList.push_back(Point(0, 6));
+		b->figureList.push_back(Point(0, 5));*/
 	}
 
 	if(moveType == BL_CASTLING_MV) {
@@ -54,6 +116,19 @@ void Move::go(Board* b) {
 		b->setFigure(0, 0, 4);
 		b->setFigure(KING | BLACK, 0, 2);
 		b->setFigure(ROOK | BLACK, 0, 3);
+
+		/*for(int i = 0; i < b->figureList.size(); ++i) {
+			if(b->figureList[i].y == 0 && b->figureList[i].x == 0) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+
+			if(b->figureList[i].y == 0 && b->figureList[i].x == 4) {
+				b->figureList.erase(b->figureList.begin() + i);
+			}
+		}
+
+		b->figureList.push_back(Point(0, 2));
+		b->figureList.push_back(Point(0, 3));*/
 	}
 }
 

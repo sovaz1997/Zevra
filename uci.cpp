@@ -63,6 +63,14 @@ bool Game::uciHandler(std::string str) {
 			std::cout << "uciok\n";
 		} else if(cmd[0] == "quit") {
 			return false;
+		} else if(cmd[0] == "stress") {
+			bool shah_tmp;
+			std::cout << "!";
+			for(unsigned int i = 0; i < 100000; ++i) {
+
+				generatePositionMoves(game_board, shah_tmp, true, 0);
+			}
+			std::cout << "!";
 		}
 
 		return true;
