@@ -23,6 +23,7 @@
 #include "hash.hpp"
 #include "debute.hpp"
 #include "point.hpp"
+#include "timer.hpp"
 
 class Game {
 private:
@@ -45,6 +46,8 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void go();
+	void goFixedDepth();
+	void goFixedTime(int time);
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 	std::vector<Move> pv_best;
@@ -56,10 +59,15 @@ private:
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 
 	int popcount64(uint64_t value);
+
+	//фиксированное время
+	Timer timer;
+	Move bestMove;
+	int time;
 public:
 	Game();
-	double minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
-	double minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove);
+	double minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
+	double minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
 
   double quies(Board & b, double alpha, double beta);

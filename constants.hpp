@@ -33,6 +33,10 @@ const double BISHOP_EV = 3300;
 const double ROOK_EV = 5600;
 const double QUEEN_EV = 11000;
 
+//move types
+const int FIXED_DEPTH = 0;
+const int FIXED_TIME = 1;
+
 const int hash_width = 24;
 
 const int REAL_EV = 0;

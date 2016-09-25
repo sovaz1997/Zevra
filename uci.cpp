@@ -41,7 +41,9 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "go") {
 			if(cmd[1] == "depth") {
 				max_depth = std::stoi(cmd[2]);
-			  go();
+			  goFixedDepth();
+			} else if(cmd[1] == "movetime") {
+				goFixedTime(std::stoi(cmd[2]));
 			}
 		} else if(cmd[0] == "posmoves") {
 			bool shah_tmp;
