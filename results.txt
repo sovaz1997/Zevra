@@ -1,0 +1,55 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+ 38.94      1.25     1.25                             Game::generatePositionMoves(Board&, bool&, bool, int) [clone .constprop.80]
+ 13.71      1.69     0.44                             Game::evalute(Board&) [clone .constprop.50]
+  9.03      1.98     0.29                             Game::clearCash() [clone .constprop.31]
+  8.41      2.25     0.27                             Hash* std::__uninitialized_default_n_1<false>::__uninit_default_n<Hash*, unsigned long>(Hash*, unsigned long)
+  7.17      2.48     0.23                             Board::Board(Board const&)
+  6.54      2.69     0.21                             Game::inCheck(Board&, unsigned char) [clone .constprop.49]
+  4.67      2.84     0.15                             Game::minimax_black(Board, double, double, int, int, std::vector<unsigned long, std::allocator<unsigned long> >, bool, std::vector<Move, std::allocator<Move> >, bool) [clone .constprop.38]
+  3.12      2.94     0.10                             Game::inCheck(Board&, unsigned char) [clone .constprop.48]
+  2.18      3.01     0.07                             Board::~Board()
+  1.87      3.07     0.06                             void std::vector<Move, std::allocator<Move> >::_M_insert_aux<Move const&>(__gnu_cxx::__normal_iterator<Move*, std::vector<Move, std::allocator<Move> > >, Move const&) [clone .lto_priv.103]
+  1.56      3.12     0.05                             Game::minimax_white(Board, double, double, int, int, std::vector<unsigned long, std::allocator<unsigned long> >, bool, std::vector<Move, std::allocator<Move> >, bool) [clone .constprop.39]
+  0.93      3.15     0.03                             void std::vector<Move, std::allocator<Move> >::_M_emplace_back_aux<Move const&>(Move const&) [clone .lto_priv.102]
+  0.62      3.17     0.02                             std::_Deque_base<BoardInfo, std::allocator<BoardInfo> >::_M_initialize_map(unsigned long)
+  0.31      3.18     0.01                             Game::getColorHash(Board&) [clone .constprop.81]
+  0.31      3.19     0.01                             Game::getStringArray(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [clone .constprop.24]
+  0.31      3.20     0.01                             void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [clone .isra.67] [clone .lto_priv.134]
+  0.31      3.21     0.01                             std::_Deque_iterator<BoardInfo, BoardInfo&, BoardInfo*> std::copy<BoardInfo>(std::_Deque_iterator<BoardInfo, BoardInfo const&, BoardInfo const*>, std::_Deque_iterator<BoardInfo, BoardInfo const&, BoardInfo const*>, std::_Deque_iterator<BoardInfo, BoardInfo&, BoardInfo*>)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
