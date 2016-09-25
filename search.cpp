@@ -91,7 +91,7 @@ double Game::minimax_white(Board b, double alpha, double beta, int depth, int re
 			}
 		}
 
-		//tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+		//tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
 
 		pv.pop_back();
 
@@ -303,9 +303,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int re
 			}
 		}
 
-		//tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
-
-		//tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
+		//tmp = minimax_white(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
 		pv.pop_back();
 
 		if(depth == 0) {
