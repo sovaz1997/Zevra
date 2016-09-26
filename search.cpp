@@ -5,6 +5,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		return 0;
 	}
 
+
 	++movesCounter;
 
 	uint8_t color;
@@ -12,10 +13,6 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		color = WHITE;
 	} else {
 		color = BLACK;
-	}
-
-	if(depth >= max_depth) {
-		return quies(b, alpha, beta, rule);
 	}
 
 	uint64_t pos_hash = getHash(b);
@@ -32,6 +29,15 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 		}
 	}
+
+	if(depth >= max_depth) {
+		return quies(b, alpha, beta, rule);
+	}
+
+/*	if(inCheck(b, color) && depth > 0) {
+		--depth;
+		basis = false;
+	}*/
 
 	int num_moves = 0;
 
