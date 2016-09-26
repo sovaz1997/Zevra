@@ -46,11 +46,12 @@ void Game::go() {
 				basis = true;
 			}
 
-			if(game_board.isWhiteMove()) {
+			/*if(game_board.isWhiteMove()) {
 				minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 			} else {
 				minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
-			}
+			}*/
+			negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 		}
 		end_timer = clock();
 
@@ -93,11 +94,12 @@ void Game::goFixedDepth() {
 			basis = true;
 		}
 
-		if(game_board.isWhiteMove()) {
+		/*if(game_board.isWhiteMove()) {
 			minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 		} else {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
-		}
+		}*/
+		negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 	}
 	end_timer = clock();
 
@@ -125,11 +127,12 @@ void Game::goFixedTime(int tm) {
 
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		flattenHistory();
-		if(game_board.isWhiteMove()) {
+		/*if(game_board.isWhiteMove()) {
 			minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 		} else {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
-		}
+		}*/
+		negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 	}
 
 	std::cout << "bestmove " << bestMove.getMoveString() << "\n";

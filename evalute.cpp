@@ -112,7 +112,12 @@ double Game::evalute(Board & b) {
 
 	double pawnStructure = passedPawnBonus;
 
-	return material_eval + figure_state_eval + pawnStructure;
+	int mul = 1;
+	if(!b.isWhiteMove()) {
+		mul = -1;
+	}
+
+	return mul * (material_eval + figure_state_eval + pawnStructure);
 }
 
 bool Game::insufficientMaterial(std::vector<uint64_t>figureMask) {
