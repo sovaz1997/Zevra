@@ -15,11 +15,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	}
 
 	if(depth >= max_depth) {
-		/*if(color == BLACK) {
-			return -evalute(b);
-		}*/
-		//return evalute(b);
-		return quies(b, alpha, beta);
+		return quies(b, alpha, beta, rule);
 	}
 
 	uint64_t pos_hash = getHash(b);
@@ -641,7 +637,11 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int re
 	return min;
 }
 
-double Game::quies(Board b, double alpha, double beta) {
+double Game::quies(Board b, double alpha, double beta, int rule) {
+	if(rule == FIXED_TIME && timer.getTime() >= time) {
+		return 0;
+	}
+
 	++movesCounter;
 	double val = evalute(b);
 
@@ -657,6 +657,10 @@ double Game::quies(Board b, double alpha, double beta) {
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, max_depth);
 
 	for(unsigned int i = 0; i < moves.size() && alpha < beta; ++i) {
+		if(rule == FIXED_TIME && timer.getTime() >= time) {
+			return 0;
+		}
+
 		if(b.board[moves[i].toY][moves[i].toX] == 0) {
 			continue;
 		}
@@ -674,7 +678,7 @@ double Game::quies(Board b, double alpha, double beta) {
 			}
 		}
 
-		val = -quies(tmp_brd, -beta, -alpha);
+		val = -quies(tmp_brd, -beta, -alpha, rule);
 
 		if(val >= beta) {
 			return val;
