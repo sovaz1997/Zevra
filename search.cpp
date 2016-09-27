@@ -78,11 +78,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		pv.push_back(moves[i]);
 		hash.push_back(pos_hash);
 
-		if(moves[i].fromHash && hashEnable) {
+		/*if(moves[i].fromHash && hashEnable) {
 			if(boardHash[board_hash & hash_cutter].type_mv == BETA_CUT_EV) {
 				alpha = boardHash[board_hash & hash_cutter].evalute;
 			}
-		}
+		}*/
 
 		tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, nextBasis, pv, true, rule);
 
@@ -120,7 +120,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 		}
 		if(max >= beta) {
-			if(hashEnable) {
+			/*if(hashEnable) {
 				if(!boardHash[board_hash & hash_cutter].enable) {
 					boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, BETA_CUT_EV);
 				} else {
@@ -128,15 +128,15 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 						boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, BETA_CUT_EV);
 					}
 				}
-			}
+			}*/
 
-			if(b.board[moves[i].toY][moves[i].toX] == 0) {
+			/*if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				if(color == WHITE) {
 					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
 				} else {
 					blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
 				}
-			}
+			}*/
 
 			if(depth == 0 && game_board.isWhiteMove() == b.isWhiteMove()) {
 				bestmove = local_move;
@@ -198,7 +198,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 
 	printVariant();
 
-	if(hashEnable) {
+	/*if(hashEnable) {
 		if(!boardHash[board_hash & hash_cutter].enable) {
 			boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, REAL_EV);
 		} else {
@@ -206,7 +206,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, REAL_EV);
 			}
 		}
-	}
+	}*/
 
 	return max;
 }
