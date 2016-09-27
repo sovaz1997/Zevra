@@ -19,7 +19,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b, pos_hash);
 
-	if(depth > 0) {
+	/*if(depth > 0) {
 	int third_repeat = 1;
 		for(unsigned int i = 0; i < hash.size(); ++i) {
 			if(hash[i] == pos_hash) {
@@ -30,16 +30,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				return 0;
 			}
 		}
-	}
+	}*/
 
 	if(depth >= max_depth) {
 		return quies(b, alpha, beta, rule);
 	}
-
-	/*if(inCheck(b, color) && depth > 0) {
-		--depth;
-		nextBasis = false;
-	}*/
 
 	int num_moves = 0;
 
@@ -54,6 +49,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 
 	if(moves.size() > 0) {
 		local_move = moves[0];
+
+		/*if(inCheck(b, color) && depth > 0) {
+			--depth;
+			nextBasis = false;
+		}*/
 	}
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
@@ -80,19 +80,10 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		pv.push_back(moves[i]);
 		hash.push_back(pos_hash);
 
-		if(moves[i].fromHash && hashEnable) {
+		//Хеш (временно отключен)
+		/*if(moves[i].fromHash && hashEnable) {
 			if(boardHash[board_hash & hash_cutter].type_mv == BETA_CUT_EV) {
 				alpha = boardHash[board_hash & hash_cutter].evalute;
-			}
-		}
-
-		/*if(num_moves <= 3 || inCheck(tmp_brd, BLACK) || depth < 3) {
-				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
-		} else {
-			tmp = minimax_black(tmp_brd, alpha+1, beta, depth + 2, max_depth, real_depth + 2, hash, basis, pv, true);
-			if(tmp > alpha) {
-				//tmp_brd = b;
-				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
 			}
 		}*/
 
@@ -178,8 +169,6 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			return max;
 		}
 	}
-
-
 
 	if(num_moves == 0) {
 		if(inCheck(b, color)) {
