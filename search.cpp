@@ -19,7 +19,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b, pos_hash);
 
-	/*if(depth > 0) {
+	if(depth > 0) {
 	int third_repeat = 1;
 		for(unsigned int i = 0; i < hash.size(); ++i) {
 			if(hash[i] == pos_hash) {
@@ -30,17 +30,15 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				return 0;
 			}
 		}
-	}*/
+	}
 
 	if(depth >= max_depth) {
+		//return evalute(b);
 		return quies(b, alpha, beta, rule);
 	}
 
 	int num_moves = 0;
-
 	double max = BLACK_WIN;
-
-	//bool null_mv = nullMoveEnable;
 
 	bool tmp_shah;
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, real_depth);
@@ -50,10 +48,10 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	if(moves.size() > 0) {
 		local_move = moves[0];
 
-		if(inCheck(b, color) && depth > 0) {
+		/*if(inCheck(b, color) && depth > 0) {
 			--depth;
 			nextBasis = false;
-		}
+		}*/
 	}
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
@@ -86,27 +84,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 		}
 
-		/*if(num_moves <= 3 || inCheck(tmp_brd, BLACK) || depth < 3) {
-				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
-		} else {
-			tmp = minimax_black(tmp_brd, alpha+1, beta, depth + 2, max_depth, real_depth + 2, hash, basis, pv, true);
-			if(tmp > alpha) {
-				//tmp_brd = b;
-				tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, max_depth, real_depth + 1, hash, basis, pv, true);
-			}
-		}*/
-
-		//if(num_moves == 1) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, nextBasis, pv, true, rule);
-	/*	} else {
-			tmp = -negamax(tmp_brd, -beta, -alpha + 1, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
-
-			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
-			}
-		}*/
-
-		//tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
+		tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, nextBasis, pv, true, rule);
 
 		pv.pop_back();
 
@@ -134,7 +112,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		if(tmp > alpha) {
 			alpha = tmp;
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
-				whiteKiller[real_depth] = Killer(local_move);
+				if(color == WHITE) {
+					whiteKiller[real_depth] = Killer(local_move);
+				} else {
+					blackKiller[real_depth] = Killer(local_move);
+				}
 			}
 		}
 		if(max >= beta) {
@@ -149,7 +131,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
-				whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+				if(color == WHITE) {
+					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+				} else {
+					blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+				}
 			}
 
 			if(depth == 0 && game_board.isWhiteMove() == b.isWhiteMove()) {
