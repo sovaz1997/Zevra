@@ -1,6 +1,7 @@
 #include "game.hpp"
 
 double Game::negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule) {
+	bool nextBasis = basis;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -24,6 +25,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			if(hash[i] == pos_hash) {
 				++third_repeat;
 			}
+
 			if(third_repeat >= 3  || b.move_rule_num >= 50) {
 				return 0;
 			}
@@ -34,10 +36,10 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		return quies(b, alpha, beta, rule);
 	}
 
-/*	if(inCheck(b, color) && depth > 0) {
+	if(inCheck(b, color) && depth > 0) {
 		--depth;
-		basis = false;
-	}*/
+		nextBasis = false;
+	}
 
 	int num_moves = 0;
 
@@ -95,7 +97,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		}*/
 
 		//if(num_moves == 1) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
+				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, nextBasis, pv, true, rule);
 	/*	} else {
 			tmp = -negamax(tmp_brd, -beta, -alpha + 1, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
 
@@ -150,7 +152,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
 			}
 
-			if(depth == 0) {
+			if(depth == 0 && game_board.isWhiteMove() == b.isWhiteMove()) {
 				bestmove = local_move;
 				bestMove = bestmove;
 				std::cout << "info pv " << local_move.getMoveString();
@@ -165,7 +167,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 						std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1;
 					}
 
-					if(basis) {
+					if(basis && rule != FIXED_TIME) {
 						std::cout << "\nbestmove " << local_move.getMoveString();
 						gameHash.push_back(getHash(game_board));
 					}
@@ -187,7 +189,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		}
 	}
 
-	if(depth == 0 && num_moves > 0) {
+	if(depth == 0 && num_moves > 0 && game_board.isWhiteMove() == b.isWhiteMove()) {
 		bestmove = local_move;
 		bestMove = bestmove;
 		std::cout << "info pv " << local_move.getMoveString();
@@ -202,7 +204,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1;
 			}
 
-			if(basis) {
+			if(basis && rule != FIXED_TIME) {
 				std::cout << "\nbestmove " << local_move.getMoveString();
 				gameHash.push_back(getHash(game_board));
 			}
