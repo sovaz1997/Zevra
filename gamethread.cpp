@@ -109,6 +109,7 @@ void Game::goFixedDepth() {
 
 void Game::goFixedTime(int tm) {
 	time = tm;
+	timer.start();
 
 	clearCash();
 
@@ -124,8 +125,6 @@ void Game::goFixedTime(int tm) {
 	bool basis = false;
 	movesCounter = 0;
 
-	bool shah_tmp;
-	timer.start();
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		flattenHistory();
 		/*if(game_board.isWhiteMove()) {
