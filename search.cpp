@@ -2,10 +2,10 @@
 
 double Game::negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule) {
 	bool nextBasis = basis;
+
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
-
 
 	++movesCounter;
 
@@ -36,10 +36,10 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		return quies(b, alpha, beta, rule);
 	}
 
-	if(inCheck(b, color) && depth > 0) {
+	/*if(inCheck(b, color) && depth > 0) {
 		--depth;
 		nextBasis = false;
-	}
+	}*/
 
 	int num_moves = 0;
 
@@ -653,9 +653,9 @@ double Game::quies(Board b, double alpha, double beta, int rule) {
 	++movesCounter;
 	double val = evalute(b);
 
-	if(val > beta) {
+	/*if(val > beta) {
 		return beta;
-	}
+	}*/
 
 	if(alpha < val) {
 		alpha = val;
@@ -687,10 +687,6 @@ double Game::quies(Board b, double alpha, double beta, int rule) {
 		}
 
 		val = -quies(tmp_brd, -beta, -alpha, rule);
-
-		if(val >= beta) {
-			return val;
-		}
 
 		if(val > alpha) {
 			alpha = val;
