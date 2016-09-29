@@ -108,7 +108,7 @@ void Game::goFixedDepth() {
 		}
 		std::cout << "\n";
 
-		if(score + 1000 >= WHITE_WIN) {
+		if(score + 1000 >= WHITE_WIN || score - 1000 <= BLACK_WIN) {
 			break;
 		}
 
@@ -153,7 +153,7 @@ void Game::goFixedTime(int tm) {
 		}
 		std::cout << "\n";
 
-		if(score + 1000 >= WHITE_WIN) {
+		if(score + 1000 >= WHITE_WIN || score - 1000 <= BLACK_WIN) {
 			break;
 		}
 	}
