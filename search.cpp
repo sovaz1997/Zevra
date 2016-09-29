@@ -153,25 +153,24 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			if(depth == 0) {
 				bestmove = local_move;
 				bestMove = bestmove;
-				std::cout << "info pv " << local_move.getMoveString();
-				std::cout << " nodes " << movesCounter;
-				if(basis || rule == FIXED_TIME) {
+				std::cout << "info nodes " << movesCounter;
+				//if(basis || rule == FIXED_TIME) {
 					std::cout << " score ";
 					if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
-						std::cout << "cp " << (int) (max / PAWN_EV * 100);
+						std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
 					} else if(max < 0) {
-						std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1;
+						std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
 					} else {
-						std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1;
+						std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
 					}
 
-					if(basis) {
+					/*if(basis) {
 						std::cout << "\nbestmove " << local_move.getMoveString();
 						gameHash.push_back(getHash(game_board));
-					}
+					}*/
+					gameHash.push_back(getHash(game_board));
 				}
-				std::cout << "\n";
-			}
+			//}
 
 			return max;
 		}
@@ -190,24 +189,23 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	if(depth == 0 && num_moves > 0) {
 		bestmove = local_move;
 		bestMove = bestmove;
-		std::cout << "info pv " << local_move.getMoveString();
-		std::cout << " nodes " << movesCounter;
-		if(basis || rule == FIXED_TIME) {
+		std::cout << "info nodes " << movesCounter;
+		//if(basis || rule == FIXED_TIME) {
 			std::cout << " score ";
 			if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
-				std::cout << "cp " << (int) (max / PAWN_EV * 100);
+				std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
 			} else if(max < 0) {
-				std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1;
+				std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
 			} else {
-				std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1;
+				std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
 			}
 
-			if(basis) {
+			/*if(basis) {
 				std::cout << "\nbestmove " << local_move.getMoveString();
-				gameHash.push_back(getHash(game_board));
-			}
-		}
-		std::cout << "\n";
+
+			}*/
+			gameHash.push_back(getHash(game_board));
+	//	}
 	}
 
 	printVariant();
