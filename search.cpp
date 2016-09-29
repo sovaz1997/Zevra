@@ -130,9 +130,6 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 
 		if(tmp > alpha) {
 			alpha = tmp;
-			if(b.board[moves[i].toY][moves[i].toX] == 0) {
-				whiteKiller[real_depth] = Killer(local_move);
-			}
 		}
 		if(max >= beta) {
 			if(hashEnable) {
@@ -146,7 +143,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
-				whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+				if(color == WHITE) {
+					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+				} else {
+					blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+				}
 			}
 
 			if(depth == 0) {
