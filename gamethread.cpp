@@ -102,11 +102,11 @@ void Game::goFixedDepth() {
 
 		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 
-		std::cout << "info pv ";
+		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
 			std::cout << pv_best[i].getMoveString() << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 
 		if(score + 1000 >= WHITE_WIN || score - 1000 <= BLACK_WIN) {
 			break;
@@ -147,11 +147,11 @@ void Game::goFixedTime(int tm) {
 		}*/
 		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 
-		std::cout << "info pv ";
+		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
 			std::cout << pv_best[i].getMoveString() << " ";
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 
 		if(score + 1000 >= WHITE_WIN || score - 1000 <= BLACK_WIN) {
 			break;

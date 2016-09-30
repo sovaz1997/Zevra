@@ -85,7 +85,14 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		}*/
 
 		//if(num_moves == 1) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule);
+			if(num_moves <= 3 || inCheck(tmp_brd, color)) {
+				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
+			} else {
+				tmp = -negamax(tmp_brd, -(alpha + 1), -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule);
+				if(tmp > alpha) {
+						tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
+				}
+			}
 	/*	} else {
 			tmp = -negamax(tmp_brd, -beta, -alpha + 1, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
 
