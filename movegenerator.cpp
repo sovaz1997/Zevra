@@ -149,27 +149,21 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 	for(int i = 0; i < num_attacks; ++i) {
 		for(int j = 0; j < num_attacks - 1; ++j) {
 			if(result[j].getAttackPrice(b) < result[j + 1].getAttackPrice(b)) {
-				Move tmp = result[j];
-				result[j] = result[j + 1];
-				result[j + 1] = tmp;
+				std::swap(result[j], result[j+1]);
 			}
 		}
 	}
 
 	if(b.isWhiteMove()) {
-		for(unsigned int i = num_attacks + 1; i < result.size(); ++i) {
-			for(int j = i; j > num_attacks && whiteHistorySort[result[j-1].fromY][result[j-1].fromX][result[j-1].toY][result[j-1].toX] < whiteHistorySort[result[j].fromY][result[j].fromX][result[j].toY][result[j].toX]; --j) {
-				Move tmp = result[j-1];
-				result[j-1] = result[j];
-				result[j] = tmp;
+		for(unsigned int i = num_attacks + 1; i < result.size() - 1; ++i) {
+			for(int j = i - 1; j >= num_attacks && whiteHistorySort[result[j].fromY][result[j].fromX][result[j].toY][result[j].toX] < whiteHistorySort[result[j+1].fromY][result[j+1].fromX][result[j+1].toY][result[j+1].toX]; --j) {
+				std::swap(result[j], result[j+1]);
 			}
 		}
 	} else {
-		for(unsigned int i = num_attacks + 1; i < result.size(); ++i) {
-			for(int j = i; j > num_attacks && blackHistorySort[result[j-1].fromY][result[j-1].fromX][result[j-1].toY][result[j-1].toX] < blackHistorySort[result[j].fromY][result[j].fromX][result[j].toY][result[j].toX]; --j) {
-				Move tmp = result[j-1];
-				result[j-1] = result[j];
-				result[j] = tmp;
+		for(unsigned int i = num_attacks + 1; i < result.size() - 1; ++i) {
+			for(int j = i - 1; j >= num_attacks && blackHistorySort[result[j].fromY][result[j].fromX][result[j].toY][result[j].toX] < blackHistorySort[result[j+1].fromY][result[j+1].fromX][result[j+1].toY][result[j+1].toX]; --j) {
+				std::swap(result[j], result[j+1]);
 			}
 		}
 	}
@@ -191,9 +185,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 	if(boardHash[getColorHash(b) & hash_cutter].enable && boardHash[getColorHash(b) & hash_cutter].depth >= max_depth - depth && boardHash[getColorHash(b) & hash_cutter].hash == getColorHash(b)) {
 		for(unsigned int i = 0; i < result.size(); ++i) {
 			if(result[i].equal(boardHash[getColorHash(b) & hash_cutter].move)) {
-				Move tmp = result[i];
-				result[i] = result[0];
-				result[0] = tmp;
+				std::swap(result[0], result[i]);
 				result[0].fromHash = true;
 				break;
 			}
