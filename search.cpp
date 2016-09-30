@@ -5,7 +5,6 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		return 0;
 	}
 
-
 	++movesCounter;
 
 	uint8_t color;
