@@ -168,21 +168,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 		}
 	}
 
-	/*for(unsigned int i = num_attacks; i < result.size(); ++i) {
-		if(b.isWhiteMove()) {
-			if(result[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable && whiteKiller[depth].move.quality()) {
-				std::swap(result[i], result[num_attacks]);
-				break;
-			}
-		} else {
-			if(result[i].equal(blackKiller[depth].move) && blackKiller[depth].enable && blackKiller[depth].move.quality()) {
-				std::swap(result[i], result[num_attacks]);
-				break;
-			}
-		}
-	}*/
-
-	if(boardHash[getColorHash(b) & hash_cutter].enable && boardHash[getColorHash(b) & hash_cutter].depth >= max_depth - depth && boardHash[getColorHash(b) & hash_cutter].hash == getColorHash(b)) {
+	/*if(boardHash[getColorHash(b) & hash_cutter].enable && boardHash[getColorHash(b) & hash_cutter].depth >= max_depth - depth && boardHash[getColorHash(b) & hash_cutter].hash == getColorHash(b)) {
 		for(unsigned int i = 0; i < result.size(); ++i) {
 			if(result[i].equal(boardHash[getColorHash(b) & hash_cutter].move)) {
 				std::swap(result[0], result[i]);
@@ -190,7 +176,21 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 				break;
 			}
 		}
-	}
+	}*/
+
+	/*for(unsigned int i = num_attacks; i < result.size(); ++i) {
+		if(b.isWhiteMove()) {
+			if(result[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable && whiteKiller[depth].move.quality()) {
+				std::swap(result[i], result[0]);
+				break;
+			}
+		} else {
+			if(result[i].equal(blackKiller[depth].move) && blackKiller[depth].enable && blackKiller[depth].move.quality()) {
+				std::swap(result[i], result[0]);
+				break;
+			}
+		}
+	}*/
 
 	return result;
 }
