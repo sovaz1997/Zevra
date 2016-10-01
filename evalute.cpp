@@ -82,7 +82,7 @@ double Game::evalute(Board & b) {
 		}
 	}
 
-	double passedPawnBonus = 0;
+	double passedPawnBonus = 0, dualPassedBonus = 0;
 
 	uint64_t whitePassedPawnMap = 0, blackPassedPawnMap = 0;
 
@@ -110,7 +110,17 @@ double Game::evalute(Board & b) {
 		}
 	}
 
-	double pawnStructure = passedPawnBonus;
+	for(int x = 0; x < BOARD_SIZE; ++x) {
+		if(popcount64(pawnAttackCutter[x] & figureMask[PAWN | WHITE]) > 1) {
+			dualPassedBonus += (DUAL_PAWN_BONUS * popcount64(pawnAttackCutter[x] & figureMask[PAWN | WHITE]) / 2);
+		}
+
+		if(popcount64(pawnAttackCutter[x] & figureMask[PAWN | BLACK]) > 1) {
+			dualPassedBonus -= (DUAL_PAWN_BONUS * popcount64(pawnAttackCutter[x] & figureMask[PAWN | WHITE]) / 2);
+		}
+	}
+
+	double pawnStructure = passedPawnBonus + dualPassedBonus;
 
 	int mul = 1;
 	if(!b.isWhiteMove()) {

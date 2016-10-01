@@ -43,7 +43,7 @@ bool Game::uciHandler(std::string str) {
 				max_depth = std::stoi(cmd[2]);
 			  goFixedDepth();
 			} else if(cmd[1] == "movetime") {
-				goFixedTime(std::stoi(cmd[2]) - 50);
+				goFixedTime(std::stoi(cmd[2]) - 500);
 			}
 		} else if(cmd[0] == "posmoves") {
 			bool shah_tmp;
@@ -69,7 +69,6 @@ bool Game::uciHandler(std::string str) {
 			bool shah_tmp;
 			std::cout << "!";
 			for(unsigned int i = 0; i < 100000; ++i) {
-
 				generatePositionMoves(game_board, shah_tmp, true, 0);
 			}
 			std::cout << "!";
