@@ -3,6 +3,53 @@
 double Game::evalute(Board & b) {
 	//новая функция оценки
 
+	int attackTable[BOARD_SIZE][BOARD_SIZE];
+
+	for(int i = 0; i < BOARD_SIZE; ++i) {
+		for(int j = 0; j < BOARD_SIZE; ++j) {
+			attackTable[i][j] = 0;
+		}
+	}
+
+	/*bool color = b.whiteMove;
+
+	b.whiteMove = true;
+	bool tmpShah;
+	std::vector<Move> moves = generatePositionMoves(b, tmpShah, false, 0);
+
+	for(unsigned int i = 0; i < moves.size(); ++i) {
+		if((b.board[moves[i].fromY][moves[i].fromX] | TYPE_SAVE) == PAWN && moves[i].fromY == moves[i].toY) {
+			continue;
+		}
+		++attackTable[moves[i].toY][moves[i].toX];
+	}
+
+	b.whiteMove = false;
+	moves = generatePositionMoves(b, tmpShah, false, 0);
+
+	for(unsigned int i = 0; i < moves.size(); ++i) {
+		if((b.board[moves[i].fromY][moves[i].fromX] | TYPE_SAVE) == PAWN && moves[i].fromY == moves[i].toY) {
+			continue;
+		}
+		--attackTable[moves[i].toY][moves[i].toX];
+	}
+
+	b.whiteMove = color;
+
+	double attackBonus = 0;*/
+
+	/*for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
+		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
+			if(b.board[y][x] != 0) {
+				if(std::abs(attackTable[y][x]) <= 6) {
+					attackBonus += (attack_bonus[attackTable[y][x]]);
+				} else {
+					attackBonus += attack_bonus[6];
+				}
+			}
+		}
+	}*/
+
 	//оценка материального преимущества
 	double material_eval = 0, all_material_eval = 0;
 	std::vector<uint64_t> figureMask(32, 0);
@@ -127,7 +174,7 @@ double Game::evalute(Board & b) {
 		mul = -1;
 	}
 
-	return mul * (material_eval + figure_state_eval + pawnStructure);
+	return mul * (material_eval + figure_state_eval + pawnStructure /*+ attackBonus*/);
 }
 
 bool Game::insufficientMaterial(std::vector<uint64_t>figureMask) {

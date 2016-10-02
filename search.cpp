@@ -34,6 +34,17 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		return quies(b, alpha, beta, rule);
 	}
 
+	if(!inCheck(b, WHITE) && !inCheck(b, BLACK) && !isEndGame(b) && usedNullMove && (max_depth - depth) > 4 && depth >= 4) {
+		b.whiteMove = !b.whiteMove;
+		double tmp = -negamax(b, -beta, -beta+1, depth + 4, real_depth + 1, hash, basis, pv, false, rule);
+
+		if(tmp >= beta) {
+			return tmp;
+		}
+
+		b.whiteMove = !b.whiteMove;
+	}
+
 	/*if(inCheck(b, color) && depth >= max_depth - 1) {
 		--nextDepth;
 		basis = false;
@@ -679,4 +690,17 @@ double Game::quies(Board b, double alpha, double beta, int rule) {
 	}
 
 	return alpha;
+}
+
+bool Game::isEndGame(Board& b) {
+	int num_figures = 0;
+	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
+		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
+			if(b.board[y][x] != 0) {
+				++num_figures;
+			}
+		}
+	}
+
+	return num_figures <= 7;
 }

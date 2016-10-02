@@ -129,4 +129,6 @@ const double DUAL_PAWN_BONUS = -15;
 const double ISOLATED_PAWN_BONUS = -15;
 const double passed_pawn_line[BOARD_SIZE] = {0, 90, 60, 50, 40, 30, 20, 0};
 
+const double attack_bonus[7] = {0, 1, 3, 6, 10, 14, 20};
+
 #endif

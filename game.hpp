@@ -113,6 +113,8 @@ public:
 	double getForcastEvalute(Board & b);
 	double getFigureEval(Board & b, int y, int x);
 
+	bool isEndGame(Board& b);
+
 	Move bestmove;
 	//uint8_t getFigureAttacks(Board & b, uint8_t color);
 };
