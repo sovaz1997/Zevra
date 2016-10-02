@@ -100,7 +100,7 @@ void Game::goFixedDepth() {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 		}*/
 
-		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH, false);
+		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
@@ -138,6 +138,7 @@ void Game::goFixedTime(int tm) {
 	bool basis = false;
 	movesCounter = 0;
 
+	double start_timer = clock();
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		flattenHistory();
 		/*if(game_board.isWhiteMove()) {
@@ -145,7 +146,7 @@ void Game::goFixedTime(int tm) {
 		} else {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 		}*/
-		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME, false);
+		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, true, pv, true, FIXED_TIME, false);
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
@@ -157,7 +158,12 @@ void Game::goFixedTime(int tm) {
 			break;
 		}
 	}
+	double end_timer = clock();
 
+	//std::cout << "bestmove " << bestMove.getMoveString() << " time " <<  "\n";
+
+	std::cout << "info nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
+	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 	std::cout << "bestmove " << bestMove.getMoveString() << "\n";
 }
 

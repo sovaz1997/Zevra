@@ -2,6 +2,7 @@
 
 double Game::negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth + 1;
+	bool nextBasis = basis;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -52,9 +53,9 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		b.whiteMove = !b.whiteMove;
 	}*/
 
-	if(inCheck(b, color) && depth >= max_depth - 1) {
+	if(inCheck(b, color)) {
 		--nextDepth;
-		//basis = false;
+		nextBasis = false;
 	}
 
 	int num_moves = 0;
@@ -107,7 +108,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		}*/
 
 			//if(num_moves <= 3 || inCheck(tmp_brd, color)) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+				tmp = -negamax(tmp_brd, -beta, -alpha, nextDepth, real_depth + 1, hash, nextBasis, pv, true, rule, capt);
 			/*} else {
 				tmp = -negamax(tmp_brd, -(alpha + 1), -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule, capt);
 				if(tmp > alpha) {
@@ -160,7 +161,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				}
 			}
 
-			if(depth == 0) {
+			if(depth == 0 && basis) {
 				bestmove = local_move;
 				bestMove = bestmove;
 				std::cout << "info nodes " << movesCounter;
@@ -189,7 +190,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		}
 	}
 
-	if(depth == 0 && num_moves > 0) {
+	if(depth == 0 && num_moves > 0 && basis) {
 		bestmove = local_move;
 		bestMove = bestmove;
 		std::cout << "info nodes " << movesCounter;
