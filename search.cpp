@@ -53,10 +53,10 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		b.whiteMove = !b.whiteMove;
 	}*/
 
-	if(inCheck(b, color)) {
+	/*if(inCheck(b, color)) {
 		--nextDepth;
 		nextBasis = false;
-	}
+	}*/
 
 	int num_moves = 0;
 
