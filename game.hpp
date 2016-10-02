@@ -68,7 +68,7 @@ public:
 	Game();
 	double minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
 	double minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
-	double negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
+	double negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
 
   double quies(Board b, double alpha, double beta, int rule);
@@ -117,6 +117,8 @@ public:
 
 	Move bestmove;
 	//uint8_t getFigureAttacks(Board & b, uint8_t color);
+
+	double margin = PAWN_EV / 2;
 };
 
 #endif

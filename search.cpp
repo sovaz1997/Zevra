@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-double Game::negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule) {
+double Game::negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth + 1;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
@@ -34,21 +34,28 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 		return quies(b, alpha, beta, rule);
 	}
 
-	if(!inCheck(b, WHITE) && !inCheck(b, BLACK) && !isEndGame(b) && usedNullMove && (max_depth - depth) > 4 && depth >= 4) {
+
+	/*if(depth >= max_depth - 2 && usedNullMove && !inCheck(b, WHITE) && !inCheck(b, BLACK) && !capture) {
+		if(evalute(b) - margin >= beta) {
+			return beta;
+		}
+	}*/
+
+	/*if(!inCheck(b, WHITE) && !inCheck(b, BLACK) && !isEndGame(b) && usedNullMove && (max_depth - depth) > 4 && depth >= 4 && !capture) {
 		b.whiteMove = !b.whiteMove;
-		double tmp = -negamax(b, -beta, -beta+1, depth + 4, real_depth + 1, hash, basis, pv, false, rule);
+		double tmp = -negamax(b, -beta, -beta+1, depth + 4, real_depth + 1, hash, basis, pv, false, rule, capture);
 
 		if(tmp >= beta) {
 			return tmp;
 		}
 
 		b.whiteMove = !b.whiteMove;
-	}
-
-	/*if(inCheck(b, color) && depth >= max_depth - 1) {
-		--nextDepth;
-		basis = false;
 	}*/
+
+	if(inCheck(b, color) && depth >= max_depth - 1) {
+		--nextDepth;
+		//basis = false;
+	}
 
 	int num_moves = 0;
 
@@ -72,6 +79,10 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 		}
 		Board tmp_brd = b;
+		bool capt = false;
+		if(b.board[moves[i].toY][moves[i].toX] != 0) {
+			capt = true;
+		}
 		tmp_brd.move(moves[i]);
 
 		if(inCheck(tmp_brd, color)) {
@@ -95,24 +106,14 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 		}*/
 
-		//if(num_moves == 1) {
-			if(num_moves <= 3 || inCheck(tmp_brd, color)) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
-			} else {
-				tmp = -negamax(tmp_brd, -(alpha + 1), -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule);
+			//if(num_moves <= 3 || inCheck(tmp_brd, color)) {
+				tmp = -negamax(tmp_brd, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			/*} else {
+				tmp = -negamax(tmp_brd, -(alpha + 1), -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule, capt);
 				if(tmp > alpha) {
-						tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
+						tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
 				}
-			}
-	/*	} else {
-			tmp = -negamax(tmp_brd, -beta, -alpha + 1, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
-
-			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
-			}
-		}*/
-
-		//tmp = minimax_black(tmp_brd, alpha, beta, depth + 1, real_depth + 1, hash, basis, pv, true, rule);
+			}*/
 
 		pv.pop_back();
 

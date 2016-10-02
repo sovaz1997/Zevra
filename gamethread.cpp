@@ -51,7 +51,7 @@ void Game::go() {
 			} else {
 				minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 			}*/
-			negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
+			negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH, false);
 		}
 		end_timer = clock();
 
@@ -100,7 +100,7 @@ void Game::goFixedDepth() {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 		}*/
 
-		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
+		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH, false);
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
@@ -145,7 +145,7 @@ void Game::goFixedTime(int tm) {
 		} else {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 		}*/
-		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
+		double score = negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME, false);
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
