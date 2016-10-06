@@ -58,6 +58,8 @@ private:
 	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 
+	bool hasBestMove = false;
+
 	int popcount64(uint64_t value);
 
 	//фиксированное время

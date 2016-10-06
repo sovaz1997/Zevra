@@ -14,12 +14,12 @@ FILES = constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.
 all: $(FILES)
 	$(CC) $(CFLAGS) $(FILES) -o zevra
 #gdb: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
-#	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o zevra
+#	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o nalimov
 gprof: $(FILES)
-	$(CC) $(CFLAGS) $(GPROF) $(FILES) -o zevra
+	$(CC) $(CFLAGS) $(GPROF) $(FILES) -o nalimov
 
 #gcov: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
-#	$(CC) $(GCOV) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o zevra
+#	$(CC) $(GCOV) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o nalimov
 
 
 main.o: main.cpp
@@ -83,4 +83,4 @@ timer.o: timer.hpp timer.cpp
 	$(CC) $(CFLAGS) -c timer.cpp
 
 clean:
-	rm -rf *.o zevra
+	rm -rf *.o nalimov

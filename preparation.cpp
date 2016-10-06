@@ -1062,6 +1062,7 @@ void Game::zobristGenerate() {
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
+				gen.seed((i+1)*(j+1)*(k+1));
 				zobrist[i][j][k] = dis(gen);
 			}
 		}
@@ -1089,7 +1090,6 @@ void Game::initEngine() {
 	cleanWhiteHistory();
 	cleanBlackHistory();
 	createPawnAttackCutter();
-
 	clearCash();
 }
 

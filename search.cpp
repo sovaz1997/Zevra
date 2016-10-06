@@ -18,7 +18,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b, pos_hash);
 
-	if(depth > 0) {
+	/*if(depth > 0) {
 	int third_repeat = 1;
 		for(unsigned int i = 0; i < hash.size(); ++i) {
 			if(hash[i] == pos_hash) {
@@ -28,7 +28,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				return 0;
 			}
 		}
-	}
+	}*/
 
 	if(depth >= max_depth) {
 		return quies(b, alpha, beta, rule);
@@ -106,14 +106,31 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			}
 		}*/
 
-			//if(num_moves <= 3 || inCheck(tmp_brd, color)) {
-				tmp = -negamax(tmp_brd, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			/*} else {
-				tmp = -negamax(tmp_brd, -(alpha + 1), -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule, capt);
+			/*if(num_moves <= 3 || inCheck(tmp_brd, WHITE) || inCheck(tmp_brd, BLACK) || moves.size() < 4 || b.board[moves[i].toY][moves[i].toX] != 0) {
+				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+			} else {
+				//tmp = alpha + 1;
+				tmp = -negamax(tmp_brd, -beta, -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule, capt);
 				if(tmp > alpha) {
 						tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
 				}
 			}*/
+
+			tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+
+			/*if(num_moves >= 4             &&
+		   3 <= (max_depth - depth)                       &&
+		   b.board[moves[i].toY][moves[i].toX] == 0  &&
+		   !inCheck(b, WHITE) && !inCheck(b, BLACK)) {
+				 tmp = -negamax(tmp_brd, -(alpha + 1), -alpha, depth + 2, real_depth + 1, hash, basis, pv, true, rule, capt);
+			} else {
+				tmp = alpha + 1;
+			}
+
+			if(tmp > alpha) {
+					tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+			}*/
+
 
 		pv.pop_back();
 
@@ -143,20 +160,23 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 
 			/*if(hashEnable) {
 				if(!boardHash[board_hash & hash_cutter].enable) {
-					boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, BETA_CUT_EV);
+					boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, alpha, REAL_EV);
 				} else {
-					if(boardHash[board_hash & hash_cutter].depth <= max_depth - real_depth) {
-						boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, BETA_CUT_EV);
+					if(boardHash[board_hash & hash_cutter].depth < max_depth - real_depth) {
+						boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, alpha, REAL_EV);
 					}
 				}
 			}*/
 		}
+
 		if(max >= beta) {
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				if(color == WHITE) {
 					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+					whiteKiller[real_depth] = Killer(moves[i]);
 				} else {
 					blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+					blackKiller[real_depth] = Killer(moves[i]);
 				}
 			}
 
@@ -197,9 +217,9 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 			if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
 				std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
 			} else if(max < 0) {
-				std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
+				std::cout << "mate " <<  (int)(-abs(max - BLACK_WIN) / 2 - 1) << "\n";
 			} else {
-				std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
+				std::cout << "mate " <<  (int)(abs(max - WHITE_WIN) / 2 + 1) << "\n";
 			}
 
 			gameHash.push_back(getHash(game_board));
@@ -207,11 +227,11 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 
 	printVariant();
 
-	/*if(hashEnable) {
+/*	if(hashEnable) {
 		if(!boardHash[board_hash & hash_cutter].enable) {
 			boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, REAL_EV);
 		} else {
-			if(boardHash[board_hash & hash_cutter].depth <= max_depth - real_depth) {
+			if(boardHash[board_hash & hash_cutter].depth < max_depth - real_depth) {
 				boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, max_depth - real_depth, max, REAL_EV);
 			}
 		}
