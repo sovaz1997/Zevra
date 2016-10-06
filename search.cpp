@@ -35,15 +35,15 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	}
 
 
-	/*if(depth >= max_depth - 2 && usedNullMove && !inCheck(b, WHITE) && !inCheck(b, BLACK) && !capture) {
+	/*if(depth >= max_depth - 1 && usedNullMove && !inCheck(b, WHITE) && !inCheck(b, BLACK) && !capture) {
 		if(evalute(b) - margin >= beta) {
 			return beta;
 		}
 	}*/
 
-	/*if(!inCheck(b, WHITE) && !inCheck(b, BLACK) && !isEndGame(b) && usedNullMove && (max_depth - depth) > 4 && depth >= 4 && !capture) {
+	/*if(!inCheck(b, WHITE) && !inCheck(b, BLACK) && !isEndGame(b) && usedNullMove && (max_depth - depth) > 2 && depth >= 4 && !capture) {
 		b.whiteMove = !b.whiteMove;
-		double tmp = -negamax(b, -beta, -beta+1, depth + 4, real_depth + 1, hash, basis, pv, false, rule, capture);
+		double tmp = -negamax(b, -beta, -beta+1, depth + 2, real_depth + 1, hash, basis, pv, false, rule, capture);
 
 		if(tmp >= beta) {
 			return tmp;
