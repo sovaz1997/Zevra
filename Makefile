@@ -1,27 +1,9 @@
 CC = g++
-CFLAGS = -Wall -pedantic -std=c++11 -m64
-OPTIMIZATION =  -O4 -flto -march=native -funroll-loops -msse
+CFLAGS = -Wall -pedantic -std=c++11 -m64 -O4 -flto -march=native -funroll-loops -msse
+FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o
 
-GDB = -std=c++17 -Wall -pedantic -m64 -O4 -flto -march=native -funroll-loops -pthread -g
-
-GPROF = -pg
-
-GCOV = -std=c++17 -Wall -pedantic -m64 -pthread -fprofile-arcs -ftest-coverage
-
-FILES = constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o
-
-
-
-all: $(FILES)
-	$(CC) $(CFLAGS) $(FILES) $(OPTIMIZATION) -o zevra
-#gdb: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
-#	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o nalimov
-gprof: $(FILES)
-	$(CC) $(CFLAGS) $(FILES) $(GPROF) -o zevra
-
-#gcov: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
-#	$(CC) $(GCOV) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o nalimov
-
+all: constants.hpp $(FILES)
+	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o zevra
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp
@@ -90,4 +72,4 @@ figurecell.o: figurecell.hpp figurecell.cpp
 	$(CC) $(CFLAGS) -c figurecell.cpp
 	
 clean:
-	rm -rf *.o nalimov
+	rm -rf *.o zevra
