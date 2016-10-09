@@ -9,7 +9,6 @@
 #include <string>
 #include <cstdlib>
 #include <random>
-#include <nmmintrin.h>
 #include <thread>
 #include <cstdio>
 #include <ctime>

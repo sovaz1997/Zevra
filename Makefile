@@ -8,7 +8,7 @@ GPROF = -pg
 
 GCOV = -std=c++17 -Wall -pedantic -m64 -pthread -fprofile-arcs -ftest-coverage
 
-FILES = constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o
+FILES = constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o
 
 
 
@@ -82,6 +82,12 @@ gameservices.o: game.hpp gameservices.cpp
 
 timer.o: timer.hpp timer.cpp
 	$(CC) $(CFLAGS) -c timer.cpp
+	
+goback.o: timer.hpp goback.cpp
+	$(CC) $(CFLAGS) -c goback.cpp
 
+figurecell.o: figurecell.hpp figurecell.cpp
+	$(CC) $(CFLAGS) -c figurecell.cpp
+	
 clean:
 	rm -rf *.o nalimov
