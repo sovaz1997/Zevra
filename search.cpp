@@ -15,8 +15,8 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		color = BLACK;
 	}
 
-	uint64_t pos_hash = getHash(b);
-	uint64_t board_hash = getColorHash(b, pos_hash);
+	//uint64_t pos_hash = getHash(b);
+	//uint64_t board_hash = getColorHash(b, pos_hash);
 
 	/*if(depth > 0) {
 	int third_repeat = 1;
@@ -101,7 +101,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		double tmp;
 
 		pv.push_back(moves[i]);
-		hash.push_back(pos_hash);
+		//hash.push_back(pos_hash);
 
 		/*if(moves[i].fromHash && hashEnable) {
 			if(boardHash[board_hash & hash_cutter].type_mv == BETA_CUT_EV) {
