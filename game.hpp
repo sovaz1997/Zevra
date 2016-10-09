@@ -9,6 +9,7 @@
 #include <string>
 #include <cstdlib>
 #include <random>
+#include <nmmintrin.h>
 #include <thread>
 #include <cstdio>
 #include <ctime>
@@ -70,10 +71,10 @@ public:
 	Game();
 	double minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
 	double minimax_black(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);
-	double negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	double negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
 
-  double quies(Board b, double alpha, double beta, int rule);
+  double quies(Board & b, double alpha, double beta, int rule);
 
 	int startGame();
 	std::vector<std::string> getStringArray(std::string str);

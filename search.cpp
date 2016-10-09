@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-double Game::negamax(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
+double Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth + 1;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
@@ -31,6 +31,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 	}*/
 
 	if(depth >= max_depth) {
+		//return evalute(b);
 		return quies(b, alpha, beta, rule);
 	}
 
@@ -78,14 +79,16 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				return 0;
 			}
 		}
-		Board tmp_brd = b;
+		//Board tmp_brd = b;
 		bool capt = false;
 		if(b.board[moves[i].toY][moves[i].toX] != 0) {
 			capt = true;
 		}
-		tmp_brd.move(moves[i]);
 
-		if(inCheck(tmp_brd, color)) {
+		b.move(moves[i]);
+
+		if(inCheck(b, color)) {
+			b.goBack();
 			continue;
 		}
 
@@ -116,7 +119,8 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				}
 			}*/
 
-			tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+			tmp = -negamax(b, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+			b.goBack();
 
 			/*if(num_moves >= 4             &&
 		   3 <= (max_depth - depth)                       &&
@@ -131,7 +135,7 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 					tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
 			}*/
 
-
+		//bool goBackMust = true;
 		pv.pop_back();
 
 		if(depth == 0) {
@@ -184,18 +188,17 @@ double Game::negamax(Board b, double alpha, double beta, int depth, int real_dep
 				bestmove = local_move;
 				bestMove = bestmove;
 				std::cout << "info nodes " << movesCounter;
-				//if(basis || rule == FIXED_TIME) {
-					std::cout << " score ";
-					if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
-						std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
-					} else if(max < 0) {
-						std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
-					} else {
-						std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
-					}
-
-					gameHash.push_back(getHash(game_board));
+				std::cout << " score ";
+				if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
+					std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
+				} else if(max < 0) {
+					std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
+				} else {
+					std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
 				}
+
+				gameHash.push_back(getHash(game_board));
+			}
 
 			return max;
 		}
@@ -658,7 +661,7 @@ double Game::minimax_black(Board b, double alpha, double beta, int depth, int re
 	return min;
 }
 
-double Game::quies(Board b, double alpha, double beta, int rule) {
+double Game::quies(Board & b, double alpha, double beta, int rule) {
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -687,20 +690,23 @@ double Game::quies(Board b, double alpha, double beta, int rule) {
 
 		++movesCounter;
 
-		Board tmp_brd = b;
-		tmp_brd.move(moves[i]);
+		//Board tmp_brd = b;
+		b.move(moves[i]);
 
 		if(b.isWhiteMove()) {
-			if(inCheck(tmp_brd, WHITE)) {
+			if(inCheck(b, WHITE)) {
+				b.goBack();
 				continue;
 			}
 		} else {
-			if(inCheck(tmp_brd, BLACK)) {
+			if(inCheck(b, BLACK)) {
+				b.goBack();
 				continue;
 			}
 		}
 
-		val = -quies(tmp_brd, -beta, -alpha, rule);
+		val = -quies(b, -beta, -alpha, rule);
+		b.goBack();
 
 		if(val >= beta) {
 			return val;

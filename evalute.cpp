@@ -709,5 +709,5 @@ uint8_t Game::getFigureAttacks(Board & b, uint8_t color) {
 }*/
 
 int Game::popcount64(uint64_t value) {
-	return __builtin_popcountll(value);
+	return /*_mm_popcnt_u64(value);*/ __builtin_popcountll(value);
 }

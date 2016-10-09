@@ -72,6 +72,8 @@ bool Game::uciHandler(std::string str) {
 				generatePositionMoves(game_board, shah_tmp, true, 0);
 			}
 			std::cout << "!";
+		} else if(cmd[0] == "goback") {
+			game_board.goBack();
 		}
 
 		return true;

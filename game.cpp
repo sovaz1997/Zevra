@@ -2,5 +2,4 @@
 
 Game::Game() {
 	initEngine();
-	//startGame();
 }

@@ -10,19 +10,22 @@
 #include "constants.hpp"
 #include "boardinfo.hpp"
 #include "point.hpp"
+#include "goback.hpp"
+#include "figurecell.hpp"
 
 
 class Move;
+class GoBack;
 
 class Board {
 private:
 	std::string savedFen;
-
 	void setFen(std::string FEN);
 	void setCastling(std::string FEN);
 	void setPassant(std::string FEN);
 
-	std::stack<BoardInfo> history;
+	//std::stack<BoardInfo> history;
+	std::stack<GoBack>history;
 public:
 	Board();
 	uint8_t createFigure(uint8_t fig, uint8_t type);
@@ -35,7 +38,7 @@ public:
 	void printBoard();
 	void cleanBoard();
 	void printStringBoard();
-	void unMove();
+	void goBack();
 
 	//uint8_t getFigure(int y, int x);
 	void setFigure(uint8_t figure, int y, int x);
@@ -56,9 +59,6 @@ public:
 	int numHalfMove;
 	int move_rule_num;
 	/* ------*/
-
-	void setBoardInfo();
-	void getBoardInfo();
 
 	//std::vector<Point>figureList;
 };

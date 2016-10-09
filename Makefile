@@ -1,9 +1,10 @@
 CC = g++
-CFLAGS = -Wall -pedantic -std=c++17 -m64 -O4 -flto -march=native -funroll-loops -msse
+CFLAGS = -Wall -pedantic -std=c++11 -m64
+OPTIMIZATION =  -O4 -flto -march=native -funroll-loops -msse
 
 GDB = -std=c++17 -Wall -pedantic -m64 -O4 -flto -march=native -funroll-loops -pthread -g
 
-GPROF = -g -pg
+GPROF = -pg
 
 GCOV = -std=c++17 -Wall -pedantic -m64 -pthread -fprofile-arcs -ftest-coverage
 
@@ -12,11 +13,11 @@ FILES = constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.
 
 
 all: $(FILES)
-	$(CC) $(CFLAGS) $(FILES) -o zevra
+	$(CC) $(CFLAGS) $(FILES) $(OPTIMIZATION) -o zevra
 #gdb: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
 #	$(CC) $(GDB) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o nalimov
 gprof: $(FILES)
-	$(CC) $(CFLAGS) $(GPROF) $(FILES) -o nalimov
+	$(CC) $(CFLAGS) $(FILES) $(GPROF) -o zevra
 
 #gcov: constants.hpp main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o
 #	$(CC) $(GCOV) main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o  uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o -o nalimov

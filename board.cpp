@@ -57,6 +57,7 @@ void Board::changeFigureColor(uint8_t & fig, uint8_t color) {
 void Board::setFenPosition(std::string FEN) {
 	cleanBoard();
 
+
 	int pointer = 0;
 
 	std::string str;
@@ -312,6 +313,10 @@ void Board::printBoard() {
 
 void Board::cleanBoard() {
 	//figureList.clear();
+	while(!history.empty()) {
+		history.pop();
+	}
+
 	for(uint8_t y = 0; y < board.size(); ++y) {
 		for(uint8_t x = 0; x < board.size(); ++x) {
 			board[y][x] = 0;
@@ -343,6 +348,43 @@ void Board::setFigure(uint8_t figure, int y, int x) {
 }
 
 void Board::move(Move & mv) {
+	history.push(GoBack());
+	history.top().type = mv.moveType;
+	//history.top().fromY = mv.fromY;
+	//history.top().fromX = mv.fromX;
+	//history.top().toY = mv.toY;
+	//history.top().toX = mv.toX;
+	history.top().passant_enable = passant_enable;
+	history.top().passant_y = passant_y;
+	history.top().passant_x = passant_x;
+	history.top().numHalfMove = numHalfMove;
+	history.top().move_rule_num = move_rule_num;
+	//history.top().attackMove = false;
+
+	history.top().whiteShortCastleEnable = whiteShortCastleEnable;
+	history.top().whiteLongCastleEnable = whiteLongCastleEnable;
+	history.top().blackShortCastleEnable = blackShortCastleEnable;
+	history.top().blackLongCastleEnable = blackLongCastleEnable;
+
+	/*if(board[mv.toY][mv.toX] != 0) {
+		history.top().attackMove = true;
+		history.top().killedFigure = board[mv.toY][mv.toX];
+	}*/
+
+	history.top().passant_enable = false;
+
+	history.top().fig1 = FigureCell(board[mv.fromY][mv.fromX], mv.fromY, mv.fromX);
+	history.top().fig2 = FigureCell(board[mv.toY][mv.toX], mv.toY, mv.toX);
+
+	if(mv.moveType == PASSANT_MV) {
+		if(whiteMove) {
+			history.top().fig3 = FigureCell(board[passant_y + 1][passant_x], passant_y + 1, passant_x);
+		} else {
+			history.top().fig3 = FigureCell(board[passant_y - 1][passant_x], passant_y - 1, passant_x);
+		}
+		history.top().passant_enable = true;
+	}
+
 	passant_enable = false;
 
 	if(board[mv.fromY][mv.fromX] == (PAWN | WHITE) && mv.fromY - mv.toY == 2) {
@@ -397,8 +439,11 @@ void Board::move(Move & mv) {
 	}
 }
 
-void Board::unMove() {
-	getBoardInfo();
+void Board::goBack() {
+	if(!history.empty()) {
+		history.top().goBack(this);
+		history.pop();
+	}
 }
 
 bool Board::isWhiteMove() {
@@ -441,44 +486,4 @@ void Board::printStringBoard() {
       }
     }
   }
-}
-
-void Board::setBoardInfo() {
-	BoardInfo b_info;
-	b_info.passant_enable = passant_enable;
-	b_info.passant_x = passant_x;
-	b_info.passant_y = passant_y;
-	b_info.whiteMove = whiteMove;
-
-	b_info.blackShortCastleEnable = blackShortCastleEnable;
-	b_info.blackLongCastleEnable = blackLongCastleEnable;
-	b_info.whiteShortCastleEnable = whiteShortCastleEnable;
-	b_info.whiteLongCastleEnable = whiteLongCastleEnable;
-
-	b_info.board = board;
-	b_info.numHalfMove = numHalfMove;
-	b_info.move_rule_num = move_rule_num;
-
-	history.push(b_info);
-}
-
-void Board::getBoardInfo() {
-	if(!history.empty()) {
-		passant_enable = history.top().passant_enable;
-
-		passant_x = history.top().passant_x;
-		passant_y = history.top().passant_y;
-		whiteMove = history.top().whiteMove;
-
-		blackShortCastleEnable = history.top().blackShortCastleEnable;
-		blackLongCastleEnable = history.top().blackLongCastleEnable;
-		whiteShortCastleEnable = history.top().whiteShortCastleEnable;
-		whiteLongCastleEnable =history.top().whiteLongCastleEnable;
-
-		board = history.top().board;
-		numHalfMove = history.top().numHalfMove;
-		move_rule_num = history.top().move_rule_num;
-
-		history.pop();
-	}
 }
