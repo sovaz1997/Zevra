@@ -15,6 +15,7 @@ public:
   FigureCell fig1, fig2, fig3;
   bool passant = false;
   bool passant_enable;
+  bool passant_has = false;
 
   bool whiteShortCastleEnable;
   bool whiteLongCastleEnable;

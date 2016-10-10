@@ -51,29 +51,8 @@ void GoBack::goBack(Board* board) {
     board->board[fig1.y][fig1.x] = fig1.figure;
     board->board[fig2.y][fig2.x] = fig2.figure;
 
-    if(passant_enable) {
+    if(passant_has) {
       board->board[fig3.y][fig3.x] = fig3.figure;
     }
-    /*if(type == STANDARD_MV || type == PASSANT_MV) {
-      board->board[fromY][fromX] = board->board[toY][toX];
-      board->board[toY][toX] = 0;
-      if(type == STANDARD_MV) {
-        if(attackMove) {
-          board->board[toY][toX] = killedFigure;
-        }
-      } else if(type == PASSANT_MV) {
-        if(color == WHITE) {
-          board->board[passant_y + 1][passant_x] = (enemyColor | PAWN);
-        } else {
-          board->board[passant_y - 1][passant_x] = (enemyColor | PAWN);
-        }
-      }
-    } else if(type == TRANSFORMATION_MV) {
-      board->board[fromY][fromX] = (color | PAWN);
-      board->board[toY][toX] = 0;
-      if(attackMove) {
-        board->board[toY][toX] = killedFigure;
-      }
-    }*/
   }
 }

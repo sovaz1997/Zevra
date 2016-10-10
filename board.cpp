@@ -371,7 +371,7 @@ void Board::move(Move & mv) {
 		history.top().killedFigure = board[mv.toY][mv.toX];
 	}*/
 
-	history.top().passant_enable = false;
+//	history.top().passant_enable = false;
 
 	history.top().fig1 = FigureCell(board[mv.fromY][mv.fromX], mv.fromY, mv.fromX);
 	history.top().fig2 = FigureCell(board[mv.toY][mv.toX], mv.toY, mv.toX);
@@ -382,7 +382,8 @@ void Board::move(Move & mv) {
 		} else {
 			history.top().fig3 = FigureCell(board[passant_y - 1][passant_x], passant_y - 1, passant_x);
 		}
-		history.top().passant_enable = true;
+		//history.top().passant_enable = true;
+		history.top().passant_has = true;
 	}
 
 	passant_enable = false;

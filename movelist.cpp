@@ -42,7 +42,6 @@ MoveItem* MoveList::add(Move mv) {
 MoveItem* MoveList::add(Move mv, MoveItem* special) {
 	MoveItem* it = add(mv);
 	it->specialNext = special;
-
 	return it;
 }
 
