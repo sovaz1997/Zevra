@@ -76,6 +76,7 @@ public:
   double quies(Board & b, double alpha, double beta, int rule);
 
 	int startGame();
+	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
 	bool move(std::string mv);
 	void printBitBoard(uint64_t bit_board);

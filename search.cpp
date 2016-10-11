@@ -53,10 +53,10 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		b.whiteMove = !b.whiteMove;
 	}*/
 
-	if(inCheck(b, color)) {
+	//if(inCheck(b, color)) {
 		//--nextDepth;
 		//basis = false;
-	}
+	//}
 
 	int num_moves = 0;
 
@@ -139,8 +139,8 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		pv.pop_back();
 
 		if(depth == 0) {
-			std::cout << "info score cp " << (int) (max / PAWN_EV * 100) << " depth " << max_depth << "\n";
-			std::cout << "info currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves << "\n";
+			//std::cout << "info score cp " << (int) (max / PAWN_EV * 100) << " depth " << max_depth << "\n";
+			std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves << "\n";
 		}
 
 		if(tmp > max) {
@@ -187,15 +187,17 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			if(depth == 0 && basis) {
 				bestmove = local_move;
 				bestMove = bestmove;
-				std::cout << "info nodes " << movesCounter;
-				std::cout << " score ";
-				if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
+				//std::cout << "info depth " << max_depth << "\n";
+				//std::cout << " score ";
+				/*if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
 					std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
 				} else if(max < 0) {
 					std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
 				} else {
 					std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
-				}
+				}*/
+				//printScore(max);
+				//std::cout << "\n";
 
 				gameHash.push_back(getHash(game_board));
 			}
@@ -212,20 +214,22 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		}
 	}
 
-	if(depth == 0 && num_moves > 0) {
+	if(depth == 0 && basis) {
 		bestmove = local_move;
 		bestMove = bestmove;
-		std::cout << "info nodes " << movesCounter;
-			std::cout << " score ";
-			if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
-				std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
-			} else if(max < 0) {
-				std::cout << "mate " <<  (int)(-abs(max - BLACK_WIN) / 2 - 1) << "\n";
-			} else {
-				std::cout << "mate " <<  (int)(abs(max - WHITE_WIN) / 2 + 1) << "\n";
-			}
+		//std::cout << "info depth " << max_depth << "\n";
+		//std::cout << " score ";
+		/*if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
+			std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
+		} else if(max < 0) {
+			std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
+		} else {
+			std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
+		}*/
+		//printScore(max);
+		//std::cout << "\n";
 
-			gameHash.push_back(getHash(game_board));
+		gameHash.push_back(getHash(game_board));
 	}
 
 	printVariant();

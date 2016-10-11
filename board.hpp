@@ -58,6 +58,7 @@ public:
 	std::vector<std::vector<uint8_t> > board;
 	int numHalfMove;
 	int move_rule_num;
+	void printScore(double score);
 	/* ------*/
 
 	//std::vector<Point>figureList;
