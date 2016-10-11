@@ -187,6 +187,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			if(depth == 0 && basis) {
 				bestmove = local_move;
 				bestMove = bestmove;
+				bestScore = max;
 				//std::cout << "info depth " << max_depth << "\n";
 				//std::cout << " score ";
 				/*if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
@@ -217,6 +218,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 	if(depth == 0 && basis) {
 		bestmove = local_move;
 		bestMove = bestmove;
+		bestScore = max;
 		//std::cout << "info depth " << max_depth << "\n";
 		//std::cout << " score ";
 		/*if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {

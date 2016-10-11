@@ -65,6 +65,7 @@ private:
 	//фиксированное время
 	Timer timer;
 	Move bestMove;
+	double bestScore;
 	int time;
 public:
 	Game();
