@@ -2,6 +2,7 @@
 
 double Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth + 1;
+	//++depth;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -33,6 +34,10 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 	if(depth >= max_depth) {
 		//return evalute(b);
 		return quies(b, alpha, beta, rule);
+	}
+
+	if(inCheck(b, color) && real_depth < 100) {
+		nextDepth;
 	}
 
 
@@ -119,7 +124,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 				}
 			}*/
 
-			tmp = -negamax(b, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
 			b.goBack();
 
 			/*if(num_moves >= 4             &&
@@ -138,7 +143,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		//bool goBackMust = true;
 		pv.pop_back();
 
-		if(depth == 0) {
+		if(real_depth == 0) {
 			//std::cout << "info score cp " << (int) (max / PAWN_EV * 100) << " depth " << max_depth << "\n";
 			std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves << "\n";
 		}
@@ -147,12 +152,12 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			max = tmp;
 			local_move = moves[i];
 
-			if(pv_tmp.size() < (unsigned int) (depth + 1)) {
-				pv_tmp.resize(depth + 1);
+			if(pv_tmp.size() < (unsigned int) (real_depth + 1)) {
+				pv_tmp.resize(real_depth + 1);
 			}
-			pv_tmp[depth] = local_move;
+			pv_tmp[real_depth] = local_move;
 
-			if(depth == 0) {
+			if(real_depth == 0) {
 				pv_best = pv_tmp;
 				pv_tmp.resize(1);
 			}
@@ -184,7 +189,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 				}
 			}
 
-			if(depth == 0 && basis) {
+			if(real_depth == 0 && basis) {
 				bestmove = local_move;
 				bestMove = bestmove;
 				bestScore = max;
@@ -215,7 +220,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		}
 	}
 
-	if(depth == 0 && basis) {
+	if(real_depth == 0 && basis) {
 		bestmove = local_move;
 		bestMove = bestmove;
 		bestScore = max;
