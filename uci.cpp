@@ -6,6 +6,7 @@ bool Game::uciHandler(std::string str) {
 			std::cout << "readyok\n";
 		} else if(cmd[0] == "position") {
 			gameHash.clear();
+			gameHash.resize(0);
 			if(cmd[1] == "startpos") {
 				game_board.setFenPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 				if(cmd.size() > 3) {

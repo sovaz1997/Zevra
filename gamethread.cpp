@@ -11,56 +11,8 @@ int Game::startGame() {
 	}
 }
 
-void Game::go() {
-		clearCash();
-
-		variant.clear();
-		variant.resize(max_depth);
-		std::vector<uint64_t>hash;
-
-		pv_best.clear();
-		std::vector<Move>pv;
-		whiteUp = BLACK_WIN;
-		blackUp = WHITE_WIN;
-
-		bool basis = false;
-		movesCounter = 0;
-		double start_timer, end_timer;
-		//boardHash.clear();
-		int max_depth_global = max_depth;
-
-		if(max_depth_global % 2 == 0) {
-			max_depth = 2;
-		} else {
-			max_depth = 1;
-		}
-
-		start_timer = clock();
-		for(; max_depth <= max_depth_global; max_depth += 2) {
-			pv_tmp.resize(1);
-			pv_best.resize(1);
-			flattenHistory();
-			//cleanWhiteHistory();
-			//cleanBlackHistory();
-			if(max_depth == max_depth_global) {
-				basis = true;
-			}
-
-			/*if(game_board.isWhiteMove()) {
-				minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
-			} else {
-				minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
-			}*/
-			negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH, false);
-		}
-		end_timer = clock();
-
-		std::cout << "info nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
-		" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
-}
-
 void Game::goFixedDepth() {
-	clearCash();
+	//clearCash();
 
 	variant.clear();
 	variant.resize(max_depth);
@@ -73,7 +25,6 @@ void Game::goFixedDepth() {
 
 	bool basis = false;
 	movesCounter = 0;
-	double start_timer, end_timer;
 	//boardHash.clear();
 	int max_depth_global = max_depth;
 
@@ -118,6 +69,7 @@ void Game::goFixedDepth() {
 		depth = max_depth;
 		hasBestMove = true;
 	}
+
 	end_timer = clock();
 
 	std::cout << "info depth " << depth << " ";
@@ -137,7 +89,7 @@ void Game::goFixedTime(int tm) {
 	time = tm;
 	timer.start();
 
-	clearCash();
+	//clearCash();
 
 	variant.clear();
 	variant.resize(max_depth);
@@ -151,7 +103,7 @@ void Game::goFixedTime(int tm) {
 	bool basis = false;
 	movesCounter = 0;
 
-	double start_timer = clock();
+	start_timer = clock();
 	hasBestMove = false;
 	double depth;
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
@@ -175,7 +127,8 @@ void Game::goFixedTime(int tm) {
 		depth = max_depth;
 		hasBestMove = true;
 	}
-	double end_timer = clock();
+
+	end_timer = clock();
 
 	//std::cout << "bestmove " << bestMove.getMoveString() << " time " <<  "\n";
 

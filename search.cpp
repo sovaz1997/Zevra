@@ -2,7 +2,6 @@
 
 double Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth + 1;
-	//++depth;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -16,23 +15,22 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		color = BLACK;
 	}
 
-	//uint64_t pos_hash = getHash(b);
-	//uint64_t board_hash = getColorHash(b, pos_hash);
-
-	/*if(depth > 0) {
-	int third_repeat = 1;
-		for(unsigned int i = 0; i < hash.size(); ++i) {
-			if(hash[i] == pos_hash) {
-				++third_repeat;
-			}
-			if(third_repeat >= 3  || b.move_rule_num >= 50) {
-				return 0;
-			}
+	/*uint64_t pos_hash = getHash(b);
+	uint64_t board_hash = getColorHash(b, pos_hash);
+	hash.push_back(pos_hash);
+	if(depth > 0) {
+		int third_repeat = 1;
+			for(unsigned int i = 0; i < hash.size(); ++i) {
+				if(hash[i] == pos_hash) {
+					++third_repeat;
+				}
+				if(third_repeat >= 3  || b.move_rule_num >= 50) {
+					return 0;
+				}
 		}
 	}*/
 
 	if(depth >= max_depth) {
-		//return evalute(b);
 		return quies(b, alpha, beta, rule);
 	}
 
@@ -145,7 +143,14 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 
 		if(real_depth == 0) {
 			//std::cout << "info score cp " << (int) (max / PAWN_EV * 100) << " depth " << max_depth << "\n";
-			std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves << "\n";
+			std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves << " ";
+			printScore(bestScore);
+			std::cout << " pv ";
+			for(unsigned int i = 0; i < pv_best.size(); ++i) {
+				std::cout << pv_best[i].getMoveString() << " ";
+			}
+			std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
+			" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 		}
 
 		if(tmp > max) {
@@ -193,19 +198,6 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 				bestmove = local_move;
 				bestMove = bestmove;
 				bestScore = max;
-				//std::cout << "info depth " << max_depth << "\n";
-				//std::cout << " score ";
-				/*if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
-					std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
-				} else if(max < 0) {
-					std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
-				} else {
-					std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
-				}*/
-				//printScore(max);
-				//std::cout << "\n";
-
-				gameHash.push_back(getHash(game_board));
 			}
 
 			return max;
@@ -224,22 +216,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		bestmove = local_move;
 		bestMove = bestmove;
 		bestScore = max;
-		//std::cout << "info depth " << max_depth << "\n";
-		//std::cout << " score ";
-		/*if(max > BLACK_WIN + 10000 && max < WHITE_WIN - 10000) {
-			std::cout << "cp " << (int) (max / PAWN_EV * 100) << "\n";
-		} else if(max < 0) {
-			std::cout << "mate " <<  -abs(max - BLACK_WIN) / 2 - 1 << "\n";
-		} else {
-			std::cout << "mate " <<  abs(max - WHITE_WIN) / 2 + 1 << "\n";
-		}*/
-		//printScore(max);
-		//std::cout << "\n";
-
-		gameHash.push_back(getHash(game_board));
 	}
-
-	printVariant();
 
 /*	if(hashEnable) {
 		if(!boardHash[board_hash & hash_cutter].enable) {

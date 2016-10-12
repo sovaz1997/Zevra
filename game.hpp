@@ -45,7 +45,6 @@ private:
 
 	void initEngine();
 	bool uciHandler(std::string str);
-	void go();
 	void goFixedDepth();
 	void goFixedTime(int time);
 	void clearCash();
@@ -67,6 +66,7 @@ private:
 	Move bestMove;
 	double bestScore;
 	int time;
+	double start_timer, end_timer;
 public:
 	Game();
 	double minimax_white(Board b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule);

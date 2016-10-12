@@ -49,19 +49,19 @@ void Game::flattenHistory() {
 
 void Game::clearCash() {
 
-	for(unsigned int i = 0; i < whiteKiller.size(); ++i) {
+	/*for(unsigned int i = 0; i < whiteKiller.size(); ++i) {
 		whiteKiller[i] = Killer();
 	}
 
 	for(unsigned int i = 0; i < blackKiller.size(); ++i) {
 		blackKiller[i] = Killer();
-	}
+	}*/
 
-	for(unsigned int i = 0; i < boardHash.size(); ++i) {
+	/*for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].enable = false;
-	}
+	}*/
 
-	gameHash = std::vector<uint64_t>();
+	//gameHash = std::vector<uint64_t>();
 }
 
 uint64_t Game::getColorHash(Board & b) {
