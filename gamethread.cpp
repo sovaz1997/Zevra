@@ -38,8 +38,8 @@ void Game::goFixedDepth() {
 	hasBestMove = false;
 	double depth;
 	for(; max_depth <= max_depth_global; max_depth += 2) {
-		pv_tmp.resize(1);
-		pv_best.resize(1);
+		pv_tmp.resize(0);
+		pv_best.resize(0);
 		flattenHistory();
 		//cleanWhiteHistory();
 		//cleanBlackHistory();
@@ -107,7 +107,10 @@ void Game::goFixedTime(int tm) {
 	hasBestMove = false;
 	double depth;
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
+		pv_tmp.resize(0);
+		pv_best.resize(0);
 		flattenHistory();
+
 		/*if(game_board.isWhiteMove()) {
 			minimax_white(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 		} else {

@@ -39,15 +39,17 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 	}
 
 
-	/*if(depth >= max_depth - 1 && usedNullMove && !inCheck(b, WHITE) && !inCheck(b, BLACK) && !capture) {
-		if(evalute(b) - margin >= beta) {
-			return beta;
+	/*if(depth >= max_depth - 1 && usedNullMove && !capture) {
+		if(!inCheck(b, color)) {
+			if(evalute(b) - margin >= beta) {
+				return beta;
+			}
 		}
 	}*/
 
 	/*if(!inCheck(b, WHITE) && !inCheck(b, BLACK) && !isEndGame(b) && usedNullMove && (max_depth - depth) > 2 && depth >= 4 && !capture) {
 		b.whiteMove = !b.whiteMove;
-		double tmp = -negamax(b, -beta, -beta+1, depth + 2, real_depth + 1, hash, basis, pv, false, rule, capture);
+		double tmp = -negamax(b, -beta, -alpha, nextDepth + 3, real_depth + 1, hash, basis, pv, false, rule, capture);
 
 		if(tmp >= beta) {
 			return tmp;
@@ -138,39 +140,57 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 					tmp = -negamax(tmp_brd, -beta, -alpha, depth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
 			}*/
 
-		//bool goBackMust = true;
-		pv.pop_back();
+			//bool goBackMust = true;
+			pv.pop_back();
 
 		if(real_depth == 0) {
-			//std::cout << "info score cp " << (int) (max / PAWN_EV * 100) << " depth " << max_depth << "\n";
-			std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves << " ";
-			printScore(bestScore);
-			std::cout << " pv ";
-			for(unsigned int i = 0; i < pv_best.size(); ++i) {
-				std::cout << pv_best[i].getMoveString() << " ";
+				//std::cout << "info score cp " << (int) (max / PAWN_EV * 100) << " depth " << max_depth << "\n";
+				std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves;
+
+			if(num_moves > 1) {
+				std::cout << " ";
+				printScore(alpha);
+				std::cout << " pv ";
+				for(unsigned int i = 0; i < pv_best.size(); ++i) {
+					std::cout << pv_best[i].getMoveString() << " ";
+				}
+				std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
+				" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
+			} else {
+				std::cout << "\n";
 			}
-			std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
-			" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 		}
 
 		if(tmp > max) {
+			//pv_tmp[real_depth] = local_move;
+
+
 			max = tmp;
 			local_move = moves[i];
 
 			if(pv_tmp.size() < (unsigned int) (real_depth + 1)) {
 				pv_tmp.resize(real_depth + 1);
 			}
-			pv_tmp[real_depth] = local_move;
+
+			/*pv_tmp[real_depth] = local_move;
 
 			if(real_depth == 0) {
 				pv_best = pv_tmp;
 				pv_tmp.resize(1);
-			}
+			}*/
 
 		}
 
 		if(tmp > alpha) {
 			alpha = tmp;
+
+			pv_tmp[real_depth] = local_move;
+
+			if(real_depth == 0) {
+				pv_best = pv_tmp;
+				//pv_tmp.resize(1);
+				//pv_line.push(local_move);
+			}
 
 			/*if(hashEnable) {
 				if(!boardHash[board_hash & hash_cutter].enable) {
@@ -183,7 +203,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			}*/
 		}
 
-		if(max >= beta) {
+		if(alpha >= beta) {
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				if(color == WHITE) {
 					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
@@ -200,7 +220,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 				bestScore = max;
 			}
 
-			return max;
+			return alpha;
 		}
 	}
 

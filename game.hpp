@@ -14,6 +14,7 @@
 #include <ctime>
 #include <iomanip>
 #include <algorithm>
+#include <stack>
 #include <omp.h>
 #include "board.hpp"
 #include "move.hpp"
@@ -60,6 +61,8 @@ private:
 	bool hasBestMove = false;
 
 	int popcount64(uint64_t value);
+
+	std::stack<Move>pv_line;
 
 	//фиксированное время
 	Timer timer;
