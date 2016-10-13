@@ -190,7 +190,7 @@ double Game::quies(Board & b, double alpha, double beta, int rule) {
 		++movesCounter;
 		b.move(moves[i]);
 
-		if(b.isWhiteMove()) {
+		if(!b.isWhiteMove()) {
 			if(inCheck(b, WHITE)) {
 				b.goBack();
 				continue;

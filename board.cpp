@@ -56,8 +56,6 @@ void Board::changeFigureColor(uint8_t & fig, uint8_t color) {
 
 void Board::setFenPosition(std::string FEN) {
 	cleanBoard();
-
-
 	int pointer = 0;
 
 	std::string str;
@@ -221,8 +219,8 @@ void Board::setFen(std::string FEN) {
 			pos += (FEN[i] - '0');
 			continue;
 		}
-		putFigureOnBoard(createFigure(FEN[i]), pos / BOARD_SIZE, pos % BOARD_SIZE);
 
+		putFigureOnBoard(createFigure(FEN[i]), pos / BOARD_SIZE, pos % BOARD_SIZE);
 		++pos;
 	}
 }
