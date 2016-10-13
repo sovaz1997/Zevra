@@ -1,16 +1,14 @@
 #include "game.hpp"
 
 double Game::evalute(Board & b) {
-	//новая функция оценки
-
 	int attackTable[BOARD_SIZE][BOARD_SIZE];
-
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			attackTable[i][j] = 0;
 		}
 	}
 
+	//ТАБЛИЦА АТАК (ВРЕМЕННО ОТКЛЮЧЕНА, Т. К. МЕДЛЕННАЯ)
 	/*bool color = b.whiteMove;
 
 	b.whiteMove = true;

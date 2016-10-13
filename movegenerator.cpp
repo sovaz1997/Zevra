@@ -177,32 +177,18 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 		for(unsigned int i = num_attacks; i < result.size(); ++i) {
 			if(b.isWhiteMove()) {
 				if(result[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
-					//std::swap(result[i], result[0]);
 					result.erase(result.begin() + i);
 					result.insert(result.begin() + num_attacks, whiteKiller[depth].move);
 					break;
 				}
 			} else {
 				if(result[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
-					//std::swap(result[i], result[0]);
 					result.erase(result.begin() + i);
 					result.insert(result.begin() + num_attacks, blackKiller[depth].move);
 					break;
 				}
 			}
 		}
-
-		/*if(boardHash[getColorHash(b) & hash_cutter].enable && boardHash[getColorHash(b) & hash_cutter].depth > max_depth - depth && boardHash[getColorHash(b) & hash_cutter].hash == getColorHash(b)) {
-			for(unsigned int i = 0; i < result.size(); ++i) {
-				if(result[i].equal(boardHash[getColorHash(b) & hash_cutter].move)) {
-					//std::swap(result[0], result[i]);
-					result.erase(result.begin() + i);
-					result.insert(result.begin(), result[i]);
-					result[0].fromHash = true;
-					break;
-				}
-			}
-		}*/
 
 		if(hasBestMove && depth == 0) {
 			for(unsigned int i = 0; i < result.size(); ++i) {
@@ -213,21 +199,6 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 				}
 			}
 		}
-
-		/*while(!pv_line.empty() && depth == 0) {
-			for(unsigned int i = 0; i < result.size(); ++i) {
-				if(result[i].equal(pv_line.top())) {
-					result.erase(result.begin() + i);
-					result.insert(result.begin(), pv_line.top());
-					pv_line.pop();
-					break;
-				}
-
-				if(i == result.size() - 1) {
-					pv_line.pop();
-				}
-			}
-		}*/
 	}
 
 	return result;
