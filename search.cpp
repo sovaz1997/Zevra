@@ -36,9 +36,9 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		return quies(b, alpha, beta, rule);
 	}
 
-	if(inCheck(b, color) && real_depth < 100) {
-		nextDepth;
-	}
+	/*if(inCheck(b, color) && real_depth < 100) {
+		--nextDepth;
+	}*/
 
 	int num_moves = 0;
 
