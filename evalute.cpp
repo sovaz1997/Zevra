@@ -1,12 +1,12 @@
 #include "game.hpp"
 
 double Game::evalute(Board & b) {
-	int attackTable[BOARD_SIZE][BOARD_SIZE];
+	/*int attackTable[BOARD_SIZE][BOARD_SIZE];
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			attackTable[i][j] = 0;
 		}
-	}
+	}*/
 
 	//ТАБЛИЦА АТАК (ВРЕМЕННО ОТКЛЮЧЕНА, Т. К. МЕДЛЕННАЯ)
 	/*bool color = b.whiteMove;
@@ -34,9 +34,9 @@ double Game::evalute(Board & b) {
 
 	b.whiteMove = color;
 
-	double attackBonus = 0;*/
+	double attackBonus = 0;
 
-	/*for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
+	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
 			if(b.board[y][x] != 0) {
 				if(std::abs(attackTable[y][x]) <= 6) {

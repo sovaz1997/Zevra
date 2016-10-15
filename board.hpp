@@ -26,6 +26,8 @@ private:
 
 	//std::stack<BoardInfo> history;
 	std::stack<GoBack>history;
+
+	double evaluteAll();
 public:
 	Board();
 	uint8_t createFigure(uint8_t fig, uint8_t type);
@@ -59,6 +61,10 @@ public:
 	int numHalfMove;
 	int move_rule_num;
 	void printScore(double score);
+
+	//оценочная функция
+	double ev_material, ev_pawn_structure, ev_figure_structure;
+	double evalute();
 	/* ------*/
 
 	//std::vector<Point>figureList;

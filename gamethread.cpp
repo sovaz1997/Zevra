@@ -53,7 +53,7 @@ void Game::goFixedDepth() {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 		}*/
 
-		negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
+		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
 
 
 		/*std::cout << "info pv ";
@@ -61,13 +61,12 @@ void Game::goFixedDepth() {
 			std::cout << pv_best[i].getMoveString() << " ";
 		}
 		std::cout << "\n";*/
-
-		if(bestScore + 1000 >= WHITE_WIN || bestScore - 1000 <= BLACK_WIN) {
+		hasBestMove = true;
+		/*if(bestScore + 1000 >= WHITE_WIN || bestScore - 1000 <= BLACK_WIN) {
 			break;
-		}
+		}*/
 
 		depth = max_depth;
-		hasBestMove = true;
 	}
 
 	end_timer = clock();
@@ -116,19 +115,18 @@ void Game::goFixedTime(int tm) {
 		} else {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 		}*/
-		negamax(game_board, -INFINITY, INFINITY, 0, 0, gameHash, true, pv, true, FIXED_TIME, false);
+		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_TIME, false);
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
 			std::cout << pv_best[i].getMoveString() << " ";
 		}
 		std::cout << "\n";*/
-
-		if(bestScore + 1000 >= WHITE_WIN || bestScore - 1000 <= BLACK_WIN) {
-			break;
-		}
-		depth = max_depth;
 		hasBestMove = true;
+		/*if(bestScore + 1000 >= WHITE_WIN || bestScore - 1000 <= BLACK_WIN) {
+			break;
+		}*/
+		depth = max_depth;
 	}
 
 	end_timer = clock();
@@ -154,13 +152,19 @@ bool Game::move(std::string mv) {
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		if(moves[i].getMoveString() == mv) {
-			Board tmp = game_board;
+			//Board tmp = game_board;
 			game_board.move(moves[i]);
-			bool shah = false;
-			std::vector<Move>moves = generatePositionMoves(game_board, shah, true, 0);
+			//bool shah = false;
+			uint8_t color;
 
-			if(shah) {
-				game_board = tmp;
+			if(game_board.whiteMove) {
+				color = BLACK;
+			} else {
+				color = WHITE;
+			}
+
+			if(inCheck(game_board, color)) {
+				game_board.goBack();
 				continue;
 			}
 

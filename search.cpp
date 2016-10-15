@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 double Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
-	int nextDepth = depth + 1;
+	int nextDepth = depth - 1;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -17,9 +17,9 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 
 	//ПРОВЕРКА НА ПОВТОРЕНИЕ ПОЗИЦИИ/ПРАВИЛА 50 ХОДОВ
 
-	/*uint64_t pos_hash = getHash(b);
-	uint64_t board_hash = getColorHash(b, pos_hash);
-	hash.push_back(pos_hash);
+	//uint64_t pos_hash = getHash(b);
+	//uint64_t board_hash = getColorHash(b, pos_hash);
+	/*hash.push_back(pos_hash);
 	if(depth > 0) {
 		int third_repeat = 1;
 			for(unsigned int i = 0; i < hash.size(); ++i) {
@@ -32,9 +32,21 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		}
 	}*/
 
-	if(depth >= max_depth) {
+	if(depth <= 0) {
 		return quies(b, alpha, beta, rule);
 	}
+
+	/*if(depth >= 4 && usedNullMove) {
+		if(!inCheck(b, color)) {
+			b.whiteMove = !b.whiteMove;
+			double tmp = -negamax(b, beta - 1, beta, nextDepth - 3, real_depth + 1, hash, basis, pv, false, rule, capture);
+			b.whiteMove = !b.whiteMove;
+
+			if(tmp >= beta) {
+				return beta;
+			}
+		}
+	}*/
 
 	/*if(inCheck(b, color) && real_depth < 100) {
 		--nextDepth;
@@ -81,9 +93,29 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		double tmp;
 
 		pv.push_back(moves[i]);
+
+		//if(depth <= MIN_DEPTH) {
+			//tmp = alpha + 1;
+		//} else {
+			//tmp = alpha + 1;
+			//int D = std::max(MIN_DEPTH, depth / 2 + 1);
+			//while(D < depth - 1 && tmp > alpha) {
+				//tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+				//++D;
+			//}
+		//}
+		/*if(depth >= max_depth - MIN_DEPTH) {
+			tmp = alpha + 1;
+		} else {
+			tmp = -negamax(b, -beta, -alpha, nextDepth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+		}*/
+
+		//if(tmp > alpha) {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			b.goBack();
-			pv.pop_back();
+		//}
+
+		b.goBack();
+		pv.pop_back();
 
 		if(real_depth == 0) {
 				std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves;
@@ -109,7 +141,6 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			if(pv_tmp.size() < (unsigned int) (real_depth + 1)) {
 				pv_tmp.resize(real_depth + 1);
 			}
-
 		}
 
 		if(tmp > alpha) {
@@ -120,15 +151,23 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			if(real_depth == 0) {
 				pv_best = pv_tmp;
 			}
+
+			/*if(boardHash[board_hash & hash_cutter].enable) {
+				if(boardHash[board_hash & hash_cutter].depth <= depth && board_hash == boardHash[board_hash & hash_cutter].hash) {
+					boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, ALPHA_CUT_EV);
+				}
+			} else {
+				boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, ALPHA_CUT_EV);
+			}*/
 		}
 
 		if(alpha >= beta) {
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				if(color == WHITE) {
-					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(moves[i]);
 				} else {
-					blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(max_depth - real_depth, max_depth - real_depth);
+					blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(moves[i]);
 				}
 			}

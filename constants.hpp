@@ -43,6 +43,8 @@ const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;
 const int ALPHA_CUT_EV = 2;
 
+const int MIN_DEPTH = 2;
+
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV

@@ -486,3 +486,16 @@ void Board::printStringBoard() {
     }
   }
 }
+
+double Board::evaluteAll() {
+
+}
+
+double Board::evalute() {
+	int mul = 1;
+	if(!whiteMove) {
+		mul = -1;
+	}
+
+	return mul * (ev_material + ev_pawn_structure + ev_figure_structure);
+}
