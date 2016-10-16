@@ -12,7 +12,7 @@ int Game::startGame() {
 }
 
 void Game::goFixedDepth() {
-	//clearCash();
+	clearCash();
 
 	variant.clear();
 	variant.resize(max_depth);
@@ -88,7 +88,7 @@ void Game::goFixedTime(int tm) {
 	time = tm;
 	timer.start();
 
-	//clearCash();
+	clearCash();
 
 	variant.clear();
 	variant.resize(max_depth);
