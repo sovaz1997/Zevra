@@ -25,6 +25,7 @@
 #include "debute.hpp"
 #include "point.hpp"
 #include "timer.hpp"
+#include "pv.hpp"
 
 class Game {
 private:
@@ -72,7 +73,7 @@ private:
 	double start_timer, end_timer;
 public:
 	Game();
-	double negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	PV negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   	double quies(Board & b, double alpha, double beta, int rule);
 	int startGame();

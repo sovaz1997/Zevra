@@ -104,6 +104,8 @@ void Board::setFenPosition(std::string FEN) {
 	}
 
 	numHalfMove = std::stoi(str);
+
+	evaluteAll();
 }
 
 std::string Board::getFenPosition() {
@@ -436,6 +438,14 @@ void Board::move(Move & mv) {
 	if(whiteMove) {
 		++numHalfMove;
 	}
+
+	double prevScore = 0, newScore = 0;
+
+	/*if(history.top().type != WS_CASTLING_MV && history.top().type != WL_CASTLING_MV && history.top().type != BS_CASTLING_MV && history.top().type != BL_CASTLING_MV ) {
+		if((history.top().fig1.type & TYPE_SAVE) == PAWN) {
+			//prevScore +=
+		}
+	}*/
 }
 
 void Board::goBack() {
@@ -488,14 +498,89 @@ void Board::printStringBoard() {
 }
 
 double Board::evaluteAll() {
+	//оценка материального преимущества
+	double material_eval = 0, all_material_eval = 0;
+	std::vector<uint64_t> figureMask(32, 0);
 
-}
-
-double Board::evalute() {
-	int mul = 1;
-	if(!whiteMove) {
-		mul = -1;
+	for(int y = 0; y < BOARD_SIZE; ++y) {
+		for(int x = 0; x < BOARD_SIZE; ++x) {
+			if(board[y][x] != 0) {
+				//(обязательно)figureMask[board[y][x]] |= cells[y][x];
+			}
+		}
 	}
 
-	return mul * (ev_material + ev_pawn_structure + ev_figure_structure);
+	/*if(insufficientMaterial(figureMask)) {
+		return 0;
+	}*/
+
+	material_eval += popcount64(figureMask[PAWN | WHITE]) * PAWN_EV;
+	material_eval -= popcount64(figureMask[PAWN | BLACK]) * PAWN_EV;
+	material_eval += popcount64(figureMask[KNIGHT | WHITE]) * KNIGHT_EV;
+	material_eval -= popcount64(figureMask[KNIGHT | BLACK]) * KNIGHT_EV;
+	material_eval += popcount64(figureMask[BISHOP | WHITE]) * BISHOP_EV;
+	material_eval -= popcount64(figureMask[BISHOP | BLACK]) * BISHOP_EV;
+	material_eval += popcount64(figureMask[ROOK | WHITE]) * ROOK_EV;
+	material_eval -= popcount64(figureMask[ROOK | BLACK]) * ROOK_EV;
+	material_eval += popcount64(figureMask[QUEEN | WHITE]) * QUEEN_EV;
+	material_eval -= popcount64(figureMask[QUEEN | BLACK]) * QUEEN_EV;
+
+	all_material_eval += popcount64(figureMask[PAWN | WHITE]) * PAWN_EV;
+	all_material_eval += popcount64(figureMask[PAWN | BLACK]) * PAWN_EV;
+	all_material_eval += popcount64(figureMask[KNIGHT | WHITE]) * KNIGHT_EV;
+	all_material_eval += popcount64(figureMask[KNIGHT | BLACK]) * KNIGHT_EV;
+	all_material_eval += popcount64(figureMask[BISHOP | WHITE]) * BISHOP_EV;
+	all_material_eval += popcount64(figureMask[BISHOP | BLACK]) * BISHOP_EV;
+	all_material_eval += popcount64(figureMask[ROOK | WHITE]) * ROOK_EV;
+	all_material_eval += popcount64(figureMask[ROOK | BLACK]) * ROOK_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | WHITE]) * QUEEN_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | BLACK]) * QUEEN_EV;
+
+	//оценка позиции (положение фигур)
+	double figure_state_eval = 0;
+
+	for(int y = 0; y < BOARD_SIZE; ++y) {
+		for(int x = 0; x < BOARD_SIZE; ++x) {
+			if(board[y][x] == 0) {
+				continue;
+			}
+
+			if((board[y][x] & COLOR_SAVE) == WHITE) {
+				if((board[y][x] & TYPE_SAVE) == PAWN) {
+					figure_state_eval += whitePawnMatr[y][x];
+				} else if((board[y][x] & TYPE_SAVE) == KNIGHT) {
+					figure_state_eval += knightMatr[y][x];
+				} else if((board[y][x] & TYPE_SAVE) == BISHOP) {
+					figure_state_eval += bishopMatr[y][x];
+				} else if((board[y][x] & TYPE_SAVE) == ROOK) {
+					figure_state_eval += rookMatr[y][x];
+				} else if((board[y][x] & TYPE_SAVE) == QUEEN) {
+					figure_state_eval += queenMatr[y][x];
+				} else if((board[y][x] & TYPE_SAVE) == KING) {
+					figure_state_eval += ((kingDebuteMatr[y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material_eval / ALL_MATERIAL));
+				}
+			} else {
+				if((board[y][x] & TYPE_SAVE) == PAWN) {
+					figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
+				} else if((board[y][x] & TYPE_SAVE) == KNIGHT) {
+					figure_state_eval -= knightMatr[BOARD_SIZE - 1 - y][x];
+				} else if((board[y][x] & TYPE_SAVE) == BISHOP) {
+					figure_state_eval -= bishopMatr[BOARD_SIZE - 1 - y][x];
+				} else if((board[y][x] & TYPE_SAVE) == ROOK) {
+					figure_state_eval -= rookMatr[BOARD_SIZE - 1 - y][x];
+				} else if((board[y][x] & TYPE_SAVE) == QUEEN) {
+					figure_state_eval -= queenMatr[BOARD_SIZE - 1 - y][x];
+				} else if((board[y][x] & TYPE_SAVE) == KING) {
+					figure_state_eval -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material_eval / ALL_MATERIAL));
+				}
+			}
+		}
+	}
+
+	evalute = material_eval + figure_state_eval;
+	return evalute;
+}
+
+int Board::popcount64(uint64_t value) {
+	return /*_mm_popcnt_u64(value);*/ __builtin_popcountll(value);
 }

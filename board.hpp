@@ -63,8 +63,9 @@ public:
 	void printScore(double score);
 
 	//оценочная функция
-	double ev_material, ev_pawn_structure, ev_figure_structure;
-	double evalute();
+	double evalute;
+
+	int popcount64(uint64_t value);
 	/* ------*/
 
 	//std::vector<Point>figureList;

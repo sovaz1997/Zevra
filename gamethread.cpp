@@ -37,9 +37,13 @@ void Game::goFixedDepth() {
 	start_timer = clock();
 	hasBestMove = false;
 	double depth;
+	PV best_pv;
 	for(; max_depth <= max_depth_global; max_depth += 2) {
 		pv_tmp.resize(0);
 		pv_best.resize(0);
+		pv.resize(0);
+		whiteUp = BLACK_WIN;
+		blackUp = WHITE_WIN;
 		flattenHistory();
 		//cleanWhiteHistory();
 		//cleanBlackHistory();
@@ -53,7 +57,7 @@ void Game::goFixedDepth() {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_DEPTH);
 		}*/
 
-		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
+		best_pv = negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
 
 
 		/*std::cout << "info pv ";
@@ -75,7 +79,7 @@ void Game::goFixedDepth() {
 	printScore(bestScore);
 	std::cout << " pv ";
 	for(unsigned int i = 0; i < pv_best.size(); ++i) {
-		std::cout << pv_best[i].getMoveString() << " ";
+		std::cout << best_pv.pv[i].getMoveString() << " ";
 	}
 	std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
 	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
@@ -105,9 +109,13 @@ void Game::goFixedTime(int tm) {
 	start_timer = clock();
 	hasBestMove = false;
 	double depth;
+	PV best_pv;
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		pv_tmp.resize(0);
 		pv_best.resize(0);
+		pv.resize(0);
+		whiteUp = BLACK_WIN;
+		blackUp = WHITE_WIN;
 		flattenHistory();
 
 		/*if(game_board.isWhiteMove()) {
@@ -115,7 +123,7 @@ void Game::goFixedTime(int tm) {
 		} else {
 			minimax_black(game_board, -INFINITY, INFINITY, 0, 0, gameHash, basis, pv, true, FIXED_TIME);
 		}*/
-		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_TIME, false);
+		best_pv = negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_TIME, false);
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
@@ -137,7 +145,7 @@ void Game::goFixedTime(int tm) {
 	printScore(bestScore);
 	std::cout << " pv ";
 	for(unsigned int i = 0; i < pv_best.size(); ++i) {
-		std::cout << pv_best[i].getMoveString() << " ";
+		std::cout << best_pv.pv[i].getMoveString() << " ";
 	}
 	std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
 	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
