@@ -190,20 +190,21 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 			}
 		}
 
-		/*uint64_t hash = getColorHash(b);
+		uint64_t hash = getColorHash(b);
 		if(boardHash[hash & hash_cutter].enable) {
 			if(boardHash[hash & hash_cutter].hash == hash && boardHash[hash & hash_cutter].depth >= depth) {
 				for(unsigned int i = 0; i < result.size(); ++i) {
 					if(boardHash[hash & hash_cutter].move.equal(result[i])) {
 						result.erase(result.begin() + i);
 						result.insert(result.begin(), boardHash[hash & hash_cutter].move);
+						result[0].fromHash = true;
 						break;
 					}
 				}
 			}
-		}*/
+		}
 
-		if(hasBestMove && depth == 0) {
+		/*if(hasBestMove && depth == 0) {
 			for(unsigned int i = 0; i < result.size(); ++i) {
 				if(bestMove.equal(result[i])) {
 					result.erase(result.begin() + i);
@@ -211,7 +212,7 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 					break;
 				}
 			}
-		}
+		}*/
 	}
 
 	return result;

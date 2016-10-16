@@ -17,8 +17,8 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 
 	//ПРОВЕРКА НА ПОВТОРЕНИЕ ПОЗИЦИИ/ПРАВИЛА 50 ХОДОВ
 
-	//uint64_t pos_hash = getHash(b);
-	//uint64_t board_hash = getColorHash(b, pos_hash);
+	uint64_t pos_hash = getHash(b);
+	uint64_t board_hash = getColorHash(b, pos_hash);
 	/*hash.push_back(pos_hash);
 	if(depth > 0) {
 		int third_repeat = 1;
@@ -33,6 +33,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 	}*/
 
 	if(depth <= 0) {
+		//return evalute(b);
 		return quies(b, alpha, beta, rule);
 	}
 
@@ -93,6 +94,11 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		double tmp;
 
 		pv.push_back(moves[i]);
+		
+		if(moves[i].fromHash && boardHash[board_hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[board_hash & hash_cutter].enable && boardHash[board_hash & hash_cutter].hash == board_hash && boardHash[board_hash & hash_cutter].depth >= depth) {
+		alpha = boardHash[board_hash & hash_cutter].alpha;
+//		beta = boardHash[board_hash & hash_cutter].beta;
+	}	
 
 		//if(depth <= MIN_DEPTH) {
 			//tmp = alpha + 1;
@@ -151,17 +157,9 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 			if(real_depth == 0) {
 				pv_best = pv_tmp;
 			}
-
-			/*if(boardHash[board_hash & hash_cutter].enable) {
-				if(boardHash[board_hash & hash_cutter].depth <= depth && board_hash == boardHash[board_hash & hash_cutter].hash) {
-					boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, ALPHA_CUT_EV);
-				}
-			} else {
-				boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, ALPHA_CUT_EV);
-			}*/
 		}
 
-		if(alpha >= beta) {
+		if(max >= beta) {
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
 				if(color == WHITE) {
 					whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
@@ -171,6 +169,14 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 					blackKiller[real_depth] = Killer(moves[i]);
 				}
 			}
+			
+			if(boardHash[board_hash & hash_cutter].enable) {
+				if(boardHash[board_hash & hash_cutter].depth <= depth && board_hash == boardHash[board_hash & hash_cutter].hash) {
+					boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, alpha, beta, ALPHA_CUT_EV);
+				}
+			} else {
+				boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, alpha, beta, ALPHA_CUT_EV);
+			}
 
 			if(real_depth == 0 && basis) {
 				bestmove = local_move;
@@ -178,7 +184,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 				bestScore = max;
 			}
 
-			return alpha;
+			return max;
 		}
 	}
 
