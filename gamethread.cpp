@@ -144,7 +144,7 @@ void Game::goFixedTime(int tm) {
 	std::cout << "info depth " << depth << " ";
 	printScore(bestScore);
 	std::cout << " pv ";
-	for(unsigned int i = 0; i < pv_best.size(); ++i) {
+	for(unsigned int i = 0; i < best_pv.size(); ++i) {
 		std::cout << best_pv.pv[i].getMoveString() << " ";
 	}
 	std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<

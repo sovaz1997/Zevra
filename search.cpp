@@ -139,10 +139,13 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 		b.goBack();
 		pv.pop_back();
 
-		if(real_depth == 0) {
-				std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves;
+		if(tmp.evalute > max) {
+			max = tmp.evalute;
+			best_pv = tmp;
+			local_move = moves[i];
 
-			if(num_moves > 1) {
+			if(real_depth == 0 && num_moves > 1) {
+				std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves;
 				std::cout << " ";
 				printScore(alpha);
 				std::cout << " pv " << local_move.getMoveString() << " ";
@@ -152,15 +155,7 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 				}
 				std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
 				" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
-			} else {
-				std::cout << "\n";
 			}
-		}
-
-		if(tmp.evalute > max) {
-			max = tmp.evalute;
-			best_pv = tmp;
-			local_move = moves[i];
 		}
 
 		if(tmp.evalute > alpha) {
