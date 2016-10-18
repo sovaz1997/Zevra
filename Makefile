@@ -1,6 +1,6 @@
 CC = g++
-CFLAGS = -Wall -pedantic -std=c++17 -m64 -O4 -flto -march=native -funroll-loops -msse
-FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o
+CFLAGS = -Wall -pedantic -std=c++11 -m64 -O4 -flto -march=native -funroll-loops -msse
+FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o
 
 all: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o zevra
@@ -70,6 +70,9 @@ goback.o: timer.hpp goback.cpp
 
 figurecell.o: figurecell.hpp figurecell.cpp
 	$(CC) $(CFLAGS) -c figurecell.cpp
+
+pv.o: pv.hpp pv.cpp
+	$(CC) $(CFLAGS) -c pv.cpp
 	
 clean:
 	rm -rf *.o zevra

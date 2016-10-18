@@ -2,7 +2,7 @@
 
 PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth - 1;
-	PV best_pv;
+	PV bpv;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -132,30 +132,51 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 		}
 
 		pv_tmp[real_depth] = local_move;
-		tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-		tmp.evalute = -tmp.evalute;
+		//if(num_moves <= 1) {
+			tmp = negamax(b, -(alpha+1), -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			tmp.evalute = -tmp.evalute;
+			if(tmp.evalute > alpha && tmp.evalute < beta) {
+					tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+					tmp.evalute = -tmp.evalute;
+			}
+
+
+		//} else {
+			//tmp = negamax(b, -alpha - 1, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			//tmp.evalute = -tmp.evalute;
+		//}
+
+		/*if(tmp.evalute > alpha) {
+			tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			tmp.evalute = -tmp.evalute;
+		}*/
 		//}
 
 		b.goBack();
 		pv.pop_back();
 
-		if(tmp.evalute > max) {
-			max = tmp.evalute;
-			best_pv = tmp;
-			local_move = moves[i];
-
-			if(real_depth == 0 && num_moves > 1) {
+		if(real_depth == 0 && num_moves > 1) {
 				std::cout << "info depth " << max_depth << " currmove " << moves[i].getMoveString() << " currmovenumber " << num_moves;
+
+			if(num_moves > 1) {
 				std::cout << " ";
 				printScore(alpha);
 				std::cout << " pv " << local_move.getMoveString() << " ";
-				for(unsigned int i = 0; i < best_pv.size(); ++i) {
+				for(unsigned int i = 0; i < bpv.size(); ++i) {
 					//std::cout << pv_best[i].getMoveString() << " ";
-					std::cout << best_pv.pv[i].getMoveString() << " ";
+					std::cout << bpv.pv[i].getMoveString() << " ";
 				}
 				std::cout << "nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
 				" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
+			} else {
+				std::cout << "\n";
 			}
+		}
+
+		if(tmp.evalute > max) {
+			max = tmp.evalute;
+			bpv = tmp;
+			local_move = moves[i];
 		}
 
 		if(tmp.evalute > alpha) {
@@ -168,7 +189,7 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 		}
 
 		if(max >= beta) {
-			best_pv.push(local_move);
+			bpv.push(local_move);
 			//pv_best = pv_tmp;
 
 			if(b.board[moves[i].toY][moves[i].toX] == 0) {
@@ -195,22 +216,22 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 				bestScore = max;
 			}
 
-			best_pv.evalute = max;
-			return best_pv;
+			bpv.evalute = max;
+			return bpv;
 		}
 	}
 
 	if(num_moves == 0) {
 		if(inCheck(b, color)) {
-			best_pv.evalute = BLACK_WIN + real_depth;
-			return best_pv;
+			bpv.evalute = BLACK_WIN + real_depth;
+			return bpv;
 		} else {
-			best_pv.evalute = 0;
-			return best_pv;
+			bpv.evalute = 0;
+			return bpv;
 		}
 	}
 
-	best_pv.push(local_move);
+	bpv.push(local_move);
 
 	if(real_depth == 0 && basis) {
 		bestmove = local_move;
@@ -218,8 +239,8 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 		bestScore = max;
 	}
 
-	best_pv.evalute = max;
-	return best_pv;
+	bpv.evalute = max;
+	return bpv;
 }
 
 double Game::quies(Board & b, double alpha, double beta, int rule) {

@@ -28,17 +28,17 @@ void Game::goFixedDepth() {
 	//boardHash.clear();
 	int max_depth_global = max_depth;
 
-	if(max_depth_global % 2 == 0) {
+	/*if(max_depth_global % 2 == 0) {
 		max_depth = 2;
 	} else {
 		max_depth = 1;
-	}
+	}*/
+	max_depth = 1;
 
 	start_timer = clock();
 	hasBestMove = false;
 	double depth;
-	PV best_pv;
-	for(; max_depth <= max_depth_global; max_depth += 2) {
+	for(; max_depth <= max_depth_global; ++max_depth) {
 		pv_tmp.resize(0);
 		pv_best.resize(0);
 		pv.resize(0);
@@ -58,7 +58,6 @@ void Game::goFixedDepth() {
 		}*/
 
 		best_pv = negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
-
 
 		/*std::cout << "info pv ";
 		for(unsigned int i = 0; i < pv_best.size(); ++i) {
@@ -109,7 +108,6 @@ void Game::goFixedTime(int tm) {
 	start_timer = clock();
 	hasBestMove = false;
 	double depth;
-	PV best_pv;
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		pv_tmp.resize(0);
 		pv_best.resize(0);

@@ -36,6 +36,8 @@ private:
 	unsigned long long movesCounter = 0;
 	double evalute(Board & b);
 
+	PV best_pv;
+
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
 

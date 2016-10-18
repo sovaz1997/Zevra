@@ -26,8 +26,14 @@ private:
 
 	//std::stack<BoardInfo> history;
 	std::stack<GoBack>history;
-
 	double evaluteAll();
+
+	//BitBoard's
+
+	uint64_t white_occupied_squares, black_occupied_squares;
+	uint64_t plus1[64], plus7[64], plus8[64], plus9[64], minus1[64], minus7[64], minus8[64], minus9[64];
+	uint64_t cells[BOARD_SIZE][BOARD_SIZE];
+	uint64_t bitboard[32][BOARD_SIZE][BOARD_SIZE];
 public:
 	Board();
 	uint8_t createFigure(uint8_t fig, uint8_t type);
@@ -61,6 +67,10 @@ public:
 	int numHalfMove;
 	int move_rule_num;
 	void printScore(double score);
+
+	std::vector<Move>bitBoardMoveGenerator();
+	void preInitBoard();
+	void initBoard();
 
 	//оценочная функция
 	double evalute;

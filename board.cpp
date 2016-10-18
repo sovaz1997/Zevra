@@ -584,3 +584,99 @@ double Board::evaluteAll() {
 int Board::popcount64(uint64_t value) {
 	return /*_mm_popcnt_u64(value);*/ __builtin_popcountll(value);
 }
+
+std::vector<Move> Board::bitBoardMoveGenerator() {
+
+}
+
+void Board::preInitBoard() {
+	uint64_t mul = 1;
+	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
+		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
+			cells[y][x] = mul;
+			mul *= 2;
+		}
+	}
+
+	for(int i = 0; i < 32; ++i) {
+		for(int j = 0; j < BOARD_SIZE; ++j) {
+			for(int k = 0; k < BOARD_SIZE; ++k) {
+				bitboard[i][j][k] = 0;
+			}
+		}
+	}
+
+	for(int y = 0; y < 64; ++y) {
+		for(int x = 0; x < 64; ++x) {
+			for(int k = 0; k < 8; ++k) {
+				if(k != x) {
+					bitboard[ROOK | WHITE][y][x] += cells[y][k];
+					bitboard[ROOK | BLACK][y][x] += cells[y][k];
+					bitboard[QUEEN | WHITE][y][x] += cells[y][k];
+					bitboard[QUEEN | BLACK][y][x] += cells[y][k];
+				}
+			}
+
+			for(int k = 0; k < 8; ++k) {
+				if(k != y) {
+					bitboard[ROOK | WHITE][y][x] += cells[k][x];
+					bitboard[ROOK | BLACK][y][x] += cells[k][x];
+					bitboard[QUEEN | WHITE][y][x] += cells[k][x];
+					bitboard[QUEEN | BLACK][y][x] += cells[k][x];
+				}
+			}
+
+			for(int i = y + 1, j = x + 1; i < 8, j < 8; ++i, ++j) {
+				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+			}
+
+			for(int i = y + 1, j = x - 1; i < 8, j >= 0; ++i, --j) {
+				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+			}
+
+			for(int i = y - 1, j = x + 1; i >= 0, j < 8; --i, ++j) {
+				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+			}
+
+			for(int i = y - 1, j = x - 1; i >= 0, j >= 0; --i, --j) {
+				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+			}
+
+			if(y < BOARD_SIZE - 2 && x < BOARD_SIZE - 1) {
+				bitboard[KNIGHT | WHITE][y][x] += cells[y+2][x+1];
+			}
+
+			if(y < BOARD_SIZE - 2 && x > 0) {
+				bitboard[KNIGHT | WHITE][y][x] += cells[y+2][x-1];
+			}
+
+			if(y < BOARD_SIZE - 2 && x > 0) {
+				bitboard[KNIGHT | WHITE][y][x] += cells[y-2][x+1];
+			}
+
+			//...
+
+			/*bitboard[KNIGHT | WHITE][y][x] += cells[y-2][x-1];
+			bitboard[KNIGHT | WHITE][y][x] += cells[y+1][x+2];
+			bitboard[KNIGHT | WHITE][y][x] += cells[y+1][x-2];
+			bitboard[KNIGHT | WHITE][y][x] += cells[y-1][x+2];
+			bitboard[KNIGHT | WHITE][y][x] += cells[y-1][x-2];*/
+		}
+	}
+}
+
+void Board::initBoard() {
+
+}

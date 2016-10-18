@@ -204,6 +204,16 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 			}
 		}
 
+		if(best_pv.size() > depth) {
+			for(unsigned int i = 0; i < result.size(); ++i) {
+				if(best_pv.pv[depth].equal(result[i])) {
+					result.erase(result.begin() + i);
+					result.insert(result.begin(), best_pv.pv[depth]);
+					break;
+				}
+			}
+		}
+
 		/*if(hasBestMove && depth == 0) {
 			for(unsigned int i = 0; i < result.size(); ++i) {
 				if(bestMove.equal(result[i])) {
