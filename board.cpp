@@ -587,7 +587,7 @@ int Board::popcount64(uint64_t value) {
 }
 
 std::vector<Move> Board::bitBoardMoveGenerator() {
-
+	
 }
 
 void Board::preInitBoard() {
@@ -792,4 +792,12 @@ uint64_t Board::blackBitMask() {
 		figures[QUEEN | BLACK]  |
 		figures[KING | BLACK]  
 	);
+}
+
+uint8_t Board::firstOne(uint64_t mask) {
+	
+}
+
+uint8_t Board::firstOne(uint64_t mask) {
+	
 }

@@ -84,6 +84,9 @@ public:
 	
 	uint64_t whiteBitMask();
 	uint64_t blackBitMask();
+	
+	uint8_t firstOne(uint64_t mask);
+	uint8_t lastOne(uint64_t mask);
 	/* ------*/
 
 	//std::vector<Point>figureList;
