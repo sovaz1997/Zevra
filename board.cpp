@@ -105,6 +105,7 @@ void Board::setFenPosition(std::string FEN) {
 
 	numHalfMove = std::stoi(str);
 
+	initBoard();
 	evaluteAll();
 }
 
@@ -623,6 +624,10 @@ void Board::preInitBoard() {
 		vec2_cells[i / 8][i % 8] = it;
 		it <<= 1;
 	}
+	
+	for(int i = 0; i < 32; ++i) {
+		figures[i] = 0;
+	}
 
 	for(int y = 0; y < 64; ++y) {
 		for(int x = 0; x < 64; ++x) {
@@ -741,7 +746,13 @@ void Board::preInitBoard() {
 }
 
 void Board::initBoard() {
-
+	for(int y = 0; y < 8; ++y) {
+		for(int x = 0; x < 8; ++x) {
+			if(board[y][x]) {
+				figures[board[y][x]] |= vec2_cells[y][x];
+			}
+		}
+	}
 }
 
 
@@ -759,4 +770,26 @@ void Board::printBitBoard(uint64_t bit_board) {
 		}
 		std::cout << "\n";
 	}
+}
+
+uint64_t Board::whiteBitMask() {
+	return (
+		figures[PAWN | WHITE]   |
+		figures[KNIGHT | WHITE] |
+		figures[BISHOP | WHITE] |
+		figures[ROOK | WHITE]   |
+		figures[QUEEN | WHITE]  |
+		figures[KING | WHITE]   
+	);
+}
+
+uint64_t Board::blackBitMask() {
+	return (
+		figures[PAWN | BLACK]   |
+		figures[KNIGHT | BLACK] |
+		figures[BISHOP | BLACK] |
+		figures[ROOK | BLACK]   |
+		figures[QUEEN | BLACK]  |
+		figures[KING | BLACK]  
+	);
 }

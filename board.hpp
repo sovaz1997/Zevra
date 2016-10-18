@@ -81,6 +81,9 @@ public:
 	int popcount64(uint64_t value);
 	
 	void printBitBoard(uint64_t bit_board);
+	
+	uint64_t whiteBitMask();
+	uint64_t blackBitMask();
 	/* ------*/
 
 	//std::vector<Point>figureList;
