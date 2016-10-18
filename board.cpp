@@ -8,8 +8,8 @@ Board::Board() {
 			board[i][j] = 0;
 		}
 	}
-
 	cleanBoard();
+	preInitBoard();
 }
 
 uint8_t Board::createFigure(uint8_t fig, uint8_t type) {
@@ -505,7 +505,7 @@ double Board::evaluteAll() {
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
 			if(board[y][x] != 0) {
-				//(обязательно)figureMask[board[y][x]] |= cells[y][x];
+				//(обязательно)figureMask[board[y][x]] |= vec2_cells[y][x];
 			}
 		}
 	}
@@ -593,7 +593,7 @@ void Board::preInitBoard() {
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
-			cells[y][x] = mul;
+			vec2_cells[y][x] = mul;
 			mul *= 2;
 		}
 	}
@@ -605,78 +605,158 @@ void Board::preInitBoard() {
 			}
 		}
 	}
+	
+	for(int i = 0; i < 64; ++i) {
+		plus1[i] = 0;
+		plus7[i] = 0;
+		plus8[i] = 0;
+		plus9[i] = 0;
+		minus1[i] = 0;
+		minus7[i] = 0;
+		minus8[i] = 0;
+		minus9[i] = 0;
+	}
+	
+	uint64_t it = 1;
+	for(int i = 0; i < 64; ++i) {
+		vec1_cells[i] = it;
+		vec2_cells[i / 8][i % 8] = it;
+		it <<= 1;
+	}
 
 	for(int y = 0; y < 64; ++y) {
 		for(int x = 0; x < 64; ++x) {
 			for(int k = 0; k < 8; ++k) {
 				if(k != x) {
-					bitboard[ROOK | WHITE][y][x] += cells[y][k];
-					bitboard[ROOK | BLACK][y][x] += cells[y][k];
-					bitboard[QUEEN | WHITE][y][x] += cells[y][k];
-					bitboard[QUEEN | BLACK][y][x] += cells[y][k];
+					bitboard[ROOK | WHITE][y][x] += vec2_cells[y][k];
+					bitboard[ROOK | BLACK][y][x] += vec2_cells[y][k];
+					bitboard[QUEEN | WHITE][y][x] += vec2_cells[y][k];
+					bitboard[QUEEN | BLACK][y][x] += vec2_cells[y][k];
 				}
 			}
 
 			for(int k = 0; k < 8; ++k) {
 				if(k != y) {
-					bitboard[ROOK | WHITE][y][x] += cells[k][x];
-					bitboard[ROOK | BLACK][y][x] += cells[k][x];
-					bitboard[QUEEN | WHITE][y][x] += cells[k][x];
-					bitboard[QUEEN | BLACK][y][x] += cells[k][x];
+					bitboard[ROOK | WHITE][y][x] += vec2_cells[k][x];
+					bitboard[ROOK | BLACK][y][x] += vec2_cells[k][x];
+					bitboard[QUEEN | WHITE][y][x] += vec2_cells[k][x];
+					bitboard[QUEEN | BLACK][y][x] += vec2_cells[k][x];
 				}
 			}
 
 			for(int i = y + 1, j = x + 1; i < 8, j < 8; ++i, ++j) {
-				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
-				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
-				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
-				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+				bitboard[QUEEN | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += vec2_cells[i][j];
 			}
 
 			for(int i = y + 1, j = x - 1; i < 8, j >= 0; ++i, --j) {
-				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
-				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
-				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
-				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+				bitboard[QUEEN | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += vec2_cells[i][j];
 			}
 
 			for(int i = y - 1, j = x + 1; i >= 0, j < 8; --i, ++j) {
-				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
-				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
-				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
-				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+				bitboard[QUEEN | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += vec2_cells[i][j];
 			}
 
 			for(int i = y - 1, j = x - 1; i >= 0, j >= 0; --i, --j) {
-				bitboard[QUEEN | WHITE][y][x] += cells[i][j];
-				bitboard[QUEEN | BLACK][y][x] += cells[i][j];
-				bitboard[BISHOP | WHITE][y][x] += cells[i][j];
-				bitboard[BISHOP | BLACK][y][x] += cells[i][j];
+				bitboard[QUEEN | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[QUEEN | BLACK][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | WHITE][y][x] += vec2_cells[i][j];
+				bitboard[BISHOP | BLACK][y][x] += vec2_cells[i][j];
 			}
 
 			if(y < BOARD_SIZE - 2 && x < BOARD_SIZE - 1) {
-				bitboard[KNIGHT | WHITE][y][x] += cells[y+2][x+1];
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y+2][x+1];
 			}
 
 			if(y < BOARD_SIZE - 2 && x > 0) {
-				bitboard[KNIGHT | WHITE][y][x] += cells[y+2][x-1];
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y+2][x-1];
 			}
 
-			if(y < BOARD_SIZE - 2 && x > 0) {
-				bitboard[KNIGHT | WHITE][y][x] += cells[y-2][x+1];
+			if(y > 1 && x < BOARD_SIZE - 1) {
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y-2][x+1];
 			}
-
-			//...
-
-			/*bitboard[KNIGHT | WHITE][y][x] += cells[y-2][x-1];
-			bitboard[KNIGHT | WHITE][y][x] += cells[y+1][x+2];
-			bitboard[KNIGHT | WHITE][y][x] += cells[y+1][x-2];
-			bitboard[KNIGHT | WHITE][y][x] += cells[y-1][x+2];
-			bitboard[KNIGHT | WHITE][y][x] += cells[y-1][x-2];*/
+			
+			if(y > 1 && x > 0) {
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y-2][x-1];
+			}
+			if(y < BOARD_SIZE - 1 && x < BOARD_SIZE - 2) {
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y+1][x+2];
+			}
+			
+			if(y < BOARD_SIZE - 1 && x > 1) {
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y+1][x-2];
+			}
+			if(y > 0 && x < BOARD_SIZE - 2) {
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y-1][x+2];
+			}
+			if(y > 0 && x > 1) {
+				bitboard[KNIGHT | WHITE][y][x] += vec2_cells[y-1][x-2];
+			}
+		}
+	}
+	
+	for(int i = 0; i < 64; ++i) {
+		int it = i;
+		
+		for(int y = i / 8 + 1, x = i % 8 + 1; y < 8 && x < 8; ++y, ++x) {
+			plus9[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8 + 1, x = i % 8 - 1; y < 8 && x >= 0; ++y, --x) {
+			plus7[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8 - 1, x = i % 8 - 1; y >= 0 && x >= 0; --y, --x) {
+			minus9[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8 - 1, x = i % 8 + 1; y >= 0 && x < 8; --y, ++x) {
+			minus7[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8 + 1, x =  i % 8; y < 8; ++y) {
+			plus8[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8, x =  i % 8 + 1; x < 8; ++x) {
+			plus1[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8 - 1, x =  i % 8; y >= 0; --y) {
+			minus8[i] |= vec2_cells[y][x];
+		}
+		
+		for(int y = i / 8, x = i % 8 - 1; x >= 0; --x) {
+			minus1[i] |= vec2_cells[y][x];
 		}
 	}
 }
 
 void Board::initBoard() {
 
+}
+
+
+void Board::printBitBoard(uint64_t bit_board) {
+	std::stack<bool> res;
+	for(int i = 0; i < 64; ++i) {
+		res.push(bit_board % 2);
+		bit_board /= 2;	
+	}
+	
+	for(int i = 0; i < 8; ++i) {
+		for(int j = 0; j < 8; ++j) {
+			std::cout << res.top();
+			res.pop();
+		}
+		std::cout << "\n";
+	}
 }

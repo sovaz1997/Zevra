@@ -32,8 +32,11 @@ private:
 
 	uint64_t white_occupied_squares, black_occupied_squares;
 	uint64_t plus1[64], plus7[64], plus8[64], plus9[64], minus1[64], minus7[64], minus8[64], minus9[64];
-	uint64_t cells[BOARD_SIZE][BOARD_SIZE];
+	uint64_t vec2_cells[8][8];
+	uint64_t vec1_cells[64];
 	uint64_t bitboard[32][BOARD_SIZE][BOARD_SIZE];
+	
+	uint64_t figures[32];
 public:
 	Board();
 	uint8_t createFigure(uint8_t fig, uint8_t type);
@@ -76,6 +79,8 @@ public:
 	double evalute;
 
 	int popcount64(uint64_t value);
+	
+	void printBitBoard(uint64_t bit_board);
 	/* ------*/
 
 	//std::vector<Point>figureList;
