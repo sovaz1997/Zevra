@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -pedantic -std=c++17 -m64 -O3 #-flto -march=native -funroll-loops -msse -g
+CFLAGS = -Wall -pedantic -std=c++17 -m64 -O4 #-flto -march=native -funroll-loops -msse -g
 FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o
 
 all: constants.hpp $(FILES)
