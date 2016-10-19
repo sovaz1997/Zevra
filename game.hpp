@@ -73,6 +73,7 @@ private:
 	double bestScore;
 	int time;
 	double start_timer, end_timer;
+	int stress;
 public:
 	Game();
 	PV negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);

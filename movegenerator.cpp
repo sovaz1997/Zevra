@@ -225,5 +225,6 @@ std::vector<Move> Game::generatePositionMoves(Board & b, bool & shah, bool withC
 		}*/
 	}
 
+	stress += result.size();
 	return result;
 }

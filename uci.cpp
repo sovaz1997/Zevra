@@ -68,11 +68,21 @@ bool Game::uciHandler(std::string str) {
 			return false;
 		} else if(cmd[0] == "stress") {
 			bool shah_tmp;
-			std::cout << "!";
-			for(unsigned int i = 0; i < 100000; ++i) {
+
+			game_board.stress = 0;
+			double st = clock();
+			for(unsigned int i = 0; i < 1000000; ++i) {
+				game_board.bitBoardMoveGenerator();
+			}
+			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
+
+			stress = 0;
+			st = clock();
+			for(unsigned int i = 0; i < 1000000; ++i) {
 				generatePositionMoves(game_board, shah_tmp, true, 0);
 			}
-			std::cout << "!";
+			std::cout << (int)(stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
+
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 		}
