@@ -696,13 +696,29 @@ std::vector<Move> Board::bitBoardMoveGenerator() {
 	}
 
 	uint64_t blackKnight = figures[KNIGHT | BLACK];
-	while(whiteKnight != 0) {
+	while(blackKnight != 0) {
 		uint8_t pos = firstOne(blackKnight);
 		possibleMoves = bitboard[KNIGHT | BLACK][pos / 8][pos % 8] & (UINT64_MAX ^ black_bit_mask) & (UINT64_MAX ^ figures[KING | WHITE]);
 		blackKnight &= (UINT64_MAX ^ vec1_cells[pos]);
 		stress += popcount64(possibleMoves);
 	}
 
+	//Короли
+	uint64_t whiteKing = figures[KING | WHITE];
+	while(whiteKing != 0) {
+		uint8_t pos = firstOne(whiteKing);
+		possibleMoves = bitboard[KING | WHITE][pos / 8][pos % 8] & (UINT64_MAX ^ white_bit_mask) & (UINT64_MAX ^ figures[KING | BLACK]);
+		whiteKing &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+	}
+
+	uint64_t blackKing = figures[KING | BLACK];
+	while(blackKing != 0) {
+		uint8_t pos = firstOne(blackKing);
+		possibleMoves = bitboard[KING | BLACK][pos / 8][pos % 8] & (UINT64_MAX ^ black_bit_mask) & (UINT64_MAX ^ figures[KING | WHITE]);
+		blackKing &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+	}
 
 	return result;
 }
@@ -828,6 +844,49 @@ void Board::preInitBoard() {
 			if(y > 0 && x > 1) {
 				bitboard[KNIGHT | WHITE][y][x] |= vec2_cells[y-1][x-2];
 				bitboard[KNIGHT | BLACK][y][x] |= vec2_cells[y-1][x-2];
+			}
+
+
+
+
+			if(y > 0 && x > 0) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y-1][x-1];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y-1][x-1];
+			}
+
+			if(y > 0) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y-1][x];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y-1][x];
+			}
+
+			if(y > 0 && x < BOARD_SIZE - 1) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y-1][x+1];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y-1][x+1];
+			}
+
+			if(x > 0) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y][x-1];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y][x-1];
+			}
+
+			if(x < BOARD_SIZE - 1) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y][x+1];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y][x+1];
+			}
+
+			if(y < BOARD_SIZE - 1 && x > 0) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y+1][x-1];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y+1][x-1];
+			}
+
+			if(y < BOARD_SIZE - 1) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y+1][x];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y+1][x];
+			}
+
+			if(y < BOARD_SIZE - 1 && x < BOARD_SIZE - 1) {
+				bitboard[KING | WHITE][y][x] |= vec2_cells[y+1][x+1];
+				bitboard[KING | BLACK][y][x] |= vec2_cells[y+1][x+1];
 			}
 		}
 	}
