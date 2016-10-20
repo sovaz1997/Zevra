@@ -1090,6 +1090,7 @@ void Game::initEngine() {
 	cleanBlackHistory();
 	createPawnAttackCutter();
 	clearCash();
+	moveArray.resize(100);
 }
 
 void Game::cache_gen() {

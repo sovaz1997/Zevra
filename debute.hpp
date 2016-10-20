@@ -4,6 +4,8 @@
 #include <cstdint>
 #include "move.hpp"
 
+class Move;
+
 class Debute {
 public:
 	uint64_t hash;

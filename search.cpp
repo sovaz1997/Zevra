@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
+/*PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth - 1;
 	PV bpv;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
@@ -20,52 +20,52 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 
 	uint64_t pos_hash = getHash(b);
 	uint64_t board_hash = getColorHash(b, pos_hash);
-	/*hash.push_back(pos_hash);
-	if(depth > 0) {
-		int third_repeat = 1;
-			for(unsigned int i = 0; i < hash.size(); ++i) {
-				if(hash[i] == pos_hash) {
-					++third_repeat;
-				}
-				if(third_repeat >= 3  || b.move_rule_num >= 50) {
-					return 0;
-				}
-		}
-	}*/
+	//hash.push_back(pos_hash);
+	//if(depth > 0) {
+	//	int third_repeat = 1;
+	//		for(unsigned int i = 0; i < hash.size(); ++i) {
+	//			if(hash[i] == pos_hash) {
+	//				++third_repeat;
+	//			}
+	//			if(third_repeat >= 3  || b.move_rule_num >= 50) {
+	//				return 0;
+	//			}
+	//	}
+	//}
 
 	if(depth <= 0) {
 		//return evalute(b);
 
-		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
-			pv_best = pv_tmp;
-			whiteUp = eval;
-		}*/
-
+		//if(eval > alpha && eval < beta && eval >= whiteUp) {
+		//	pv_best = pv_tmp;
+		//	whiteUp = eval;
+		//}
 		return PV(quies(b, alpha, beta, rule));
 	}
 
-	/*if(depth >= 4 && usedNullMove) {
-		if(!inCheck(b, color)) {
-			b.whiteMove = !b.whiteMove;
-			double tmp = -negamax(b, beta - 1, beta, nextDepth - 3, real_depth + 1, hash, basis, pv, false, rule, capture);
-			b.whiteMove = !b.whiteMove;
+	//if(depth >= 4 && usedNullMove) {
+	//	if(!inCheck(b, color)) {
+	//		b.whiteMove = !b.whiteMove;
+	//		double tmp = -negamax(b, beta - 1, beta, nextDepth - 3, real_depth + 1, hash, basis, pv, false, rule, capture);
+	//		b.whiteMove = !b.whiteMove;
 
-			if(tmp >= beta) {
-				return beta;
-			}
-		}
-	}*/
+	//		if(tmp >= beta) {
+	//			return beta;
+	//		}
+	//	}
+	//}
 
-	/*if(inCheck(b, color) && real_depth < 100) {
-		--nextDepth;
-	}*/
+	//if(inCheck(b, color) && real_depth < 100) {
+	//	--nextDepth;
+	//}
 
 	int num_moves = 0;
 
 	double max = BLACK_WIN;
 
 	bool tmp_shah;
-	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, real_depth);
+	std::vector<Move>moves = b.bitBoardMoveGenerator();//generatePositionMoves(b, tmp_shah, true, real_depth);
+	sortMoves(moves, d);
 
 	Move local_move;
 
@@ -107,23 +107,23 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 //		beta = boardHash[board_hash & hash_cutter].beta;
 	}
 
-		/*if(depth <= MIN_DEPTH) {
-			tmp = alpha + 1;
-		} else {
-			tmp = alpha + 1;
-			int D = std::max(MIN_DEPTH, depth / 2 + 1);
+		//if(depth <= MIN_DEPTH) {
+		//	tmp = alpha + 1;
+		//} else {
+		//	tmp = alpha + 1;
+		//	int D = std::max(MIN_DEPTH, depth / 2 + 1);
 
-			while(D < depth - 1 && tmp > alpha) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, hash, basis, pv, true, rule, capt);
-				++D;
-			}
-		}*/
+		//	while(D < depth - 1 && tmp > alpha) {
+		//		tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+		//		++D;
+		//	}
+		//}
 
-		/*if(depth >= max_depth - MIN_DEPTH) {
-			tmp = alpha + 1;
-		} else {
-			tmp = -negamax(b, -beta, -alpha, nextDepth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
-		}*/
+		//if(depth >= max_depth - MIN_DEPTH) {
+		//	tmp = alpha + 1;
+		//} else {
+		//	tmp = -negamax(b, -beta, -alpha, nextDepth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+		//}
 
 		//if(tmp > alpha) {
 		if(pv_tmp.size() < (unsigned int) (real_depth + 1)) {
@@ -146,10 +146,10 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 			//tmp.evalute = -tmp.evalute;
 		//}
 
-		/*if(tmp.evalute > alpha) {
-			tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			tmp.evalute = -tmp.evalute;
-		}*/
+		//if(tmp.evalute > alpha) {
+		//	tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+		//	tmp.evalute = -tmp.evalute;
+		//}
 		//}
 
 		b.goBack();
@@ -241,9 +241,248 @@ PV Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth
 
 	bpv.evalute = max;
 	return bpv;
+}*/
+
+double Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
+	int nextDepth = depth - 1;
+	if(rule == FIXED_TIME && timer.getTime() >= time) {
+		return 0;
+	}
+
+	uint8_t color;
+	if(b.isWhiteMove()) {
+		color = WHITE;
+	} else {
+		color = BLACK;
+	}
+
+	//ПРОВЕРКА НА ПОВТОРЕНИЕ ПОЗИЦИИ/ПРАВИЛА 50 ХОДОВ
+
+	//uint64_t pos_hash = getHash(b);
+	//uint64_t board_hash = getColorHash(b, pos_hash);
+	/*hash.push_back(pos_hash);
+	if(depth > 0) {
+		int third_repeat = 1;
+			for(unsigned int i = 0; i < hash.size(); ++i) {
+				if(hash[i] == pos_hash) {
+					++third_repeat;
+				}
+				if(third_repeat >= 3  || b.move_rule_num >= 50) {
+					return 0;
+				}
+		}
+	}*/
+
+	if(depth <= 0) {
+		return evalute(b);
+
+		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
+			pv_best = pv_tmp;
+			whiteUp = eval;
+		}*/
+		//return quies(b, alpha, beta, rule, real_depth);
+	}
+
+	/*if(depth >= 4 && usedNullMove) {
+		if(!inCheck(b, color)) {
+			b.whiteMove = !b.whiteMove;
+			double tmp = -negamax(b, beta - 1, beta, nextDepth - 3, real_depth + 1, hash, basis, pv, false, rule, capture);
+			b.whiteMove = !b.whiteMove;
+
+			if(tmp >= beta) {
+				return beta;
+			}
+		}
+	}*/
+
+	/*if(inCheck(b, color) && real_depth < 100) {
+		--nextDepth;
+	}*/
+
+	int num_moves = 0;
+
+	double max = BLACK_WIN;
+
+	bool tmp_shah;
+	/*std::vector<Move>moves = */b.bitBoardMoveGenerator(moveArray[real_depth]);//generatePositionMoves(b, tmp_shah, true, real_depth);
+	//sortMoves(moves, depth);
+
+	Move local_move;
+
+	if(moveArray[real_depth].count > 0) {
+		local_move = moveArray[real_depth].moveArray[0];
+	}
+
+	int tmp;
+
+	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
+		++movesCounter;
+		if(rule == FIXED_TIME) {
+			if(timer.getTime() >= time) {
+				return 0;
+			}
+		}
+
+		bool capt = false;
+		if(b.board[moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] != 0) {
+			capt = true;
+		}
+
+		b.move(moveArray[real_depth].moveArray[i]);
+
+		if(inCheck(b, color)) {
+			b.goBack();
+			continue;
+		}
+
+		if(num_moves == 0) {
+			local_move = moveArray[real_depth].moveArray[i];
+		}
+
+		++num_moves;
+
+		pv.push_back(moveArray[real_depth].moveArray[i]);
+
+		//if(moves[i].fromHash && boardHash[board_hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[board_hash & hash_cutter].enable && boardHash[board_hash & hash_cutter].hash == board_hash && boardHash[board_hash & hash_cutter].depth >= depth) {
+			//alpha = boardHash[board_hash & hash_cutter].alpha;
+//		beta = boardHash[board_hash & hash_cutter].beta;
+		//}
+
+		/*if(depth <= MIN_DEPTH) {
+			tmp = alpha + 1;
+		} else {
+			tmp = alpha + 1;
+			int D = std::max(MIN_DEPTH, depth / 2 + 1);
+
+			while(D < depth - 1 && tmp > alpha) {
+				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+				++D;
+			}
+		}*/
+
+		/*if(depth >= max_depth - MIN_DEPTH) {
+			tmp = alpha + 1;
+		} else {
+			tmp = -negamax(b, -beta, -alpha, nextDepth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
+		}*/
+
+		//if(tmp > alpha) {
+
+
+
+		//if(num_moves <= 1) {
+			tmp = -negamax(b, -(alpha+1), -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			if(tmp > alpha && tmp < beta) {
+				tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			}
+
+
+		//} else {
+			//tmp = negamax(b, -alpha - 1, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			//tmp.evalute = -tmp.evalute;
+		//}
+
+		/*if(tmp.evalute > alpha) {
+			tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
+			tmp.evalute = -tmp.evalute;
+		}*/
+		//}
+
+		b.goBack();
+
+		if(real_depth == 0 && num_moves > 1) {
+				std::cout << "info depth " << max_depth << " currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves;
+
+			if(num_moves > 1) {
+				std::cout << " ";
+				printScore(alpha);
+				std::cout << " nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
+				" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
+			} else {
+				std::cout << "\n";
+			}
+		}
+
+		if(tmp > max) {
+			max = tmp;
+			local_move = moveArray[real_depth].moveArray[i];
+		}
+
+		if(tmp > alpha) {
+			alpha = tmp;
+			//if(real_depth == 0) {
+				//pv_best[real_depth] = local_move;
+
+
+			//}
+		}
+
+		if(max >= beta) {
+			//pv_best = pv_tmp;
+
+			//if(b.board[moves[i].toY][moves[i].toX] == 0) {
+			//	if(color == WHITE) {
+			//		whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
+			//		whiteKiller[real_depth] = Killer(moves[i]);
+			//	} else {
+			//		blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
+			//		blackKiller[real_depth] = Killer(moves[i]);
+			//	}
+			//}
+
+			//if(boardHash[board_hash & hash_cutter].enable) {
+			//	if(boardHash[board_hash & hash_cutter].depth <= depth && board_hash == boardHash[board_hash & hash_cutter].hash) {
+			//		boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, alpha, beta, ALPHA_CUT_EV);
+			//	}
+			//} else {
+			//	boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, alpha, beta, ALPHA_CUT_EV);
+			//}
+
+			if(real_depth == 0 && basis) {
+				bestmove = local_move;
+				bestMove = bestmove;
+				bestScore = max;
+			}
+
+			return max;
+		}
+	}
+
+	if(num_moves == 0) {
+		if(inCheck(b, color)) {
+			return BLACK_WIN + real_depth;
+		} else {
+			return 0;
+		}
+	}
+
+
+	if(real_depth == 0 && basis) {
+		bestmove = local_move;
+		bestMove = bestmove;
+		bestScore = max;
+	}
+
+	return max;
 }
 
-double Game::quies(Board & b, double alpha, double beta, int rule) {
+uint64_t Game::perft(int depth) {
+	uint64_t res = 0;
+	if(depth == 0) {
+		return 1;
+	}
+	/*std::vector<Move>moves = */game_board.bitBoardMoveGenerator(moveArray[depth]);
+
+	for(int i = 0; i < moveArray[depth].count; ++i) {
+		game_board.move(moveArray[depth].moveArray[i]);
+		res += perft(depth - 1);
+		game_board.goBack();
+	}
+
+	return res;
+}
+
+double Game::quies(Board & b, double alpha, double beta, int rule, int real_depth) {
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -259,21 +498,22 @@ double Game::quies(Board & b, double alpha, double beta, int rule) {
 	}
 
 	bool tmp_shah = false;
-	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, true, max_depth);
+	/*std::vector<Move>moves = */b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
+	//sortMoves(moves, 0);
 
-	for(unsigned int i = 0; i < moves.size() && alpha < beta; ++i) {
+	for(unsigned int i = 0; i < moveArray[real_depth].count && alpha < beta; ++i) {
 		if(rule == FIXED_TIME && timer.getTime() >= time) {
 			return 0;
 		}
 
-		if(b.board[moves[i].toY][moves[i].toX] == 0) {
+		if(b.board[moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] == 0) {
 			continue;
 		}
 
 		++movesCounter;
-		b.move(moves[i]);
+		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(!b.isWhiteMove()) {
+		/*if(!b.isWhiteMove()) {
 			if(inCheck(b, WHITE)) {
 				b.goBack();
 				continue;
@@ -283,9 +523,9 @@ double Game::quies(Board & b, double alpha, double beta, int rule) {
 				b.goBack();
 				continue;
 			}
-		}
+		}*/
 
-		val = -quies(b, -beta, -alpha, rule);
+		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
 		b.goBack();
 
 		if(val >= beta) {

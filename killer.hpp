@@ -3,6 +3,8 @@
 
 #include "move.hpp"
 
+class Move;
+
 class Killer {
 public:
 	Move move;

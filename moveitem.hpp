@@ -3,6 +3,8 @@
 
 #include "move.hpp"
 
+class Move;
+
 class MoveItem {
 private:
 	void init();

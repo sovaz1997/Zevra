@@ -48,11 +48,11 @@ bool Game::uciHandler(std::string str) {
 			}
 		} else if(cmd[0] == "posmoves") {
 			bool shah_tmp;
-			std::vector<Move>moves = generatePositionMoves(game_board, shah_tmp, true, 0);
-			for(unsigned int i = 0; i < moves.size(); ++i) {
+			/*std::vector<Move>moves = *//*game_board.bitBoardMoveGenerator();*///generatePositionMoves(game_board, shah_tmp, true, 0);
+			/*for(unsigned int i = 0; i < moves.size(); ++i) {
 				moves[i].print();
 				std::cout << "\n";
-			}
+			}*/
 
 			std::cout << evalute(game_board) / PAWN_EV * 100 << "\n";
 			std::cout << game_board.getFenPosition() << "\n";
@@ -72,7 +72,7 @@ bool Game::uciHandler(std::string str) {
 			game_board.stress = 0;
 			double st = clock();
 			for(unsigned int i = 0; i < 1000000; ++i) {
-				game_board.bitBoardMoveGenerator();
+				game_board.bitBoardMoveGenerator(moveArray[0]);
 			}
 			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
 
@@ -85,6 +85,12 @@ bool Game::uciHandler(std::string str) {
 
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
+		} else if(cmd[0] == "perft") {
+			int k;
+			std::cin >> k;
+			double st = clock();
+			uint64_t count = perft(k);
+			std::cout << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << "\n";
 		}
 
 		return true;

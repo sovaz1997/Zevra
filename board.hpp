@@ -13,10 +13,12 @@
 #include "point.hpp"
 #include "goback.hpp"
 #include "figurecell.hpp"
+#include "movearray.hpp"
 
 
 class Move;
 class GoBack;
+class MoveArray;
 
 class Board {
 private:
@@ -71,7 +73,8 @@ public:
 	int move_rule_num;
 	void printScore(double score);
 
-	std::vector<Move>bitBoardMoveGenerator();
+	void bitBoardMoveGenerator(MoveArray& moveArray);
+	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
 	void preInitBoard();
 	void initBoard();
 

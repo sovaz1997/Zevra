@@ -27,32 +27,31 @@ void GoBack::goBack(Board* board) {
   }*/
 
   if(type == WS_CASTLING_MV) {
-    board->board[7][4] = (KING | WHITE);
-    board->board[7][5] = 0;
-    board->board[7][6] = 0;
-    board->board[7][7] = (ROOK | WHITE);
+  	board->setFigure(KING | WHITE, 7, 4);
+  	board->setFigure(0, 7, 5);
+    board->setFigure(0, 7, 6);
+    board->setFigure(ROOK | WHITE, 7, 7);
     board->whiteShortCastleEnable = true;
   } else if(type == WL_CASTLING_MV) {
-    board->board[7][4] = (KING | WHITE);
-    board->board[7][3] = 0;
-    board->board[7][2] = 0;
-    board->board[7][0] = (ROOK | WHITE);
+    board->setFigure(KING | WHITE, 7, 4);
+    board->setFigure(0, 7, 3);
+    board->setFigure(0, 7, 2);
+    board->setFigure(ROOK | WHITE, 7, 0);
   } else if(type == BS_CASTLING_MV) {
-    board->board[0][4] = (KING | BLACK);
-    board->board[0][5] = 0;
-    board->board[0][6] = 0;
-    board->board[0][7] = (ROOK | BLACK);
+    board->setFigure(KING | BLACK, 0, 4);
+    board->setFigure(0, 0, 5);
+    board->setFigure(0, 0, 6);
+    board->setFigure(ROOK | BLACK, 0, 7);
   } else if(type == BL_CASTLING_MV) {
-    board->board[0][4] = (KING | BLACK);
-    board->board[0][3] = 0;
-    board->board[0][2] = 0;
-    board->board[0][0] = (ROOK | BLACK);
+    board->setFigure(KING | BLACK, 0, 4);
+    board->setFigure(0, 0, 3);
+    board->setFigure(0, 0, 2);
+    board->setFigure(ROOK | BLACK, 0, 3);
   } else {
-    board->board[fig1.y][fig1.x] = fig1.figure;
-    board->board[fig2.y][fig2.x] = fig2.figure;
-
+    board->setFigure(fig1.figure, fig1.y, fig1.x);
+    board->setFigure(fig2.figure, fig2.y, fig2.x);
     if(passant_has) {
-      board->board[fig3.y][fig3.x] = fig3.figure;
+      board->setFigure(fig3.figure, fig3.y, fig3.x);
     }
   }
 }

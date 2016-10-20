@@ -1,6 +1,6 @@
 CC = g++
-CFLAGS = -Wall -pedantic -std=c++17 -m64 -O4 #-flto -march=native -funroll-loops -msse -g
-FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o
+CFLAGS = -Wall -pedantic -std=c++17 -m64 -O3 #-pg #-pg -flto -march=native -funroll-loops -msse -g
+FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o bitmove.o movearray.o bitboard.o
 
 all: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o zevra
@@ -11,10 +11,10 @@ main.o: main.cpp
 board.o: board.hpp board.cpp
 	$(CC) $(CFLAGS) -c board.cpp
 
-game.o: game.cpp
+game.o: game.hpp game.cpp
 	$(CC) $(CFLAGS) -c game.cpp
 
-move.o: move.cpp
+move.o: move.hpp move.cpp
 	$(CC) $(CFLAGS) -c move.cpp
 
 movelist.o: movelist.hpp movelist.cpp
@@ -73,6 +73,15 @@ figurecell.o: figurecell.hpp figurecell.cpp
 
 pv.o: pv.hpp pv.cpp
 	$(CC) $(CFLAGS) -c pv.cpp
-	
+
+bitmove.o: bitmove.hpp bitmove.cpp
+	$(CC) $(CFLAGS) -c bitmove.cpp
+
+movearray.o: move.hpp game.hpp movearray.hpp movearray.cpp
+	$(CC) $(CFLAGS) -c movearray.cpp
+
+bitboard.o: bitboard.hpp bitboard.cpp
+	$(CC) $(CFLAGS) -c bitboard.cpp
+
 clean:
 	rm -rf *.o zevra

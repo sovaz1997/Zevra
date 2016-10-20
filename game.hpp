@@ -26,6 +26,7 @@
 #include "point.hpp"
 #include "timer.hpp"
 #include "pv.hpp"
+#include "movearray.hpp"
 
 class Game {
 private:
@@ -76,9 +77,11 @@ private:
 	int stress;
 public:
 	Game();
-	PV negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	//PV negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	double negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  	double quies(Board & b, double alpha, double beta, int rule);
+  	double quies(Board & b, double alpha, double beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
@@ -97,6 +100,8 @@ public:
 	std::vector<std::string>variant;
 	std::vector<Killer>whiteKiller;
 	std::vector<Killer>blackKiller;
+
+	std::vector<MoveArray> moveArray;
 
 	void printVariant();
 
@@ -126,6 +131,8 @@ public:
 	//uint8_t getFigureAttacks(Board & b, uint8_t color);
 
 	double margin = PAWN_EV / 2;
+
+	void sortMoves(std::vector<Move>& result, int depth);
 };
 
 #endif

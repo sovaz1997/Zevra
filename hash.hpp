@@ -4,6 +4,8 @@
 #include <cstdint>
 #include "move.hpp"
 
+class Move;
+
 class Hash {
 public:
 	bool enable = false;
