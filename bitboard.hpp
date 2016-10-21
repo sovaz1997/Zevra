@@ -1,13 +1,15 @@
 #ifndef BITBOARD_HPP
 #define BITBOARD_HPP
 
+#include <iostream>
 #include <cstdint>
 #include <string>
-#include <iostream>
 #include <vector>
+#include <stack>
 #include <algorithm>
 #include "constants.hpp"
 #include "movearray.hpp"
+#include "goback.hpp"
 
 class BitBoard {
 private:
@@ -28,6 +30,8 @@ private:
 	uint8_t lastOne(uint64_t mask);
 	void clearCell(uint8_t y, uint8_t x);
 	void printBitBoard(uint64_t bit_board);
+
+	std::stack<GoBack> history;
 public:
 	BitBoard();
 	~BitBoard();
@@ -40,6 +44,7 @@ public:
 	void bitBoardMoveGenerator(MoveArray& moveArray);
 	void move(BitMove& mv);
 	void goBack();
+	void pushHistory();
 
 	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
 };

@@ -3,32 +3,15 @@
 
 #include <cstdint>
 #include "constants.hpp"
-#include "board.hpp"
 #include "figurecell.hpp"
-
-class Board;
 
 class GoBack {
 public:
-  GoBack();
-  //new
-  FigureCell fig1, fig2, fig3;
-  bool passant = false;
-  bool passant_enable;
-  bool passant_has = false;
-
-  bool whiteShortCastleEnable;
-  bool whiteLongCastleEnable;
-  bool blackShortCastleEnable;
-  bool blackLongCastleEnable;
-
-  uint16_t numHalfMove;
-  uint16_t move_rule_num;
-  uint8_t type;
-  uint8_t passant_y;
-  uint8_t passant_x;
-
-  void goBack(Board* board);
+	GoBack();
+ 	uint64_t figures[7];
+	uint64_t white_bit_mask, black_bit_mask;
+	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
+	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
 };
 
 #endif

@@ -90,7 +90,7 @@ bool Game::uciHandler(std::string str) {
 			std::cin >> k;
 			double st = clock();
 			uint64_t count = perft(k);
-			std::cout << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << "\n";
+			std::cout << count << " " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << "\n";
 		}
 
 		return true;

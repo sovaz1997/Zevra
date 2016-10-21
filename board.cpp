@@ -358,34 +358,22 @@ void Board::setFigure(uint8_t figure, int y, int x) {
 			black_bit_mask = (black_bit_mask | vec2_cells[y][x]);
 		}
 	}
-	//figureList.push_back(Point(y, x));
 }
 
-void Board::move(Move & mv) {
+/*void Board::move(Move & mv) {
 	history.push(GoBack());
 	history.top().type = mv.moveType;
-	//history.top().fromY = mv.fromY;
-	//history.top().fromX = mv.fromX;
-	//history.top().toY = mv.toY;
-	//history.top().toX = mv.toX;
 	history.top().passant_enable = passant_enable;
 	history.top().passant_y = passant_y;
 	history.top().passant_x = passant_x;
 	history.top().numHalfMove = numHalfMove;
 	history.top().move_rule_num = move_rule_num;
-	//history.top().attackMove = false;
 
 	history.top().whiteShortCastleEnable = whiteShortCastleEnable;
 	history.top().whiteLongCastleEnable = whiteLongCastleEnable;
 	history.top().blackShortCastleEnable = blackShortCastleEnable;
 	history.top().blackLongCastleEnable = blackLongCastleEnable;
 
-	/*if(board[mv.toY][mv.toX] != 0) {
-		history.top().attackMove = true;
-		history.top().killedFigure = board[mv.toY][mv.toX];
-	}*/
-
-//	history.top().passant_enable = false;
 
 	history.top().fig1 = FigureCell(board[mv.fromY][mv.fromX], mv.fromY, mv.fromX);
 	history.top().fig2 = FigureCell(board[mv.toY][mv.toX], mv.toY, mv.toX);
@@ -396,7 +384,6 @@ void Board::move(Move & mv) {
 		} else if(passant_y + 1 < BOARD_SIZE && passant_y + 1 >= 0 && passant_x + 1 < BOARD_SIZE && passant_x + 1 >= 0) {
 			history.top().fig3 = FigureCell(board[passant_y - 1][passant_x], passant_y - 1, passant_x);
 		}
-		//history.top().passant_enable = true;
 		history.top().passant_has = true;
 	}
 
@@ -454,20 +441,14 @@ void Board::move(Move & mv) {
 	}
 
 	double prevScore = 0, newScore = 0;
+}*/
 
-	/*if(history.top().type != WS_CASTLING_MV && history.top().type != WL_CASTLING_MV && history.top().type != BS_CASTLING_MV && history.top().type != BL_CASTLING_MV ) {
-		if((history.top().fig1.type & TYPE_SAVE) == PAWN) {
-			//prevScore +=
-		}
-	}*/
-}
-
-void Board::goBack() {
+/*void Board::goBack() {
 	if(!history.empty()) {
 		history.top().goBack(this);
 		history.pop();
 	}
-}
+}*/
 
 bool Board::isWhiteMove() {
 	return whiteMove;

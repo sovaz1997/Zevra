@@ -17,11 +17,9 @@ void BitBoard::setFen(std::string fen) {
 
 	std::reverse(notation.begin(), notation.end());
 
-	int pointer = 0;
-
 	for(unsigned int y = 0; y < 8; ++y) {
 		int x = 0;
-		for(int i = 0; i < notation[y].size(); ++i) {
+		for(unsigned int i = 0; i < notation[y].size(); ++i) {
 			if(notation[y][i] == 'K') {
 				figures[KING] |= vec2_cells[y][x];
 				white_bit_mask |= vec2_cells[y][x];
@@ -462,7 +460,7 @@ void BitBoard::preInit() {
 
 void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	moveArray.clear();
-	uint64_t possibleMoves, mask, emask;
+	uint64_t possibleMoves, mask;
 
 	uint8_t color, enemyColor;
 	if(whiteMove) {
@@ -574,12 +572,13 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 }
 
 void BitBoard::move(BitMove& mv) {
+	pushHistory();
 	clearCell(mv.toY, mv.toX);
 	clearCell(mv.fromY, mv.fromX);
 
 	figures[mv.movedFigure & TYPE_SAVE] |= vec2_cells[mv.toY][mv.toX];
 
-	if(mv.movedFigure & COLOR_SAVE == WHITE) {
+	if((mv.movedFigure & COLOR_SAVE) == WHITE) {
 		white_bit_mask |= vec2_cells[mv.toY][mv.toX];
 	} else {
 		black_bit_mask |= vec2_cells[mv.toY][mv.toX];
@@ -587,7 +586,25 @@ void BitBoard::move(BitMove& mv) {
 }
 
 void BitBoard::goBack() {
+	if(!history.empty()) {
+		for(unsigned int i = 0; i < 7; ++i) {
+			figures[i] = history.top().figures[i];
+		}
 
+		white_bit_mask = history.top().white_bit_mask;
+		black_bit_mask = history.top().black_bit_mask;
+		moveNumber = history.top().moveNumber;
+		ruleNumber = history.top().ruleNumber;
+		passant_x = history.top().passant_x;
+		passant_y = history.top().passant_y;
+		wsc = history.top().wsc;
+		wlc = history.top().wlc;
+		bsc = history.top().bsc;
+		blc = history.top().blc;
+		passant_enable = history.top().passant_enable;
+		whiteMove = history.top().whiteMove;
+		history.pop();
+	}
 }
 
 
@@ -610,4 +627,27 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 		}
 		std::cout << "\n";
 	}
+}
+
+void BitBoard::pushHistory() {
+	GoBack newHistory;
+
+	for(unsigned int i = 0; i < 7; ++i) {
+		newHistory.figures[i] = figures[i];
+	}
+
+	newHistory.white_bit_mask = white_bit_mask;
+	newHistory.black_bit_mask = black_bit_mask;
+	newHistory.moveNumber = moveNumber;
+	newHistory.ruleNumber = ruleNumber;
+	newHistory.passant_x = passant_x;
+	newHistory.passant_y = passant_y;
+	newHistory.wsc = wsc;
+	newHistory.wlc = wlc;
+	newHistory.bsc = bsc;
+	newHistory.blc = blc;
+	newHistory.passant_enable = passant_enable;
+	newHistory.whiteMove = whiteMove;
+
+	history.push(newHistory);
 }
