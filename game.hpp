@@ -86,7 +86,7 @@ public:
 	int startGame();
 	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
-	//bool move(std::string mv);
+	bool move(std::string mv);
 	void printBitBitBoard(uint64_t bit_BitBoard);
 	void cache_gen();
 	void zobristGenerate();

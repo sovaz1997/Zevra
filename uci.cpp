@@ -30,11 +30,11 @@ bool Game::uciHandler(std::string str) {
 
 				game_board.setFen(fen);
 				if(cmd.size() > pos) {
-					/*if(cmd[pos] == "moves") {
+					if(cmd[pos] == "moves") {
 						for(unsigned int i = pos + 1; i < cmd.size(); ++i) {
 							move(cmd[i]);
 						}
-					}*/
+					}
 				}
 			}
 

@@ -115,14 +115,14 @@ void Game::goFixedTime(int tm) {
 	}
 }
 
-/*bool Game::move(std::string mv) {
-	bool tmp_shah = false;
-	std::vector<BitMove>moves = generatePositionMoves(game_board, tmp_shah, true, 0);
+bool Game::move(std::string mv) {
+	MoveArray moves;
+	game_board.bitBoardMoveGenerator(moves);
 
-	for(unsigned int i = 0; i < moves.size(); ++i) {
-		if(moves[i].getMoveString() == mv) {
+	for(unsigned int i = 0; i < moves.count; ++i) {
+		if(moves.moveArray[i].getMoveString() == mv) {
 			//Board tmp = game_board;
-			game_board.move(moves[i]);
+			game_board.move(moves.moveArray[i]);
 			//bool shah = false;
 			uint8_t color;
 
@@ -132,16 +132,14 @@ void Game::goFixedTime(int tm) {
 				color = WHITE;
 			}
 
-			if(inCheck(game_board, color)) {
+			/*if(inCheck(game_board, color)) {
 				game_board.goBack();
 				continue;
-			}
-
-			gameHash.push_back(getHash(game_board));
+			}*/
 
 			return true;
 		}
 	}
 
 	return false;
-}*/
+}
