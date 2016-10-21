@@ -64,7 +64,7 @@ void Game::clearCash() {
 	//gameHash = std::vector<uint64_t>();
 }
 
-uint64_t Game::getColorHash(Board & b) {
+/*uint64_t Game::getColorHash(Board & b) {
 	uint64_t res = getHash(b);
 
 	if(!b.isWhiteMove()) {
@@ -87,26 +87,6 @@ uint64_t Game::getHash(Board & b) {
 
 	for(unsigned int y = 0; y < 8; ++y) {
 		for(unsigned int x = 0; x < 8; ++x) {
-			/*int k = 0;
-
-			if(b.getFigure(y, x) == 0) { k = 1; }
-			else if(b.getFigure(y, x) & TYPE_SAVE == PAWN) { k = 2; }
-			else if(b.getFigure(y, x) & TYPE_SAVE == KNIGHT) { k = 3; }
-			else if(b.getFigure(y, x) & TYPE_SAVE == BISHOP) { k = 4; }
-			else if(b.getFigure(y, x) & TYPE_SAVE == ROOK) { k = 5; }
-			else if(b.getFigure(y, x) & TYPE_SAVE == QUEEN) { k = 6; }
-			else if(b.getFigure(y, x) & TYPE_SAVE == KING) { k = 7; }
-
-			if(b.getFigure(y, x) & COLOR_SAVE == BLACK) {
-				k += 6;
-			}
-			uint64_t res = 1;
-			for(unsigned int i = 0; i < (y+1) * 8 + (x+1); ++i) {
-				res = res + k*(100000000*((y+1)+((x+1)^17))*k*(12^k));
-				hash += res;
-			}
-
-			hash += res;*/
 			if(b.board[y][x] != 0) {
 				hash = (hash ^ zobrist[b.board[y][x]][y][x]);
 			}
@@ -114,7 +94,7 @@ uint64_t Game::getHash(Board & b) {
 	}
 
 	return hash;
-}
+}*/
 
 std::vector<std::string> Game::getStringArray(std::string str) {
 	std::vector<std::string> result;

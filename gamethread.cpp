@@ -19,7 +19,7 @@ void Game::goFixedDepth() {
 	std::vector<uint64_t>hash;
 
 	pv_best.clear();
-	std::vector<Move>pv;
+	std::vector<BitMove>pv;
 	whiteUp = BLACK_WIN;
 	blackUp = WHITE_WIN;
 
@@ -76,7 +76,7 @@ void Game::goFixedTime(int tm) {
 	std::vector<uint64_t>hash;
 
 	pv_best.clear();
-	std::vector<Move>pv;
+	std::vector<BitMove>pv;
 	whiteUp = BLACK_WIN;
 	blackUp = WHITE_WIN;
 
@@ -115,9 +115,9 @@ void Game::goFixedTime(int tm) {
 	}
 }
 
-bool Game::move(std::string mv) {
+/*bool Game::move(std::string mv) {
 	bool tmp_shah = false;
-	std::vector<Move>moves = generatePositionMoves(game_board, tmp_shah, true, 0);
+	std::vector<BitMove>moves = generatePositionMoves(game_board, tmp_shah, true, 0);
 
 	for(unsigned int i = 0; i < moves.size(); ++i) {
 		if(moves[i].getMoveString() == mv) {
@@ -144,4 +144,4 @@ bool Game::move(std::string mv) {
 	}
 
 	return false;
-}
+}*/

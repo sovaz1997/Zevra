@@ -1,7 +1,7 @@
 #include "movearray.hpp"
 
 MoveArray::MoveArray() : count(0) {
-	moveArray = new MoveArray[100];
+	moveArray = new BitMove[100];
 }
 
 MoveArray::~MoveArray() {

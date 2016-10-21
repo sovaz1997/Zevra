@@ -190,7 +190,7 @@ bool Game::insufficientMaterial(std::vector<uint64_t>figureMask) {
 	return popcount64(figureMask[KNIGHT | WHITE]) + popcount64(figureMask[KNIGHT | BLACK]) + popcount64(figureMask[BISHOP | WHITE]) + popcount64(figureMask[BISHOP | BLACK]) <= 1;
 }
 
-double Game::getForcastEvalute(Board & b) {
+/*double Game::getForcastEvalute(Board & b) {
 	bool tmp_shah;
 	std::vector<Move>moves = generatePositionMoves(b, tmp_shah, false, 0);
 
@@ -209,9 +209,9 @@ double Game::getForcastEvalute(Board & b) {
 	}
 
 	return res;
-}
+}*/
 
-double Game::getFigureEval(Board & b, int y, int x) {
+/*double Game::getFigureEval(Board & b, int y, int x) {
 	if((b.board[y][x] & TYPE_SAVE) == PAWN) {
 		return PAWN_EV;
 	} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
@@ -225,9 +225,9 @@ double Game::getFigureEval(Board & b, int y, int x) {
 	}
 
 	return 0;
-}
+}*/
 
-bool Game::inCheck(Board & b, uint8_t color) {
+/*bool Game::inCheck(Board & b, uint8_t color) {
 	uint8_t enemyColor;
 	if(color == WHITE) {
 		enemyColor = BLACK;
@@ -642,28 +642,6 @@ bool Game::inZugzwang(Board & b, uint8_t color) {
 		return true;
 	}
 
-	/*if(color == WHITE) {
-		if(all_material > 4 * BISHOP_EV) {
-			if(white_mat / black_mat < 0.25) {
-				return true;
-			} else {
-				if(white_mat / black_mat < 0.5) {
-					return true;
-				}
-			}
-		}
-	} else {
-		if(all_material > 4 * BISHOP_EV) {
-			if(black_mat / white_mat < 0.25) {
-				return true;
-			} else {
-				if(black_mat / white_mat < 0.5) {
-					return true;
-				}
-			}
-		}
-	}*/
-
 	return false;
 }
 
@@ -683,7 +661,7 @@ double Game::getPriceCell(Board & b, int y, int x) {
 	} else {
 		return 0;
 	}
-}
+}*/
 
 /*
 uint8_t Game::getFigureAttacks(Board & b, uint8_t color) {

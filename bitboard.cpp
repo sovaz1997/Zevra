@@ -576,9 +576,9 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 void BitBoard::move(BitMove& mv) {
 	clearCell(mv.toY, mv.toX);
 	clearCell(mv.fromY, mv.fromX);
-	
+
 	figures[mv.movedFigure & TYPE_SAVE] |= vec2_cells[mv.toY][mv.toX];
-	
+
 	if(mv.movedFigure & COLOR_SAVE == WHITE) {
 		white_bit_mask |= vec2_cells[mv.toY][mv.toX];
 	} else {
@@ -586,11 +586,15 @@ void BitBoard::move(BitMove& mv) {
 	}
 }
 
+void BitBoard::goBack() {
+	
+}
+
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
 	white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
 	black_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
-	
+
 	for(uint8_t i = 0; i < 7; ++i) {
 		figures[i] &= (UINT64_MAX ^ vec2_cells[y][x]);
 	}

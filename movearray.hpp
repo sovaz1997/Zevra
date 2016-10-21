@@ -7,7 +7,7 @@ class BitMove;
 
 class MoveArray {
 public:
-	MoveArray* moveArray;
+	BitMove* moveArray;
 	MoveArray();
 	~MoveArray();
 	int count;

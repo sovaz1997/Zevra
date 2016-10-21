@@ -14,9 +14,6 @@ private:
 	uint64_t white_bit_mask, black_bit_mask;
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
-
-	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
-
 	void preInit();
 	std::vector<std::string> splitter(std::string str, char sym);
 
@@ -37,10 +34,12 @@ public:
 	std::string getFen();
 	void clear();
 	int stress;
-	
+
 	void bitBoardMoveGenerator(MoveArray& moveArray);
 	void move(BitMove& mv);
 	void goBack();
+
+	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
 };
 
 #endif

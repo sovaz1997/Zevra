@@ -8,7 +8,7 @@ bool Game::uciHandler(std::string str) {
 			gameHash.clear();
 			gameHash.resize(0);
 			if(cmd[1] == "startpos") {
-				game_board.setFenPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 				if(cmd.size() > 3) {
 					if(cmd[2] == "moves") {
 						for(unsigned int i = 3; i < cmd.size(); ++i) {
@@ -28,17 +28,17 @@ bool Game::uciHandler(std::string str) {
 					++pos;
 				}
 
-				game_board.setFenPosition(fen);
+				game_board.setFen(fen);
 				if(cmd.size() > pos) {
-					if(cmd[pos] == "moves") {
+					/*if(cmd[pos] == "moves") {
 						for(unsigned int i = pos + 1; i < cmd.size(); ++i) {
 							move(cmd[i]);
 						}
-					}
+					}*/
 				}
 			}
 
-			gameHash.push_back(getHash(game_board));
+			//gameHash.push_back(getHash(game_board));
 		} else if(cmd[0] == "go") {
 			if(cmd[1] == "depth") {
 				max_depth = std::stoi(cmd[2]);
@@ -55,7 +55,7 @@ bool Game::uciHandler(std::string str) {
 			}*/
 
 			std::cout << evalute(game_board) / PAWN_EV * 100 << "\n";
-			std::cout << game_board.getFenPosition() << "\n";
+			std::cout << game_board.getFen() << "\n";
 		} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
@@ -76,13 +76,13 @@ bool Game::uciHandler(std::string str) {
 			}
 			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
 
-			stress = 0;
+			/*stress = 0;
 			st = clock();
 			for(unsigned int i = 0; i < 1000000; ++i) {
 				generatePositionMoves(game_board, shah_tmp, true, 0);
 			}
 			std::cout << (int)(stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
-
+			*/
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 		} else if(cmd[0] == "perft") {

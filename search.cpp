@@ -243,35 +243,18 @@
 	return bpv;
 }*/
 
-double Game::negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture) {
+double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<BitMove>pv, bool usedNullMove, int rule, bool capture) {
 	int nextDepth = depth - 1;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
 
 	uint8_t color;
-	if(b.isWhiteMove()) {
+	if(b.whiteMove) {
 		color = WHITE;
 	} else {
 		color = BLACK;
 	}
-
-	//ПРОВЕРКА НА ПОВТОРЕНИЕ ПОЗИЦИИ/ПРАВИЛА 50 ХОДОВ
-
-	//uint64_t pos_hash = getHash(b);
-	//uint64_t board_hash = getColorHash(b, pos_hash);
-	/*hash.push_back(pos_hash);
-	if(depth > 0) {
-		int third_repeat = 1;
-			for(unsigned int i = 0; i < hash.size(); ++i) {
-				if(hash[i] == pos_hash) {
-					++third_repeat;
-				}
-				if(third_repeat >= 3  || b.move_rule_num >= 50) {
-					return 0;
-				}
-		}
-	}*/
 
 	if(depth <= 0) {
 		return evalute(b);
@@ -283,22 +266,6 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		//return quies(b, alpha, beta, rule, real_depth);
 	}
 
-	/*if(depth >= 4 && usedNullMove) {
-		if(!inCheck(b, color)) {
-			b.whiteMove = !b.whiteMove;
-			double tmp = -negamax(b, beta - 1, beta, nextDepth - 3, real_depth + 1, hash, basis, pv, false, rule, capture);
-			b.whiteMove = !b.whiteMove;
-
-			if(tmp >= beta) {
-				return beta;
-			}
-		}
-	}*/
-
-	/*if(inCheck(b, color) && real_depth < 100) {
-		--nextDepth;
-	}*/
-
 	int num_moves = 0;
 
 	double max = BLACK_WIN;
@@ -307,7 +274,7 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 	/*std::vector<Move>moves = */b.bitBoardMoveGenerator(moveArray[real_depth]);//generatePositionMoves(b, tmp_shah, true, real_depth);
 	//sortMoves(moves, depth);
 
-	Move local_move;
+	BitMove local_move;
 
 	if(moveArray[real_depth].count > 0) {
 		local_move = moveArray[real_depth].moveArray[0];
@@ -324,16 +291,13 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		}
 
 		bool capt = false;
-		if(b.board[moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] != 0) {
-			capt = true;
-		}
 
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(inCheck(b, color)) {
+		/*if(inCheck(b, color)) {
 			b.goBack();
 			continue;
-		}
+		}*/
 
 		if(num_moves == 0) {
 			local_move = moveArray[real_depth].moveArray[i];
@@ -448,13 +412,13 @@ double Game::negamax(Board & b, double alpha, double beta, int depth, int real_d
 		}
 	}
 
-	if(num_moves == 0) {
+	/*if(num_moves == 0) {
 		if(inCheck(b, color)) {
 			return BLACK_WIN + real_depth;
 		} else {
 			return 0;
 		}
-	}
+	}*/
 
 
 	if(real_depth == 0 && basis) {
@@ -482,7 +446,7 @@ uint64_t Game::perft(int depth) {
 	return res;
 }
 
-double Game::quies(Board & b, double alpha, double beta, int rule, int real_depth) {
+/*double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_depth) {
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
 	}
@@ -498,7 +462,7 @@ double Game::quies(Board & b, double alpha, double beta, int rule, int real_dept
 	}
 
 	bool tmp_shah = false;
-	/*std::vector<Move>moves = */b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
+	b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
 	//sortMoves(moves, 0);
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count && alpha < beta; ++i) {
@@ -513,7 +477,7 @@ double Game::quies(Board & b, double alpha, double beta, int rule, int real_dept
 		++movesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		/*if(!b.isWhiteMove()) {
+		if(!b.isWhiteMove()) {
 			if(inCheck(b, WHITE)) {
 				b.goBack();
 				continue;
@@ -523,7 +487,7 @@ double Game::quies(Board & b, double alpha, double beta, int rule, int real_dept
 				b.goBack();
 				continue;
 			}
-		}*/
+		}
 
 		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
 		b.goBack();
@@ -538,9 +502,9 @@ double Game::quies(Board & b, double alpha, double beta, int rule, int real_dept
 	}
 
 	return alpha;
-}
+}*/
 
-bool Game::isEndGame(Board& b) {
+/*bool Game::isEndGame(Board& b) {
 	int num_figures = 0;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
@@ -551,4 +515,4 @@ bool Game::isEndGame(Board& b) {
 	}
 
 	return num_figures <= 7;
-}
+}*/
