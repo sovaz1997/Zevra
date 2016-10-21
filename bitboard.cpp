@@ -23,52 +23,52 @@ void BitBoard::setFen(std::string fen) {
 		int x = 0;
 		for(int i = 0; i < notation[y].size(); ++i) {
 			if(notation[y][i] == 'K') {
-				figures[KING] &= vec2_cells[y][x];
-				white_bit_mask &= vec2_cells[y][x];
+				figures[KING] |= vec2_cells[y][x];
+				white_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'Q') {
-				figures[QUEEN] &= vec2_cells[y][x];
-				white_bit_mask &= vec2_cells[y][x];
+				figures[QUEEN] |= vec2_cells[y][x];
+				white_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'R') {
-				figures[ROOK] &= vec2_cells[y][x];
-				white_bit_mask &= vec2_cells[y][x];
+				figures[ROOK] |= vec2_cells[y][x];
+				white_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'B') {
-				figures[BISHOP] &= vec2_cells[y][x];
-				white_bit_mask &= vec2_cells[y][x];
+				figures[BISHOP] |= vec2_cells[y][x];
+				white_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'N') {
-				figures[KNIGHT] &= vec2_cells[y][x];
-				white_bit_mask &= vec2_cells[y][x];
+				figures[KNIGHT] |= vec2_cells[y][x];
+				white_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'P') {
-				figures[PAWN] &= vec2_cells[y][x];
-				white_bit_mask &= vec2_cells[y][x];
+				figures[PAWN] |= vec2_cells[y][x];
+				white_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'k') {
-				figures[KING] &= vec2_cells[y][x];
-				black_bit_mask &= vec2_cells[y][x];
+				figures[KING] |= vec2_cells[y][x];
+				black_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'q') {
-				figures[QUEEN] &= vec2_cells[y][x];
-				black_bit_mask &= vec2_cells[y][x];
+				figures[QUEEN] |= vec2_cells[y][x];
+				black_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'r') {
-				figures[ROOK] &= vec2_cells[y][x];
-				black_bit_mask &= vec2_cells[y][x];
+				figures[ROOK] |= vec2_cells[y][x];
+				black_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'b') {
-				figures[BISHOP] &= vec2_cells[y][x];
-				black_bit_mask &= vec2_cells[y][x];
+				figures[BISHOP] |= vec2_cells[y][x];
+				black_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'n') {
-				figures[KNIGHT] &= vec2_cells[y][x];
-				black_bit_mask &= vec2_cells[y][x];
+				figures[KNIGHT] |= vec2_cells[y][x];
+				black_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'p') {
-				figures[PAWN] &= vec2_cells[y][x];
-				black_bit_mask &= vec2_cells[y][x];
+				figures[PAWN] |= vec2_cells[y][x];
+				black_bit_mask |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] >= '0' && notation[y][i] <= '9') {
 				x += (notation[y][i] - '0');
@@ -99,7 +99,8 @@ void BitBoard::setFen(std::string fen) {
 		uint8_t y = (fenArray[3][1] - '1');
 
 		passant_enable = true;
-		passant_cell &= vec2_cells[y][x];
+		passant_x = x;
+		passant_y = y;
 	}
 
 	moveNumber = std::stoi(fenArray[4]);
@@ -107,7 +108,106 @@ void BitBoard::setFen(std::string fen) {
 }
 
 std::string BitBoard::getFen() {
+	std::string res;
 
+	for(int y = 7; y >= 0; --y) {
+		int space = 0;
+		for(int x = 0; x < 8; ++x) {
+			if(white_bit_mask & vec2_cells[y][x]) {
+				if(space != 0) {
+					res.push_back('0' + space);
+					space = 0;
+				}
+
+				if(figures[KING] & vec2_cells[y][x]) {
+					res.push_back('K');
+				} else if(figures[QUEEN] & vec2_cells[y][x]) {
+					res.push_back('Q');
+				} else if(figures[ROOK] & vec2_cells[y][x]) {
+					res.push_back('R');
+				} else if(figures[BISHOP] & vec2_cells[y][x]) {
+					res.push_back('B');
+				} else if(figures[KNIGHT] & vec2_cells[y][x]) {
+					res.push_back('N');
+				} else if(figures[PAWN] & vec2_cells[y][x]) {
+					res.push_back('P');
+				}
+			} else if(black_bit_mask & vec2_cells[y][x]) {
+				if(space != 0) {
+					res.push_back('0' + space);
+					space = 0;
+				}
+
+				if(figures[KING] & vec2_cells[y][x]) {
+					res.push_back('k');
+				} else if(figures[QUEEN] & vec2_cells[y][x]) {
+					res.push_back('q');
+				} else if(figures[ROOK] & vec2_cells[y][x]) {
+					res.push_back('r');
+				} else if(figures[BISHOP] & vec2_cells[y][x]) {
+					res.push_back('b');
+				} else if(figures[KNIGHT] & vec2_cells[y][x]) {
+					res.push_back('n');
+				} else if(figures[PAWN] & vec2_cells[y][x]) {
+					res.push_back('p');
+				}
+			} else {
+				++space;
+			}
+		}
+
+		if(space > 0) {
+			res.push_back('0' + space);
+		}
+
+		if(y > 0) {
+			res.push_back('/');
+		}
+	}
+
+	res.push_back(' ');
+
+	if(whiteMove) {
+		res.push_back('w');
+	} else {
+		res.push_back('b');
+	}
+
+	res.push_back(' ');
+
+	if(!wsc && !wlc && !bsc && !blc) {
+		res.push_back('-');
+	} else {
+		if(wsc) {
+			res.push_back('K');
+		}
+		if(wlc) {
+			res.push_back('Q');
+		}
+		if(bsc) {
+			res.push_back('k');
+		}
+		if(blc) {
+			res.push_back('q');
+		}
+	}
+
+	res.push_back(' ');
+
+	if(passant_enable) {
+		res.push_back(passant_x + 'a');
+		res.push_back(passant_y + '1');
+	} else {
+		res.push_back('-');
+	}
+
+
+	res.push_back(' ');
+	res += std::to_string(moveNumber);
+	res.push_back(' ');
+	res += std::to_string(ruleNumber);
+
+	return res;
 }
 
 void BitBoard::clear() {
@@ -123,7 +223,7 @@ void BitBoard::clear() {
 	wsc = false;
 	wlc = false;
 	bsc = false;
-	passant_cell = false;
+	passant_enable = false;
 	whiteMove = true;
 }
 
@@ -134,6 +234,7 @@ std::vector<std::string> BitBoard::splitter(std::string str, char sym) {
 		if(str[i] == sym) {
 			result.push_back(tmp);
 			tmp.clear();
+			continue;
 		}
 
 		tmp.push_back(str[i]);
