@@ -48,15 +48,17 @@ bool Game::uciHandler(std::string str) {
 			}
 		} else if(cmd[0] == "posmoves") {
 			bool shah_tmp;
-			/*std::vector<Move>moves = *//*game_board.bitBoardMoveGenerator();*///generatePositionMoves(game_board, shah_tmp, true, 0);
-			/*for(unsigned int i = 0; i < moves.size(); ++i) {
-				moves[i].print();
+			MoveArray moves;
+			game_board.bitBoardMoveGenerator(moves);//generatePositionMoves(game_board, shah_tmp, true, 0);
+
+			for(unsigned int i = 0; i < moves.count; ++i) {
+				std::cout << moves.moveArray[i].getMoveString();
 				std::cout << "\n";
-			}*/
+			}
 
 			std::cout << evalute(game_board) / PAWN_EV * 100 << "\n";
 			std::cout << game_board.getFen() << "\n";
-		} else if(cmd[0] == "move") {
+		/*} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
 			return false;

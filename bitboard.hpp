@@ -14,6 +14,8 @@
 class BitBoard {
 private:
 	uint64_t figures[7];
+	uint64_t horizontal[8];
+	uint64_t vertical[8];
 	uint64_t white_bit_mask, black_bit_mask;
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
