@@ -7,7 +7,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "position") {
 			gameHash.clear();
 			gameHash.resize(0);
-			if(cmd[1] == "startpos") {
+			if(cmd[1] == "startpos") { //r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQ1RK1 b kq - 2 5
 				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 				if(cmd.size() > 3) {
 					if(cmd[2] == "moves") {

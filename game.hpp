@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <stack>
 #include <omp.h>
-#include "BitBoard.hpp"
+#include "bitboard.hpp"
 #include "move.hpp"
 #include "movelist.hpp"
 #include "constants.hpp"

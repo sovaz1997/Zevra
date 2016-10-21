@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include "constants.hpp"
@@ -26,6 +27,7 @@ private:
 	uint8_t firstOne(uint64_t mask);
 	uint8_t lastOne(uint64_t mask);
 	void clearCell(uint8_t y, uint8_t x);
+	void printBitBoard(uint64_t bit_board);
 public:
 	BitBoard();
 	~BitBoard();

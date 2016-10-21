@@ -476,7 +476,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 
 	//Ладьи
-	uint64_t rook = figures[ROOK | color] & mask;
+	uint64_t rook = figures[ROOK] & mask;
 	while(rook != 0) {
 		possibleMoves = 0;
 		uint8_t pos = firstOne(rook);
@@ -497,7 +497,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 
 	//Слоны
-	uint64_t bishop = figures[BISHOP | color] & mask;
+	uint64_t bishop = figures[BISHOP] & mask;
 	while(bishop != 0) {
 		possibleMoves = 0;
 		uint8_t pos = firstOne(bishop);
@@ -518,7 +518,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 
 	//Ферзи
-	uint64_t queen = figures[QUEEN | color] & mask;
+	uint64_t queen = figures[QUEEN] & mask;
 	while(queen != 0) {
 		possibleMoves = 0;
 		uint8_t pos = firstOne(queen);
@@ -543,7 +543,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 
 	//Кони
-	uint64_t knight = figures[KNIGHT | color] & mask;
+	uint64_t knight = figures[KNIGHT] & mask;
 	while(knight != 0) {
 		uint8_t pos = firstOne(knight);
 		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ figures[KING | enemyColor]);
@@ -558,10 +558,10 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 
 	//Короли
-	uint64_t king = figures[KING | color] & mask;
+	uint64_t king = figures[KING] & mask;
 	while(king != 0) {
 		uint8_t pos = firstOne(king);
-		possibleMoves = bitboard[KING | WHITE][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ figures[KING | enemyColor]);
+		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ figures[KING | enemyColor]);
 		king &= (UINT64_MAX ^ vec1_cells[pos]);
 		stress += popcount64(possibleMoves);
 
@@ -587,7 +587,7 @@ void BitBoard::move(BitMove& mv) {
 }
 
 void BitBoard::goBack() {
-	
+
 }
 
 
@@ -597,5 +597,17 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 
 	for(uint8_t i = 0; i < 7; ++i) {
 		figures[i] &= (UINT64_MAX ^ vec2_cells[y][x]);
+	}
+}
+
+void BitBoard::printBitBoard(uint64_t bit_board) {
+	uint64_t doubler = 1;
+	doubler <<= 63;
+	for(int i = 0; i < 8; ++i) {
+		for(int j = 0; j < 8; ++j) {
+			std::cout << (bool)(bit_board & doubler);
+			doubler >>= 1;
+		}
+		std::cout << "\n";
 	}
 }
