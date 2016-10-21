@@ -10,11 +10,100 @@ BitBoard::~BitBoard() {
 }
 
 void BitBoard::setFen(std::string fen) {
-	std::vector<std::string> fenArray = splitter(fen);
+	clear();
 
-	for(unsigned int i = 0; i < 64; ++i) {
+	std::vector<std::string> fenArray = splitter(fen, ' ');
+	std::vector<std::string> notation = splitter(fenArray[0], '/');
 
+	std::reverse(notation.begin(), notation.end());
+
+	int pointer = 0;
+
+	for(unsigned int y = 0; y < 8; ++y) {
+		int x = 0;
+		for(int i = 0; i < notation[y].size(); ++i) {
+			if(notation[y][i] == 'K') {
+				figures[KING] &= vec2_cells[y][x];
+				white_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'Q') {
+				figures[QUEEN] &= vec2_cells[y][x];
+				white_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'R') {
+				figures[ROOK] &= vec2_cells[y][x];
+				white_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'B') {
+				figures[BISHOP] &= vec2_cells[y][x];
+				white_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'N') {
+				figures[KNIGHT] &= vec2_cells[y][x];
+				white_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'P') {
+				figures[PAWN] &= vec2_cells[y][x];
+				white_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'k') {
+				figures[KING] &= vec2_cells[y][x];
+				black_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'q') {
+				figures[QUEEN] &= vec2_cells[y][x];
+				black_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'r') {
+				figures[ROOK] &= vec2_cells[y][x];
+				black_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'b') {
+				figures[BISHOP] &= vec2_cells[y][x];
+				black_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'n') {
+				figures[KNIGHT] &= vec2_cells[y][x];
+				black_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] == 'p') {
+				figures[PAWN] &= vec2_cells[y][x];
+				black_bit_mask &= vec2_cells[y][x];
+				++x;
+			} else if(notation[y][i] >= '0' && notation[y][i] <= '9') {
+				x += (notation[y][i] - '0');
+			}
+		}
 	}
+
+	if(fenArray[1] == "w") {
+		whiteMove = true;
+	} else {
+		whiteMove = false;
+	}
+
+	for(unsigned int i = 0; i < fenArray[2].size() && fenArray[2] != "-"; ++i) {
+		if(fenArray[2][i] == 'K') {
+			wsc = true;
+		} else if(fenArray[2][i] == 'Q') {
+			wlc = true;
+		} else if(fenArray[2][i] == 'k') {
+			bsc = true;
+		} else if(fenArray[2][i] == 'q') {
+			blc = true;
+		}
+	}
+
+	if(fenArray[3] != "-") {
+		uint8_t x = (fenArray[3][0] - 'a');
+		uint8_t y = (fenArray[3][1] - '1');
+
+		passant_enable = true;
+		passant_cell &= vec2_cells[y][x];
+	}
+
+	moveNumber = std::stoi(fenArray[4]);
+	ruleNumber = std::stoi(fenArray[5]);
 }
 
 std::string BitBoard::getFen() {
@@ -35,14 +124,14 @@ void BitBoard::clear() {
 	wlc = false;
 	bsc = false;
 	passant_cell = false;
-
+	whiteMove = true;
 }
 
-std::vector<std::string> BitBoard::splitter(std::string str) {
+std::vector<std::string> BitBoard::splitter(std::string str, char sym) {
 	std::vector<std::string> result;
 	std::string tmp;
 	for(unsigned int i = 0; i < str.size(); ++i) {
-		if(str[i] == ' ') {
+		if(str[i] == sym) {
 			result.push_back(tmp);
 			tmp.clear();
 		}

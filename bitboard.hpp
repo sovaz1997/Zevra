@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "constants.hpp"
 
 class BitBoard {
@@ -16,7 +17,7 @@ private:
 	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
 
 	void preInit();
-	std::vector<std::string> splitter(std::string str);
+	std::vector<std::string> splitter(std::string str, char sym);
 
 	uint64_t plus1[64], plus7[64], plus8[64], plus9[64], minus1[64], minus7[64], minus8[64], minus9[64];
 	uint64_t vec2_cells[8][8];
