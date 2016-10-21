@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include "constants.hpp"
+#include "movearray.hpp"
 
 class BitBoard {
 private:
@@ -27,6 +28,7 @@ private:
 	uint8_t popcount64(uint64_t value);
 	uint8_t firstOne(uint64_t mask);
 	uint8_t lastOne(uint64_t mask);
+	void clearCell(uint8_t y, uint8_t x);
 public:
 	BitBoard();
 	~BitBoard();
@@ -34,6 +36,11 @@ public:
 	void setFen(std::string fen);
 	std::string getFen();
 	void clear();
+	int stress;
+	
+	void bitBoardMoveGenerator(MoveArray& moveArray);
+	void move(BitMove& mv);
+	void goBack();
 };
 
 #endif

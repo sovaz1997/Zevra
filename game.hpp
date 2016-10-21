@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <stack>
 #include <omp.h>
-#include "board.hpp"
+#include "BitBoard.hpp"
 #include "move.hpp"
 #include "movelist.hpp"
 #include "constants.hpp"
@@ -25,17 +25,18 @@
 #include "debute.hpp"
 #include "point.hpp"
 #include "timer.hpp"
+#include "bitboard.hpp"
 #include "pv.hpp"
 #include "movearray.hpp"
 
 class Game {
 private:
-	Board game_board;
+	BitBoard gameBoard;
 	MoveList move_list[32][BOARD_SIZE][BOARD_SIZE];
 	void moveListGenerator();
-	std::vector<Move> generatePositionMoves(Board & b, bool & shah, bool withCastling, int depth);
+	std::vector<Move> generatePositionMoves(BitBoard & b, bool & shah, bool withCastling, int depth);
 	unsigned long long movesCounter = 0;
-	double evalute(Board & b);
+	double evalute(BitBoard & b);
 
 	PV best_pv;
 
@@ -45,7 +46,7 @@ private:
 	int max_depth;
 
 	uint64_t cells[BOARD_SIZE][BOARD_SIZE];
-	uint64_t bitboard[32][BOARD_SIZE][BOARD_SIZE];
+	uint64_t bitBitBoard[32][BOARD_SIZE][BOARD_SIZE];
 	uint64_t zobrist[32][BOARD_SIZE][BOARD_SIZE];
 
 	void initEngine();
@@ -57,7 +58,7 @@ private:
 	std::vector<Move> pv_best;
 	std::vector<Move> pv_tmp;
 
-	bool inZugzwang(Board & b, uint8_t color);
+	bool inZugzwang(BitBoard & b, uint8_t color);
 
 	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
@@ -77,24 +78,24 @@ private:
 	int stress;
 public:
 	Game();
-	//PV negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
-	double negamax(Board & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	//PV negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
+	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  	double quies(Board & b, double alpha, double beta, int rule, int real_depth);
+  	double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
 	bool move(std::string mv);
-	void printBitBoard(uint64_t bit_board);
+	void printBitBitBoard(uint64_t bit_BitBoard);
 	void cache_gen();
 	void zobristGenerate();
-	uint64_t getHash(Board & b);
-	uint64_t getColorHash(Board & b);
-	uint64_t getColorHash(Board & b, uint64_t hash);
+	uint64_t getHash(BitBoard & b);
+	uint64_t getColorHash(BitBoard & b);
+	uint64_t getColorHash(BitBoard & b, uint64_t hash);
 
 	std::vector<uint64_t>gameHash;
-	std::vector<Hash>boardHash;
+	std::vector<Hash>BitBoardHash;
 	uint64_t hash_cutter;
 
 	std::vector<std::string>variant;
@@ -111,9 +112,9 @@ public:
 	bool print_variant_enable = false;
 	//flags - end
 
-	bool inCheck(Board & b, uint8_t color);
-	bool inCheck(Board b, uint8_t color, int yPos, int xPos);
-	double getPriceCell(Board & b, int y, int x);
+	bool inCheck(BitBoard & b, uint8_t color);
+	bool inCheck(BitBoard b, uint8_t color, int yPos, int xPos);
+	double getPriceCell(BitBoard & b, int y, int x);
 	double evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	void cleanWhiteHistory();
 	void cleanBlackHistory();
@@ -122,13 +123,13 @@ public:
 	uint64_t pawnAttackCutter[BOARD_SIZE];
 	void createPawnAttackCutter();
 
-	double getForcastEvalute(Board & b);
-	double getFigureEval(Board & b, int y, int x);
+	double getForcastEvalute(BitBoard & b);
+	double getFigureEval(BitBoard & b, int y, int x);
 
-	bool isEndGame(Board& b);
+	bool isEndGame(BitBoard& b);
 
 	Move bestmove;
-	//uint8_t getFigureAttacks(Board & b, uint8_t color);
+	//uint8_t getFigureAttacks(BitBoard & b, uint8_t color);
 
 	double margin = PAWN_EV / 2;
 

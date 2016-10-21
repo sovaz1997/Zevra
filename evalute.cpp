@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-double Game::evalute(Board & b) {
+double Game::evalute(BitBoard & b) {
 	/*int attackTable[BOARD_SIZE][BOARD_SIZE];
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
@@ -49,7 +49,7 @@ double Game::evalute(Board & b) {
 	}*/
 
 	//оценка материального преимущества
-	double material_eval = 0, all_material_eval = 0;
+	/*double material_eval = 0, all_material_eval = 0;
 	std::vector<uint64_t> figureMask(32, 0);
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
@@ -84,10 +84,10 @@ double Game::evalute(Board & b) {
 	all_material_eval += popcount64(figureMask[ROOK | WHITE]) * ROOK_EV;
 	all_material_eval += popcount64(figureMask[ROOK | BLACK]) * ROOK_EV;
 	all_material_eval += popcount64(figureMask[QUEEN | WHITE]) * QUEEN_EV;
-	all_material_eval += popcount64(figureMask[QUEEN | BLACK]) * QUEEN_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | BLACK]) * QUEEN_EV;*/
 
 	//оценка позиции (положение фигур)
-	double figure_state_eval = 0;
+	/*double figure_state_eval = 0;
 
 	for(int y = 0; y < BOARD_SIZE; ++y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
@@ -170,9 +170,9 @@ double Game::evalute(Board & b) {
 	int mul = 1;
 	if(!b.isWhiteMove()) {
 		mul = -1;
-	}
+	}*/
 
-	return mul * (material_eval + figure_state_eval + pawnStructure /*+ attackBonus*/);
+	return 0;// mul * (material_eval + figure_state_eval + pawnStructure /*+ attackBonus*/);
 }
 
 bool Game::insufficientMaterial(std::vector<uint64_t>figureMask) {

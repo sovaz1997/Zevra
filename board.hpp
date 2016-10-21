@@ -73,8 +73,8 @@ public:
 	int move_rule_num;
 	void printScore(double score);
 
-	void bitBoardMoveGenerator(MoveArray& moveArray);
-	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
+	//void bitBoardMoveGenerator(MoveArray& moveArray);
+	//void bitBoardAttackMoveGenerator(MoveArray& moveArray);
 	void preInitBoard();
 	void initBoard();
 

@@ -599,6 +599,7 @@ int Board::popcount64(uint64_t value) {
 	return /*_mm_popcnt_u64(value);*/ __builtin_popcountll(value);
 }
 
+/*
 void Board::bitBoardMoveGenerator(MoveArray& moveArray) {
 	moveArray.clear();
 	uint64_t possibleMoves, mask, emask;
@@ -829,7 +830,7 @@ void Board::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
-}
+}*/
 
 void Board::preInitBoard() {
 	uint64_t mul = 1;

@@ -1,18 +1,18 @@
 #ifndef MOVEARRAY_HPP
 #define MOVEARRAY_HPP
 
-#include "move.hpp"
+#include "bitmove.hpp"
 
-class Move;
+class BitMove;
 
 class MoveArray {
 public:
-	Move* moveArray;
+	MoveArray* moveArray;
 	MoveArray();
 	~MoveArray();
 	int count;
 	void clear();
-	void addMove(Move mv);
+	void addMove(BitMove mv);
 };
 
 #endif
