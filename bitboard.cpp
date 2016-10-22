@@ -1341,5 +1341,11 @@ bool BitBoard::inCheck(uint8_t color) {
 		}
 	}
 
+	uint8_t eKingCoord = firstOne(figures[KING] & emask);
+
+	if(bitboard[KING | WHITE][eKingCoord / 8][eKingCoord % 8] & kingPos) {
+		return true;
+	}
+
 	return false;
 }

@@ -303,10 +303,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		/*if(inCheck(b, color)) {
+		if(game_board.inCheck(color)) {
 			b.goBack();
 			continue;
-		}*/
+		}
 
 		if(num_moves == 0) {
 			local_move = moveArray[real_depth].moveArray[i];
@@ -418,13 +418,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		}
 	}
 
-	/*if(num_moves == 0) {
-		if(inCheck(b, color)) {
+	if(num_moves == 0) {
+		if(game_board.inCheck(color)) {
 			return BLACK_WIN + real_depth;
 		} else {
 			return 0;
 		}
-	}*/
+	}
 
 
 	if(real_depth == 0) {
@@ -481,17 +481,17 @@ double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_d
 		++movesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		/*if(!b.isWhiteMove()) {
-			if(inCheck(b, WHITE)) {
+		if(!b.whiteMove) {
+			if(game_board.inCheck(WHITE)) {
 				b.goBack();
 				continue;
 			}
 		} else {
-			if(inCheck(b, BLACK)) {
+			if(game_board.inCheck(BLACK)) {
 				b.goBack();
 				continue;
 			}
-		}*/
+		}
 
 		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
 		b.goBack();
