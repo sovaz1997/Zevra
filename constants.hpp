@@ -51,7 +51,7 @@ const double ALL_MATERIAL = 16 * PAWN_EV
 +	4*ROOK_EV
 +	QUEEN_EV;
 
-const double whitePawnMatr[BOARD_SIZE][BOARD_SIZE] = {
+const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 0, 0, 0, 0, 0},
 {50, 50, 50, 50, 50, 50, 50, 50},
 {10, 10, 20, 30, 30, 20, 10, 10},

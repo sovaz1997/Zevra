@@ -56,7 +56,8 @@ bool Game::uciHandler(std::string str) {
 				std::cout << "\n";
 			}
 
-			std::cout << evalute(game_board) / PAWN_EV * 100 << "\n";
+			game_board.evaluteAll();
+			std::cout << game_board.evalute / PAWN_EV * 100 << "\n";
 			std::cout << game_board.getFen() << "\n";
 		/*} else if(cmd[0] == "move") {
 			move(cmd[1]);

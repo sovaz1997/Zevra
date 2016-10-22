@@ -245,8 +245,10 @@
 
 double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule) {
 	int nextDepth = depth - 1;
-	if(rule == FIXED_TIME && timer.getTime() >= time) {
-		return 0;
+	if(depth > 2) {
+		if(rule == FIXED_TIME && timer.getTime() >= time) {
+			return 0;
+		}
 	}
 
 	uint8_t color;
@@ -257,7 +259,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}
 
 	if(depth <= 0) {
-		return evalute(b);
+		b.evaluteAll();
+		if(b.whiteMove) {
+			return b.evalute;
+		} else {
+			return -b.evalute;
+		}
 
 		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
 			pv_best = pv_tmp;
@@ -284,8 +291,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		++movesCounter;
-		if(rule == FIXED_TIME) {
-			if(timer.getTime() >= time) {
+		if(depth > 2) {
+			if(rule == FIXED_TIME && timer.getTime() >= time) {
 				return 0;
 			}
 		}
@@ -424,6 +431,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	return max;
 }
+
 
 uint64_t Game::perft(int depth) {
 	uint64_t res = 0;

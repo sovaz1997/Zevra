@@ -616,7 +616,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 			while(possibleMoves != 0) {
 				uint64_t to = firstOne(possibleMoves);
-				moveArray.addMove(BitMove(WHITE | color, pos / 8, pos % 8, to / 8, to % 8));
+				moveArray.addMove(BitMove(PAWN | color, pos / 8, pos % 8, to / 8, to % 8));
 				possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
 			}
 		}
@@ -633,7 +633,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 			while(possibleMoves != 0) {
 				uint64_t to = firstOne(possibleMoves);
-				moveArray.addMove(BitMove(BLACK | color, pos / 8, pos % 8, to / 8, to % 8));
+				moveArray.addMove(BitMove(PAWN | color, pos / 8, pos % 8, to / 8, to % 8));
 				possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
 			}
 		}
@@ -645,7 +645,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
 			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
@@ -653,7 +653,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	} else {
@@ -661,14 +661,14 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		uint64_t rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
 			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
 		uint64_t leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
@@ -712,10 +712,10 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
-	clearCell(mv.toY, mv.toX);
-	clearCell(mv.fromY, mv.fromX);
 
+	clearCell(mv.toY, mv.toX);
 	figures[mv.movedFigure & TYPE_SAVE] |= vec2_cells[mv.toY][mv.toX];
+	clearCell(mv.fromY, mv.fromX);
 
 	if((mv.movedFigure & COLOR_SAVE) == WHITE) {
 		white_bit_mask |= vec2_cells[mv.toY][mv.toX];
@@ -806,4 +806,154 @@ void BitBoard::pushHistory() {
 
 void BitBoard::evaluteAll() {
 	evalute = 0;
+
+	evalute += popcount64(figures[PAWN] & white_bit_mask) * PAWN_EV;
+	evalute -= popcount64(figures[PAWN] & black_bit_mask) * PAWN_EV;
+	evalute += popcount64(figures[KNIGHT] & white_bit_mask) * KNIGHT_EV;
+	evalute -= popcount64(figures[KNIGHT] & black_bit_mask) * KNIGHT_EV;
+	evalute += popcount64(figures[BISHOP] & white_bit_mask) * BISHOP_EV;
+	evalute -= popcount64(figures[BISHOP] & black_bit_mask) * BISHOP_EV;
+	evalute += popcount64(figures[ROOK] & white_bit_mask) * ROOK_EV;
+	evalute -= popcount64(figures[ROOK] & black_bit_mask) * ROOK_EV;
+	evalute += popcount64(figures[QUEEN] & white_bit_mask) * QUEEN_EV;
+	evalute -= popcount64(figures[QUEEN] & black_bit_mask) * QUEEN_EV;
+
+	uint64_t mask = figures[PAWN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += pawnMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[PAWN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= pawnMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KNIGHT] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += knightMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KNIGHT] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= knightMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[BISHOP] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += bishopMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[BISHOP] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= bishopMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[ROOK] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += rookMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[ROOK] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= rookMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[QUEEN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += queenMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[QUEEN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= queenMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	if(!whiteMove) {
+		evalute = -evalute;
+	}
+
+	/*mask = figures[KING] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += queenMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KING] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= queenMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}*/
+
+	/*all_material_eval += popcount64(figureMask[PAWN | WHITE]) * PAWN_EV;
+	all_material_eval += popcount64(figureMask[PAWN | BLACK]) * PAWN_EV;
+	all_material_eval += popcount64(figureMask[KNIGHT | WHITE]) * KNIGHT_EV;
+	all_material_eval += popcount64(figureMask[KNIGHT | BLACK]) * KNIGHT_EV;
+	all_material_eval += popcount64(figureMask[BISHOP | WHITE]) * BISHOP_EV;
+	all_material_eval += popcount64(figureMask[BISHOP | BLACK]) * BISHOP_EV;
+	all_material_eval += popcount64(figureMask[ROOK | WHITE]) * ROOK_EV;
+	all_material_eval += popcount64(figureMask[ROOK | BLACK]) * ROOK_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | WHITE]) * QUEEN_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | BLACK]) * QUEEN_EV;*/
+
+	//double figure_state_eval = 0;
+
+	/*for(int y = 0; y < BOARD_SIZE; ++y) {
+		for(int x = 0; x < BOARD_SIZE; ++x) {
+			if(b.board[y][x] == 0) {
+				continue;
+			}
+
+			if((b.board[y][x] & COLOR_SAVE) == WHITE) {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
+					figure_state_eval += whitePawnMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
+					figure_state_eval += knightMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
+					figure_state_eval += bishopMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
+					figure_state_eval += rookMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
+					figure_state_eval += queenMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KING) {
+					figure_state_eval += ((kingDebuteMatr[y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material_eval / ALL_MATERIAL));
+				}
+			} else {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
+					figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
+					figure_state_eval -= knightMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
+					figure_state_eval -= bishopMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
+					figure_state_eval -= rookMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
+					figure_state_eval -= queenMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KING) {
+					figure_state_eval -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material_eval / ALL_MATERIAL));
+				}
+			}
+		}
+	}*/
 }
