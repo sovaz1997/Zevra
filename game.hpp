@@ -79,7 +79,7 @@ private:
 public:
 	Game();
 	//PV negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<Move>pv, bool usedNullMove, int rule, bool capture);
-	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<BitMove>pv, bool usedNullMove, int rule, bool capture);
+	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   //double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);

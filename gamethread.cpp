@@ -43,7 +43,7 @@ void Game::goFixedDepth() {
 		}
 
 
-		/*best_pv = */negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_DEPTH, false);
+		/*best_pv = */negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_DEPTH);
 		hasBestMove = true;
 
 
@@ -94,7 +94,7 @@ void Game::goFixedTime(int tm) {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		/*best_pv = */negamax(game_board, -INFINITY, INFINITY, max_depth, 0, gameHash, true, pv, true, FIXED_TIME, false);
+		/*best_pv = */negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_TIME);
 
 		hasBestMove = true;
 		depth = max_depth;

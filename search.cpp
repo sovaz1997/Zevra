@@ -243,7 +243,7 @@
 	return bpv;
 }*/
 
-double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, std::vector<uint64_t> hash, bool basis, std::vector<BitMove>pv, bool usedNullMove, int rule, bool capture) {
+double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule) {
 	int nextDepth = depth - 1;
 	if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
@@ -290,8 +290,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			}
 		}
 
-		bool capt = false;
-
 		b.move(moveArray[real_depth].moveArray[i]);
 
 		/*if(inCheck(b, color)) {
@@ -305,7 +303,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		++num_moves;
 
-		pv.push_back(moveArray[real_depth].moveArray[i]);
+		//pv.push_back(moveArray[real_depth].moveArray[i]);
 
 		//if(moves[i].fromHash && boardHash[board_hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[board_hash & hash_cutter].enable && boardHash[board_hash & hash_cutter].hash == board_hash && boardHash[board_hash & hash_cutter].depth >= depth) {
 			//alpha = boardHash[board_hash & hash_cutter].alpha;
@@ -335,10 +333,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 
 		//if(num_moves <= 1) {
-			tmp = -negamax(b, -(alpha+1), -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			if(tmp > alpha && tmp < beta) {
-				tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			}
+			tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
 
 
 		//} else {
@@ -402,7 +397,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			//	boardHash[board_hash & hash_cutter] = Hash(board_hash, local_move, depth, tmp, alpha, beta, ALPHA_CUT_EV);
 			//}
 
-			if(real_depth == 0 && basis) {
+			if(real_depth == 0) {
 				bestmove = local_move;
 				bestMove = bestmove;
 				bestScore = max;
@@ -421,7 +416,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}*/
 
 
-	if(real_depth == 0 && basis) {
+	if(real_depth == 0) {
 		bestmove = local_move;
 		bestMove = bestmove;
 		bestScore = max;
