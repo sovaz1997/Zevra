@@ -266,6 +266,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			return -b.evalute;
 		}
 
+		//return b.evalute;
+
 		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
 			pv_best = pv_tmp;
 			whiteUp = eval;
@@ -431,7 +433,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	return max;
 }
-
 
 uint64_t Game::perft(int depth) {
 	uint64_t res = 0;

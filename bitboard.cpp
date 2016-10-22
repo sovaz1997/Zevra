@@ -500,7 +500,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		color = BLACK;
 		enemyColor = WHITE;
 		mask = black_bit_mask;
-		emask = black_bit_mask;
+		emask = white_bit_mask;
 	}
 
 	//Ладьи
@@ -665,7 +665,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
-		uint64_t leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]);
+		uint64_t leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
 			moveArray.addMove(BitMove(PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
