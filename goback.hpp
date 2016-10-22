@@ -12,6 +12,7 @@ public:
 	uint64_t white_bit_mask, black_bit_mask;
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
+	double evalute;
 };
 
 #endif

@@ -53,6 +53,7 @@ public:
 
 	void evaluteAll();
 	double evalute;
+	double getEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
 };

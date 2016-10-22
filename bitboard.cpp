@@ -5,9 +5,7 @@ BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 	clear();
 }
 
-BitBoard::~BitBoard() {
-
-}
+BitBoard::~BitBoard() {}
 
 void BitBoard::setFen(std::string fen) {
 	clear();
@@ -103,6 +101,8 @@ void BitBoard::setFen(std::string fen) {
 
 	moveNumber = std::stoi(fenArray[4]);
 	ruleNumber = std::stoi(fenArray[5]);
+
+	evaluteAll();
 }
 
 std::string BitBoard::getFen() {
@@ -849,6 +849,93 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
 
+	double dEvalute = 0;
+
+
+	uint8_t removedFigure = (getFigure(mv.fromY, mv.fromX) & TYPE_SAVE);
+	if(whiteMove) {
+		if(removedFigure == PAWN) {
+			dEvalute -= PAWN_EV;
+			dEvalute -= pawnMatr[7 - mv.fromY][mv.fromX];
+		} else if(removedFigure == KNIGHT) {
+			dEvalute -= KNIGHT_EV;
+			dEvalute -= knightMatr[7 - mv.fromY][mv.fromX];
+		} else if(removedFigure == BISHOP) {
+			dEvalute -= BISHOP_EV;
+			dEvalute -= bishopMatr[7 - mv.fromY][mv.fromX];
+		} else if(removedFigure == ROOK) {
+			dEvalute -= ROOK_EV;
+			dEvalute -= rookMatr[7 - mv.fromY][mv.fromX];
+		} else if(removedFigure == QUEEN) {
+			dEvalute -= QUEEN_EV;
+			dEvalute -= queenMatr[7 - mv.fromY][mv.fromX];
+		} else if(removedFigure == KING) {
+			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+		}
+	} else {
+		if(removedFigure == PAWN) {
+			dEvalute += PAWN_EV;
+			dEvalute += pawnMatr[mv.fromY][mv.fromX];
+		} else if(removedFigure == KNIGHT) {
+			dEvalute += KNIGHT_EV;
+			dEvalute += knightMatr[mv.fromY][mv.fromX];
+		} else if(removedFigure == BISHOP) {
+			dEvalute += BISHOP_EV;
+			dEvalute += bishopMatr[mv.fromY][mv.fromX];
+		} else if(removedFigure == ROOK) {
+			dEvalute += ROOK_EV;
+			dEvalute += rookMatr[mv.fromY][mv.fromX];
+		} else if(removedFigure == QUEEN) {
+			dEvalute += QUEEN_EV;
+			dEvalute += queenMatr[mv.fromY][mv.fromX];
+		} else if(removedFigure == KING) {
+			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+		}
+	}
+
+	removedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
+
+	if(whiteMove) {
+		removedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
+		if(removedFigure == PAWN) {
+			dEvalute += PAWN_EV;
+			dEvalute += pawnMatr[7 - mv.toY][mv.toX];
+		} else if(removedFigure == KNIGHT) {
+			dEvalute += KNIGHT_EV;
+			dEvalute += knightMatr[7 - mv.toY][mv.toX];
+		} else if(removedFigure == BISHOP) {
+			dEvalute += BISHOP_EV;
+			dEvalute += bishopMatr[7 - mv.toY][mv.toX];
+		} else if(removedFigure == ROOK) {
+			dEvalute += ROOK_EV;
+			dEvalute += rookMatr[7 - mv.toY][mv.toX];
+		} else if(removedFigure == QUEEN) {
+			dEvalute += QUEEN_EV;
+			dEvalute += queenMatr[7 - mv.toY][mv.toX];
+		} else if(removedFigure == KING) {
+			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+		}
+	} else {
+		if(removedFigure == PAWN) {
+			dEvalute -= PAWN_EV;
+			dEvalute -= pawnMatr[mv.toY][mv.toX];
+		} else if(removedFigure == KNIGHT) {
+			dEvalute -= KNIGHT_EV;
+			dEvalute -= knightMatr[mv.toY][mv.toX];
+		} else if(removedFigure == BISHOP) {
+			dEvalute -= BISHOP_EV;
+			dEvalute -= bishopMatr[mv.toY][mv.toX];
+		} else if(removedFigure == ROOK) {
+			dEvalute -= ROOK_EV;
+			dEvalute -= rookMatr[mv.toY][mv.toX];
+		} else if(removedFigure == QUEEN) {
+			dEvalute -= QUEEN_EV;
+			dEvalute -= queenMatr[mv.toY][mv.toX];
+		} else if(removedFigure == KING) {
+			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+		}
+	}
+
 	clearCell(mv.toY, mv.toX);
 	figures[mv.movedFigure & TYPE_SAVE] |= vec2_cells[mv.toY][mv.toX];
 	clearCell(mv.fromY, mv.fromX);
@@ -859,9 +946,61 @@ void BitBoard::move(BitMove& mv) {
 		black_bit_mask |= vec2_cells[mv.toY][mv.toX];
 	}
 
+	uint8_t addedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
+
+	if(whiteMove) {
+		if(addedFigure == PAWN) {
+			dEvalute += PAWN_EV;
+			dEvalute += pawnMatr[7 - mv.toY][mv.toX];
+		} else if(addedFigure == KNIGHT) {
+			dEvalute += KNIGHT_EV;
+			dEvalute += knightMatr[7 - mv.toY][mv.toX];
+		} else if(addedFigure == BISHOP) {
+			dEvalute += BISHOP_EV;
+			dEvalute += bishopMatr[7 - mv.toY][mv.toX];
+		} else if(addedFigure == ROOK) {
+			dEvalute += ROOK_EV;
+			dEvalute += rookMatr[7 - mv.toY][mv.toX];
+		} else if(addedFigure == QUEEN) {
+			dEvalute += QUEEN_EV;
+			dEvalute += queenMatr[7 - mv.toY][mv.toX];
+		} else if(addedFigure == KING) {
+			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+		}
+	} else {
+		if(addedFigure == PAWN) {
+			dEvalute -= PAWN_EV;
+			dEvalute -= pawnMatr[mv.toY][mv.toX];
+		} else if(addedFigure == KNIGHT) {
+			dEvalute -= KNIGHT_EV;
+			dEvalute -= knightMatr[mv.toY][mv.toX];
+		} else if(addedFigure == BISHOP) {
+			dEvalute -= BISHOP_EV;
+			dEvalute -= bishopMatr[mv.toY][mv.toX];
+		} else if(addedFigure == ROOK) {
+			dEvalute -= ROOK_EV;
+			dEvalute -= rookMatr[mv.toY][mv.toX];
+		} else if(addedFigure == QUEEN) {
+			dEvalute -= QUEEN_EV;
+			dEvalute -= queenMatr[mv.toY][mv.toX];
+		} else if(addedFigure == KING) {
+			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+		}
+	}
+
+	evalute += dEvalute;
+	/*if(whiteMove) {
+		evalute += dEvalute;
+	} else {
+		evalute -= dEvalute;
+	}*/
+
+	//evalute = -evalute;
+
 	whiteMove = !whiteMove;
 	if(whiteMove) {
 		++moveNumber;
+
 	}
 }
 
@@ -883,6 +1022,7 @@ void BitBoard::goBack() {
 		blc = history.top().blc;
 		passant_enable = history.top().passant_enable;
 		whiteMove = history.top().whiteMove;
+		evalute = history.top().evalute;
 		history.pop();
 	}
 }
@@ -932,11 +1072,9 @@ void BitBoard::pushHistory() {
 	newHistory.wlc = wlc;
 	newHistory.bsc = bsc;
 	newHistory.blc = blc;
-
-
 	newHistory.passant_enable = passant_enable;
 	newHistory.whiteMove = whiteMove;
-
+	newHistory.evalute = evalute;
 	history.push(newHistory);
 }
 
@@ -1024,9 +1162,9 @@ void BitBoard::evaluteAll() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	if(!whiteMove) {
+	/*if(!whiteMove) {
 		evalute = -evalute;
-	}
+	}*/
 
 	/*mask = figures[KING] & white_bit_mask;
 	while(mask != 0) {
@@ -1104,4 +1242,12 @@ uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 	}
 
 	return 0;
+}
+
+double BitBoard::getEvalute() {
+	if(whiteMove) {
+		return evalute;
+	} else {
+		return -evalute;
+	}
 }

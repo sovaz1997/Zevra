@@ -259,7 +259,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}
 
 	if(depth <= 0) {
-		b.evaluteAll();
+		//b.evaluteAll();
 		/*if(b.whiteMove) {
 			return b.evalute;
 		} else {
@@ -457,8 +457,8 @@ double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_d
 		return 0;
 	}*/
 
-	b.evaluteAll();
-	double val = b.evalute;
+	//b.evaluteAll();
+	double val = b.getEvalute();
 
 	if(val >= beta) {
 		return beta;
