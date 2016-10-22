@@ -59,6 +59,9 @@ bool Game::uciHandler(std::string str) {
 			game_board.evaluteAll();
 			std::cout << game_board.evalute / PAWN_EV * 100 << "\n";
 			std::cout << game_board.getFen() << "\n";
+
+			std::cout << "inCheck (WHITE) : " << game_board.inCheck(WHITE) << "\n";
+			std::cout << "inCheck (BLACK) : " << game_board.inCheck(BLACK) << "\n";
 		/*} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {

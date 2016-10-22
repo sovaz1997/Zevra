@@ -1251,3 +1251,95 @@ double BitBoard::getEvalute() {
 		return -evalute;
 	}
 }
+
+bool BitBoard::inCheck(uint8_t color) {
+	uint64_t mask, emask;
+	uint8_t ecolor;
+
+	if(color == WHITE) {
+		mask = white_bit_mask;
+		emask = black_bit_mask;
+		ecolor = BLACK;
+	} else {
+		mask = black_bit_mask;
+		emask = white_bit_mask;
+		ecolor = WHITE;
+	}
+
+	uint64_t kingPos = figures[KING] & mask;
+	uint8_t kingCoord = firstOne(kingPos);
+
+
+	uint64_t figure;
+	figure = firstOne(plus8[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus8[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = firstOne(plus1[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus1[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus8[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus8[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus1[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus1[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = firstOne(plus7[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus7[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = firstOne(plus9[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus9[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus7[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus7[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus9[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus9[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	if(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & figures[KNIGHT] & emask) {
+		return true;
+	}
+
+	if(color == WHITE) {
+		if(((figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
+			return true;
+		}
+
+		if(((figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
+			return true;
+		}
+	} else {
+		if(((figures[PAWN] & emask) << 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
+			return true;
+		}
+
+		if(((figures[PAWN] & emask) << 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
+			return true;
+		}
+	}
+
+	return false;
+}

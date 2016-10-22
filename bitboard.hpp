@@ -56,6 +56,8 @@ public:
 	double getEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
+
+	bool inCheck(uint8_t color);
 };
 
 #endif
