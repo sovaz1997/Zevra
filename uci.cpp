@@ -79,12 +79,6 @@ bool Game::uciHandler(std::string str) {
 			}
 			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
 
-			/*stress = 0;
-			st = clock();
-			for(unsigned int i = 0; i < 1000000; ++i) {
-				generatePositionMoves(game_board, shah_tmp, true, 0);
-			}
-			std::cout << (int)(stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
 			*/
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();

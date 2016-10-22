@@ -1,16 +1,14 @@
 #ifndef KILLER_HPP
 #define KILLER_HPP
 
-#include "move.hpp"
-
-class Move;
+#include "bitmove.hpp"
 
 class Killer {
 public:
-	Move move;
+	BitMove move;
 	bool enable;
 
-	Killer(Move mv);
+	Killer(BitMove mv);
 	Killer();
 };
 

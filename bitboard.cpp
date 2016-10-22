@@ -488,6 +488,7 @@ void BitBoard::preInit() {
 
 void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	moveArray.clear();
+	bitBoardAttackMoveGenerator(moveArray);
 	uint64_t possibleMoves, mask, emask;
 
 	uint8_t color, enemyColor;
@@ -513,7 +514,8 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves |= ( plus1[pos] & (UINT64_MAX ^  plus1[firstOne(plus1[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves |= ( plus8[pos] & (UINT64_MAX ^  plus8[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves &= (mask ^ UINT64_MAX);
-		possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		possibleMoves &= ((figures[KING] ^ emask) ^ UINT64_MAX);
+		possibleMoves &= (UINT64_MAX ^ emask);
 		rook &= (UINT64_MAX ^ vec1_cells[pos]);
 		stress += popcount64(possibleMoves);
 
@@ -534,7 +536,8 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves |= ( plus7[pos] & (UINT64_MAX ^  plus7[firstOne(plus7[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves |= ( plus9[pos] & (UINT64_MAX ^  plus9[firstOne(plus9[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves &= (mask ^ UINT64_MAX);
-		possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		possibleMoves &= ((figures[KING] ^ emask) ^ UINT64_MAX);
+		possibleMoves &= (UINT64_MAX ^ emask);
 		bishop &= (UINT64_MAX ^ vec1_cells[pos]);
 		stress += popcount64(possibleMoves);
 
@@ -559,7 +562,8 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves |= ( plus7[pos] & (UINT64_MAX ^  plus7[firstOne(plus7[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves |= ( plus9[pos] & (UINT64_MAX ^  plus9[firstOne(plus9[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves &= (mask ^ UINT64_MAX);
-		possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		possibleMoves &= ((figures[KING] ^ emask) ^ UINT64_MAX);
+		possibleMoves &= (UINT64_MAX & emask);
 		queen &= (UINT64_MAX ^ vec1_cells[pos]);
 		stress += popcount64(possibleMoves);
 
@@ -577,6 +581,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		uint8_t pos = firstOne(knight);
 		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
 		knight &= (UINT64_MAX ^ vec1_cells[pos]);
+		possibleMoves &= (UINT64_MAX ^ emask);
 		stress += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -593,6 +598,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		uint8_t pos = firstOne(king);
 		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
 		king &= (UINT64_MAX ^ vec1_cells[pos]);
+		possibleMoves &= (UINT64_MAX ^ emask);
 		stress += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -639,7 +645,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		}
 	}
 
-	if(whiteMove) {
+	/*if(whiteMove) {
 		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[6]);
 		uint64_t rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
 
@@ -670,6 +676,172 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			uint64_t to = firstOne(leftPawnAttack);
 			moveArray.addMove(BitMove(PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+	}*/
+}
+
+void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
+	moveArray.clear();
+	uint64_t possibleMoves, mask, emask;
+
+	uint8_t color, enemyColor;
+	if(whiteMove) {
+		color = WHITE;
+		enemyColor = BLACK;
+		mask = white_bit_mask;
+		emask = black_bit_mask;
+	} else {
+		color = BLACK;
+		enemyColor = WHITE;
+		mask = black_bit_mask;
+		emask = white_bit_mask;
+	}
+
+	//Пешки
+	if(whiteMove) {
+		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[6]);
+		uint64_t rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
+		moveArray.num_attacks += popcount64(rightPawnAttack);
+
+		while(rightPawnAttack != 0) {
+			uint64_t to = firstOne(rightPawnAttack);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
+			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+
+		uint64_t leftPawnAttack = (pawn << 7) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
+		moveArray.num_attacks += popcount64(leftPawnAttack);
+
+		while(leftPawnAttack != 0) {
+			uint64_t to = firstOne(leftPawnAttack);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
+			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+	} else {
+		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[1]);
+		uint64_t rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
+		moveArray.num_attacks += popcount64(rightPawnAttack);
+		while(rightPawnAttack != 0) {
+			uint64_t to = firstOne(rightPawnAttack);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
+			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+
+		uint64_t leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
+		moveArray.num_attacks += popcount64(leftPawnAttack);
+		while(leftPawnAttack != 0) {
+			uint64_t to = firstOne(leftPawnAttack);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
+			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+	}
+
+	//Кони
+	uint64_t knight = figures[KNIGHT] & mask;
+	while(knight != 0) {
+		uint8_t pos = firstOne(knight);
+		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
+		possibleMoves &= emask;
+		knight &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+		moveArray.num_attacks += popcount64(possibleMoves);
+
+		while(possibleMoves != 0) {
+			uint64_t to = firstOne(possibleMoves);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), KNIGHT | color, pos / 8, pos % 8, to / 8, to % 8));
+			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
+			possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		}
+	}
+
+	//Слоны
+	uint64_t bishop = figures[BISHOP] & mask;
+	while(bishop != 0) {
+		possibleMoves = 0;
+		uint8_t pos = firstOne(bishop);
+		possibleMoves |= (minus7[pos] & (UINT64_MAX ^ minus7[lastOne(minus7[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= (minus9[pos] & (UINT64_MAX ^ minus9[lastOne(minus9[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus7[pos] & (UINT64_MAX ^  plus7[firstOne(plus7[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus9[pos] & (UINT64_MAX ^  plus9[firstOne(plus9[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves &= (mask ^ UINT64_MAX);
+		possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		possibleMoves &= emask;
+		bishop &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+		moveArray.num_attacks += popcount64(possibleMoves);
+
+		while(possibleMoves != 0) {
+			uint64_t to = firstOne(possibleMoves);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), BISHOP | color, pos / 8, pos % 8, to / 8, to % 8));
+			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+	}
+
+	//Ладьи
+	uint64_t rook = figures[ROOK] & mask;
+	while(rook != 0) {
+		possibleMoves = 0;
+		uint8_t pos = firstOne(rook);
+		possibleMoves |= (minus1[pos] & (UINT64_MAX ^ minus1[lastOne(minus1[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= (minus8[pos] & (UINT64_MAX ^ minus8[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus1[pos] & (UINT64_MAX ^  plus1[firstOne(plus1[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus8[pos] & (UINT64_MAX ^  plus8[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves &= (mask ^ UINT64_MAX);
+		possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		possibleMoves &= emask;
+		rook &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+		moveArray.num_attacks += popcount64(possibleMoves);
+
+		while(possibleMoves != 0) {
+			uint64_t to = firstOne(possibleMoves);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), ROOK | color, pos / 8, pos % 8, to / 8, to % 8));
+			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+	}
+
+	//Ферзи
+	uint64_t queen = figures[QUEEN] & mask;
+	while(queen != 0) {
+		possibleMoves = 0;
+		uint8_t pos = firstOne(queen);
+		possibleMoves |= (minus1[pos] & (UINT64_MAX ^ minus1[lastOne(minus1[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= (minus8[pos] & (UINT64_MAX ^ minus8[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus1[pos] & (UINT64_MAX ^  plus1[firstOne(plus1[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus8[pos] & (UINT64_MAX ^  plus8[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= (minus7[pos] & (UINT64_MAX ^ minus7[lastOne(minus7[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= (minus9[pos] & (UINT64_MAX ^ minus9[lastOne(minus9[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus7[pos] & (UINT64_MAX ^  plus7[firstOne(plus7[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves |= ( plus9[pos] & (UINT64_MAX ^  plus9[firstOne(plus9[pos] & (white_bit_mask | black_bit_mask))]));
+		possibleMoves &= (mask ^ UINT64_MAX);
+		possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		possibleMoves &= emask;
+		queen &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+		moveArray.num_attacks += popcount64(possibleMoves);
+
+		while(possibleMoves != 0) {
+			uint64_t to = firstOne(possibleMoves);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), QUEEN | color, pos / 8, pos % 8, to / 8, to % 8));
+			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
+			possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
+		}
+	}
+
+	//Короли
+	uint64_t king = figures[KING] & mask;
+	while(king != 0) {
+		uint8_t pos = firstOne(king);
+		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
+		possibleMoves &= emask;
+		king &= (UINT64_MAX ^ vec1_cells[pos]);
+		stress += popcount64(possibleMoves);
+		moveArray.num_attacks += popcount64(possibleMoves);
+
+		while(possibleMoves != 0) {
+			uint64_t to = firstOne(possibleMoves);
+			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), KING | color, pos / 8, pos % 8, to / 8, to % 8));
+			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
 }
@@ -920,4 +1092,16 @@ void BitBoard::evaluteAll() {
 			}
 		}
 	}*/
+}
+
+uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
+	for(uint8_t i = 1; i < 7; ++i) {
+		if(figures[i] & vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
+			return (i);
+		}/* else if(figures[i] & vec2_cells[y][x] & black_bit_mask) {
+			return (i | BLACK);
+		}*/
+	}
+
+	return 0;
 }

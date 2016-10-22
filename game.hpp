@@ -82,7 +82,7 @@ public:
 	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  //double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);
+  	double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
@@ -103,6 +103,8 @@ public:
 	std::vector<Killer>blackKiller;
 
 	std::vector<MoveArray> moveArray;
+
+	void sortAttacks(MoveArray& moves);
 
 	void printVariant();
 
@@ -133,7 +135,7 @@ public:
 
 	double margin = PAWN_EV / 2;
 
-	void sortMoves(std::vector<Move>& result, int depth);
+	void sortMoves(MoveArray& result, int depth);
 };
 
 #endif

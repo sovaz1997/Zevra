@@ -266,13 +266,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			return -b.evalute;
 		}*/
 
-		return b.evalute;
+		//return b.evalute;
 
 		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
 			pv_best = pv_tmp;
 			whiteUp = eval;
 		}*/
-		//return quies(b, alpha, beta, rule, real_depth);
+		return quies(b, alpha, beta, rule, real_depth);
 	}
 
 	int num_moves = 0;
@@ -281,6 +281,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	bool tmp_shah;
 	/*std::vector<Move>moves = */b.bitBoardMoveGenerator(moveArray[real_depth]);//generatePositionMoves(b, tmp_shah, true, real_depth);
+	sortAttacks(moveArray[real_depth]);
+	//sortMoves(moveArray[real_depth], real_depth);
 	//sortMoves(moves, depth);
 
 	BitMove local_move;
@@ -388,15 +390,15 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		if(max >= beta) {
 			//pv_best = pv_tmp;
 
-			//if(b.board[moves[i].toY][moves[i].toX] == 0) {
-			//	if(color == WHITE) {
-			//		whiteHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
-			//		whiteKiller[real_depth] = Killer(moves[i]);
-			//	} else {
-			//		blackHistorySort[moves[i].fromY][moves[i].fromX][moves[i].toY][moves[i].toX] += pow(depth, 2);
-			//		blackKiller[real_depth] = Killer(moves[i]);
-			//	}
-			//}
+			if(!moveArray[real_depth].moveArray[i].isAttack) {
+				if(color == WHITE) {
+					whiteHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] += pow(depth, 2);
+					whiteKiller[real_depth] = Killer(moveArray[real_depth].moveArray[i]);
+				} else {
+					blackHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] += pow(depth, 2);
+					blackKiller[real_depth] = Killer(moveArray[real_depth].moveArray[i]);
+				}
+			}
 
 			//if(boardHash[board_hash & hash_cutter].enable) {
 			//	if(boardHash[board_hash & hash_cutter].depth <= depth && board_hash == boardHash[board_hash & hash_cutter].hash) {
@@ -450,12 +452,13 @@ uint64_t Game::perft(int depth) {
 	return res;
 }
 
-/*double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_depth) {
-	if(rule == FIXED_TIME && timer.getTime() >= time) {
+double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_depth) {
+	/*if(rule == FIXED_TIME && timer.getTime() >= time) {
 		return 0;
-	}
+	}*/
 
-	double val = evalute(b);
+	b.evaluteAll();
+	double val = b.evalute;
 
 	if(val >= beta) {
 		return beta;
@@ -467,21 +470,18 @@ uint64_t Game::perft(int depth) {
 
 	bool tmp_shah = false;
 	b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
+	sortAttacks(moveArray[real_depth]);
 	//sortMoves(moves, 0);
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count && alpha < beta; ++i) {
-		if(rule == FIXED_TIME && timer.getTime() >= time) {
+		/*if(rule == FIXED_TIME && timer.getTime() >= time) {
 			return 0;
-		}
-
-		if(b.board[moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] == 0) {
-			continue;
-		}
+		}*/
 
 		++movesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(!b.isWhiteMove()) {
+		/*if(!b.isWhiteMove()) {
 			if(inCheck(b, WHITE)) {
 				b.goBack();
 				continue;
@@ -491,7 +491,7 @@ uint64_t Game::perft(int depth) {
 				b.goBack();
 				continue;
 			}
-		}
+		}*/
 
 		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
 		b.goBack();
@@ -506,7 +506,7 @@ uint64_t Game::perft(int depth) {
 	}
 
 	return alpha;
-}*/
+}
 
 /*bool Game::isEndGame(Board& b) {
 	int num_figures = 0;

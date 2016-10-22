@@ -542,7 +542,7 @@ double Board::evaluteAll() {
 
 			if((board[y][x] & COLOR_SAVE) == WHITE) {
 				if((board[y][x] & TYPE_SAVE) == PAWN) {
-					figure_state_eval += whitePawnMatr[y][x];
+					//figure_state_eval += whitePawnMatr[y][x];
 				} else if((board[y][x] & TYPE_SAVE) == KNIGHT) {
 					figure_state_eval += knightMatr[y][x];
 				} else if((board[y][x] & TYPE_SAVE) == BISHOP) {
@@ -556,7 +556,7 @@ double Board::evaluteAll() {
 				}
 			} else {
 				if((board[y][x] & TYPE_SAVE) == PAWN) {
-					figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
+					//figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
 				} else if((board[y][x] & TYPE_SAVE) == KNIGHT) {
 					figure_state_eval -= knightMatr[BOARD_SIZE - 1 - y][x];
 				} else if((board[y][x] & TYPE_SAVE) == BISHOP) {

@@ -44,6 +44,7 @@ public:
 	int stress;
 
 	void bitBoardMoveGenerator(MoveArray& moveArray);
+	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
 	void move(BitMove& mv);
 	void goBack();
 	void pushHistory();
@@ -52,6 +53,8 @@ public:
 
 	void evaluteAll();
 	double evalute;
+
+	uint8_t getFigure(uint8_t y, uint8_t x);
 };
 
 #endif

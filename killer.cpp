@@ -1,4 +1,4 @@
 #include "killer.hpp"
 
 Killer::Killer() : enable(false) {}
-Killer::Killer(Move mv) : move(mv), enable(true) {}
+Killer::Killer(BitMove mv) : move(mv), enable(true) {}

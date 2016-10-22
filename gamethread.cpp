@@ -118,7 +118,6 @@ void Game::goFixedTime(int tm) {
 bool Game::move(std::string mv) {
 	MoveArray moves;
 	game_board.bitBoardMoveGenerator(moves);
-
 	for(unsigned int i = 0; i < moves.count; ++i) {
 		if(moves.moveArray[i].getMoveString() == mv) {
 			//Board tmp = game_board;
