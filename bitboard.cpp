@@ -803,3 +803,7 @@ void BitBoard::pushHistory() {
 
 	history.push(newHistory);
 }
+
+void BitBoard::evaluteAll() {
+	evalute = 0;
+}

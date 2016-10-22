@@ -49,6 +49,9 @@ public:
 	void pushHistory();
 
 	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
+
+	void evaluteAll();
+	double evalute;
 };
 
 #endif
