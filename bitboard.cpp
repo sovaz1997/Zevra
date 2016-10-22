@@ -672,42 +672,6 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
-
-	/*if(whiteMove) {
-		uint64_t pawn = figures[PAWN] & mask;
-		while(pawn != 0) {
-			uint8_t pos = firstOne(pawn);
-			possibleMoves = bitboard[PAWN | WHITE][pos / 8][pos % 8];
-			possibleMoves &= ( plus8[pos] & (UINT64_MAX ^  plus8[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]));
-			possibleMoves &= UINT64_MAX ^ (vec1_cells[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]);
-			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
-			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
-			stress += popcount64(possibleMoves);
-
-			while(possibleMoves != 0) {
-				uint64_t to = firstOne(possibleMoves);
-				moveArray.addMove(BitMove(WHITE | color, pos / 8, pos % 8, to / 8, to % 8));
-				possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
-			}
-		}
-	} else {
-		uint64_t pawn = figures[PAWN] & mask;
-		while(pawn != 0) {
-			uint8_t pos = firstOne(pawn);
-			possibleMoves = bitboard[PAWN | BLACK][pos / 8][pos % 8];
-			possibleMoves &= ( minus8[pos] & (UINT64_MAX ^ minus8[firstOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
-			possibleMoves &= UINT64_MAX ^ (vec1_cells[firstOne(minus8[pos] & (white_bit_mask | black_bit_mask))]);
-			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
-			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
-			stress += popcount64(possibleMoves);
-
-			while(possibleMoves != 0) {
-				uint64_t to = firstOne(possibleMoves);
-				moveArray.addMove(BitMove(BLACK | color, pos / 8, pos % 8, to / 8, to % 8));
-				possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
-			}
-		}
-	}*/
 }
 
 void BitBoard::move(BitMove& mv) {

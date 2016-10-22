@@ -260,13 +260,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	if(depth <= 0) {
 		b.evaluteAll();
-		if(b.whiteMove) {
+		/*if(b.whiteMove) {
 			return b.evalute;
 		} else {
 			return -b.evalute;
-		}
+		}*/
 
-		//return b.evalute;
+		return b.evalute;
 
 		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
 			pv_best = pv_tmp;
@@ -342,7 +342,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 
 		//if(num_moves <= 1) {
-			tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
 
 
 		//} else {
