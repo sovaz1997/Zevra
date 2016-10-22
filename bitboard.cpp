@@ -640,37 +640,35 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 
 	if(whiteMove) {
-		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[1]);
-		uint64_t rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[0]);
+		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[6]);
+		uint64_t rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
 
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(WHITE | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
 			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
-		uint64_t leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
+		uint64_t leftPawnAttack = (pawn << 7) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
 
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(WHITE | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	} else {
-		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[6]);
-		uint64_t rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
-
+		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[1]);
+		uint64_t rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(WHITE | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
 			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
-		uint64_t leftPawnAttack = (pawn << 7) & (UINT64_MAX ^ vertical[0]);
-
+		uint64_t leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(WHITE | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(WHITE | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
@@ -765,14 +763,20 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
 	uint64_t doubler = 1;
-	doubler <<= 63;
-	for(int i = 0; i < 8; ++i) {
+	//doubler <<= 63;
+	for(int y = 7; y >= 0; --y) {
+		for(int x = 0; x < BOARD_SIZE; ++x) {
+			std::cout << (bool)((doubler << (y * 8 + x)) & bit_board);
+		}
+		std::cout << "\n";
+	}
+	/*for(int i = 0; i < 8; ++i) {
 		for(int j = 0; j < 8; ++j) {
 			std::cout << (bool)(bit_board & doubler);
 			doubler >>= 1;
 		}
 		std::cout << "\n";
-	}
+	}*/
 }
 
 void BitBoard::pushHistory() {
