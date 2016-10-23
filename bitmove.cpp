@@ -27,13 +27,13 @@ double BitMove::getAttackPrice() {
 	double res = 0;
 
 	if((attackedFigure & TYPE_SAVE) == QUEEN) {
-		res = QUEEN_EV;
+		res = QUEEN_EV * 100;
 	} else if((attackedFigure & TYPE_SAVE) == ROOK) {
-		res = ROOK_EV;
+		res = ROOK_EV * 100;
 	} else if((attackedFigure & TYPE_SAVE) == BISHOP) {
-		res = BISHOP_EV;
+		res = BISHOP_EV * 100;
 	} else if((attackedFigure & TYPE_SAVE) == KNIGHT) {
-		res = KNIGHT_EV;
+		res = KNIGHT_EV * 100;
 	} else if((attackedFigure & TYPE_SAVE) == PAWN) {
 		res = PAWN_EV;
 	}

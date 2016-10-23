@@ -39,8 +39,8 @@ void Game::flattenHistory() {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
 				for(int m = 0; m < BOARD_SIZE; ++m) {
-					whiteHistorySort[i][j][k][m] /= 1000000000;
-					blackHistorySort[i][j][k][m] /= 1000000000;
+					whiteHistorySort[i][j][k][m] /= 1000000;
+					blackHistorySort[i][j][k][m] /= 1000000;
 				}
 			}
 		}
@@ -48,7 +48,8 @@ void Game::flattenHistory() {
 }
 
 void Game::clearCash() {
-
+	cleanWhiteHistory();
+	cleanBlackHistory();
 	/*for(unsigned int i = 0; i < whiteKiller.size(); ++i) {
 		whiteKiller[i] = Killer();
 	}
