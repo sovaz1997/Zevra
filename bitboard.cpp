@@ -571,7 +571,6 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			uint64_t to = firstOne(possibleMoves);
 			moveArray.addMove(BitMove(QUEEN | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
-			possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
 		}
 	}
 
@@ -824,7 +823,6 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 			uint64_t to = firstOne(possibleMoves);
 			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), QUEEN | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
-			possibleMoves &= ((figures[KING] & emask) ^ UINT64_MAX);
 		}
 	}
 

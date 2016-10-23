@@ -62,7 +62,7 @@ bool Game::uciHandler(std::string str) {
 
 			std::cout << "inCheck (WHITE) : " << game_board.inCheck(WHITE) << "\n";
 			std::cout << "inCheck (BLACK) : " << game_board.inCheck(BLACK) << "\n";
-		/*} else if(cmd[0] == "move") {
+		} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
 			return false;
@@ -81,8 +81,6 @@ bool Game::uciHandler(std::string str) {
 				game_board.bitBoardMoveGenerator(moveArray[0]);
 			}
 			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
-
-			*/
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 		} else if(cmd[0] == "perft") {
