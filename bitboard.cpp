@@ -894,7 +894,6 @@ void BitBoard::move(BitMove& mv) {
 	removedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
 
 	if(whiteMove) {
-		removedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
 		if(removedFigure == PAWN) {
 			dEvalute += PAWN_EV;
 			dEvalute += pawnMatr[7 - mv.toY][mv.toX];
