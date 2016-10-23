@@ -322,17 +322,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 //		beta = boardHash[board_hash & hash_cutter].beta;
 		//}
 
-		/*if(depth <= MIN_DEPTH) {
-			tmp = alpha + 1;
-		} else {
-			tmp = alpha + 1;
-			int D = std::max(MIN_DEPTH, depth / 2 + 1);
-
-			while(D < depth - 1 && tmp > alpha) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, hash, basis, pv, true, rule, capt);
-				++D;
-			}
-		}*/
 
 		/*if(depth >= max_depth - MIN_DEPTH) {
 			tmp = alpha + 1;
@@ -345,7 +334,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 
 		//if(num_moves <= 1) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
+			//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
 
 
 		//} else {
@@ -353,11 +342,22 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			//tmp.evalute = -tmp.evalute;
 		//}
 
-		/*if(tmp.evalute > alpha) {
-			tmp = negamax(b, -beta, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			tmp.evalute = -tmp.evalute;
+		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
+
+		/*if(num_moves <= 1) {
+			tmp = -negamax(b, -(alpha+1), -alpha, nextDepth, real_depth + 1, rule);
+			if(tmp > alpha && tmp < beta) {
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
+			}
+
+		} else {
+			tmp = -negamax(b, -alpha - 1, -alpha, nextDepth, real_depth + 1, rule);
+
+		}
+
+		if(tmp > alpha) {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
 		}*/
-		//}
 
 		b.goBack();
 

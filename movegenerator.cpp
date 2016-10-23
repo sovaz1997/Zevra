@@ -55,15 +55,15 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		}
 	}*/
 
-	/*if(hasBestMove && depth == 0) {
-		for(unsigned int i = 0; i < result.size(); ++i) {
+	if(hasBestMove && depth == 0) {
+		for(unsigned int i = 0; i < result.count; ++i) {
 			if(bestMove.equal(result.moveArray[i])) {
-				result.erase(result.begin() + i);
-				result.insert(result.begin(), bestMove);
+				result.moveArray.erase(result.moveArray.begin() + i);
+				result.moveArray.insert(result.moveArray.begin(), bestMove);
 				break;
 			}
 		}
-	}*/
+	}
 }
 
 void Game::sortAttacks(MoveArray& moves) {
