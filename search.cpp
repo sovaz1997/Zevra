@@ -281,8 +281,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	bool tmp_shah;
 	/*std::vector<Move>moves = */b.bitBoardMoveGenerator(moveArray[real_depth]);//generatePositionMoves(b, tmp_shah, true, real_depth);
-	sortMoves(moveArray[real_depth], real_depth);
 	sortAttacks(moveArray[real_depth]);
+	sortMoves(moveArray[real_depth], real_depth);
 	//sortMoves(moveArray[real_depth], real_depth);
 	//sortMoves(moves, depth);
 

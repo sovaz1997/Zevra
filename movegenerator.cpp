@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 void Game::sortMoves(MoveArray& result, int depth) {
-	int num_attacks = 0;
+	int num_attacks = result.num_attacks;
 	if(game_board.whiteMove) {
 		for(unsigned int i = result.num_attacks + 1; i < result.count - 1; ++i) {
 			for(int j = i - 1; j >= result.num_attacks && whiteHistorySort[result.moveArray[j].fromY][result.moveArray[j].fromX][result.moveArray[j].toY][result.moveArray[j].toX] < whiteHistorySort[result.moveArray[j+1].fromY][result.moveArray[j+1].fromX][result.moveArray[j+1].toY][result.moveArray[j+1].toX]; --j) {
@@ -30,7 +30,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				break;
 			}
 		}
-}
+	}
 	/*uint64_t hash = getColorHash(game_board);
 	if(boardHash[hash & hash_cutter].enable) {
 		if(boardHash[hash & hash_cutter].hash == hash && boardHash[hash & hash_cutter].depth >= depth) {
