@@ -1243,6 +1243,7 @@ uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 }
 
 double BitBoard::getEvalute() {
+	//evaluteAll();
 	if(whiteMove) {
 		return evalute;
 	} else {

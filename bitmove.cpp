@@ -56,3 +56,11 @@ double BitMove::getAttackPrice() {
 bool BitMove::equal(BitMove& mv) {
 	return (mv.fromY == fromY && mv.fromX == fromX && mv.toY == toY && mv.toX == toX && mv.movedFigure == movedFigure);
 }
+
+bool BitMove::operator>(BitMove& mv) {
+	return getAttackPrice() < mv.getAttackPrice();
+}
+
+bool BitMove::operator<(BitMove& mv) {
+	return getAttackPrice() > mv.getAttackPrice();
+}
