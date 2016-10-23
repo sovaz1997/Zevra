@@ -1027,12 +1027,12 @@ void BitBoard::goBack() {
 
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
+	if((getFigure(y, x) & TYPE_SAVE) != 0) {
+		figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
+	}
+
 	white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
 	black_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
-
-	for(uint8_t i = 0; i < 7; ++i) {
-		figures[i] &= (UINT64_MAX ^ vec2_cells[y][x]);
-	}
 }
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
