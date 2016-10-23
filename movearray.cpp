@@ -2,7 +2,7 @@
 
 MoveArray::MoveArray() : count(0), num_attacks(0) {
 	//moveArray = new BitMove[100];
-	moveArray.resize(100);
+	moveArray.resize(109);
 }
 
 MoveArray::~MoveArray() {}
