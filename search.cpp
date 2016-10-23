@@ -386,20 +386,22 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 
 			//}
+
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					whiteKiller[real_depth] = Killer(local_move);
+				} else {
+					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					blackKiller[real_depth] = Killer(local_move);
+				}
+			}
 		}
 
 		if(max >= beta) {
 			//pv_best = pv_tmp;
 
-			if(!moveArray[real_depth].moveArray[i].isAttack) {
-				if(color == WHITE) {
-					whiteHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] += pow(depth, 2);
-					whiteKiller[real_depth] = Killer(moveArray[real_depth].moveArray[i]);
-				} else {
-					blackHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] += pow(depth, 2);
-					blackKiller[real_depth] = Killer(moveArray[real_depth].moveArray[i]);
-				}
-			}
+
 
 			//if(boardHash[board_hash & hash_cutter].enable) {
 			//	if(boardHash[board_hash & hash_cutter].depth <= depth && board_hash == boardHash[board_hash & hash_cutter].hash) {
