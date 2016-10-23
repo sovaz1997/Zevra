@@ -563,7 +563,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves |= ( plus9[pos] & (UINT64_MAX ^  plus9[firstOne(plus9[pos] & (white_bit_mask | black_bit_mask))]));
 		possibleMoves &= (mask ^ UINT64_MAX);
 		possibleMoves &= ((figures[KING] ^ emask) ^ UINT64_MAX);
-		possibleMoves &= (UINT64_MAX & emask);
+		possibleMoves &= (UINT64_MAX ^ emask);
 		queen &= (UINT64_MAX ^ vec1_cells[pos]);
 		stress += popcount64(possibleMoves);
 
