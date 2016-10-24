@@ -9,9 +9,9 @@ class GoBack {
 public:
 	GoBack();
  	uint64_t figures[7];
-	uint64_t white_bit_mask, black_bit_mask;
+	uint64_t white_bit_mask, black_bit_mask, passantMap;
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
-	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
+	bool whiteMove, passant_enable;
 	double evalute;
 };
 

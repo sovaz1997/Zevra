@@ -18,6 +18,8 @@ private:
 	uint64_t vertical[8];
 	uint64_t white_bit_mask, black_bit_mask;
 
+	uint64_t passantMap;
+
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	void preInit();
 	std::vector<std::string> splitter(std::string str, char sym);
@@ -35,6 +37,11 @@ private:
 	void printBitBoard(uint64_t bit_board);
 
 	std::stack<GoBack> history;
+
+	bool wsc();
+	bool wlc();
+	bool bsc();
+	bool blc();
 public:
 	BitBoard();
 	~BitBoard();
@@ -50,7 +57,7 @@ public:
 	void goBack();
 	void pushHistory();
 
-	bool whiteMove, wsc, wlc, bsc, blc, passant_enable;
+	bool whiteMove, passant_enable;
 
 	void evaluteAll();
 	double evalute;
@@ -59,6 +66,7 @@ public:
 	uint8_t getFigure(uint8_t y, uint8_t x);
 
 	bool inCheck(uint8_t color);
+	bool inCheck(uint8_t color, uint8_t y, uint8_t x);
 };
 
 #endif

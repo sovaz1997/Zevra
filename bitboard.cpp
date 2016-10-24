@@ -80,13 +80,13 @@ void BitBoard::setFen(std::string fen) {
 
 	for(unsigned int i = 0; i < fenArray[2].size() && fenArray[2] != "-"; ++i) {
 		if(fenArray[2][i] == 'K') {
-			wsc = true;
+			passantMap |= (vec2_cells[0][4] | vec2_cells[0][7]);
 		} else if(fenArray[2][i] == 'Q') {
-			wlc = true;
+			passantMap |= (vec2_cells[0][4] | vec2_cells[0][0]);
 		} else if(fenArray[2][i] == 'k') {
-			bsc = true;
+			passantMap |= (vec2_cells[7][4] | vec2_cells[7][7]);
 		} else if(fenArray[2][i] == 'q') {
-			blc = true;
+			passantMap |= (vec2_cells[7][4] | vec2_cells[7][0]);
 		}
 	}
 
@@ -173,19 +173,19 @@ std::string BitBoard::getFen() {
 
 	res.push_back(' ');
 
-	if(!wsc && !wlc && !bsc && !blc) {
+	if(!wsc() && !wlc() && !bsc() && !blc()) {
 		res.push_back('-');
 	} else {
-		if(wsc) {
+		if(wsc()) {
 			res.push_back('K');
 		}
-		if(wlc) {
+		if(wlc()) {
 			res.push_back('Q');
 		}
-		if(bsc) {
+		if(bsc()) {
 			res.push_back('k');
 		}
-		if(blc) {
+		if(blc()) {
 			res.push_back('q');
 		}
 	}
@@ -217,12 +217,9 @@ void BitBoard::clear() {
 	black_bit_mask = 0;
 	moveNumber = 0;
 	ruleNumber = 0;
-
-	wsc = false;
-	wlc = false;
-	bsc = false;
 	passant_enable = false;
 	whiteMove = true;
+	passantMap = 0;
 }
 
 std::vector<std::string> BitBoard::splitter(std::string str, char sym) {
@@ -258,6 +255,15 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
+	passantMap = 0;
+
+	/*passantMap |= (vec2_cells[0][0]);
+	passantMap |= (vec2_cells[0][7]);
+	passantMap |= (vec2_cells[7][0]);
+	passantMap |= (vec2_cells[7][7]);
+	passantMap |= (vec2_cells[0][4]);
+	passantMap |= (vec2_cells[7][4]);*/
+
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
@@ -609,6 +615,40 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		}
 	}
 
+	if(whiteMove) {
+		if(wsc()) {
+			if(((white_bit_mask | black_bit_mask) & (vec2_cells[0][5] | vec2_cells[0][6])) == 0) {
+				if(!inCheck(WHITE, 0, 4) && !inCheck(WHITE, 0, 5) && !inCheck(WHITE, 0, 6)) {
+					moveArray.addMove(BitMove(KING | color, 0, 4, 0, 6));
+				}
+			}
+		}
+		if(wlc()) {
+			if(((white_bit_mask | black_bit_mask) & (vec2_cells[0][3] | vec2_cells[0][2] | vec2_cells[0][1])) == 0) {
+				if(!inCheck(WHITE, 0, 4) && !inCheck(WHITE, 0, 3) && !inCheck(WHITE, 0, 2)) {
+					moveArray.addMove(BitMove(KING | color, 0, 4, 0, 2));
+				}
+			}
+
+		}
+	} else {
+		if(bsc()) {
+			if(((white_bit_mask | black_bit_mask) & (vec2_cells[7][5] | vec2_cells[7][6])) == 0) {
+				if(!inCheck(BLACK, 7, 4) && !inCheck(WHITE, 7, 5) && !inCheck(BLACK, 7, 6)) {
+					moveArray.addMove(BitMove(KING | color, 7, 4, 7, 6));
+				}
+			}
+		}
+		if(blc()) {
+			if(((white_bit_mask | black_bit_mask) & (vec2_cells[7][3] | vec2_cells[7][2] | vec2_cells[7][1])) == 0) {
+				if(!inCheck(BLACK, 7, 4) && !inCheck(WHITE, 7, 3) && !inCheck(BLACK, 7, 2)) {
+					moveArray.addMove(BitMove(KING | color, 7, 4, 7, 2));
+				}
+			}
+
+		}
+	}
+
 	//Пешки
 	if(whiteMove) {
 		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX^horizontal[6]);
@@ -662,8 +702,8 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		while(pawn != 0) {
 			uint8_t pos = firstOne(pawn);
 			possibleMoves = bitboard[PAWN | BLACK][pos / 8][pos % 8];
-			possibleMoves &= ( minus8[pos] & (UINT64_MAX ^ minus8[firstOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
-			possibleMoves &= UINT64_MAX ^ (vec1_cells[firstOne(minus8[pos] & (white_bit_mask | black_bit_mask))]);
+			possibleMoves &= ( minus8[pos] & (UINT64_MAX ^ minus8[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
+			possibleMoves &= UINT64_MAX ^ (vec1_cells[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]);
 			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
 			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
 			stress += popcount64(possibleMoves);
@@ -743,7 +783,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
-		pawn = figures[PAWN] & mask & (horizontal[6]);
+		pawn = figures[PAWN] & mask & horizontal[6];
 		rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
@@ -767,8 +807,8 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		leftPawnAttack = (pawn << 7) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
-			uint64_t to = firstOne(rightPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+			uint64_t to = firstOne(leftPawnAttack);
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -802,12 +842,12 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
-		pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[1]);
+		pawn = figures[PAWN] & mask & horizontal[1];
 		rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -826,8 +866,8 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
-			uint64_t to = firstOne(rightPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+			uint64_t to = firstOne(leftPawnAttack);
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -967,10 +1007,32 @@ void BitBoard::move(BitMove& mv) {
 		addFigure(movedFigure, mv.toY, mv.toX);
 	}
 
+	if((mv.movedFigure & TYPE_SAVE) == KING) {
+		if(whiteMove) {
+			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
+				addFigure(ROOK | WHITE, 0, 5);
+				clearCell(0, 7);
+			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
+				addFigure(ROOK | WHITE, 0, 3);
+				clearCell(0, 0);
+			}
+		} else {
+			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
+				addFigure(ROOK | WHITE, 7, 5);
+				clearCell(7, 7);
+			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
+				addFigure(ROOK | WHITE, 7, 3);
+				clearCell(7, 0);
+			}
+		}
+	}
+
 	whiteMove = !whiteMove;
 	if(whiteMove) {
 		++moveNumber;
 	}
+
+	passantMap &= (figures[KING] | figures[ROOK]);
 }
 
 void BitBoard::goBack() {
@@ -985,10 +1047,11 @@ void BitBoard::goBack() {
 		ruleNumber = history.top().ruleNumber;
 		passant_x = history.top().passant_x;
 		passant_y = history.top().passant_y;
-		wsc = history.top().wsc;
-		wlc = history.top().wlc;
-		bsc = history.top().bsc;
-		blc = history.top().blc;
+		//wsc = history.top().wsc;
+		//wlc = history.top().wlc;
+		//bsc = history.top().bsc;
+		//blc = history.top().blc;
+		passantMap = history.top().passantMap;
 		passant_enable = history.top().passant_enable;
 		whiteMove = history.top().whiteMove;
 		evalute = history.top().evalute;
@@ -1140,13 +1203,14 @@ void BitBoard::pushHistory() {
 	newHistory.ruleNumber = ruleNumber;
 	newHistory.passant_x = passant_x;
 	newHistory.passant_y = passant_y;
-	newHistory.wsc = wsc;
-	newHistory.wlc = wlc;
-	newHistory.bsc = bsc;
-	newHistory.blc = blc;
+	//newHistory.wsc = wsc;
+	//newHistory.wlc = wlc;
+	//newHistory.bsc = bsc;
+	//newHistory.blc = blc;
 	newHistory.passant_enable = passant_enable;
 	newHistory.whiteMove = whiteMove;
 	newHistory.evalute = evalute;
+	newHistory.passantMap = passantMap;
 	history.push(newHistory);
 }
 
@@ -1421,4 +1485,118 @@ bool BitBoard::inCheck(uint8_t color) {
 	}
 
 	return false;
+}
+
+bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
+	uint64_t mask, emask;
+	uint8_t ecolor;
+
+	if(color == WHITE) {
+		mask = white_bit_mask & (UINT64_MAX ^ (figures[KING] & WHITE));
+		emask = black_bit_mask & (UINT64_MAX ^ (figures[KING] & BLACK));
+		ecolor = BLACK;
+	} else {
+		mask = black_bit_mask & (UINT64_MAX ^ (figures[KING] & BLACK));
+		emask = white_bit_mask & (UINT64_MAX ^ (figures[KING] & WHITE));
+		ecolor = WHITE;
+	}
+
+	uint64_t kingPos = vec2_cells[y][x];
+	uint8_t kingCoord = y * 8 + x;
+
+
+	uint64_t figure;
+	figure = firstOne(plus8[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus8[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = firstOne(plus1[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus1[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus8[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus8[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus1[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus1[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = firstOne(plus7[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus7[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = firstOne(plus9[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus9[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus7[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus7[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	figure = lastOne(minus9[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus9[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		return true;
+	}
+
+	if(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & figures[KNIGHT] & emask) {
+		return true;
+	}
+
+	if(color == WHITE) {
+		if(((figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
+			return true;
+		}
+
+		if(((figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
+			return true;
+		}
+	} else {
+		if(((figures[PAWN] & emask) << 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
+			return true;
+		}
+
+		if(((figures[PAWN] & emask) << 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
+			return true;
+		}
+	}
+
+	uint8_t eKingCoord = firstOne(figures[KING] & emask);
+
+	if(bitboard[KING | WHITE][eKingCoord / 8][eKingCoord % 8] & kingPos) {
+		return true;
+	}
+
+	return false;
+}
+
+bool BitBoard::wsc() {
+	return (passantMap & vec2_cells[0][4]) && (passantMap & vec2_cells[0][7]);
+}
+
+bool BitBoard::wlc() {
+	return (passantMap & vec2_cells[0][4]) && (passantMap & vec2_cells[0][0]);
+}
+
+bool BitBoard::bsc() {
+	return (passantMap & vec2_cells[7][4]) && (passantMap & vec2_cells[7][7]);
+}
+
+bool BitBoard::blc() {
+	return (passantMap & vec2_cells[7][4]) && (passantMap & vec2_cells[7][0]);
 }
