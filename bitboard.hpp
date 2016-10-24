@@ -24,7 +24,7 @@ private:
 	void preInit();
 	std::vector<std::string> splitter(std::string str, char sym);
 
-	uint64_t plus1[64], plus7[64], plus8[64], plus9[64], minus1[64], minus7[64], minus8[64], minus9[64];
+	uint64_t plus1[65], plus7[65], plus8[65], plus9[65], minus1[65], minus7[65], minus8[65], minus9[65];
 	uint64_t vec2_cells[8][8];
 	uint64_t vec1_cells[64];
 	uint64_t bitboard[32][8][8];
