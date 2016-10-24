@@ -248,10 +248,12 @@ uint8_t BitBoard::popcount64(uint64_t value) {
 }
 
 uint8_t BitBoard::firstOne(uint64_t mask) {
+	if(!mask) { return 0; }
 	return __builtin_ctzll(mask);
 }
 
 uint8_t BitBoard::lastOne(uint64_t mask) {
+	if(!mask) { return 0; }
 	return 63 - __builtin_clzll(mask);
 }
 
