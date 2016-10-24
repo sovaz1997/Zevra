@@ -743,21 +743,47 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 
-		/*uint64_t pawn = figures[PAWN] & mask & (horizontal[6]);
-		uint64_t rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
+		pawn = figures[PAWN] & mask & (horizontal[6]);
+		rightPawnAttack = (pawn << 9) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+
+			replaced.setReplaced(KNIGHT | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(BISHOP | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(ROOK | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(QUEEN | color);
+			moveArray.addMove(replaced);
+
 			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
-		uint64_t leftPawnAttack = (pawn << 7) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
+		leftPawnAttack = (pawn << 7) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
-			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
+			uint64_t to = firstOne(rightPawnAttack);
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+
+			replaced.setReplaced(KNIGHT | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(BISHOP | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(ROOK | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(QUEEN | color);
+			moveArray.addMove(replaced);
+
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
-		}*/
+		}
 	} else {
 		uint64_t pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[1]);
 		uint64_t rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
@@ -773,6 +799,48 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
 			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
+			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+
+		pawn = figures[PAWN] & mask & (UINT64_MAX ^ horizontal[1]);
+		rightPawnAttack = (pawn >> 9) & (UINT64_MAX ^ vertical[7]) & emask & (UINT64_MAX ^ figures[KING]);
+		moveArray.num_attacks += popcount64(rightPawnAttack);
+		while(rightPawnAttack != 0) {
+			uint64_t to = firstOne(rightPawnAttack);
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+
+			replaced.setReplaced(KNIGHT | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(BISHOP | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(ROOK | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(QUEEN | color);
+			moveArray.addMove(replaced);
+
+			rightPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
+		}
+		leftPawnAttack = (pawn >> 7) & (UINT64_MAX ^ vertical[0]) & emask & (UINT64_MAX ^ figures[KING]);
+		moveArray.num_attacks += popcount64(leftPawnAttack);
+		while(leftPawnAttack != 0) {
+			uint64_t to = firstOne(rightPawnAttack);
+			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+
+			replaced.setReplaced(KNIGHT | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(BISHOP | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(ROOK | color);
+			moveArray.addMove(replaced);
+
+			replaced.setReplaced(QUEEN | color);
+			moveArray.addMove(replaced);
+
 			leftPawnAttack &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}

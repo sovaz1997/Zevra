@@ -259,19 +259,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}
 
 	if(depth <= 0) {
-		//b.evaluteAll();
-		/*if(b.whiteMove) {
-			return b.evalute;
-		} else {
-			return -b.evalute;
-		}*/
-
-		//return b.evalute;
-
-		/*if(eval > alpha && eval < beta && eval >= whiteUp) {
-			pv_best = pv_tmp;
-			whiteUp = eval;
-		}*/
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
@@ -280,11 +267,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	double max = BLACK_WIN;
 
 	bool tmp_shah;
-	/*std::vector<Move>moves = */b.bitBoardMoveGenerator(moveArray[real_depth]);//generatePositionMoves(b, tmp_shah, true, real_depth);
+	b.bitBoardMoveGenerator(moveArray[real_depth]);
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
-	//sortMoves(moveArray[real_depth], real_depth);
-	//sortMoves(moves, depth);
 
 	BitMove local_move;
 
@@ -315,31 +300,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		++num_moves;
 
-		//pv.push_back(moveArray[real_depth].moveArray[i]);
-
 		//if(moves[i].fromHash && boardHash[board_hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[board_hash & hash_cutter].enable && boardHash[board_hash & hash_cutter].hash == board_hash && boardHash[board_hash & hash_cutter].depth >= depth) {
-			//alpha = boardHash[board_hash & hash_cutter].alpha;
-//		beta = boardHash[board_hash & hash_cutter].beta;
-		//}
-
-
-		/*if(depth >= max_depth - MIN_DEPTH) {
-			tmp = alpha + 1;
-		} else {
-			tmp = -negamax(b, -beta, -alpha, nextDepth + 1, real_depth + 1, hash, basis, pv, true, rule, capt);
-		}*/
-
-		//if(tmp > alpha) {
-
-
-
-		//if(num_moves <= 1) {
-			//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
-
-
-		//} else {
-			//tmp = negamax(b, -alpha - 1, -alpha, nextDepth, real_depth + 1, hash, basis, pv, true, rule, capt);
-			//tmp.evalute = -tmp.evalute;
+		//	alpha = boardHash[board_hash & hash_cutter].alpha;
+		//	beta = boardHash[board_hash & hash_cutter].beta;
 		//}
 
 		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
