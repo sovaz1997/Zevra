@@ -848,158 +848,15 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
-
-	double dEvalute = 0;
-
-
-	uint8_t removedFigure = (getFigure(mv.fromY, mv.fromX) & TYPE_SAVE);
-	if(whiteMove) {
-		if(removedFigure == PAWN) {
-			dEvalute -= PAWN_EV;
-			dEvalute -= pawnMatr[7 - mv.fromY][mv.fromX];
-		} else if(removedFigure == KNIGHT) {
-			dEvalute -= KNIGHT_EV;
-			dEvalute -= knightMatr[7 - mv.fromY][mv.fromX];
-		} else if(removedFigure == BISHOP) {
-			dEvalute -= BISHOP_EV;
-			dEvalute -= bishopMatr[7 - mv.fromY][mv.fromX];
-		} else if(removedFigure == ROOK) {
-			dEvalute -= ROOK_EV;
-			dEvalute -= rookMatr[7 - mv.fromY][mv.fromX];
-		} else if(removedFigure == QUEEN) {
-			dEvalute -= QUEEN_EV;
-			dEvalute -= queenMatr[7 - mv.fromY][mv.fromX];
-		} else if(removedFigure == KING) {
-			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
-		}
-	} else {
-		if(removedFigure == PAWN) {
-			dEvalute += PAWN_EV;
-			dEvalute += pawnMatr[mv.fromY][mv.fromX];
-		} else if(removedFigure == KNIGHT) {
-			dEvalute += KNIGHT_EV;
-			dEvalute += knightMatr[mv.fromY][mv.fromX];
-		} else if(removedFigure == BISHOP) {
-			dEvalute += BISHOP_EV;
-			dEvalute += bishopMatr[mv.fromY][mv.fromX];
-		} else if(removedFigure == ROOK) {
-			dEvalute += ROOK_EV;
-			dEvalute += rookMatr[mv.fromY][mv.fromX];
-		} else if(removedFigure == QUEEN) {
-			dEvalute += QUEEN_EV;
-			dEvalute += queenMatr[mv.fromY][mv.fromX];
-		} else if(removedFigure == KING) {
-			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
-		}
-	}
-
-	removedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
-
-	if(whiteMove) {
-		if(removedFigure == PAWN) {
-			dEvalute += PAWN_EV;
-			dEvalute += pawnMatr[7 - mv.toY][mv.toX];
-		} else if(removedFigure == KNIGHT) {
-			dEvalute += KNIGHT_EV;
-			dEvalute += knightMatr[7 - mv.toY][mv.toX];
-		} else if(removedFigure == BISHOP) {
-			dEvalute += BISHOP_EV;
-			dEvalute += bishopMatr[7 - mv.toY][mv.toX];
-		} else if(removedFigure == ROOK) {
-			dEvalute += ROOK_EV;
-			dEvalute += rookMatr[7 - mv.toY][mv.toX];
-		} else if(removedFigure == QUEEN) {
-			dEvalute += QUEEN_EV;
-			dEvalute += queenMatr[7 - mv.toY][mv.toX];
-		} else if(removedFigure == KING) {
-			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
-		}
-	} else {
-		if(removedFigure == PAWN) {
-			dEvalute -= PAWN_EV;
-			dEvalute -= pawnMatr[mv.toY][mv.toX];
-		} else if(removedFigure == KNIGHT) {
-			dEvalute -= KNIGHT_EV;
-			dEvalute -= knightMatr[mv.toY][mv.toX];
-		} else if(removedFigure == BISHOP) {
-			dEvalute -= BISHOP_EV;
-			dEvalute -= bishopMatr[mv.toY][mv.toX];
-		} else if(removedFigure == ROOK) {
-			dEvalute -= ROOK_EV;
-			dEvalute -= rookMatr[mv.toY][mv.toX];
-		} else if(removedFigure == QUEEN) {
-			dEvalute -= QUEEN_EV;
-			dEvalute -= queenMatr[mv.toY][mv.toX];
-		} else if(removedFigure == KING) {
-			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
-		}
-	}
+	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
 
 	clearCell(mv.toY, mv.toX);
-	figures[mv.movedFigure & TYPE_SAVE] |= vec2_cells[mv.toY][mv.toX];
+	addFigure(movedFigure, mv.toY, mv.toX);
 	clearCell(mv.fromY, mv.fromX);
-
-	if((mv.movedFigure & COLOR_SAVE) == WHITE) {
-		white_bit_mask |= vec2_cells[mv.toY][mv.toX];
-	} else {
-		black_bit_mask |= vec2_cells[mv.toY][mv.toX];
-	}
-
-	uint8_t addedFigure = (getFigure(mv.toY, mv.toX) & TYPE_SAVE);
-
-	if(whiteMove) {
-		if(addedFigure == PAWN) {
-			dEvalute += PAWN_EV;
-			dEvalute += pawnMatr[7 - mv.toY][mv.toX];
-		} else if(addedFigure == KNIGHT) {
-			dEvalute += KNIGHT_EV;
-			dEvalute += knightMatr[7 - mv.toY][mv.toX];
-		} else if(addedFigure == BISHOP) {
-			dEvalute += BISHOP_EV;
-			dEvalute += bishopMatr[7 - mv.toY][mv.toX];
-		} else if(addedFigure == ROOK) {
-			dEvalute += ROOK_EV;
-			dEvalute += rookMatr[7 - mv.toY][mv.toX];
-		} else if(addedFigure == QUEEN) {
-			dEvalute += QUEEN_EV;
-			dEvalute += queenMatr[7 - mv.toY][mv.toX];
-		} else if(addedFigure == KING) {
-			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
-		}
-	} else {
-		if(addedFigure == PAWN) {
-			dEvalute -= PAWN_EV;
-			dEvalute -= pawnMatr[mv.toY][mv.toX];
-		} else if(addedFigure == KNIGHT) {
-			dEvalute -= KNIGHT_EV;
-			dEvalute -= knightMatr[mv.toY][mv.toX];
-		} else if(addedFigure == BISHOP) {
-			dEvalute -= BISHOP_EV;
-			dEvalute -= bishopMatr[mv.toY][mv.toX];
-		} else if(addedFigure == ROOK) {
-			dEvalute -= ROOK_EV;
-			dEvalute -= rookMatr[mv.toY][mv.toX];
-		} else if(addedFigure == QUEEN) {
-			dEvalute -= QUEEN_EV;
-			dEvalute -= queenMatr[mv.toY][mv.toX];
-		} else if(addedFigure == KING) {
-			//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
-		}
-	}
-
-	evalute += dEvalute;
-	/*if(whiteMove) {
-		evalute += dEvalute;
-	} else {
-		evalute -= dEvalute;
-	}*/
-
-	//evalute = -evalute;
 
 	whiteMove = !whiteMove;
 	if(whiteMove) {
 		++moveNumber;
-
 	}
 }
 
@@ -1028,12 +885,115 @@ void BitBoard::goBack() {
 
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
-	if((getFigure(y, x) & TYPE_SAVE) != 0) {
-		figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
-	}
+	uint8_t figure = getFigure(y, x);
 
-	white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
-	black_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
+	uint8_t color = (figure & COLOR_SAVE);
+	if(figure) {
+		if(color == WHITE) {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute -= PAWN_EV;
+				evalute -= pawnMatr[7 - y][x];
+			} else if(figure == KNIGHT) {
+				evalute -= KNIGHT_EV;
+				evalute -= knightMatr[7 - y][x];
+			} else if(figure == BISHOP) {
+				evalute -= BISHOP_EV;
+				evalute -= bishopMatr[7 - y][x];
+			} else if(figure == ROOK) {
+				evalute -= ROOK_EV;
+				evalute -= rookMatr[7 - y][x];
+			} else if(figure == QUEEN) {
+				evalute -= QUEEN_EV;
+				evalute -= queenMatr[7 - y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		} else {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute += PAWN_EV;
+				evalute += pawnMatr[y][x];
+			} else if(figure == KNIGHT) {
+				evalute += KNIGHT_EV;
+				evalute += knightMatr[y][x];
+			} else if(figure == BISHOP) {
+				evalute += BISHOP_EV;
+				evalute += bishopMatr[y][x];
+			} else if(figure == ROOK) {
+				evalute += ROOK_EV;
+				evalute += rookMatr[y][x];
+			} else if(figure == QUEEN) {
+				evalute += QUEEN_EV;
+				evalute += queenMatr[y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		}
+
+		if((getFigure(y, x) & TYPE_SAVE) != 0) {
+			figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
+		}
+
+		white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
+		black_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
+	}
+}
+
+void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
+	uint8_t color = (figure & COLOR_SAVE);
+
+	if(figure) {
+		if(color == WHITE) {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute += PAWN_EV;
+				evalute += pawnMatr[7 - y][x];
+			} else if(figure == KNIGHT) {
+				evalute += KNIGHT_EV;
+				evalute += knightMatr[7 - y][x];
+			} else if(figure == BISHOP) {
+				evalute += BISHOP_EV;
+				evalute += bishopMatr[7 - y][x];
+			} else if(figure == ROOK) {
+				evalute += ROOK_EV;
+				evalute += rookMatr[7 - y][x];
+			} else if(figure == QUEEN) {
+				evalute += QUEEN_EV;
+				evalute += queenMatr[7 - y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		} else {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute -= PAWN_EV;
+				evalute -= pawnMatr[y][x];
+			} else if(figure == KNIGHT) {
+				evalute -= KNIGHT_EV;
+				evalute -= knightMatr[y][x];
+			} else if(figure == BISHOP) {
+				evalute -= BISHOP_EV;
+				evalute -= bishopMatr[y][x];
+			} else if(figure == ROOK) {
+				evalute -= ROOK_EV;
+				evalute -= rookMatr[y][x];
+			} else if(figure == QUEEN) {
+				evalute -= QUEEN_EV;
+				evalute -= queenMatr[y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		}
+
+		figures[figure & TYPE_SAVE] |= vec2_cells[y][x];
+
+		if(color == WHITE) {
+			white_bit_mask |= vec2_cells[y][x];
+		} else if(color == BLACK) {
+			black_bit_mask |= vec2_cells[y][x];
+		}
+	}
 }
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
@@ -1233,11 +1193,11 @@ void BitBoard::evaluteAll() {
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 	for(uint8_t i = 1; i < 7; ++i) {
-		if(figures[i] & vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
-			return (i);
-		}/* else if(figures[i] & vec2_cells[y][x] & black_bit_mask) {
+		if(figures[i] & vec2_cells[y][x] & white_bit_mask) {
+			return (i | WHITE);
+		} else if(figures[i] & vec2_cells[y][x] & black_bit_mask) {
 			return (i | BLACK);
-		}*/
+		}
 	}
 
 	return 0;

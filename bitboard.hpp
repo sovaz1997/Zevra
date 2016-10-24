@@ -31,6 +31,7 @@ private:
 	uint8_t firstOne(uint64_t mask);
 	uint8_t lastOne(uint64_t mask);
 	void clearCell(uint8_t y, uint8_t x);
+	void addFigure(uint8_t figure, uint8_t y, uint8_t x) ;
 	void printBitBoard(uint64_t bit_board);
 
 	std::stack<GoBack> history;
