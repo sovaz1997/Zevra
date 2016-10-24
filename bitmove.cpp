@@ -1,22 +1,31 @@
 #include "bitmove.hpp"
 
-BitMove::BitMove() {
-
-}
-
+BitMove::BitMove() {}
 
 BitMove::BitMove(uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx) :
-	movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(false) {}
+	movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(false), replaced(false) {}
 
 BitMove::BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx) :
-	attackedFigure(afig), movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(true) {}
-
+	attackedFigure(afig), movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(true), replaced(false) {}
 std::string BitMove::getMoveString() {
 	std::string res;
 	res.push_back(fromX + 'a');
 	res.push_back(fromY + '1');
 	res.push_back(toX + 'a');
 	res.push_back(toY + '1');
+
+	if(replaced) {
+		if((replacedFigure & TYPE_SAVE) == KNIGHT) {
+			res.push_back('n');
+		} else if((replacedFigure & TYPE_SAVE) == BISHOP) {
+			res.push_back('b');
+		} else if((replacedFigure & TYPE_SAVE) == ROOK) {
+			res.push_back('r');
+		} else if((replacedFigure & TYPE_SAVE) == QUEEN) {
+			res.push_back('q');
+		}
+	}
+
 	return res;
 }
 
@@ -63,4 +72,9 @@ bool BitMove::operator>(BitMove& mv) {
 
 bool BitMove::operator<(BitMove& mv) {
 	return getAttackPrice() > mv.getAttackPrice();
+}
+
+void BitMove::setReplaced(uint8_t figure) {
+	replacedFigure = figure;
+	replaced = true;
 }

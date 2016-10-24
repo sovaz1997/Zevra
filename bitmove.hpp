@@ -10,8 +10,8 @@
 class BitMove {
 public:
 	uint8_t fromY, fromX, toY, toX;
-	uint8_t movedFigure, attackedFigure;
-	bool isAttack;
+	uint8_t movedFigure, attackedFigure, replacedFigure;
+	bool isAttack, replaced;
 
 	BitMove();
 	BitMove(uint8_t fy, uint8_t fig, uint8_t fx, uint8_t ty, uint8_t tx);
@@ -21,6 +21,7 @@ public:
 	std::string getMoveString();
 	double getAttackPrice();
 	bool equal(BitMove& mv);
+	void setReplaced(uint8_t figure);
 };
 
 #endif
