@@ -245,12 +245,12 @@ uint8_t BitBoard::popcount64(uint64_t value) {
 }
 
 uint8_t BitBoard::firstOne(uint64_t mask) {
-	if(!mask) { return 65; }
+	if(!mask) { return 64; }
 	return __builtin_ctzll(mask);
 }
 
 uint8_t BitBoard::lastOne(uint64_t mask) {
-	if(!mask) { return 65; }
+	if(!mask) { return 64; }
 	return 63 - __builtin_clzll(mask);
 }
 
@@ -634,14 +634,14 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	} else {
 		if(bsc()) {
 			if(((white_bit_mask | black_bit_mask) & (vec2_cells[7][5] | vec2_cells[7][6])) == 0) {
-				if(!inCheck(BLACK, 7, 4) && !inCheck(WHITE, 7, 5) && !inCheck(BLACK, 7, 6)) {
+				if(!inCheck(BLACK, 7, 4) && !inCheck(BLACK, 7, 5) && !inCheck(BLACK, 7, 6)) {
 					moveArray.addMove(BitMove(KING | color, 7, 4, 7, 6));
 				}
 			}
 		}
 		if(blc()) {
 			if(((white_bit_mask | black_bit_mask) & (vec2_cells[7][3] | vec2_cells[7][2] | vec2_cells[7][1])) == 0) {
-				if(!inCheck(BLACK, 7, 4) && !inCheck(WHITE, 7, 3) && !inCheck(BLACK, 7, 2)) {
+				if(!inCheck(BLACK, 7, 4) && !inCheck(BLACK, 7, 3) && !inCheck(BLACK, 7, 2)) {
 					moveArray.addMove(BitMove(KING | color, 7, 4, 7, 2));
 				}
 			}
@@ -1018,10 +1018,10 @@ void BitBoard::move(BitMove& mv) {
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
-				addFigure(ROOK | WHITE, 7, 5);
+				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
-				addFigure(ROOK | WHITE, 7, 3);
+				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
 			}
 		}
