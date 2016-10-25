@@ -1381,7 +1381,6 @@ uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 }
 
 double BitBoard::getEvalute() {
-	//evaluteAll();
 	if(whiteMove) {
 		return evalute;
 	} else {
@@ -1461,11 +1460,11 @@ bool BitBoard::inCheck(uint8_t color) {
 	}
 
 	if(color == WHITE) {
-		if(((figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
+		if(((figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[7]) & kingPos) {
 			return true;
 		}
 
-		if(((figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
+		if(((figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[0]) & kingPos) {
 			return true;
 		}
 	} else {
@@ -1559,11 +1558,11 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 	}
 
 	if(color == WHITE) {
-		if(((figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
+		if(((figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[7]) & kingPos) {
 			return true;
 		}
 
-		if(((figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
+		if(((figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[0]) & kingPos) {
 			return true;
 		}
 	} else {
