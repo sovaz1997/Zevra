@@ -411,6 +411,18 @@ uint64_t Game::perft(int depth) {
 
 	for(int i = 0; i < moveArray[depth].count; ++i) {
 		game_board.move(moveArray[depth].moveArray[i]);
+		if(game_board.whiteMove) {
+			if(game_board.inCheck(BLACK)) {
+				game_board.goBack();
+				continue;
+			}
+		} else {
+			if(game_board.inCheck(WHITE)) {
+				game_board.goBack();
+				continue;
+			}
+		}
+
 		res += perft(depth - 1);
 		game_board.goBack();
 	}
