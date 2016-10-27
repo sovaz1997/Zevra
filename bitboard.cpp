@@ -890,7 +890,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 	if(passant_enable) {
 		if(whiteMove) {
 			uint64_t passant_cell = vec2_cells[passant_y][passant_x];
-			uint64_t whitePawnMask = figures[PAWN] & whitePawnMask & horizontal[4];
+			uint64_t whitePawnMask = figures[PAWN] & white_bit_mask & horizontal[4];
 
 			if(((passant_cell >> 9) & whitePawnMask)) {
 				moveArray.addMove(BitMove(PAWN | BLACK, PAWN | WHITE, passant_y - 1, passant_x - 1, passant_y, passant_x, true));
