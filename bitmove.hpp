@@ -11,11 +11,13 @@ class BitMove {
 public:
 	uint8_t fromY, fromX, toY, toX;
 	uint8_t movedFigure, attackedFigure, replacedFigure;
-	bool isAttack, replaced;
+	bool isAttack, replaced, passant;
 
 	BitMove();
 	BitMove(uint8_t fy, uint8_t fig, uint8_t fx, uint8_t ty, uint8_t tx);
 	BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx);
+	BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx, bool psnt);
+
 	bool operator>(BitMove& mv);
 	bool operator<(BitMove& mv);
 	std::string getMoveString();

@@ -80,13 +80,13 @@ void BitBoard::setFen(std::string fen) {
 
 	for(unsigned int i = 0; i < fenArray[2].size() && fenArray[2] != "-"; ++i) {
 		if(fenArray[2][i] == 'K') {
-			passantMap |= (vec2_cells[0][4] | vec2_cells[0][7]);
+			castlingMap |= (vec2_cells[0][4] | vec2_cells[0][7]);
 		} else if(fenArray[2][i] == 'Q') {
-			passantMap |= (vec2_cells[0][4] | vec2_cells[0][0]);
+			castlingMap |= (vec2_cells[0][4] | vec2_cells[0][0]);
 		} else if(fenArray[2][i] == 'k') {
-			passantMap |= (vec2_cells[7][4] | vec2_cells[7][7]);
+			castlingMap |= (vec2_cells[7][4] | vec2_cells[7][7]);
 		} else if(fenArray[2][i] == 'q') {
-			passantMap |= (vec2_cells[7][4] | vec2_cells[7][0]);
+			castlingMap |= (vec2_cells[7][4] | vec2_cells[7][0]);
 		}
 	}
 
@@ -219,7 +219,7 @@ void BitBoard::clear() {
 	ruleNumber = 0;
 	passant_enable = false;
 	whiteMove = true;
-	passantMap = 0;
+	castlingMap = 0;
 }
 
 std::vector<std::string> BitBoard::splitter(std::string str, char sym) {
@@ -255,14 +255,14 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
-	passantMap = 0;
+	castlingMap = 0;
 
-	/*passantMap |= (vec2_cells[0][0]);
-	passantMap |= (vec2_cells[0][7]);
-	passantMap |= (vec2_cells[7][0]);
-	passantMap |= (vec2_cells[7][7]);
-	passantMap |= (vec2_cells[0][4]);
-	passantMap |= (vec2_cells[7][4]);*/
+	/*castlingMap |= (vec2_cells[0][0]);
+	castlingMap |= (vec2_cells[0][7]);
+	castlingMap |= (vec2_cells[7][0]);
+	castlingMap |= (vec2_cells[7][7]);
+	castlingMap |= (vec2_cells[0][4]);
+	castlingMap |= (vec2_cells[7][4]);*/
 
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
@@ -885,6 +885,34 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		}
 	}
 
+	//Пешки (взятие на проходе)
+
+	if(passant_enable) {
+		if(whiteMove) {
+			uint64_t passant_cell = vec2_cells[passant_y][passant_x];
+			uint64_t whitePawnMask = figures[PAWN] & whitePawnMask & horizontal[4];
+
+			if(((passant_cell >> 9) & whitePawnMask)) {
+				moveArray.addMove(BitMove(PAWN | BLACK, PAWN | WHITE, passant_y - 1, passant_x - 1, passant_y, passant_x, true));
+			}
+
+			if(((passant_cell >> 7) & whitePawnMask)) {
+				moveArray.addMove(BitMove(PAWN | BLACK, PAWN | WHITE, passant_y - 1, passant_x + 1, passant_y, passant_x, true));
+			}
+		} else {
+			uint64_t passant_cell = vec2_cells[passant_y][passant_x];
+			uint64_t blackPawnMask = figures[PAWN] & black_bit_mask & horizontal[3];
+
+			if(((passant_cell << 9) & blackPawnMask)) {
+				moveArray.addMove(BitMove(PAWN | WHITE, PAWN | BLACK, passant_y + 1, passant_x + 1, passant_y, passant_x, true));
+			}
+
+			if(((passant_cell << 7) & blackPawnMask)) {
+				moveArray.addMove(BitMove(PAWN | WHITE, PAWN | BLACK, passant_y + 1, passant_x - 1, passant_y, passant_x, true));
+			}
+		}
+	}
+
 	//Кони
 	uint64_t knight = figures[KNIGHT] & mask;
 	while(knight != 0) {
@@ -1007,6 +1035,15 @@ void BitBoard::move(BitMove& mv) {
 		addFigure(movedFigure, mv.toY, mv.toX);
 	}
 
+	if(mv.passant) {
+		if(whiteMove) {
+			clearCell(passant_y - 1, passant_x);
+		} else {
+			clearCell(passant_y + 1, passant_x);
+		}
+		passant_enable = false;
+	}
+
 	if((mv.movedFigure & TYPE_SAVE) == KING) {
 		if(whiteMove) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
@@ -1027,12 +1064,18 @@ void BitBoard::move(BitMove& mv) {
 		}
 	}
 
+	if((mv.movedFigure & TYPE_SAVE) == PAWN && abs(mv.toY - mv.fromY) > 1) {
+		passant_enable = true;
+		passant_y = (mv.toY + mv.fromY) / 2;
+		passant_x = mv.fromX;
+	}
+
 	whiteMove = !whiteMove;
 	if(whiteMove) {
 		++moveNumber;
 	}
 
-	passantMap &= (figures[KING] | figures[ROOK]);
+	castlingMap &= (figures[KING] | figures[ROOK]);
 }
 
 void BitBoard::goBack() {
@@ -1045,16 +1088,17 @@ void BitBoard::goBack() {
 		black_bit_mask = history.top().black_bit_mask;
 		moveNumber = history.top().moveNumber;
 		ruleNumber = history.top().ruleNumber;
-		passant_x = history.top().passant_x;
-		passant_y = history.top().passant_y;
 		//wsc = history.top().wsc;
 		//wlc = history.top().wlc;
 		//bsc = history.top().bsc;
 		//blc = history.top().blc;
-		passantMap = history.top().passantMap;
-		passant_enable = history.top().passant_enable;
+		castlingMap = history.top().castlingMap;
 		whiteMove = history.top().whiteMove;
 		evalute = history.top().evalute;
+		passant_y = history.top().passant_y;
+		passant_x = history.top().passant_x;
+		passant_enable = history.top().passant_enable;
+
 		history.pop();
 	}
 }
@@ -1201,8 +1245,6 @@ void BitBoard::pushHistory() {
 	newHistory.black_bit_mask = black_bit_mask;
 	newHistory.moveNumber = moveNumber;
 	newHistory.ruleNumber = ruleNumber;
-	newHistory.passant_x = passant_x;
-	newHistory.passant_y = passant_y;
 	//newHistory.wsc = wsc;
 	//newHistory.wlc = wlc;
 	//newHistory.bsc = bsc;
@@ -1210,7 +1252,10 @@ void BitBoard::pushHistory() {
 	newHistory.passant_enable = passant_enable;
 	newHistory.whiteMove = whiteMove;
 	newHistory.evalute = evalute;
-	newHistory.passantMap = passantMap;
+	newHistory.castlingMap = castlingMap;
+	newHistory.passant_enable = passant_enable;
+	newHistory.passant_x = passant_x;
+	newHistory.passant_y = passant_y;
 	history.push(newHistory);
 }
 
@@ -1585,17 +1630,17 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 }
 
 bool BitBoard::wsc() {
-	return (passantMap & vec2_cells[0][4]) && (passantMap & vec2_cells[0][7]);
+	return (castlingMap & vec2_cells[0][4]) && (castlingMap & vec2_cells[0][7]);
 }
 
 bool BitBoard::wlc() {
-	return (passantMap & vec2_cells[0][4]) && (passantMap & vec2_cells[0][0]);
+	return (castlingMap & vec2_cells[0][4]) && (castlingMap & vec2_cells[0][0]);
 }
 
 bool BitBoard::bsc() {
-	return (passantMap & vec2_cells[7][4]) && (passantMap & vec2_cells[7][7]);
+	return (castlingMap & vec2_cells[7][4]) && (castlingMap & vec2_cells[7][7]);
 }
 
 bool BitBoard::blc() {
-	return (passantMap & vec2_cells[7][4]) && (passantMap & vec2_cells[7][0]);
+	return (castlingMap & vec2_cells[7][4]) && (castlingMap & vec2_cells[7][0]);
 }
