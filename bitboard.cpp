@@ -99,8 +99,8 @@ void BitBoard::setFen(std::string fen) {
 		passant_y = y;
 	}
 
-	moveNumber = std::stoi(fenArray[4]);
-	ruleNumber = std::stoi(fenArray[5]);
+	ruleNumber = std::stoi(fenArray[4]);
+	moveNumber = std::stoi(fenArray[5]);
 
 	evaluteAll();
 }
@@ -201,9 +201,9 @@ std::string BitBoard::getFen() {
 
 
 	res.push_back(' ');
-	res += std::to_string(moveNumber);
-	res.push_back(' ');
 	res += std::to_string(ruleNumber);
+	res.push_back(' ');
+	res += std::to_string(moveNumber);
 
 	return res;
 }
@@ -1041,7 +1041,6 @@ void BitBoard::move(BitMove& mv) {
 		} else {
 			clearCell(passant_y + 1, passant_x);
 		}
-		passant_enable = false;
 	}
 
 	if((mv.movedFigure & TYPE_SAVE) == KING) {
@@ -1064,6 +1063,8 @@ void BitBoard::move(BitMove& mv) {
 		}
 	}
 
+	passant_enable = false;
+
 	if((mv.movedFigure & TYPE_SAVE) == PAWN && abs(mv.toY - mv.fromY) > 1) {
 		passant_enable = true;
 		passant_y = (mv.toY + mv.fromY) / 2;
@@ -1073,6 +1074,12 @@ void BitBoard::move(BitMove& mv) {
 	whiteMove = !whiteMove;
 	if(whiteMove) {
 		++moveNumber;
+	}
+
+	if(!mv.isAttack && (mv.movedFigure & TYPE_SAVE) != PAWN) {
+		++ruleNumber;
+	} else {
+		ruleNumber = 0;
 	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
@@ -1249,7 +1256,6 @@ void BitBoard::pushHistory() {
 	//newHistory.wlc = wlc;
 	//newHistory.bsc = bsc;
 	//newHistory.blc = blc;
-	newHistory.passant_enable = passant_enable;
 	newHistory.whiteMove = whiteMove;
 	newHistory.evalute = evalute;
 	newHistory.castlingMap = castlingMap;
