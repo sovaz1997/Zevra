@@ -301,7 +301,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 								}
 							}*/
 
-							return boardHash[hash & hash_cutter].evalute;
+							//return boardHash[hash & hash_cutter].evalute;
+							alpha = boardHash[hash & hash_cutter].evalute;
 						}
 					}
 				}
