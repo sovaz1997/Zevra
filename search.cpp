@@ -319,27 +319,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		++num_moves;
 
-		//if(moves[i].fromHash && boardHash[board_hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[board_hash & hash_cutter].enable && boardHash[board_hash & hash_cutter].hash == board_hash && boardHash[board_hash & hash_cutter].depth >= depth) {
-		//	alpha = boardHash[board_hash & hash_cutter].alpha;
-		//	beta = boardHash[board_hash & hash_cutter].beta;
-		//}
-
 		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
-
-		/*if(num_moves <= 1) {
-			tmp = -negamax(b, -(alpha+1), -alpha, nextDepth, real_depth + 1, rule);
-			if(tmp > alpha && tmp < beta) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
-			}
-
-		} else {
-			tmp = -negamax(b, -alpha - 1, -alpha, nextDepth, real_depth + 1, rule);
-
-		}
-
-		if(tmp > alpha) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
-		}*/
 
 		b.goBack();
 
@@ -363,26 +343,19 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		if(tmp > alpha) {
 			alpha = tmp;
-			//if(real_depth == 0) {
-				//pv_best[real_depth] = local_move;
-
-
-			//}
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
 		}
 
 		if(max >= beta) {
-			//pv_best = pv_tmp;
-
 			if(boardHash[hash & hash_cutter].enable) {
 				if(boardHash[hash & hash_cutter].depth <= depth) {
 					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);

@@ -1082,6 +1082,7 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
+	totalStaticEvalute();
 }
 
 void BitBoard::goBack() {
@@ -1356,6 +1357,8 @@ void BitBoard::evaluteAll() {
 		evalute -= queenMatr[pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
+
+	totalStaticEvalute();
 
 	/*if(!whiteMove) {
 		evalute = -evalute;
@@ -1694,4 +1697,50 @@ uint64_t BitBoard::getColorHash() {
 	}
 
 	return hash;
+}
+
+void BitBoard::totalStaticEvalute() {
+	uint64_t passedBlock = (figures[PAWN] & black_bit_mask);
+	for(uint8_t x = 0; x < 8; ++x) {
+		uint8_t pawnVertical = white_bit_mask & figures[PAWN] & vertical[x];
+		if(pawnVertical) {
+			if(!(passedBlock & vertical[x])) {
+				evalute += PASSED_PAWN_BONUS;
+				uint8_t pos = lastOne(pawnVertical);
+				evalute -= pawnMatr[pos / 8][pos % 8];
+				evalute += passed_pawn_line[pos / 8];
+			}
+
+			evalute -= (popcount64(pawnVertical) - 1);
+		}
+	}
+
+	passedBlock = (figures[PAWN] & white_bit_mask);
+	for(uint8_t x = 0; x < 8; ++x) {
+		uint8_t pawnVertical = black_bit_mask & figures[PAWN] & vertical[x];
+		if(pawnVertical) {
+			if(!(passedBlock & vertical[x])) {
+				evalute -= PASSED_PAWN_BONUS;
+				uint8_t pos = firstOne(pawnVertical);
+				evalute += pawnMatr[7 - pos / 8][7 - pos % 8];
+				evalute -= passed_pawn_line[7 - pos / 8];
+			}
+
+			evalute += (popcount64(pawnVertical) - 1);
+		}
+	}
+
+	/*uint8_t whiteKingPos = firstOne(figures[KING] & white_bit_mask);
+	uint8_t blackKingPos = firstOne(figures[KING] & black_bit_mask);
+
+	double beginningPriority = popcount64(white_bit_mask | black_bit_mask);
+	double endPriority = 32 - beginningPriority;
+
+	double bPart = beginningPriority / (beginningPriority + endPriority);
+	double ePart = 1 - bPart;
+
+	evalute += (bPart * kingDebuteMatr[whiteKingPos / 8][whiteKingPos % 8]);
+	evalute += (ePart * kingEndGameMatr[whiteKingPos / 8][whiteKingPos % 8]);
+	evalute -= (bPart * kingDebuteMatr[7 - blackKingPos / 8][7 - blackKingPos % 8]);
+	evalute -= (ePart * kingEndGameMatr[7 - blackKingPos / 8][7 - blackKingPos % 8]);*/
 }
