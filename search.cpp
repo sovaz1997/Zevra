@@ -287,9 +287,20 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 					if(moveArray[real_depth].moveArray[i].equal(boardHash[hash & hash_cutter].move)) {
 						if(abs(boardHash[hash & hash_cutter].evalute) < 100000) {
-							if(real_depth == 0) {
+							/*if(real_depth == 0) {
 								bestMove = boardHash[hash & hash_cutter].move;
 							}
+
+							return boardHash[hash & hash_cutter].evalute;
+
+							if(abs(boardHash[hash & hash_cutter].evalute) > 100000) {
+								if(boardHash[hash & hash_cutter].evalute > 0) {
+									return boardHash[hash & hash_cutter].evalute - boardHash[hash & hash_cutter].depth + depth;
+								} else {
+									return boardHash[hash & hash_cutter].evalute + boardHash[hash & hash_cutter].depth - depth;
+								}
+							}*/
+
 							return boardHash[hash & hash_cutter].evalute;
 						}
 					}
