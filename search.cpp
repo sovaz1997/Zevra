@@ -376,7 +376,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			//pv_best = pv_tmp;
 
 			if(boardHash[hash & hash_cutter].enable) {
-				if(boardHash[hash & hash_cutter].depth < depth) {
+				if(boardHash[hash & hash_cutter].depth <= depth) {
 					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
 				}
 			} else {
@@ -418,7 +418,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}
 
 	if(boardHash[hash & hash_cutter].enable) {
-		if(boardHash[hash & hash_cutter].depth < depth) {
+		if(boardHash[hash & hash_cutter].depth <= depth) {
 			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
 		}
 	} else {

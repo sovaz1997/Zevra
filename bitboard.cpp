@@ -1104,6 +1104,7 @@ void BitBoard::goBack() {
 		passant_y = history.top().passant_y;
 		passant_x = history.top().passant_x;
 		passant_enable = history.top().passant_enable;
+		hash = history.top().hash;
 
 		history.pop();
 	}
@@ -1113,7 +1114,9 @@ void BitBoard::goBack() {
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
 	uint8_t figure = getFigure(y, x);
 
-	hash ^= (zobrist[figure][y][x]);
+	if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
+		hash -= zobrist[figure][y][x];
+	}
 
 	uint8_t color = (figure & COLOR_SAVE);
 	if(figure) {
@@ -1170,8 +1173,7 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 
 void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 	uint8_t color = (figure & COLOR_SAVE);
-
-	hash ^= (zobrist[figure][y][x]);
+	uint8_t originalFigure = figure;
 
 	if(figure) {
 		if(color == WHITE) {
@@ -1224,6 +1226,8 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 			black_bit_mask |= vec2_cells[y][x];
 		}
 	}
+
+	hash += zobrist[originalFigure][y][x];
 }
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
@@ -1265,6 +1269,7 @@ void BitBoard::pushHistory() {
 	newHistory.passant_enable = passant_enable;
 	newHistory.passant_x = passant_x;
 	newHistory.passant_y = passant_y;
+	newHistory.hash = hash;
 	history.push(newHistory);
 }
 
@@ -1674,7 +1679,7 @@ void BitBoard::generateHash() {
 
 	while(figure_positions) {
 		uint8_t pos = firstOne(figure_positions);
-		hash ^= (zobrist[getFigure(pos / 8, pos % 8)][pos / 8][pos % 8]);
+		hash += (zobrist[getFigure(pos / 8, pos % 8)][pos / 8][pos % 8]);
 		figure_positions &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 }
@@ -1685,7 +1690,7 @@ uint64_t BitBoard::getHash() {
 
 uint64_t BitBoard::getColorHash() {
 	if(!whiteMove) {
-		return hash ^ reverse_color_const;
+		return hash + reverse_color_const;
 	}
 
 	return hash;

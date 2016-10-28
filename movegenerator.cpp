@@ -40,7 +40,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		}
 	}
 
-	/*uint64_t hash = getColorHash(game_board);
+/*	uint64_t hash = game_board.getColorHash();
 	if(boardHash[hash & hash_cutter].enable) {
 		if(boardHash[hash & hash_cutter].hash == hash && boardHash[hash & hash_cutter].depth >= depth) {
 			for(unsigned int i = 0; i < result.size(); ++i) {
