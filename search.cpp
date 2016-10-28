@@ -281,7 +281,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	uint64_t hash = b.getColorHash();
 
-	if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash) {
+	/*if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash) {
 		if(boardHash[hash & hash_cutter].depth >= depth) {
 			if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
 				for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
@@ -296,7 +296,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			}
 		}
-	}
+	}*/
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		++movesCounter;
