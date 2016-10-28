@@ -285,7 +285,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		if(boardHash[hash & hash_cutter].depth >= depth) {
 			if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
 				bestMove = boardHash[hash & hash_cutter].move;
-				return boardHash[hash & hash_cutter].evalute;
+				if(abs(boardHash[hash & hash_cutter].evalute) < 100000) {
+					return boardHash[hash & hash_cutter].evalute;
+				}
 			}
 		}
 	}
