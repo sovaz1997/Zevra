@@ -102,6 +102,8 @@ void BitBoard::setFen(std::string fen) {
 	ruleNumber = std::stoi(fenArray[4]);
 	moveNumber = std::stoi(fenArray[5]);
 
+	generateHash();
+
 	evaluteAll();
 }
 
@@ -209,6 +211,8 @@ std::string BitBoard::getFen() {
 }
 
 void BitBoard::clear() {
+	hash = 0;
+
 	for(unsigned int i = 0; i < 7; ++i) {
 		figures[i] = 0;
 	}
@@ -255,14 +259,9 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
-	castlingMap = 0;
+	zobristGenerator();
 
-	/*castlingMap |= (vec2_cells[0][0]);
-	castlingMap |= (vec2_cells[0][7]);
-	castlingMap |= (vec2_cells[7][0]);
-	castlingMap |= (vec2_cells[7][7]);
-	castlingMap |= (vec2_cells[0][4]);
-	castlingMap |= (vec2_cells[7][4]);*/
+	castlingMap = 0;
 
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
@@ -1114,6 +1113,8 @@ void BitBoard::goBack() {
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
 	uint8_t figure = getFigure(y, x);
 
+	hash ^= (zobrist[figure][y][x]);
+
 	uint8_t color = (figure & COLOR_SAVE);
 	if(figure) {
 		if(color == WHITE) {
@@ -1169,6 +1170,8 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 
 void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 	uint8_t color = (figure & COLOR_SAVE);
+
+	hash ^= (zobrist[figure][y][x]);
 
 	if(figure) {
 		if(color == WHITE) {
@@ -1649,4 +1652,41 @@ bool BitBoard::bsc() {
 
 bool BitBoard::blc() {
 	return (castlingMap & vec2_cells[7][4]) && (castlingMap & vec2_cells[7][0]);
+}
+
+void BitBoard::zobristGenerator() {
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<unsigned long long> dis;
+
+	for(int i = 0; i < 32; ++i) {
+		for(int j = 0; j < BOARD_SIZE; ++j) {
+			for(int k = 0; k < BOARD_SIZE; ++k) {
+				zobrist[i][j][k] = dis(gen);
+			}
+		}
+	}
+}
+
+void BitBoard::generateHash() {
+	uint64_t figure_positions = (white_bit_mask | black_bit_mask);
+	hash = 0;
+
+	while(figure_positions) {
+		uint8_t pos = firstOne(figure_positions);
+		hash ^= (zobrist[getFigure(pos / 8, pos % 8)][pos / 8][pos % 8]);
+		figure_positions &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+}
+
+uint64_t BitBoard::getHash() {
+	return hash;
+}
+
+uint64_t BitBoard::getColorHash() {
+	if(!whiteMove) {
+		return hash ^ reverse_color_const;
+	}
+
+	return hash;
 }

@@ -7,6 +7,7 @@
 #include <vector>
 #include <stack>
 #include <algorithm>
+#include <random>
 #include "constants.hpp"
 #include "movearray.hpp"
 #include "goback.hpp"
@@ -17,8 +18,10 @@ private:
 	uint64_t horizontal[8];
 	uint64_t vertical[8];
 	uint64_t white_bit_mask, black_bit_mask;
-
 	uint64_t castlingMap;
+
+	uint64_t zobrist[32][BOARD_SIZE][BOARD_SIZE];
+	uint64_t hash;
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	void preInit();
@@ -29,6 +32,7 @@ private:
 	uint64_t vec1_cells[64];
 	uint64_t bitboard[32][8][8];
 
+	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
 	uint8_t firstOne(uint64_t mask);
 	uint8_t lastOne(uint64_t mask);
@@ -67,6 +71,10 @@ public:
 
 	bool inCheck(uint8_t color);
 	bool inCheck(uint8_t color, uint8_t y, uint8_t x);
+
+	void generateHash();
+	uint64_t getHash();
+	uint64_t getColorHash();
 };
 
 #endif

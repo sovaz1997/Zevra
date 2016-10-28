@@ -2,20 +2,21 @@
 #define HASH_HPP
 
 #include <cstdint>
-#include "move.hpp"
+#include "bitmove.hpp"
 
-class Move;
+class BitMove;
 
 class Hash {
 public:
 	bool enable = false;
 	uint64_t hash;
 	int depth;
-	Move move;
+	BitMove move;
 	double evalute, alpha, beta;
 	int type_mv;
 
 	Hash();
-	Hash(uint64_t hsh, Move mv, int dpth, double eval, double a, double b, int type);
+	Hash(uint64_t hsh, BitMove mv, int dpth, double eval, double a, double b, int type);
 };
+
 #endif

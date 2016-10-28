@@ -62,6 +62,7 @@ bool Game::uciHandler(std::string str) {
 
 			std::cout << "inCheck (WHITE) : " << game_board.inCheck(WHITE) << "\n";
 			std::cout << "inCheck (BLACK) : " << game_board.inCheck(BLACK) << "\n";
+			std::cout << "color_hash: " << game_board.getColorHash() << "\n";
 		} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {

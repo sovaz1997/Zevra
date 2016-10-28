@@ -27,6 +27,8 @@ const uint8_t BL_CASTLING_MV = 4;
 const uint8_t PASSANT_MV = 5;
 const uint8_t TRANSFORMATION_MV = 6;
 
+const uint64_t reverse_color_const = 54387554323743313;
+
 const double PAWN_EV = 1000;
 const double KNIGHT_EV = 3200;
 const double BISHOP_EV = 3300;
@@ -37,7 +39,7 @@ const double QUEEN_EV = 11000;
 const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
 
-const int hash_width = 16;
+const int hash_width = 20;
 
 const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;
