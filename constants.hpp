@@ -39,7 +39,7 @@ const double QUEEN_EV = 11000;
 const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
 
-const int hash_width = 20;
+const int hash_width = 22;
 
 const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;
