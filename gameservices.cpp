@@ -58,9 +58,9 @@ void Game::clearCash() {
 		blackKiller[i] = Killer();
 	}*/
 
-	/*for(unsigned int i = 0; i < boardHash.size(); ++i) {
+	for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].enable = false;
-	}*/
+	}
 
 	//gameHash = std::vector<uint64_t>();
 }

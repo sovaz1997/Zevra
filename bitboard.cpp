@@ -1115,7 +1115,7 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 	uint8_t figure = getFigure(y, x);
 
 	if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
-		hash -= zobrist[figure][y][x];
+		hash ^= zobrist[figure][y][x];
 	}
 
 	uint8_t color = (figure & COLOR_SAVE);
@@ -1227,7 +1227,7 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 		}
 	}
 
-	hash += zobrist[originalFigure][y][x];
+	hash ^= zobrist[originalFigure][y][x];
 }
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
@@ -1679,7 +1679,7 @@ void BitBoard::generateHash() {
 
 	while(figure_positions) {
 		uint8_t pos = firstOne(figure_positions);
-		hash += (zobrist[getFigure(pos / 8, pos % 8)][pos / 8][pos % 8]);
+		hash ^= (zobrist[getFigure(pos / 8, pos % 8)][pos / 8][pos % 8]);
 		figure_positions &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 }

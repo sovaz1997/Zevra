@@ -40,7 +40,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		}
 	}
 
-	/*uint64_t hash = game_board.getColorHash();
+	uint64_t hash = game_board.getColorHash();
 	if(boardHash[hash & hash_cutter].enable) {
 		if(boardHash[hash & hash_cutter].hash == hash && boardHash[hash & hash_cutter].depth >= depth) {
 			for(unsigned int i = 0; i < result.count; ++i) {
@@ -52,7 +52,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				}
 			}
 		}
-	}*/
+	}
 
 	/*if(best_pv.size() > depth) {
 		for(unsigned int i = 0; i < result.count; ++i) {
@@ -64,7 +64,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		}
 	}*/
 
-	if(hasBestMove && depth == 0) {
+	/*if(hasBestMove && depth == 0) {
 		for(unsigned int i = 0; i < result.count; ++i) {
 			if(bestMove.equal(result.moveArray[i])) {
 				result.moveArray.erase(result.moveArray.begin() + i);
@@ -72,7 +72,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				break;
 			}
 		}
-	}
+	}*/
 }
 
 void Game::sortAttacks(MoveArray& moves) {

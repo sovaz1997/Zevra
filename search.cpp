@@ -279,9 +279,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	int tmp;
 
-	//uint64_t hash = b.getColorHash();
+	uint64_t hash = b.getColorHash();
 
-	/*if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash) {
+	if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash) {
 		if(boardHash[hash & hash_cutter].depth >= depth) {
 			if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
 				for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
@@ -296,7 +296,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			}
 		}
-	}*/
+	}
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		++movesCounter;
@@ -371,10 +371,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
@@ -383,13 +383,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		if(max >= beta) {
 			//pv_best = pv_tmp;
 
-			/*if(boardHash[hash & hash_cutter].enable) {
+			if(boardHash[hash & hash_cutter].enable) {
 				if(boardHash[hash & hash_cutter].depth <= depth) {
 					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
 				}
 			} else {
 				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
-			}*/
+			}
 
 			if(real_depth == 0) {
 				bestmove = local_move;
@@ -416,13 +416,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		bestScore = max;
 	}
 
-	/*if(boardHash[hash & hash_cutter].enable) {
+	if(boardHash[hash & hash_cutter].enable) {
 		if(boardHash[hash & hash_cutter].depth <= depth) {
 			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
 		}
 	} else {
 		boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
-	}*/
+	}
 
 	return max;
 }
