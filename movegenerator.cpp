@@ -1,6 +1,37 @@
 #include "game.hpp"
 
 void Game::sortMoves(MoveArray& result, int depth) {
+	/*
+	Категории:
+	4 - Хеш
+	3 - Взятие
+	2 - Киллер
+	1 - Тихие ходы (история)
+	*/
+
+	/*uint64_t hash = game_board.getColorHash();
+	for(unsigned int i = 0; i < result.count; ++i) {
+		if(boardHash[hash & hash_cutter].enable) {
+			if(boardHash[hash & hash_cutter].hash == hash && boardHash[hash & hash_cutter].depth >= depth) {
+				if(boardHash[hash & hash_cutter].move.equal(result.moveArray[i])) {
+					result.moveArray[i].setCategory(4, 1);
+				}
+			}
+		} else if(result.moveArray[i].isAttack) {
+			result.moveArray[i].setCategory(3, result.moveArray[i].getAttackPrice());
+		} else if(game_board.whiteMove && result.moveArray[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
+			result.moveArray[i].setCategory(2, 1);
+		} else if(!game_board.whiteMove && result.moveArray[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
+			result.moveArray[i].setCategory(2, 1);
+		} else if(game_board.whiteMove) {
+			result.moveArray[i].setCategory(1, whiteHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX]);
+		} else if(!game_board.whiteMove) {
+			result.moveArray[i].setCategory(1, blackHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX]);
+		}
+	}
+
+	std::sort(result.moveArray.begin(), result.moveArray.end());*/
+
 	int num_attacks = result.num_attacks;
 	/*if(game_board.whiteMove) {
 		for(unsigned int i = result.num_attacks + 1; i < result.count - 1; ++i) {
@@ -25,6 +56,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				} else {
 					result.moveArray.insert(result.moveArray.begin(), whiteKiller[depth].move);
 				}
+
 				break;
 			}
 		} else {

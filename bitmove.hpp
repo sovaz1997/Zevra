@@ -6,8 +6,11 @@
 #include <cstdint>
 #include <cmath>
 #include "constants.hpp"
+#include "category.hpp"
 
 class BitMove {
+private:
+	Category category;
 public:
 	uint8_t fromY, fromX, toY, toX;
 	uint8_t movedFigure, attackedFigure, replacedFigure;
@@ -24,6 +27,7 @@ public:
 	double getAttackPrice();
 	bool equal(BitMove& mv);
 	void setReplaced(uint8_t figure);
+	void setCategory(int cat, double val);
 };
 
 #endif

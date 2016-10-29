@@ -358,10 +358,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}

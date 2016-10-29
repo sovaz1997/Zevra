@@ -12,6 +12,8 @@ class Move {
 private:
 	void init(uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx, uint8_t mt);
 	bool bit_quality(int bit);
+
+
 public:
 	Move();
 	Move(uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx);
