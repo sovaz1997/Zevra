@@ -281,9 +281,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	uint64_t hash = b.getColorHash();
 
-	if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash) {
+	if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash/* && boardHash[hash & hash_cutter].staticEval == b.getEvalute()*/) {
 		if(boardHash[hash & hash_cutter].depth >= depth) {
-			if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
+			//if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
 				for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 					if(moveArray[real_depth].moveArray[i].equal(boardHash[hash & hash_cutter].move)) {
 						if(abs(boardHash[hash & hash_cutter].evalute) < 100000) {
@@ -301,12 +301,27 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 								}
 							}*/
 
+							if(abs(boardHash[hash & hash_cutter].evalute) >= (WHITE_WIN - 100)) {
+								if(boardHash[hash & hash_cutter].evalute > 0) {
+									boardHash[hash & hash_cutter].evalute -= (boardHash[hash & hash_cutter].ply - real_depth);
+								} else {
+									boardHash[hash & hash_cutter].evalute += (boardHash[hash & hash_cutter].ply - real_depth);
+								}
+							}
+
+							local_move = boardHash[hash & hash_cutter].move;
 							//return boardHash[hash & hash_cutter].evalute;
-							alpha = boardHash[hash & hash_cutter].evalute;
+							if(boardHash[hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[hash & hash_cutter].evalute <= alpha) {
+								return boardHash[hash & hash_cutter].evalute;
+							} else if(boardHash[hash & hash_cutter].type_mv == BETA_CUT_EV && boardHash[hash & hash_cutter].evalute >= beta) {
+								return boardHash[hash & hash_cutter].evalute;
+							} else if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
+								return boardHash[hash & hash_cutter].evalute;
+							}
 						}
 					}
 				}
-			}
+			//}
 		}
 	}
 
@@ -368,12 +383,20 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		}
 
 		if(max >= beta) {
+			if(abs(tmp) >= WHITE_WIN) {
+				if(tmp > 0) {
+					tmp = WHITE_WIN;
+				} else {
+					tmp = BLACK_WIN;
+				}
+			}
+
 			if(boardHash[hash & hash_cutter].enable) {
 				if(boardHash[hash & hash_cutter].depth <= depth) {
-					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
+					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 				}
 			} else {
-				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
+				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 			}
 
 			if(real_depth == 0) {
@@ -382,7 +405,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				bestScore = max;
 			}
 
-			return max;
+			return alpha;
 		}
 	}
 
@@ -401,15 +424,43 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		bestScore = max;
 	}
 
-	if(boardHash[hash & hash_cutter].enable) {
-		if(boardHash[hash & hash_cutter].depth <= depth) {
-			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
+	if(abs(tmp) >= WHITE_WIN) {
+		if(tmp > 0) {
+			tmp = WHITE_WIN;
+		} else {
+			tmp = BLACK_WIN;
 		}
-	} else {
-		boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, tmp, alpha, beta, REAL_EV);
 	}
 
-	return max;
+	if(boardHash[hash & hash_cutter].enable) {
+		/*if(max < alpha) {
+			if(boardHash[hash & hash_cutter].depth <= depth) {
+				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, ALPHA_CUT_EV, b.getEvalute());
+			}
+		} else {
+			if(boardHash[hash & hash_cutter].depth <= depth || boardHash[hash & hash_cutter].type_mv != REAL_EV) {
+				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
+			}
+		}*/
+
+		if(max < alpha) {
+			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, ALPHA_CUT_EV, b.getEvalute());
+		} else if(max > beta) {
+			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
+		}/* else if(boardHash[hash & hash_cutter].depth <= depth){
+			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
+		}*/
+	} else {
+		if(max < alpha) {
+			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, ALPHA_CUT_EV, b.getEvalute());
+		} else if(max > beta) {
+			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
+		}/* else {
+			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
+		}*/
+	}
+
+	return alpha;
 }
 
 uint64_t Game::perft(int depth) {
