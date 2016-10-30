@@ -258,12 +258,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		color = BLACK;
 	}
 
-	if(b.inCheck(color)) {
-		++nextDepth;
+	if(depth <= 0 || real_depth >= 100) {
+		return quies(b, alpha, beta, rule, real_depth);
 	}
 
-	if(depth <= 0) {
-		return quies(b, alpha, beta, rule, real_depth);
+	if(b.inCheck(color)) {
+		++nextDepth;
 	}
 
 	int num_moves = 0;

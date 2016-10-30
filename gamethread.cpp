@@ -31,6 +31,7 @@ void Game::goFixedDepth() {
 	start_timer = clock();
 	hasBestMove = false;
 	double depth;
+
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		pv_tmp.resize(0);
 		pv_best.resize(0);
@@ -43,9 +44,12 @@ void Game::goFixedDepth() {
 		}
 
 
-		/*best_pv = */negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_DEPTH);
+		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_DEPTH);
 		hasBestMove = true;
 
+		if(abs(bestScore) >= (WHITE_WIN - 100)) {
+			break;
+		}
 
 		depth = max_depth;
 	}
@@ -95,6 +99,10 @@ void Game::goFixedTime(int tm) {
 		flattenHistory();
 
 		/*best_pv = */negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_TIME);
+
+		if(abs(bestScore) >= (WHITE_WIN - 100)) {
+			break;
+		}
 
 		hasBestMove = true;
 		depth = max_depth;
