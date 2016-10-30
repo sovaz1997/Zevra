@@ -258,6 +258,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		color = BLACK;
 	}
 
+	if(b.inCheck(color)) {
+		++nextDepth;
+	}
+
 	if(depth <= 0) {
 		return quies(b, alpha, beta, rule, real_depth);
 	}
@@ -379,6 +383,14 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
+			}
+
+			if(boardHash[hash & hash_cutter].enable) {
+				if(boardHash[hash & hash_cutter].depth <= depth) {
+					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
+				}
+			} else {
+				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
 			}
 		}
 
