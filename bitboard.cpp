@@ -1801,10 +1801,22 @@ void BitBoard::magicNumberGenerator() {
 			std::random_device rd;
 			std::mt19937_64 gen(rd());
 			std::uniform_int_distribution<unsigned long long> dis;
+			
 			uint64_t magic = dis(gen);
-
 			std::vector<int> check(rook_combination.size(), 0);
 
+			for(int i = 0; i < rook_combination.size(); ++i) {
+				uint64_t index = (rook_combination[i] * magic) >> (63 - popcount64(rook_cell[y][x]));
+				if(check[index]) {
+					break;
+				}
+				
+				++check[index];
+				
+				if(i == rook_combination.size() - 1) {
+					std::cout << y << " " << x << " " << magic << "\n";
+				}
+			}
 		}
 	}
 }
