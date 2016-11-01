@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -std=c++17 -m64 -O4 -flto -funroll-loops -msse -march=corei7 -mpopcnt
-FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o bitmove.o movearray.o bitboard.o category.o
+FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o bitmove.o movearray.o bitboard.o category.o magic.o
 
 all: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o zevra
@@ -85,6 +85,9 @@ bitboard.o: bitboard.hpp bitboard.cpp
 
 category.o: category.hpp category.cpp
 	$(CC) $(CFLAGS) -c category.cpp
+
+magic.o: magic.hpp magic.cpp
+	$(CC) $(CFLAGS) -c magic.cpp
 
 clean:
 	rm -rf *.o zevra

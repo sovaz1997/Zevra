@@ -1778,6 +1778,8 @@ void BitBoard::magicNumberGenerator() {
 			//bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]));
 		}
 	}
+	
+	int max = 0;
 
 	for(uint8_t y = 0; y < 8; ++y) {
 		for(uint8_t x = 0; x < 8; ++x) {
@@ -1794,29 +1796,49 @@ void BitBoard::magicNumberGenerator() {
 					}
 				}
 				rook_combination[k] = bit_combination;
-				//printBitBoard(bit_combination);
-				std::cout << "\n" << (int)k << "\n";
 			}
-
-			std::random_device rd;
-			std::mt19937_64 gen(rd());
-			std::uniform_int_distribution<unsigned long long> dis;
 			
-			uint64_t magic = dis(gen);
-			std::vector<int> check(rook_combination.size(), 0);
+			bool stopped = false;
+			
+			while(!stopped) {
+				uint64_t magic = magicGenerator();//dis(gen);
+				std::vector<int> check(rook_combination.size(), 0);
 
-			for(int i = 0; i < rook_combination.size(); ++i) {
-				uint64_t index = (rook_combination[i] * magic) >> (63 - popcount64(rook_cell[y][x]));
-				if(check[index]) {
-					break;
-				}
+				for(int i = 0; i < rook_combination.size(); ++i) {
+					uint64_t index = (rook_combination[i] * magic) >> (64 - popcount64(rook_cell[y][x]));
 				
-				++check[index];
+					if(check[index]) {
+						break;
+					}
 				
-				if(i == rook_combination.size() - 1) {
-					std::cout << y << " " << x << " " << magic << "\n";
+					++check[index];
+				
+					if(i == rook_combination.size() - 1) {
+						std::cout << "rookMagic[" << (int)y << "][" << (int)x << "] = " << magic << ";\n";
+						stopped = true;
+					}
 				}
 			}
 		}
 	}
+}
+
+uint64_t BitBoard::magicGenerator() {
+	uint64_t result = 0;
+	
+	int i = 0;
+	
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<unsigned long long> dis;
+	while(i < 7) {
+		uint64_t pos = dis(gen) % 64;
+		
+		if(!(result & vec1_cells[pos])) {
+			result |= vec1_cells[pos];
+			++i;
+		}
+	}
+	
+	return result;
 }

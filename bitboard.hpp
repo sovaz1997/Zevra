@@ -40,6 +40,8 @@ private:
 	void addFigure(uint8_t figure, uint8_t y, uint8_t x) ;
 	void printBitBoard(uint64_t bit_board);
 	void magicNumberGenerator();
+	
+	uint64_t magicGenerator();
 
 	std::stack<GoBack> history;
 
