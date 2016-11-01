@@ -1770,22 +1770,22 @@ void BitBoard::magicNumberGenerator() {
 				rook_cell[y][x] |= minus8[y * 8 + x];
 				rook_cell[y][x] &= (UINT64_MAX ^ horizontal[0]);
 			}
-			
+
 			rook_cell[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
 
+			//save rook_cell!
 
-			//bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]));			
+			//bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]));
 		}
 	}
 
-
-	//for(uint8_t y = 0; y < 8; ++y) {
-		//for(uint8_t x = 0; x < 8; ++x) {
-			int y = 0, x = 0;
+	for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			std::vector<uint64_t> rook_combination = std::vector<uint64_t>((int)std::pow(2, popcount64(rook_cell[y][x])));
 			for(uint64_t k = 0; k < std::pow(2, popcount64(rook_cell[y][x])); ++k) {
 				uint64_t tmp_bitboard = rook_cell[y][x];
 				uint64_t bit_combination = 0;
-				
+
 				for(int m = 0; m < popcount64(rook_cell[y][x]); ++m) {
 					uint8_t pos = firstOne(tmp_bitboard);
 					tmp_bitboard &= (UINT64_MAX ^ vec1_cells[pos]);
@@ -1793,9 +1793,18 @@ void BitBoard::magicNumberGenerator() {
 						bit_combination |= vec1_cells[pos];
 					}
 				}
-				printBitBoard(bit_combination);
+				rook_combination[k] = bit_combination;
+				//printBitBoard(bit_combination);
 				std::cout << "\n" << (int)k << "\n";
 			}
-		//}
-	//}
+
+			std::random_device rd;
+			std::mt19937_64 gen(rd());
+			std::uniform_int_distribution<unsigned long long> dis;
+			uint64_t magic = dis(gen);
+
+			std::vector<int> check(rook_combination.size(), 0);
+
+		}
+	}
 }
