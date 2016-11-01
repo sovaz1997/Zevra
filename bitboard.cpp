@@ -3,6 +3,7 @@
 BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 	preInit();
 	clear();
+	magicNumberGenerator();
 }
 
 BitBoard::~BitBoard() {}
@@ -1743,4 +1744,18 @@ void BitBoard::totalStaticEvalute() {
 	evalute += (ePart * kingEndGameMatr[whiteKingPos / 8][whiteKingPos % 8]);
 	evalute -= (bPart * kingDebuteMatr[7 - blackKingPos / 8][7 - blackKingPos % 8]);
 	evalute -= (ePart * kingEndGameMatr[7 - blackKingPos / 8][7 - blackKingPos % 8]);*/
+}
+
+void BitBoard::magicNumberGenerator() {
+	uint64_t board_cutter = (vertical[0] | vertical[7] | horizontal[0] | horizontal[7]);
+
+	uint8_t bishop_cell_count[8][8];
+	uint8_t rook_cell_count[8][8];
+
+	for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]) & (UINT64_MAX ^ board_cutter));
+			rook_cell_count[y][x] = popcount64(bitboard[ROOK | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]) & (UINT64_MAX ^ board_cutter));
+		}
+	}
 }
