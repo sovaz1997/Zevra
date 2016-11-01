@@ -1800,8 +1800,9 @@ void BitBoard::magicNumberGenerator() {
 			
 			bool stopped = false;
 			
+			uint64_t magic;
 			while(!stopped) {
-				uint64_t magic = magicGenerator();//dis(gen);
+				magic = magicGenerator();//dis(gen);
 				std::vector<int> check(rook_combination.size(), 0);
 
 				for(int i = 0; i < rook_combination.size(); ++i) {
@@ -1814,9 +1815,46 @@ void BitBoard::magicNumberGenerator() {
 					++check[index];
 				
 					if(i == rook_combination.size() - 1) {
-						std::cout << "rookMagic[" << (int)y << "][" << (int)x << "] = " << magic << ";\n";
+						//std::cout << "rookMagic[" << (int)y << "][" << (int)x << "] = " << magic << ";\n";
 						stopped = true;
+						
+											//Ладьи
+						/*uint64_t rook = figures[ROOK] & mask;
+						while(rook != 0) {
+							possibleMoves = 0;
+							uint8_t pos = firstOne(rook);
+							possibleMoves |= (minus1[pos] & (UINT64_MAX ^ minus1[lastOne(minus1[pos] & (white_bit_mask | black_bit_mask))]));
+							possibleMoves |= (minus8[pos] & (UINT64_MAX ^ minus8[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
+							possibleMoves |= ( plus1[pos] & (UINT64_MAX ^  plus1[firstOne(plus1[pos] & (white_bit_mask | black_bit_mask))]));
+							possibleMoves |= ( plus8[pos] & (UINT64_MAX ^  plus8[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]));
+							possibleMoves &= (mask ^ UINT64_MAX);
+							possibleMoves &= ((figures[KING] ^ emask) ^ UINT64_MAX);
+							possibleMoves &= (UINT64_MAX ^ emask);
+							rook &= (UINT64_MAX ^ vec1_cells[pos]);
+							stress += popcount64(possibleMoves);
+
+							while(possibleMoves != 0) {
+								uint64_t to = firstOne(possibleMoves);
+								moveArray.addMove(BitMove(ROOK | color, pos / 8, pos % 8, to / 8, to % 8));
+								possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
+							}
+						}*/
+						
+						
+						
 					}
+				}
+				
+				
+				std::cout << "std::vector<uint64_t> rook_combination(" << rook_combination.size() << ");\n";
+				std::cout << "std::vector<uint64_t> rook_result(" << rook_combination.size() << ");\n";
+				for(int s = 0; s < rook_combination.size(); ++s) {
+							uint64_t rook_result = 0;
+							rook_result |= (minus1[y * 8 + x] & (UINT64_MAX ^ minus1[lastOne(minus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+							rook_result |= (minus8[y * 8 + x] & (UINT64_MAX ^ minus8[lastOne(minus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+							rook_result |= ( plus1[y * 8 + x] & (UINT64_MAX ^  plus1[firstOne(plus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+							rook_result |= ( plus8[y * 8 + x] & (UINT64_MAX ^  plus8[firstOne(plus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+//							std::cout << "rook_combination"
 				}
 			}
 		}

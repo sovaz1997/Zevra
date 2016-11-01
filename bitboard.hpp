@@ -11,6 +11,7 @@
 #include "constants.hpp"
 #include "movearray.hpp"
 #include "goback.hpp"
+#include "magic.hpp"
 
 class BitBoard {
 private:
@@ -49,6 +50,12 @@ private:
 	bool wlc();
 	bool bsc();
 	bool blc();
+	
+	Magic rookMagic[8][8];
+	Magic bishopMagic[8][8];
+	
+	uint64_t rookMagicMask[8][8];
+	uint64_t bishopMagicMask[8][8];
 public:
 	BitBoard();
 	~BitBoard();
