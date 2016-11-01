@@ -1747,15 +1747,55 @@ void BitBoard::totalStaticEvalute() {
 }
 
 void BitBoard::magicNumberGenerator() {
-	uint64_t board_cutter = (vertical[0] | vertical[7] | horizontal[0] | horizontal[7]);
-
-	uint8_t bishop_cell_count[8][8];
-	uint8_t rook_cell_count[8][8];
+	uint64_t bishop_cell[8][8];
+	uint64_t rook_cell[8][8];
 
 	for(uint8_t y = 0; y < 8; ++y) {
 		for(uint8_t x = 0; x < 8; ++x) {
-			bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]) & (UINT64_MAX ^ board_cutter));
-			rook_cell_count[y][x] = popcount64(bitboard[ROOK | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]) & (UINT64_MAX ^ board_cutter));
+			rook_cell[y][x] = 0;
+
+			if(plus1[y * 8 + x]) {
+				rook_cell[y][x] |= plus1[y * 8 + x];
+				rook_cell[y][x] &= (UINT64_MAX ^ vertical[7]);
+			}
+			if(minus1[y * 8 + x]) {
+				rook_cell[y][x] |= minus1[y * 8 + x];
+				rook_cell[y][x] &= (UINT64_MAX ^ vertical[0]);
+			}
+			if(plus8[y * 8 + x]) {
+				rook_cell[y][x] |= plus8[y * 8 + x];
+				rook_cell[y][x] &= (UINT64_MAX ^ horizontal[7]);
+			}
+			if(minus8[y * 8 + x]) {
+				rook_cell[y][x] |= minus8[y * 8 + x];
+				rook_cell[y][x] &= (UINT64_MAX ^ horizontal[0]);
+			}
+			
+			rook_cell[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
+
+
+			//bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]));			
 		}
 	}
+
+
+	//for(uint8_t y = 0; y < 8; ++y) {
+		//for(uint8_t x = 0; x < 8; ++x) {
+			int y = 0, x = 0;
+			for(uint64_t k = 0; k < std::pow(2, popcount64(rook_cell[y][x])); ++k) {
+				uint64_t tmp_bitboard = rook_cell[y][x];
+				uint64_t bit_combination = 0;
+				
+				for(int m = 0; m < popcount64(rook_cell[y][x]); ++m) {
+					uint8_t pos = firstOne(tmp_bitboard);
+					tmp_bitboard &= (UINT64_MAX ^ vec1_cells[pos]);
+					if(vec1_cells[m] & k) {
+						bit_combination |= vec1_cells[pos];
+					}
+				}
+				printBitBoard(bit_combination);
+				std::cout << "\n" << (int)k << "\n";
+			}
+		//}
+	//}
 }
