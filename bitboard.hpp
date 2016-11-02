@@ -20,6 +20,9 @@ private:
 	uint64_t vertical[8];
 	uint64_t white_bit_mask, black_bit_mask;
 	uint64_t castlingMap;
+	
+	uint64_t ROOK_MAGIC[8][8];
+	uint64_t BISHOP_MAGIC[8][8];
 
 	uint64_t zobrist[32][BOARD_SIZE][BOARD_SIZE];
 	uint64_t hash;
@@ -42,6 +45,7 @@ private:
 	void printBitBoard(uint64_t bit_board);
 	void magicNumberGenerator();
 	void magicInit();
+	void magicConstantsSet();
 	
 	uint64_t magicGenerator();
 

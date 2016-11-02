@@ -3,7 +3,7 @@
 BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 	preInit();
 	clear();
-	magicNumberGenerator();
+	//magicNumberGenerator();
 }
 
 BitBoard::~BitBoard() {}
@@ -260,6 +260,7 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
+	magicConstantsSet();
 	zobristGenerator();
 	castlingMap = 0;
 
@@ -547,6 +548,91 @@ void BitBoard::magicInit() {
 			}
 
 			bishopMagicMask[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
+		}
+	}
+	
+	/*for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			std::vector<uint64_t> rook_result_array(popcount64(rookMagicMask[y][x]));
+			for(int s = 0; s < popcount64(rookMagicMask[y][x]); ++s) {
+				uint64_t rook_result = 0;
+				rook_result |= (minus1[y * 8 + x] & (UINT64_MAX ^ minus1[lastOne(minus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+				rook_result |= (minus8[y * 8 + x] & (UINT64_MAX ^ minus8[lastOne(minus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+				rook_result |= ( plus1[y * 8 + x] & (UINT64_MAX ^  plus1[firstOne(plus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+				rook_result |= ( plus8[y * 8 + x] & (UINT64_MAX ^  plus8[firstOne(plus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+				uint64_t ind = (rook_combination[s] * magic) >> (64 - popcount64(rookMagicMask[y][x]));
+				rook_result_array[ind] = rook_result;
+			}
+			
+			std::vector<uint64_t> bishop_result_array(popcount64(bishopMagicMask[y][x]));
+			for(int s = 0; s < popcount64(bishopMagicMask[y][x]); ++s) {
+				uint64_t bishop_result = 0;
+				bishop_result |= (minus7[y * 8 + x] & (UINT64_MAX ^ minus7[lastOne(minus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= (minus9[y * 8 + x] & (UINT64_MAX ^ minus9[lastOne(minus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= ( plus7[y * 8 + x] & (UINT64_MAX ^  plus7[firstOne(plus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= ( plus9[y * 8 + x] & (UINT64_MAX ^  plus9[firstOne(plus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				uint64_t ind = (bishop_combination[s] * magic) >> (64 - popcount64(bishopMagicMask[y][x]));				
+				bishop_result_array[ind] = bishop_result;
+			}
+		}
+	}*/
+	
+	for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			std::vector<uint64_t> rook_combination = std::vector<uint64_t>((int)std::pow(2, popcount64(rookMagicMask[y][x])));
+			for(uint64_t k = 0; k < std::pow(2, popcount64(rookMagicMask[y][x])); ++k) {
+				uint64_t tmp_bitboard = rookMagicMask[y][x];
+				uint64_t bit_combination = 0;
+
+				for(int m = 0; m < popcount64(rookMagicMask[y][x]); ++m) {
+					uint8_t pos = firstOne(tmp_bitboard);
+					tmp_bitboard &= (UINT64_MAX ^ vec1_cells[pos]);
+					if(vec1_cells[m] & k) {
+						bit_combination |= vec1_cells[pos];
+					}
+				}
+				rook_combination[k] = bit_combination;
+			}
+			
+			std::vector<uint64_t> bishop_combination = std::vector<uint64_t>((int)std::pow(2, popcount64(bishopMagicMask[y][x])));
+			for(uint64_t k = 0; k < std::pow(2, popcount64(bishopMagicMask[y][x])); ++k) {
+				uint64_t tmp_bitboard = bishopMagicMask[y][x];
+				uint64_t bit_combination = 0;
+
+				for(int m = 0; m < popcount64(bishopMagicMask[y][x]); ++m) {
+					uint8_t pos = firstOne(tmp_bitboard);
+					tmp_bitboard &= (UINT64_MAX ^ vec1_cells[pos]);
+					if(vec1_cells[m] & k) {
+						bit_combination |= vec1_cells[pos];
+					}
+				}
+				
+				bishop_combination[k] = bit_combination;
+			}
+
+			std::vector<uint64_t> rook_result_array(std::pow(2, popcount64(rookMagicMask[y][x])));
+			for(int s = 0; s < popcount64(rookMagicMask[y][x]); ++s) {
+				uint64_t rook_result = 0;
+				rook_result |= (minus1[y * 8 + x] & (UINT64_MAX ^ minus1[lastOne(minus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+				rook_result |= (minus8[y * 8 + x] & (UINT64_MAX ^ minus8[lastOne(minus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+				rook_result |= ( plus1[y * 8 + x] & (UINT64_MAX ^  plus1[firstOne(plus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+				rook_result |= ( plus8[y * 8 + x] & (UINT64_MAX ^  plus8[firstOne(plus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+				uint64_t ind = (rook_combination[s] * ROOK_MAGIC[y][x]) >> (64 - popcount64(rookMagicMask[y][x]));
+				rook_result_array[ind] = rook_result;
+			}
+			rookMagic[y][x] = Magic(rook_result_array, ROOK_MAGIC[y][x]);
+			
+			std::vector<uint64_t> bishop_result_array(std::pow(2, popcount64(bishopMagicMask[y][x])));
+			for(int s = 0; s < popcount64(bishopMagicMask[y][x]); ++s) {
+				uint64_t bishop_result = 0;
+				bishop_result |= (minus7[y * 8 + x] & (UINT64_MAX ^ minus7[lastOne(minus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= (minus9[y * 8 + x] & (UINT64_MAX ^ minus9[lastOne(minus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= ( plus7[y * 8 + x] & (UINT64_MAX ^  plus7[firstOne(plus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= ( plus9[y * 8 + x] & (UINT64_MAX ^  plus9[firstOne(plus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				uint64_t ind = (bishop_combination[s] * BISHOP_MAGIC[y][x]) >> (64 - popcount64(bishopMagicMask[y][x]));				
+				bishop_result_array[ind] = bishop_result;
+			}
+			bishopMagic[y][x] = Magic(bishop_result_array, BISHOP_MAGIC[y][x]);
 		}
 	}
 }
@@ -1936,4 +2022,136 @@ uint64_t BitBoard::magicGenerator() {
 	}
 	
 	return result;
+}
+
+void BitBoard::magicConstantsSet() {
+	ROOK_MAGIC[0][0] = 36028940099256448ULL;
+	ROOK_MAGIC[0][1] = 1170936178531373060ULL;
+	ROOK_MAGIC[0][2] = 36046389741890176ULL;
+	ROOK_MAGIC[0][3] = 1188967895993417732ULL;
+	ROOK_MAGIC[0][4] = 1297054319295725600ULL;
+	ROOK_MAGIC[0][5] = 9367491691713527816ULL;
+	ROOK_MAGIC[0][6] = 4791840998646874368ULL;
+	ROOK_MAGIC[0][7] = 9295430181724422146ULL;
+	ROOK_MAGIC[1][0] = 2392539451899906ULL;
+	ROOK_MAGIC[1][1] = 2341942243698409664ULL;
+	ROOK_MAGIC[1][2] = 11399805301432320ULL;
+	ROOK_MAGIC[1][3] = 9232520007966068736ULL;
+	ROOK_MAGIC[1][4] = 649785533559474176ULL;
+	ROOK_MAGIC[1][5] = 1441714839302965252ULL;
+	ROOK_MAGIC[1][6] = 281827164293376ULL;
+	ROOK_MAGIC[1][7] = 36732502722740480ULL;
+	ROOK_MAGIC[2][0] = 18023744903578176ULL;
+	ROOK_MAGIC[2][1] = 4503874652086274ULL;
+	ROOK_MAGIC[2][2] = 212207354777856ULL;
+	ROOK_MAGIC[2][3] = 4645986651621376ULL;
+	ROOK_MAGIC[2][4] = 565149245703200ULL;
+	ROOK_MAGIC[2][5] = 4611827307315725312ULL;
+	ROOK_MAGIC[2][6] = 576465150635280400ULL;
+	ROOK_MAGIC[2][7] = 2306408158207180868ULL;
+	ROOK_MAGIC[3][0] = 2377970974143316016ULL;
+	ROOK_MAGIC[3][1] = 36239905401081984ULL;
+	ROOK_MAGIC[3][2] = 563027264946312ULL;
+	ROOK_MAGIC[3][3] = 41675890895095808ULL;
+	ROOK_MAGIC[3][4] = 9156734983864449ULL;
+	ROOK_MAGIC[3][5] = 563233422575632ULL;
+	ROOK_MAGIC[3][6] = 36037610296119298ULL;
+	ROOK_MAGIC[3][7] = 4406637658177ULL;
+	ROOK_MAGIC[4][0] = 54043745829519936ULL;
+	ROOK_MAGIC[4][1] = 144150399295688704ULL;
+	ROOK_MAGIC[4][2] = 81065360773615616ULL;
+	ROOK_MAGIC[4][3] = 2310346647512551456ULL;
+	ROOK_MAGIC[4][4] = 144194359363896320ULL;
+	ROOK_MAGIC[4][5] = 4611721220113645584ULL;
+	ROOK_MAGIC[4][6] = 1153202996847314432ULL;
+	ROOK_MAGIC[4][7] = 2308095363111714884ULL;
+	ROOK_MAGIC[5][0] = 288652863631032320ULL;
+	ROOK_MAGIC[5][1] = 633331590955040ULL;
+	ROOK_MAGIC[5][2] = 2310347159133782064ULL;
+	ROOK_MAGIC[5][3] = 9288708859691044ULL;
+	ROOK_MAGIC[5][4] = 54192729176965248ULL;
+	ROOK_MAGIC[5][5] = 13835621022415618176ULL;
+	ROOK_MAGIC[5][6] = 55044435345409ULL;
+	ROOK_MAGIC[5][7] = 292066820105ULL;
+	ROOK_MAGIC[6][0] = 324329552652279936ULL;
+	ROOK_MAGIC[6][1] = 71476854661632ULL;
+	ROOK_MAGIC[6][2] = 35236986552576ULL;
+	ROOK_MAGIC[6][3] = 158330345783424ULL;
+	ROOK_MAGIC[6][4] = 4611708008794259584ULL;
+	ROOK_MAGIC[6][5] = 288250167965024384ULL;
+	ROOK_MAGIC[6][6] = 72339077604838656ULL;
+	ROOK_MAGIC[6][7] = 576601491150737536;
+	ROOK_MAGIC[7][0] = 140738026340419ULL;
+	ROOK_MAGIC[7][1] = 4785349483044993ULL;
+	ROOK_MAGIC[7][2] = 44259639042049ULL;
+	ROOK_MAGIC[7][3] = 72092847129757953ULL;
+	ROOK_MAGIC[7][4] = 563018742106118ULL;
+	ROOK_MAGIC[7][5] = 4611967527931871233ULL;
+	ROOK_MAGIC[7][6] = 18016666260670468ULL;
+	ROOK_MAGIC[7][7] = 36033195606573314ULL;
+	
+	BISHOP_MAGIC[0][0] = 9227880103252345088ULL;
+	BISHOP_MAGIC[0][1] = 642149158781056ULL;
+	BISHOP_MAGIC[0][2] = 1130590048886784ULL;
+	BISHOP_MAGIC[0][3] = 4612816318796661312ULL;
+	BISHOP_MAGIC[0][4] = 299342124548116ULL;
+	BISHOP_MAGIC[0][5] = 4900199106774827012ULL;
+	BISHOP_MAGIC[0][6] = 72621162618159104ULL;
+	BISHOP_MAGIC[0][7] = 282026947199232ULL;
+	BISHOP_MAGIC[1][0] = 580968784370861056ULL;
+	BISHOP_MAGIC[1][1] = 8867102621952ULL;
+	BISHOP_MAGIC[1][2] = 74779709276164ULL;
+	BISHOP_MAGIC[1][3] = 4508014862157825ULL;
+	BISHOP_MAGIC[1][4] = 171137955145449472ULL;
+	BISHOP_MAGIC[1][5] = 144186115455188992ULL;
+	BISHOP_MAGIC[1][6] = 2201475366912ULL;
+	BISHOP_MAGIC[1][7] = 141872467976ULL;
+	BISHOP_MAGIC[2][0] = 4503737134482050ULL;
+	BISHOP_MAGIC[2][1] = 1266706186502208ULL;
+	BISHOP_MAGIC[2][2] = 38280648506478608ULL;
+	BISHOP_MAGIC[2][3] = 9225623976288501760ULL;
+	BISHOP_MAGIC[2][4] = 1154047413122566144ULL;
+	BISHOP_MAGIC[2][5] = 562953191464962ULL;
+	BISHOP_MAGIC[2][6] = 70385992471552ULL;
+	BISHOP_MAGIC[2][7] = 2305878198216425984ULL;
+	BISHOP_MAGIC[3][0] = 9042383896051976ULL;
+	BISHOP_MAGIC[3][1] = 13528391202439426ULL;
+	BISHOP_MAGIC[3][2] = 282574765687297ULL;
+	BISHOP_MAGIC[3][3] = 18019071635292192ULL;
+	BISHOP_MAGIC[3][4] = 285873056801025ULL;
+	BISHOP_MAGIC[3][5] = 1157434999841227008ULL;
+	BISHOP_MAGIC[3][6] = 2308165727531828224ULL;
+	BISHOP_MAGIC[3][7] = 1126174801854608ULL;
+	BISHOP_MAGIC[4][0] = 569615778324480ULL;
+	BISHOP_MAGIC[4][1] = 72357795073101824ULL;
+	BISHOP_MAGIC[4][2] = 37417822259204ULL;
+	BISHOP_MAGIC[4][3] = 9228439136728384000ULL;
+	BISHOP_MAGIC[4][4] = 18016606122697344ULL;
+	BISHOP_MAGIC[4][5] = 2306689641757050880ULL;
+	BISHOP_MAGIC[4][6] = 571754637574656ULL;
+	BISHOP_MAGIC[4][7] = 36593947077780480ULL;
+	BISHOP_MAGIC[5][0] = 1130585850396672ULL;
+	BISHOP_MAGIC[5][1] = 9224511139625304576ULL;
+	BISHOP_MAGIC[5][2] = 1153062413910673409ULL;
+	BISHOP_MAGIC[5][3] = 2305845491738353696ULL;
+	BISHOP_MAGIC[5][4] = 1161101794345152ULL;
+	BISHOP_MAGIC[5][5] = 1127033811829000ULL;
+	BISHOP_MAGIC[5][6] = 2254290962874432ULL;
+	BISHOP_MAGIC[5][7] = 5630607669329956ULL;
+	BISHOP_MAGIC[6][0] = 1130302383063112ULL;
+	BISHOP_MAGIC[6][1] = 4611827048009171072ULL;
+	BISHOP_MAGIC[6][2] = 4503788640010248ULL;
+	BISHOP_MAGIC[6][3] = 576504769343127552ULL;
+	BISHOP_MAGIC[6][4] = 2305843284268941312ULL;
+	BISHOP_MAGIC[6][5] = 6631702200576ULL;
+	BISHOP_MAGIC[6][6] = 18017731974561792ULL;
+	BISHOP_MAGIC[6][7] = 9223952596190904448ULL;
+	BISHOP_MAGIC[7][0] = 72602194379776ULL;
+	BISHOP_MAGIC[7][1] = 563092358956032ULL;
+	BISHOP_MAGIC[7][2] = 35330419886080ULL;
+	BISHOP_MAGIC[7][3] = 108122674944934400ULL;
+	BISHOP_MAGIC[7][4] = 35185179628032ULL;
+	BISHOP_MAGIC[7][5] = 35201820791296ULL;
+	BISHOP_MAGIC[7][6] = 9012215810621696ULL;
+	BISHOP_MAGIC[7][7] = 1706510799372320ULL;
 }
