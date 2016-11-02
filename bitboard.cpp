@@ -261,7 +261,6 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 
 void BitBoard::preInit() {
 	zobristGenerator();
-
 	castlingMap = 0;
 
 	uint64_t mul = 1;
@@ -491,6 +490,66 @@ void BitBoard::preInit() {
 	for(unsigned int i = 0; i < 8; ++i) {
 		vertical[i] = res;
 		res <<= 1;
+	}
+	
+	magicInit();
+}
+
+void BitBoard::magicInit() {
+	for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			rookMagicMask[y][x] = 0;
+
+			if(plus1[y * 8 + x]) {
+				rookMagicMask[y][x] |= plus1[y * 8 + x];
+				rookMagicMask[y][x] &= (UINT64_MAX ^ vertical[7]);
+			}
+			if(minus1[y * 8 + x]) {
+				rookMagicMask[y][x] |= minus1[y * 8 + x];
+				rookMagicMask[y][x] &= (UINT64_MAX ^ vertical[0]);
+			}
+			if(plus8[y * 8 + x]) {
+				rookMagicMask[y][x] |= plus8[y * 8 + x];
+				rookMagicMask[y][x] &= (UINT64_MAX ^ horizontal[7]);
+			}
+			if(minus8[y * 8 + x]) {
+				rookMagicMask[y][x] |= minus8[y * 8 + x];
+				rookMagicMask[y][x] &= (UINT64_MAX ^ horizontal[0]);
+			}
+
+			rookMagicMask[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
+		}
+	}
+	
+	for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			bishopMagicMask[y][x] = 0;
+
+			if(plus9[y * 8 + x]) {
+				bishopMagicMask[y][x] |= plus9[y * 8 + x];
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ vertical[7]);
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ horizontal[7]);
+			}
+			if(minus9[y * 8 + x]) {
+				bishopMagicMask[y][x] |= minus9[y * 8 + x];
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ vertical[0]);
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ horizontal[0]);
+			}
+			if(plus7[y * 8 + x]) {
+				bishopMagicMask[y][x] |= plus7[y * 8 + x];
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ vertical[0]);
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ horizontal[7]);
+			}
+			if(minus7[y * 8 + x]) {
+				bishopMagicMask[y][x] |= minus7[y * 8 + x];
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ vertical[7]);
+				bishopMagicMask[y][x] &= (UINT64_MAX ^ horizontal[0]);
+			}
+
+			bishopMagicMask[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
+			printBitBoard(bishopMagicMask[y][x]);
+			std::cout << "\n";
+		}
 	}
 }
 
@@ -1747,48 +1806,14 @@ void BitBoard::totalStaticEvalute() {
 }
 
 void BitBoard::magicNumberGenerator() {
-	uint64_t bishop_cell[8][8];
-	uint64_t rook_cell[8][8];
-
-	for(uint8_t y = 0; y < 8; ++y) {
+	/*for(uint8_t y = 0; y < 8; ++y) {
 		for(uint8_t x = 0; x < 8; ++x) {
-			rook_cell[y][x] = 0;
-
-			if(plus1[y * 8 + x]) {
-				rook_cell[y][x] |= plus1[y * 8 + x];
-				rook_cell[y][x] &= (UINT64_MAX ^ vertical[7]);
-			}
-			if(minus1[y * 8 + x]) {
-				rook_cell[y][x] |= minus1[y * 8 + x];
-				rook_cell[y][x] &= (UINT64_MAX ^ vertical[0]);
-			}
-			if(plus8[y * 8 + x]) {
-				rook_cell[y][x] |= plus8[y * 8 + x];
-				rook_cell[y][x] &= (UINT64_MAX ^ horizontal[7]);
-			}
-			if(minus8[y * 8 + x]) {
-				rook_cell[y][x] |= minus8[y * 8 + x];
-				rook_cell[y][x] &= (UINT64_MAX ^ horizontal[0]);
-			}
-
-			rook_cell[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
-
-			//save rook_cell!
-
-			//bishop_cell_count[y][x] = popcount64(bitboard[BISHOP | WHITE][y][x] & (UINT64_MAX ^ vec2_cells[y][x]));
-		}
-	}
-	
-	int max = 0;
-
-	for(uint8_t y = 0; y < 8; ++y) {
-		for(uint8_t x = 0; x < 8; ++x) {
-			std::vector<uint64_t> rook_combination = std::vector<uint64_t>((int)std::pow(2, popcount64(rook_cell[y][x])));
-			for(uint64_t k = 0; k < std::pow(2, popcount64(rook_cell[y][x])); ++k) {
-				uint64_t tmp_bitboard = rook_cell[y][x];
+			std::vector<uint64_t> rook_combination = std::vector<uint64_t>((int)std::pow(2, popcount64(rookMagicMask[y][x])));
+			for(uint64_t k = 0; k < std::pow(2, popcount64(rookMagicMask[y][x])); ++k) {
+				uint64_t tmp_bitboard = rookMagicMask[y][x];
 				uint64_t bit_combination = 0;
 
-				for(int m = 0; m < popcount64(rook_cell[y][x]); ++m) {
+				for(int m = 0; m < popcount64(rookMagicMask[y][x]); ++m) {
 					uint8_t pos = firstOne(tmp_bitboard);
 					tmp_bitboard &= (UINT64_MAX ^ vec1_cells[pos]);
 					if(vec1_cells[m] & k) {
@@ -1806,7 +1831,7 @@ void BitBoard::magicNumberGenerator() {
 				std::vector<int> check(rook_combination.size(), 0);
 
 				for(int i = 0; i < rook_combination.size(); ++i) {
-					uint64_t index = (rook_combination[i] * magic) >> (64 - popcount64(rook_cell[y][x]));
+					uint64_t index = (rook_combination[i] * magic) >> (64 - popcount64(rookMagicMask[y][x]));
 				
 					if(check[index]) {
 						break;
@@ -1815,46 +1840,78 @@ void BitBoard::magicNumberGenerator() {
 					++check[index];
 				
 					if(i == rook_combination.size() - 1) {
-						//std::cout << "rookMagic[" << (int)y << "][" << (int)x << "] = " << magic << ";\n";
 						stopped = true;
 						
-											//Ладьи
-						/*uint64_t rook = figures[ROOK] & mask;
-						while(rook != 0) {
-							possibleMoves = 0;
-							uint8_t pos = firstOne(rook);
-							possibleMoves |= (minus1[pos] & (UINT64_MAX ^ minus1[lastOne(minus1[pos] & (white_bit_mask | black_bit_mask))]));
-							possibleMoves |= (minus8[pos] & (UINT64_MAX ^ minus8[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]));
-							possibleMoves |= ( plus1[pos] & (UINT64_MAX ^  plus1[firstOne(plus1[pos] & (white_bit_mask | black_bit_mask))]));
-							possibleMoves |= ( plus8[pos] & (UINT64_MAX ^  plus8[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]));
-							possibleMoves &= (mask ^ UINT64_MAX);
-							possibleMoves &= ((figures[KING] ^ emask) ^ UINT64_MAX);
-							possibleMoves &= (UINT64_MAX ^ emask);
-							rook &= (UINT64_MAX ^ vec1_cells[pos]);
-							stress += popcount64(possibleMoves);
+						for(int s = 0; s < rook_combination.size(); ++s) {
+									uint64_t rook_result = 0;
+									rook_result |= (minus1[y * 8 + x] & (UINT64_MAX ^ minus1[lastOne(minus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+									rook_result |= (minus8[y * 8 + x] & (UINT64_MAX ^ minus8[lastOne(minus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+									rook_result |= ( plus1[y * 8 + x] & (UINT64_MAX ^  plus1[firstOne(plus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+									rook_result |= ( plus8[y * 8 + x] & (UINT64_MAX ^  plus8[firstOne(plus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+									uint64_t ind = (rook_combination[s] * magic) >> (64 - popcount64(rookMagicMask[y][x]));
+									
+									printBitBoard(rook_combination[s]);
+									std::cout << "\n";
+									printBitBoard(rook_result);
+									std::cout << "\n\n\n\n";
+						}
+					}
+				}
+			}
+		}
+	}*/
+	
+	for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			std::vector<uint64_t> bishop_combination = std::vector<uint64_t>((int)std::pow(2, popcount64(bishopMagicMask[y][x])));
+			for(uint64_t k = 0; k < std::pow(2, popcount64(bishopMagicMask[y][x])); ++k) {
+				uint64_t tmp_bitboard = bishopMagicMask[y][x];
+				uint64_t bit_combination = 0;
 
-							while(possibleMoves != 0) {
-								uint64_t to = firstOne(possibleMoves);
-								moveArray.addMove(BitMove(ROOK | color, pos / 8, pos % 8, to / 8, to % 8));
-								possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
-							}
-						}*/
-						
-						
-						
+				for(int m = 0; m < popcount64(bishopMagicMask[y][x]); ++m) {
+					uint8_t pos = firstOne(tmp_bitboard);
+					tmp_bitboard &= (UINT64_MAX ^ vec1_cells[pos]);
+					if(vec1_cells[m] & k) {
+						bit_combination |= vec1_cells[pos];
 					}
 				}
 				
+				bishop_combination[k] = bit_combination;
+			}
+			
+			bool stopped = false;
+			
+			uint64_t magic;
+			while(!stopped) {
+				magic = magicGenerator();//dis(gen);
+				std::vector<int> check(bishop_combination.size(), 0);
+
+				for(int i = 0; i < bishop_combination.size(); ++i) {
+					uint64_t index = (bishop_combination[i] * magic) >> (64 - popcount64(bishopMagicMask[y][x]));
 				
-				std::cout << "std::vector<uint64_t> rook_combination(" << rook_combination.size() << ");\n";
-				std::cout << "std::vector<uint64_t> rook_result(" << rook_combination.size() << ");\n";
-				for(int s = 0; s < rook_combination.size(); ++s) {
-							uint64_t rook_result = 0;
-							rook_result |= (minus1[y * 8 + x] & (UINT64_MAX ^ minus1[lastOne(minus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
-							rook_result |= (minus8[y * 8 + x] & (UINT64_MAX ^ minus8[lastOne(minus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
-							rook_result |= ( plus1[y * 8 + x] & (UINT64_MAX ^  plus1[firstOne(plus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
-							rook_result |= ( plus8[y * 8 + x] & (UINT64_MAX ^  plus8[firstOne(plus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
-//							std::cout << "rook_combination"
+					if(check[index]) {
+						break;
+					}
+				
+					++check[index];
+				
+					if(i == bishop_combination.size() - 1) {
+						stopped = true;
+						
+						for(int s = 0; s < bishop_combination.size(); ++s) {
+									uint64_t bishop_result = 0;
+									bishop_result |= (minus7[y * 8 + x] & (UINT64_MAX ^ minus7[lastOne(minus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+									bishop_result |= (minus9[y * 8 + x] & (UINT64_MAX ^ minus9[lastOne(minus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+									bishop_result |= ( plus7[y * 8 + x] & (UINT64_MAX ^  plus7[firstOne(plus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+									bishop_result |= ( plus9[y * 8 + x] & (UINT64_MAX ^  plus9[firstOne(plus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+									uint64_t ind = (bishop_combination[s] * magic) >> (64 - popcount64(bishopMagicMask[y][x]));
+									
+									printBitBoard(bishop_combination[s]);
+									std::cout << "\n";
+									printBitBoard(bishop_result);
+									std::cout << "\n\n\n\n";
+						}
+					}
 				}
 			}
 		}
