@@ -1,16 +1,20 @@
 #ifndef MAGIC_HPP
 #define MAGIC_HPP
 
+#include <iostream>
 #include <vector>
 #include <cstdint>
 
 class Magic {
 	uint64_t magic;
+	uint8_t count;
 public:
 	std::vector<uint64_t> result;
 
 	Magic();
-	Magic(std::vector<uint64_t> _result, uint64_t _magic);
+	Magic(std::vector<uint64_t> _result, uint64_t _magic, uint8_t _count);
+	
+	uint64_t getPossibleMoves(uint64_t mask);
 };
 
 #endif
