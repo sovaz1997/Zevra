@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -std=c++17 -m64 -O4 -flto -funroll-loops -msse3 -msse4.2 -mpopcnt
-FILES = main.o board.o game.o move.o movelist.o moveitem.o killer.o hash.o debute.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o pv.o bitmove.o movearray.o bitboard.o category.o magic.o
+FILES = main.o game.o killer.o hash.o boardinfo.o point.o uci.o evalute.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o category.o magic.o
 
 all: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o zevra
@@ -8,29 +8,14 @@ all: constants.hpp $(FILES)
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp
 
-board.o: board.hpp board.cpp
-	$(CC) $(CFLAGS) -c board.cpp
-
 game.o: game.hpp game.cpp
 	$(CC) $(CFLAGS) -c game.cpp
-
-move.o: move.hpp move.cpp
-	$(CC) $(CFLAGS) -c move.cpp
-
-movelist.o: movelist.hpp movelist.cpp
-	$(CC) $(CFLAGS) -c movelist.cpp
-
-moveitem.o: moveitem.hpp moveitem.cpp
-	$(CC) $(CFLAGS) -c moveitem.cpp
 
 killer.o: killer.hpp killer.cpp
 	$(CC) $(CFLAGS) -c killer.cpp
 
 hash.o: hash.hpp hash.cpp
 	$(CC) $(CFLAGS) -c hash.cpp
-
-debute.o: debute.hpp debute.cpp
-	$(CC) $(CFLAGS) -c debute.cpp
 
 boardinfo.o: boardinfo.hpp boardinfo.cpp
 	$(CC) $(CFLAGS) -c boardinfo.cpp
@@ -70,9 +55,6 @@ goback.o: timer.hpp goback.cpp
 
 figurecell.o: figurecell.hpp figurecell.cpp
 	$(CC) $(CFLAGS) -c figurecell.cpp
-
-pv.o: pv.hpp pv.cpp
-	$(CC) $(CFLAGS) -c pv.cpp
 
 bitmove.o: bitmove.hpp bitmove.cpp
 	$(CC) $(CFLAGS) -c bitmove.cpp

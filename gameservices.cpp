@@ -50,52 +50,11 @@ void Game::flattenHistory() {
 void Game::clearCash() {
 	cleanWhiteHistory();
 	cleanBlackHistory();
-	/*for(unsigned int i = 0; i < whiteKiller.size(); ++i) {
-		whiteKiller[i] = Killer();
-	}
-
-	for(unsigned int i = 0; i < blackKiller.size(); ++i) {
-		blackKiller[i] = Killer();
-	}*/
 
 	for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].enable = false;
 	}
-
-	//gameHash = std::vector<uint64_t>();
 }
-
-/*uint64_t Game::getColorHash(Board & b) {
-	uint64_t res = getHash(b);
-
-	if(!b.isWhiteMove()) {
-		res = (res * res + 1);
-	}
-
-	return res;
-}
-
-uint64_t Game::getColorHash(Board & b, uint64_t hash) {
-	if(!b.isWhiteMove()) {
-		hash = (hash * hash + 1);
-	}
-
-	return hash;
-}
-
-uint64_t Game::getHash(Board & b) {
-	uint64_t hash = 0;
-
-	for(unsigned int y = 0; y < 8; ++y) {
-		for(unsigned int x = 0; x < 8; ++x) {
-			if(b.board[y][x] != 0) {
-				hash = (hash ^ zobrist[b.board[y][x]][y][x]);
-			}
-		}
-	}
-
-	return hash;
-}*/
 
 std::vector<std::string> Game::getStringArray(std::string str) {
 	std::vector<std::string> result;

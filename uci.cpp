@@ -47,7 +47,6 @@ bool Game::uciHandler(std::string str) {
 				goFixedTime(std::stoi(cmd[2]));
 			}
 		} else if(cmd[0] == "posmoves") {
-			bool shah_tmp;
 			MoveArray moves;
 			game_board.bitBoardMoveGenerator(moves);//generatePositionMoves(game_board, shah_tmp, true, 0);
 
@@ -74,8 +73,6 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "quit") {
 			return false;
 		} else if(cmd[0] == "stress") {
-			bool shah_tmp;
-
 			game_board.stress = 0;
 			double st = clock();
 			for(unsigned int i = 0; i < 1000000; ++i) {

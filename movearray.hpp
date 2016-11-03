@@ -11,7 +11,7 @@ public:
 	std::vector<BitMove> moveArray;
 	MoveArray();
 	~MoveArray();
-	int count, num_attacks;
+	unsigned int count, num_attacks;
 	void clear();
 	void addMove(BitMove mv);
 };
