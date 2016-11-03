@@ -59,7 +59,7 @@ figurecell.o: figurecell.hpp figurecell.cpp
 bitmove.o: bitmove.hpp bitmove.cpp
 	$(CC) $(CFLAGS) -c bitmove.cpp
 
-movearray.o: move.hpp game.hpp movearray.hpp movearray.cpp
+movearray.o: bitmove.hpp game.hpp movearray.hpp movearray.cpp
 	$(CC) $(CFLAGS) -c movearray.cpp
 
 bitboard.o: bitboard.hpp bitboard.cpp
