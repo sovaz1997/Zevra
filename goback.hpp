@@ -13,6 +13,7 @@ public:
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	bool whiteMove, passant_enable;
 	double evalute;
+	bool attacked;
 };
 
 #endif

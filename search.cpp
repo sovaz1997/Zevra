@@ -1,7 +1,9 @@
 #include "game.hpp"
 
-double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule) {
+double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove) {
 	++nodesCounter;
+	
+	bool extended = false;
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {
@@ -23,6 +25,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	if(b.inCheck(color)) {
 		++nextDepth;
+		extended = true;
+	}
+	
+	if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked) {
+		if(negamax(b, alpha, alpha + 1, nextDepth - 2, real_depth + 1, rule, true) >= beta) {
+			return beta;
+		}
 	}
 
 	int num_moves = 0;
@@ -89,7 +98,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		++num_moves;
 
-		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule);
+		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 
 		b.goBack();
 

@@ -1128,6 +1128,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
 	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
+	attacked = false;
 
 	clearCell(mv.toY, mv.toX);
 	clearCell(mv.fromY, mv.fromX);
@@ -1184,6 +1185,10 @@ void BitBoard::move(BitMove& mv) {
 	} else {
 		ruleNumber = 0;
 	}
+	
+	if(mv.isAttack) {
+		attacked = true;
+	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
 	totalStaticEvalute();
@@ -1210,6 +1215,7 @@ void BitBoard::goBack() {
 		passant_x = history.top().passant_x;
 		passant_enable = history.top().passant_enable;
 		hash = history.top().hash;
+		attacked = history.top().attacked;
 
 		history.pop();
 	}
@@ -1375,6 +1381,7 @@ void BitBoard::pushHistory() {
 	newHistory.passant_x = passant_x;
 	newHistory.passant_y = passant_y;
 	newHistory.hash = hash;
+	newHistory.attacked = attacked;
 	history.push(newHistory);
 }
 

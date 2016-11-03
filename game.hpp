@@ -62,7 +62,7 @@ private:
 	int stress;
 public:
 	Game();
-	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule);
+	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   	double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);

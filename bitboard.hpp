@@ -91,6 +91,8 @@ public:
 	void generateHash();
 	uint64_t getHash();
 	uint64_t getColorHash();
+	
+	bool attacked;
 };
 
 #endif
