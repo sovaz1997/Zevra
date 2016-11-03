@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule) {
-	++movesCounter;
+	++nodesCounter;
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {
@@ -99,7 +99,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			if(num_moves > 1) {
 				std::cout << " ";
 				printScore(alpha);
-				std::cout << " nodes " << movesCounter << " nps " << (int)(movesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
+				std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
 				" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 			} else {
 				std::cout << "\n";
@@ -244,7 +244,7 @@ double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_d
 	sortAttacks(moveArray[real_depth]);
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count && alpha < beta; ++i) {
-		++movesCounter;
+		++nodesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
 		if(!b.whiteMove) {

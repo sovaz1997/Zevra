@@ -27,7 +27,7 @@
 class Game {
 private:
 	BitBoard game_board;
-	unsigned long long movesCounter = 0;
+	unsigned long long nodesCounter = 0;
 	double evalute(BitBoard & b);
 
 	const int WHITE_WIN = 100000000;

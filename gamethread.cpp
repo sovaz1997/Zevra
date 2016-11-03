@@ -23,7 +23,7 @@ void Game::goFixedDepth() {
 	blackUp = WHITE_WIN;
 
 	bool basis = false;
-	movesCounter = 0;
+	nodesCounter = 0;
 	int max_depth_global = max_depth;
 	max_depth = 1;
 
@@ -55,7 +55,7 @@ void Game::goFixedDepth() {
 
 	std::cout << "info depth " << depth << " ";
 	printScore(bestScore);
-	std::cout << " nodes " << movesCounter << " nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
+	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
 	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << "\n";
@@ -77,7 +77,7 @@ void Game::goFixedTime(int tm) {
 	blackUp = WHITE_WIN;
 
 	bool basis = false;
-	movesCounter = 0;
+	nodesCounter = 0;
 
 	start_timer = clock();
 	hasBestMove = false;
@@ -102,7 +102,7 @@ void Game::goFixedTime(int tm) {
 
 	std::cout << "info depth " << depth << " ";
 	printScore(bestScore);
-	std::cout << " nodes " << movesCounter << " nps " << (int)(movesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
+	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
 	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << "\n";
