@@ -84,6 +84,8 @@ public:
 	void totalStaticEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
+	
+	int getFiguresCount();
 
 	bool inCheck(uint8_t color);
 	bool inCheck(uint8_t color, uint8_t y, uint8_t x);

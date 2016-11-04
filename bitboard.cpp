@@ -638,6 +638,10 @@ void BitBoard::magicInit() {
 	}
 }
 
+int BitBoard::getFiguresCount() {
+	return popcount64(white_bit_mask | black_bit_mask);
+}
+
 void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	moveArray.clear();
 	bitBoardAttackMoveGenerator(moveArray);
