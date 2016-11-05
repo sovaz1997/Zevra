@@ -29,11 +29,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		inNullMove = true;
 	}
 	
-	/*if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && depth > 2 && b.getFiguresCount() > 3) {
+	if(real_depth > 0 && !inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 &&  /*depth > 2 && */b.getFiguresCount() > 3) {
 		if(negamax(b, alpha, alpha + 1, nextDepth - 1, real_depth + 1, rule, true) >= beta) {
 			return beta;
 		}
-	}*/
+	}
 
 	int num_moves = 0;
 

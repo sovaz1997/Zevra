@@ -246,7 +246,7 @@ std::vector<std::string> BitBoard::splitter(std::string str, char sym) {
 }
 
 uint8_t BitBoard::popcount64(uint64_t value) {
-	return /*_mm_popcnt_u64(value);*/ __builtin_popcountll(value);
+	return __builtin_popcountll(value);
 }
 
 uint8_t BitBoard::firstOne(uint64_t mask) {
