@@ -2,7 +2,7 @@
 
 double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove) {
 	++nodesCounter;
-	
+
 	bool extended = false;
 
 	int nextDepth = depth - 1;
@@ -28,12 +28,21 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		extended = true;
 		inNullMove = true;
 	}
-	
-	if(real_depth > 0 && !inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 &&  /*depth > 2 && */b.getFiguresCount() > 3) {
-		if(negamax(b, alpha, alpha + 1, nextDepth - 1, real_depth + 1, rule, true) >= beta) {
+
+	int R = 1;
+
+	if(max_depth > 4) {
+		R = 2;
+	} else if(max_depth > 7) {
+		R = 3;
+	}
+
+	/*if(real_depth >= 4 && !inNullMove && !b.inCheck(color) && !extended && !b.attacked &&  b.getFiguresCount() > 3) {
+		double value = -negamax(b, -beta, -alpha, nextDepth - 2, real_depth + 1, rule, true);
+		if(value >= beta) {
 			return beta;
 		}
-	}
+	}*/
 
 	int num_moves = 0;
 
@@ -162,6 +171,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			}
 
 			if(real_depth == 0) {
+				if(depth > 2) {
+					if(rule == FIXED_TIME && timer.getTime() >= time) {
+						return 0;
+					}
+				}
+
 				bestmove = local_move;
 				bestMove = bestmove;
 				bestScore = max;
@@ -181,6 +196,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 
 	if(real_depth == 0) {
+		if(depth > 2) {
+			if(rule == FIXED_TIME && timer.getTime() >= time) {
+				return 0;
+			}
+		}
+
 		bestmove = local_move;
 		bestMove = bestmove;
 		bestScore = max;

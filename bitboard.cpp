@@ -1189,7 +1189,7 @@ void BitBoard::move(BitMove& mv) {
 	} else {
 		ruleNumber = 0;
 	}
-	
+
 	if(mv.isAttack) {
 		attacked = true;
 	}
@@ -1809,15 +1809,29 @@ uint64_t BitBoard::getColorHash() {
 }
 
 void BitBoard::totalStaticEvalute() {
-	uint64_t passedBlock = (figures[PAWN] & black_bit_mask);
+	/*uint64_t mask = figures[PAWN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += pawnMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[PAWN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= pawnMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}*/
+
+	/*uint64_t passedBlock = (figures[PAWN] & black_bit_mask);
 	for(uint8_t x = 0; x < 8; ++x) {
 		uint8_t pawnVertical = white_bit_mask & figures[PAWN] & vertical[x];
 		if(pawnVertical) {
 			if(!(passedBlock & vertical[x])) {
 				evalute += PASSED_PAWN_BONUS;
 				uint8_t pos = lastOne(pawnVertical);
-				evalute -= pawnMatr[pos / 8][pos % 8];
-				evalute += passed_pawn_line[pos / 8];
+				evalute -= pawnMatr[7 - pos / 8][pos % 8];
+				evalute += passed_pawn_line[7 - pos / 8];
 			}
 
 			evalute -= (popcount64(pawnVertical) - 1);
@@ -1831,13 +1845,13 @@ void BitBoard::totalStaticEvalute() {
 			if(!(passedBlock & vertical[x])) {
 				evalute -= PASSED_PAWN_BONUS;
 				uint8_t pos = firstOne(pawnVertical);
-				evalute += pawnMatr[7 - pos / 8][7 - pos % 8];
-				evalute -= passed_pawn_line[7 - pos / 8];
+				evalute += pawnMatr[pos / 8][pos % 8];
+				evalute -= passed_pawn_line[pos / 8];
 			}
 
 			evalute += (popcount64(pawnVertical) - 1);
 		}
-	}
+	}*/
 
 	/*uint8_t whiteKingPos = firstOne(figures[KING] & white_bit_mask);
 	uint8_t blackKingPos = firstOne(figures[KING] & black_bit_mask);
