@@ -46,6 +46,7 @@ bool Game::uciHandler(std::string str) {
 			} else if(cmd[1] == "movetime") {
 				goFixedTime(std::stoi(cmd[2]));
 			} else {
+				wtime = 0, btime = 0;
 				winc = 0, binc = 0;
 				for(int i = 1; i < cmd.size(); ++i) {
 					if(cmd[i] == "wtime") {
@@ -54,11 +55,11 @@ bool Game::uciHandler(std::string str) {
 						btime = std::stoi(cmd[i+1]);
 					} else if(cmd[i] == "winc") {
 						winc = std::stoi(cmd[i+1]);
-					} else if(cmd[i] == "binc	") {
+					} else if(cmd[i] == "binc") {
 						binc = std::stoi(cmd[i+1]);
 					}
 				}
-				
+
 				goTournament();
 			}
 		} else if(cmd[0] == "posmoves") {

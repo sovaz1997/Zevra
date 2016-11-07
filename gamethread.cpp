@@ -31,6 +31,13 @@ void Game::goFixedDepth() {
 	hasBestMove = false;
 	double depth;
 
+	MoveArray movesCritical;
+	game_board.bitBoardMoveGenerator(movesCritical);
+	if(movesCritical.count >= 0) {
+		bestMove = movesCritical.moveArray[0];
+		hasBestMove = true;
+	}
+
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		pv.resize(0);
 		whiteUp = BLACK_WIN;
@@ -82,6 +89,14 @@ void Game::goFixedTime(int tm) {
 	start_timer = clock();
 	hasBestMove = false;
 	double depth;
+
+	MoveArray movesCritical;
+	game_board.bitBoardMoveGenerator(movesCritical);
+	if(movesCritical.count >= 0) {
+		bestMove = movesCritical.moveArray[0];
+		hasBestMove = true;
+	}
+
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		pv.resize(0);
 		whiteUp = BLACK_WIN;
@@ -110,27 +125,19 @@ void Game::goFixedTime(int tm) {
 }
 
 void Game::goTournament() {
-	double time, inc;
+	double tm, inc;
 	if(game_board.whiteMove) {
-		time = wtime;
+		tm = wtime;
 		inc = winc;
 	} else {
-		time = btime;
+		tm = btime;
 		inc = binc;
 	}
-	
-	
-	double k = 100;
-	
-	if(inc == 0) {
-		goFixedTime(time / 100);
-	} else {
-		if(time / 100 > inc) {
-			goFixedTime(time / 100 + inc);
-		} else {
-			goFixedTime(time / 100);
-		}
-	}
+
+
+	double k = 50;
+
+	goFixedTime(tm / k + inc - 100);
 }
 
 bool Game::move(std::string mv) {
