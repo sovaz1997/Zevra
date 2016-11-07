@@ -70,6 +70,10 @@ void Game::goFixedDepth() {
 }
 
 void Game::goFixedTime(int tm) {
+	if(tm >= 200) {
+		tm -= 100;
+	}
+
 	time = tm;
 	timer.start();
 
