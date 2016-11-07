@@ -45,6 +45,21 @@ bool Game::uciHandler(std::string str) {
 			  goFixedDepth();
 			} else if(cmd[1] == "movetime") {
 				goFixedTime(std::stoi(cmd[2]));
+			} else {
+				winc = 0, binc = 0;
+				for(int i = 1; i < cmd.size(); ++i) {
+					if(cmd[i] == "wtime") {
+						wtime = std::stoi(cmd[i+1]);
+					} else if(cmd[i] == "btime") {
+						btime = std::stoi(cmd[i+1]);
+					} else if(cmd[i] == "winc") {
+						winc = std::stoi(cmd[i+1]);
+					} else if(cmd[i] == "binc	") {
+						binc = std::stoi(cmd[i+1]);
+					}
+				}
+				
+				goTournament();
 			}
 		} else if(cmd[0] == "posmoves") {
 			MoveArray moves;

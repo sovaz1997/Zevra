@@ -38,6 +38,7 @@ const double QUEEN_EV = 11000;
 //move types
 const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
+const int TOURNAMENT = 2;
 
 const int hash_width = 20;
 

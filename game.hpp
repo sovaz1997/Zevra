@@ -39,6 +39,7 @@ private:
 	bool uciHandler(std::string str);
 	void goFixedDepth();
 	void goFixedTime(int time);
+	void goTournament();
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
@@ -52,14 +53,18 @@ private:
 	int popcount64(uint64_t value);
 
 	std::stack<BitMove>pv_line;
-
-	//фиксированное время
-	Timer timer;
+	int stress;
 	BitMove bestMove;
 	double bestScore;
+	
+	//фиксированное время
+	Timer timer;
 	int time;
 	double start_timer, end_timer;
-	int stress;
+	
+	//турнирный режим
+	
+	double wtime, btime, winc, binc;
 public:
 	Game();
 	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove);

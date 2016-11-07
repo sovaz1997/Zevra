@@ -109,6 +109,30 @@ void Game::goFixedTime(int tm) {
 	}
 }
 
+void Game::goTournament() {
+	double time, inc;
+	if(game_board.whiteMove) {
+		time = wtime;
+		inc = winc;
+	} else {
+		time = btime;
+		inc = binc;
+	}
+	
+	
+	double k = 100;
+	
+	if(inc == 0) {
+		goFixedTime(time / 100);
+	} else {
+		if(time / 100 > inc) {
+			goFixedTime(time / 100 + inc);
+		} else {
+			goFixedTime(time / 100);
+		}
+	}
+}
+
 bool Game::move(std::string mv) {
 	MoveArray moves;
 	game_board.bitBoardMoveGenerator(moves);
