@@ -65,6 +65,8 @@ private:
 	//турнирный режим
 	
 	double wtime, btime, winc, binc;
+	int movestogo;
+	bool movestogoEnable;
 public:
 	Game();
 	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove);

@@ -47,7 +47,7 @@ bool Game::uciHandler(std::string str) {
 				goFixedTime(std::stoi(cmd[2]));
 			} else {
 				wtime = 0, btime = 0;
-				winc = 0, binc = 0;
+				winc = 0, binc = 0, movestogo = 0, movestogoEnable = false;
 				for(int i = 1; i < cmd.size(); ++i) {
 					if(cmd[i] == "wtime") {
 						wtime = std::stoi(cmd[i+1]);
@@ -57,6 +57,9 @@ bool Game::uciHandler(std::string str) {
 						winc = std::stoi(cmd[i+1]);
 					} else if(cmd[i] == "binc") {
 						binc = std::stoi(cmd[i+1]);
+					} else if(cmd[i] == "movestogo") {
+						movestogoEnable = true;
+						movestogo = std::stoi(cmd[i+1]);
 					}
 				}
 
