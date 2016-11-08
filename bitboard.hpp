@@ -6,8 +6,10 @@
 #include <string>
 #include <vector>
 #include <stack>
+#include <cmath>
 #include <algorithm>
 #include <random>
+#include <set>
 #include "constants.hpp"
 #include "movearray.hpp"
 #include "goback.hpp"
@@ -35,6 +37,7 @@ private:
 	uint64_t vec2_cells[8][8];
 	uint64_t vec1_cells[64];
 	uint64_t bitboard[32][8][8];
+	double kingSecurityArray[64][64];
 
 	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
@@ -75,6 +78,7 @@ public:
 	void move(BitMove& mv);
 	void goBack();
 	void pushHistory();
+	BitMove getRandomMove();
 
 	bool whiteMove, passant_enable;
 
@@ -96,6 +100,12 @@ public:
 	
 	bool attacked;
 	double margin;
+	
+	bool testOfDraw();
+	
+	double kingSecurity();
+	
+	std::multiset<uint64_t> gameHash;
 };
 
 #endif
