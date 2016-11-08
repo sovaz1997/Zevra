@@ -143,14 +143,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
-
-			if(boardHash[hash & hash_cutter].enable) {
-				if(boardHash[hash & hash_cutter].depth <= depth) {
-					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
-				}
-			} else {
-				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, REAL_EV, b.getEvalute());
-			}
 		}
 
 		if(alpha >= beta) {
@@ -168,18 +160,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			} else {
 				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
-			}
-
-			if(real_depth == 0) {
-				if(depth > 2) {
-					if(rule == FIXED_TIME && timer.getTime() >= time) {
-						return 0;
-					}
-				}
-
-				bestmove = local_move;
-				bestMove = bestmove;
-				bestScore = max;
 			}
 
 			return beta;
@@ -202,9 +182,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			}
 		}
 
-		bestmove = local_move;
-		bestMove = bestmove;
-		bestScore = max;
+		bestMove = local_move;
+		bestScore = alpha;
 	}
 
 	if(abs(tmp) >= WHITE_WIN) {
@@ -212,20 +191,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			tmp = WHITE_WIN;
 		} else {
 			tmp = BLACK_WIN;
-		}
-	}
-
-	if(boardHash[hash & hash_cutter].enable) {
-		if(max < alpha) {
-			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, ALPHA_CUT_EV, b.getEvalute());
-		} else if(max > beta) {
-			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
-		}
-	} else {
-		if(max < alpha) {
-			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, ALPHA_CUT_EV, b.getEvalute());
-		} else if(max > beta) {
-			boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 		}
 	}
 
