@@ -265,12 +265,6 @@ void BitBoard::preInit() {
 	magicConstantsSet();
 	zobristGenerator();
 	castlingMap = 0;
-	
-	for(int i = 0; i < 64; ++i) {
-		for(int j = 0; j < 64; ++j) {
-			kingSecurityArray[i][j] = king_security[std::max(std::abs(i / 8 - j / 8), std::abs(i % 8 - j % 8))];
-		}
-	}
 
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
@@ -1211,14 +1205,9 @@ void BitBoard::move(BitMove& mv) {
 	} else {
 		margin = oldEvalute - evalute;
 	}
-	
-	gameHash.insert(getHash());
 }
 
 void BitBoard::goBack() {
-	std::multiset<uint64_t>::iterator removed = gameHash.find(getHash());
-	gameHash.erase(removed);
-	
 	if(!history.empty()) {
 		for(unsigned int i = 0; i < 7; ++i) {
 			figures[i] = history.top().figures[i];
@@ -1228,6 +1217,10 @@ void BitBoard::goBack() {
 		black_bit_mask = history.top().black_bit_mask;
 		moveNumber = history.top().moveNumber;
 		ruleNumber = history.top().ruleNumber;
+		//wsc = history.top().wsc;
+		//wlc = history.top().wlc;
+		//bsc = history.top().bsc;
+		//blc = history.top().blc;
 		castlingMap = history.top().castlingMap;
 		whiteMove = history.top().whiteMove;
 		evalute = history.top().evalute;
@@ -1394,33 +1387,9 @@ void BitBoard::pushHistory() {
 	history.push(newHistory);
 }
 
-double BitBoard::kingSecurity() {
-	double result = 0;
-
-	uint64_t mask = figures[KING] & white_bit_mask;
-	uint8_t kingPos = firstOne(mask);
-	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & black_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		result += kingSecurityArray[kingPos][pos];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}
-	
-	mask = figures[KING] & black_bit_mask;
-	kingPos = firstOne(mask);
-	
-	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & white_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		result -= kingSecurityArray[kingPos][pos];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}
-	
-	return result;
-}
-
 void BitBoard::evaluteAll() {
 	evalute = 0;
+
 	evalute += popcount64(figures[PAWN] & white_bit_mask) * PAWN_EV;
 	evalute -= popcount64(figures[PAWN] & black_bit_mask) * PAWN_EV;
 	evalute += popcount64(figures[KNIGHT] & white_bit_mask) * KNIGHT_EV;
@@ -1501,6 +1470,77 @@ void BitBoard::evaluteAll() {
 		evalute -= queenMatr[pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
+
+	totalStaticEvalute();
+
+	/*if(!whiteMove) {
+		evalute = -evalute;
+	}*/
+
+	/*mask = figures[KING] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += queenMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KING] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= queenMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}*/
+
+	/*all_material_eval += popcount64(figureMask[PAWN | WHITE]) * PAWN_EV;
+	all_material_eval += popcount64(figureMask[PAWN | BLACK]) * PAWN_EV;
+	all_material_eval += popcount64(figureMask[KNIGHT | WHITE]) * KNIGHT_EV;
+	all_material_eval += popcount64(figureMask[KNIGHT | BLACK]) * KNIGHT_EV;
+	all_material_eval += popcount64(figureMask[BISHOP | WHITE]) * BISHOP_EV;
+	all_material_eval += popcount64(figureMask[BISHOP | BLACK]) * BISHOP_EV;
+	all_material_eval += popcount64(figureMask[ROOK | WHITE]) * ROOK_EV;
+	all_material_eval += popcount64(figureMask[ROOK | BLACK]) * ROOK_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | WHITE]) * QUEEN_EV;
+	all_material_eval += popcount64(figureMask[QUEEN | BLACK]) * QUEEN_EV;*/
+
+	//double figure_state_eval = 0;
+
+	/*for(int y = 0; y < BOARD_SIZE; ++y) {
+		for(int x = 0; x < BOARD_SIZE; ++x) {
+			if(b.board[y][x] == 0) {
+				continue;
+			}
+
+			if((b.board[y][x] & COLOR_SAVE) == WHITE) {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
+					figure_state_eval += whitePawnMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
+					figure_state_eval += knightMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
+					figure_state_eval += bishopMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
+					figure_state_eval += rookMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
+					figure_state_eval += queenMatr[y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KING) {
+					figure_state_eval += ((kingDebuteMatr[y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[y][x] *  (1 - all_material_eval / ALL_MATERIAL));
+				}
+			} else {
+				if((b.board[y][x] & TYPE_SAVE) == PAWN) {
+					figure_state_eval -= whitePawnMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KNIGHT) {
+					figure_state_eval -= knightMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == BISHOP) {
+					figure_state_eval -= bishopMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == ROOK) {
+					figure_state_eval -= rookMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == QUEEN) {
+					figure_state_eval -= queenMatr[BOARD_SIZE - 1 - y][x];
+				} else if((b.board[y][x] & TYPE_SAVE) == KING) {
+					figure_state_eval -= ((kingDebuteMatr[BOARD_SIZE - 1 - y][x] * (all_material_eval / ALL_MATERIAL)) + kingEndGameMatr[BOARD_SIZE - 1 - y][x] *  (1 - all_material_eval / ALL_MATERIAL));
+				}
+			}
+		}
+	}*/
 }
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
@@ -1515,39 +1555,11 @@ uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 	return 0;
 }
 
-BitMove BitBoard::getRandomMove() {
-	MoveArray moveArray;
-	bitBoardMoveGenerator(moveArray);
-	
-	uint8_t color;
-	
-	if(whiteMove) {
-		color = WHITE;
-	} else {
-		color = BLACK;
-	}
-	
-	BitMove res;
-	
-	for(int i = 0; i < moveArray.count; ++i) {
-		move(moveArray.moveArray[i]);
-		if(!inCheck(color)) {
-			goBack();
-			res = moveArray.moveArray[i];
-			break;
-		}
-		
-		goBack();
-	}
-	
-	return res;
-}
-
 double BitBoard::getEvalute() {
 	if(whiteMove) {
-		return evalute + kingSecurity();
+		return evalute;
 	} else {
-		return -evalute - kingSecurity();
+		return -evalute;
 	}
 }
 
@@ -1941,10 +1953,6 @@ void BitBoard::magicNumberGenerator() {
 			}
 		}
 	}
-}
-
-bool BitBoard::testOfDraw() {
-	return (gameHash.count(getHash()) >= 3);
 }
 
 uint64_t BitBoard::magicGenerator() {
