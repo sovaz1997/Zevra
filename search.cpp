@@ -89,11 +89,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
-		if(depth > 2) {
+		/*if(depth > 2) {
 			if(rule == FIXED_TIME && timer.getTime() >= time) {
 				return 0;
 			}
-		}
+		}*/
 
 		b.move(moveArray[real_depth].moveArray[i]);
 
