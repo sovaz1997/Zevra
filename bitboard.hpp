@@ -95,6 +95,7 @@ public:
 	uint64_t getColorHash();
 	
 	bool attacked;
+	double margin;
 };
 
 #endif

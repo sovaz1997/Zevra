@@ -14,6 +14,7 @@ public:
 	bool whiteMove, passant_enable;
 	double evalute;
 	bool attacked;
+	double margin;
 };
 
 #endif

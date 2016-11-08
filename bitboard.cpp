@@ -260,6 +260,8 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
+	margin = 0;
+	
 	magicConstantsSet();
 	zobristGenerator();
 	castlingMap = 0;
@@ -1131,6 +1133,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
+	double oldEvalute = evalute;
 	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
 	attacked = false;
 
@@ -1196,6 +1199,12 @@ void BitBoard::move(BitMove& mv) {
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
 	totalStaticEvalute();
+	
+	if(whiteMove) {
+		margin = evalute - oldEvalute;
+	} else {
+		margin = oldEvalute - evalute;
+	}
 }
 
 void BitBoard::goBack() {
@@ -1220,7 +1229,7 @@ void BitBoard::goBack() {
 		passant_enable = history.top().passant_enable;
 		hash = history.top().hash;
 		attacked = history.top().attacked;
-
+		margin = history.top().margin;
 		history.pop();
 	}
 }
@@ -1347,20 +1356,12 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
 	uint64_t doubler = 1;
-	//doubler <<= 63;
 	for(int y = 7; y >= 0; --y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
 			std::cout << (bool)((doubler << (y * 8 + x)) & bit_board);
 		}
 		std::cout << "\n";
 	}
-	/*for(int i = 0; i < 8; ++i) {
-		for(int j = 0; j < 8; ++j) {
-			std::cout << (bool)(bit_board & doubler);
-			doubler >>= 1;
-		}
-		std::cout << "\n";
-	}*/
 }
 
 void BitBoard::pushHistory() {
@@ -1374,10 +1375,6 @@ void BitBoard::pushHistory() {
 	newHistory.black_bit_mask = black_bit_mask;
 	newHistory.moveNumber = moveNumber;
 	newHistory.ruleNumber = ruleNumber;
-	//newHistory.wsc = wsc;
-	//newHistory.wlc = wlc;
-	//newHistory.bsc = bsc;
-	//newHistory.blc = blc;
 	newHistory.whiteMove = whiteMove;
 	newHistory.evalute = evalute;
 	newHistory.castlingMap = castlingMap;
@@ -1386,6 +1383,7 @@ void BitBoard::pushHistory() {
 	newHistory.passant_y = passant_y;
 	newHistory.hash = hash;
 	newHistory.attacked = attacked;
+	newHistory.margin = margin;
 	history.push(newHistory);
 }
 
