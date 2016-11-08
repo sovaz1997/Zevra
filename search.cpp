@@ -125,11 +125,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			}
 		}
 
-		if(tmp > max) {
-			max = tmp;
-			local_move = moveArray[real_depth].moveArray[i];
-		}
-
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
@@ -176,22 +171,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 
 	if(real_depth == 0) {
-		if(depth > 2) {
-			if(rule == FIXED_TIME && timer.getTime() >= time) {
-				return 0;
-			}
+		if(rule == FIXED_TIME && timer.getTime() >= time) {
+			return 0;
 		}
 
 		bestMove = local_move;
 		bestScore = alpha;
-	}
-
-	if(abs(tmp) >= WHITE_WIN) {
-		if(tmp > 0) {
-			tmp = WHITE_WIN;
-		} else {
-			tmp = BLACK_WIN;
-		}
 	}
 
 	return alpha;
