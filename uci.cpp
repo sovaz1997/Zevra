@@ -62,12 +62,12 @@ bool Game::uciHandler(std::string str) {
 						movestogo = std::stoi(cmd[i+1]);
 					}
 				}
-
+				
 				goTournament();
 			}
 		} else if(cmd[0] == "posmoves") {
 			MoveArray moves;
-			game_board.bitBoardMoveGenerator(moves);//generatePositionMoves(game_board, shah_tmp, true, 0);
+			game_board.bitBoardMoveGenerator(moves);
 
 			for(unsigned int i = 0; i < moves.count; ++i) {
 				std::cout << moves.moveArray[i].getMoveString();

@@ -134,13 +134,13 @@ void Game::goTournament() {
 
 
 	double k = 50;
-	
+
 	if(movestogoEnable) {
 		k = movestogo;
 		goFixedTime(tm / k + inc);
+	} else {
+		goFixedTime(tm / k + inc - 100);
 	}
-	
-	goFixedTime(tm / k + inc - 100);
 }
 
 bool Game::move(std::string mv) {
