@@ -145,11 +145,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			}
 
-			if(boardHash[hash & hash_cutter].enable && b.getEvalute() != 0) {
+			if(boardHash[hash & hash_cutter].enable/* && beta != 0*/) {
 				if(boardHash[hash & hash_cutter].depth <= depth) {
 					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 				}
-			} else if(b.getEvalute() != 0) {
+			} else /*if*beta != 0)*/ {
 				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 			}
 

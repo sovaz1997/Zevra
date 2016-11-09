@@ -1212,12 +1212,12 @@ void BitBoard::move(BitMove& mv) {
 		margin = oldEvalute - evalute;
 	}
 	
-	gameHash.insert(getHash());
+	//gameHash.insert(getHash());
 }
 
 void BitBoard::goBack() {
-	std::multiset<uint64_t>::iterator removed = gameHash.find(getHash());
-	gameHash.erase(removed);
+	//std::multiset<uint64_t>::iterator removed = gameHash.find(getHash());
+	//gameHash.erase(removed);
 	
 	if(!history.empty()) {
 		for(unsigned int i = 0; i < 7; ++i) {
@@ -1545,9 +1545,9 @@ BitMove BitBoard::getRandomMove() {
 
 double BitBoard::getEvalute() {
 	if(whiteMove) {
-		return evalute;// + kingSecurity();
+		return evalute + kingSecurity() / 1000;
 	} else {
-		return -evalute;// - kingSecurity();
+		return -evalute - kingSecurity() / 1000;
 	}
 }
 
