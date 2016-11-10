@@ -225,6 +225,12 @@ void BitBoard::clear() {
 	passant_enable = false;
 	whiteMove = true;
 	castlingMap = 0;
+	
+	while(!history.empty()) {
+		history.pop();
+	}
+	
+	gameHash.clear();
 }
 
 std::vector<std::string> BitBoard::splitter(std::string str, char sym) {
