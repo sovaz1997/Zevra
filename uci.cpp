@@ -86,8 +86,9 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "quit") {
 			return false;
 		} else if(cmd[0] == "uci") {
-			std::cout << "id name Zevra\n";
+			std::cout << "id name Zevra v1.0.5\n";
 			std::cout << "id author sovaz1997\n";
+			option.print();
 			std::cout << "uciok\n";
 		} else if(cmd[0] == "quit") {
 			return false;
@@ -106,6 +107,14 @@ bool Game::uciHandler(std::string str) {
 			double st = clock();
 			uint64_t count = perft(k);
 			std::cout << count << " " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << "\n";
+		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
+			if(cmd[2] == "nullmove" && cmd[3] == "value") {
+				if(cmd[4] == "true") {
+					option.nullMovePrunningEnable = true;
+				} else if(cmd[4] == "false") {
+					option.nullMovePrunningEnable = false;
+				}
+			}
 		}
 
 		return true;

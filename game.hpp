@@ -23,6 +23,7 @@
 #include "point.hpp"
 #include "timer.hpp"
 #include "movearray.hpp"
+#include "option.hpp"
 
 class Game {
 private:
@@ -67,6 +68,8 @@ private:
 	double wtime, btime, winc, binc;
 	int movestogo;
 	bool movestogoEnable;
+	
+	Option option;
 public:
 	Game();
 	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove);
