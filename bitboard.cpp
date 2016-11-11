@@ -400,9 +400,6 @@ void BitBoard::preInit() {
 				bitboard[KNIGHT | BLACK][y][x] |= vec2_cells[y-1][x-2];
 			}
 
-
-
-
 			if(y > 0 && x > 0) {
 				bitboard[KING | WHITE][y][x] |= vec2_cells[y-1][x-1];
 				bitboard[KING | BLACK][y][x] |= vec2_cells[y-1][x-1];
@@ -1535,7 +1532,7 @@ BitMove BitBoard::getRandomMove() {
 	
 	BitMove res;
 	
-	for(int i = 0; i < moveArray.count; ++i) {
+	for(unsigned int i = 0; i < moveArray.count; ++i) {
 		move(moveArray.moveArray[i]);
 		if(!inCheck(color)) {
 			goBack();

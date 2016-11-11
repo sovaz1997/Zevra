@@ -12,8 +12,8 @@ class BitMove {
 private:
 	Category category;
 public:
-	uint8_t fromY, fromX, toY, toX;
-	uint8_t movedFigure, attackedFigure, replacedFigure;
+	uint8_t attackedFigure, movedFigure, fromY, fromX, toY, toX;
+	uint8_t replacedFigure;
 	bool isAttack, replaced, passant, fromHash;
 
 	BitMove();

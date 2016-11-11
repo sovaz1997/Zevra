@@ -48,7 +48,7 @@ bool Game::uciHandler(std::string str) {
 			} else {
 				wtime = 0, btime = 0;
 				winc = 0, binc = 0, movestogo = 0, movestogoEnable = false;
-				for(int i = 1; i < cmd.size(); ++i) {
+				for(unsigned int i = 1; i < cmd.size(); ++i) {
 					if(cmd[i] == "wtime") {
 						wtime = std::stoi(cmd[i+1]);
 					} else if(cmd[i] == "btime") {
@@ -86,7 +86,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "quit") {
 			return false;
 		} else if(cmd[0] == "uci") {
-			std::cout << "id name Zevra v1.0.5\n";
+			std::cout << "id name Zevra v1.1\n";
 			std::cout << "id author sovaz1997\n";
 			option.print();
 			std::cout << "uciok\n";

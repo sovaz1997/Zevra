@@ -8,12 +8,13 @@ class BitMove;
 
 class Hash {
 public:
-	bool enable = false;
+	bool enable;
 	uint64_t hash;
-	int depth, ply;
 	BitMove move;
-	double evalute, alpha, beta, staticEval;
+	int depth, ply;
+	double evalute, alpha, beta;
 	int type_mv;
+	double 	staticEval;
 
 	Hash();
 	Hash(uint64_t hsh, BitMove mv, int dpth, int pl, double eval, double a, double b, int type, double seval);

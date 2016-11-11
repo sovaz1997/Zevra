@@ -29,7 +29,6 @@ class Game {
 private:
 	BitBoard game_board;
 	unsigned long long nodesCounter = 0;
-	double evalute(BitBoard & b);
 
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
@@ -50,8 +49,6 @@ private:
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 
 	bool hasBestMove = false;
-
-	int popcount64(uint64_t value);
 
 	std::stack<BitMove>pv_line;
 	int stress;

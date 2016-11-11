@@ -32,17 +32,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		inNullMove = true;
 	}
 
-	int R = 1;
-
-	if(max_depth > 4) {
-		R = 2;
-	} else if(max_depth > 7) {
-		R = 3;
-	}
-
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 && b.getFiguresCount() > 3) {
-			if(negamax(b, alpha, alpha + 1, nextDepth - 1, real_depth + 1, rule, true) >= beta) {
+			if(negamax(b, alpha, beta, nextDepth - 1, real_depth + 1, rule, true) >= beta) {
 				return beta;
 			}
 		}
@@ -50,7 +42,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	int num_moves = 0;
 
-	double max = BLACK_WIN;
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
@@ -146,11 +137,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			}
 
-			if(boardHash[hash & hash_cutter].enable/* && beta != 0*/) {
+			if(boardHash[hash & hash_cutter].enable) {
 				if(boardHash[hash & hash_cutter].depth <= depth) {
 					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 				}
-			} else /*if*beta != 0)*/ {
+			} else {
 				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
 			}
 
@@ -187,7 +178,7 @@ uint64_t Game::perft(int depth) {
 
 	game_board.bitBoardMoveGenerator(moveArray[depth]);
 
-	for(int i = 0; i < moveArray[depth].count; ++i) {
+	for(unsigned int i = 0; i < moveArray[depth].count; ++i) {
 		game_board.move(moveArray[depth].moveArray[i]);
 		if(game_board.whiteMove) {
 			if(game_board.inCheck(BLACK)) {

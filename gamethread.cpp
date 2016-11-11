@@ -22,7 +22,6 @@ void Game::goFixedDepth() {
 	whiteUp = BLACK_WIN;
 	blackUp = WHITE_WIN;
 
-	bool basis = false;
 	nodesCounter = 0;
 	int max_depth_global = max_depth;
 	max_depth = 1;
@@ -41,10 +40,6 @@ void Game::goFixedDepth() {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
-		if(max_depth == max_depth_global) {
-			basis = true;
-		}
-
 
 		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_DEPTH, false);
 		hasBestMove = true;
@@ -85,7 +80,6 @@ void Game::goFixedTime(int tm) {
 	whiteUp = BLACK_WIN;
 	blackUp = WHITE_WIN;
 
-	bool basis = false;
 	nodesCounter = 0;
 
 	start_timer = clock();

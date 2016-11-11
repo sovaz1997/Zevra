@@ -6,8 +6,6 @@
 #include <cstdint>
 
 class Magic {
-	uint64_t magic;
-	uint8_t count;
 public:
 	std::vector<uint64_t> result;
 
@@ -15,6 +13,10 @@ public:
 	Magic(std::vector<uint64_t> _result, uint64_t _magic, uint8_t _count);
 	
 	uint64_t getPossibleMoves(uint64_t mask);
+
+private:
+	uint64_t magic;
+	uint8_t count;
 };
 
 #endif
