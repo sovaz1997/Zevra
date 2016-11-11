@@ -34,7 +34,7 @@ void Game::goFixedDepth() {
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
 	hasBestMove = true;
-	bestScore = -INFINITY;
+	bestScore = 0;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		pv.resize(0);
@@ -94,7 +94,7 @@ void Game::goFixedTime(int tm) {
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
-	bestScore = -INFINITY;
+	bestScore = 0;
 	hasBestMove = true;
 
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
