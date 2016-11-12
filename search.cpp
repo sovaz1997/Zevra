@@ -34,7 +34,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 && b.getFiguresCount() > 3) {
-			if(negamax(b, alpha, beta, nextDepth - 1, real_depth + 1, rule, true) >= beta) {
+			if(negamax(b, alpha, alpha + 1, nextDepth - 2, real_depth + 1, rule, true) >= beta) {
 				return beta;
 			}
 		}
@@ -96,8 +96,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		}
 
 		++num_moves;
-
+		
+		
 		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+		
+		/*if(tmp > alpha && tmp < beta) {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+		}*/
 
 		b.goBack();
 
@@ -112,7 +117,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				std::cout << "\n";
 			}
 		}
-
+		
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
@@ -127,7 +132,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			}
 		}
-
+		
 		if(alpha >= beta) {
 			if(abs(tmp) >= WHITE_WIN) {
 				if(tmp > 0) {
