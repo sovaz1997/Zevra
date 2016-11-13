@@ -3,7 +3,6 @@
 BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 	preInit();
 	clear();
-	//magicNumberGenerator();
 }
 
 BitBoard::~BitBoard() {}

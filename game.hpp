@@ -15,7 +15,6 @@
 #include <iomanip>
 #include <algorithm>
 #include <stack>
-#include <omp.h>
 #include "bitboard.hpp"
 #include "constants.hpp"
 #include "killer.hpp"
@@ -106,6 +105,7 @@ public:
 
 	double margin = PAWN_EV / 2;
 	void sortMoves(MoveArray& result, int depth);
+	void recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
 };
 
 #endif

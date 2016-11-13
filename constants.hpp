@@ -40,11 +40,17 @@ const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
 const int TOURNAMENT = 2;
 
-const int hash_width = 20;
+const int hash_width = 24;
 
 const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;
 const int ALPHA_CUT_EV = 2;
+
+
+const int EMPTY = 0;
+const int EXACT = 1;
+const int ALPHA = 2;
+const int BETA = 3;
 
 const int MIN_DEPTH = 2;
 

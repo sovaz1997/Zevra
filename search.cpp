@@ -5,8 +5,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	/*if(game_board.testOfDraw()) {
 		return 0;
 	}*/
+	
+	double oldAlpha = alpha;
 
 	bool extended = false;
+	
+	double eval = -INFINITY;
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {
@@ -40,6 +44,55 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		}
 	}
 
+	int tmp;
+
+	uint64_t hash = b.getColorHash();
+	
+	Hash* currentHash = &boardHash[hash & hash_cutter];
+	
+	if(currentHash->flag != EMPTY && currentHash->key == hash) {
+		if(real_depth > 0 && currentHash->depth >= depth) {
+			double score = currentHash->score;
+			
+			if(score > INFINITY - 100) {
+				score -= real_depth;
+			} else if(score < -INFINITY + 100) {
+				score += real_depth;
+			}
+			
+		  switch(currentHash->flag) {
+		  	EXACT:BETA: {
+		  		if(score > alpha) {
+		  			alpha = score;
+		  		}
+		  		if(alpha >= beta) {
+		  			return beta;
+		  		}
+		  	} break;
+		  	
+		  	ALPHA: {
+		  		if(score <= alpha) {
+		  			return alpha;
+		  		}
+		  	} break;
+		  }
+		}
+		
+		if(currentHash->flag != ALPHA) {
+			b.move(currentHash->move);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+			b.goBack();
+			
+			if(tmp > alpha) {
+				recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, currentHash->move, real_depth);
+				alpha = tmp;
+				if(alpha >= beta) {
+					return beta;
+				}
+			}
+		}
+	}
+	
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
@@ -50,37 +103,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	if(moveArray[real_depth].count > 0) {
 		local_move = moveArray[real_depth].moveArray[0];
-	}
-
-	int tmp;
-
-	uint64_t hash = b.getColorHash();
-
-	if(boardHash[hash & hash_cutter].enable && boardHash[hash & hash_cutter].hash == hash) {
-		if(boardHash[hash & hash_cutter].depth >= depth) {
-			for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
-				if(moveArray[real_depth].moveArray[i].equal(boardHash[hash & hash_cutter].move)) {
-					if(abs(boardHash[hash & hash_cutter].evalute) < 100000) {
-						if(abs(boardHash[hash & hash_cutter].evalute) >= (WHITE_WIN - 100)) {
-							if(boardHash[hash & hash_cutter].evalute > 0) {
-								boardHash[hash & hash_cutter].evalute -= (boardHash[hash & hash_cutter].ply - real_depth);
-							} else {
-								boardHash[hash & hash_cutter].evalute += (boardHash[hash & hash_cutter].ply - real_depth);
-							}
-						}
-
-						local_move = boardHash[hash & hash_cutter].move;
-						if(boardHash[hash & hash_cutter].type_mv == ALPHA_CUT_EV && boardHash[hash & hash_cutter].evalute <= alpha) {
-							return boardHash[hash & hash_cutter].evalute;
-						} else if(boardHash[hash & hash_cutter].type_mv == BETA_CUT_EV && boardHash[hash & hash_cutter].evalute >= beta) {
-							return boardHash[hash & hash_cutter].evalute;
-						} else if(boardHash[hash & hash_cutter].type_mv == REAL_EV) {
-							return boardHash[hash & hash_cutter].evalute;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
@@ -99,12 +121,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		
 		
 		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
-		
-		/*if(tmp > alpha && tmp < beta) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
-		}*/
 
 		b.goBack();
+		
+		if(tmp > eval) {
+			eval = tmp;
+		}
 
 		if(real_depth == 0 && num_moves > 1) {
 				std::cout << "info depth " << max_depth << " currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves;
@@ -124,13 +146,15 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
+			
+			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
 		}
 		
 		if(alpha >= beta) {
@@ -141,15 +165,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 					tmp = BLACK_WIN;
 				}
 			}
-
-			if(boardHash[hash & hash_cutter].enable) {
-				if(boardHash[hash & hash_cutter].depth <= depth) {
-					boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
-				}
-			} else {
-				boardHash[hash & hash_cutter] = Hash(hash, local_move, depth, real_depth, tmp, alpha, beta, BETA_CUT_EV, b.getEvalute());
-			}
-
+			
 			return beta;
 		}
 	}
@@ -170,6 +186,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		bestMove = local_move;
 		bestScore = alpha;
+	}
+	
+	if(alpha == oldAlpha) {
+		recordHash(depth, alpha, ALPHA, hash, local_move, real_depth);
 	}
 
 	return alpha;
@@ -248,3 +268,26 @@ double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_d
 
 	return alpha;
 }
+
+	void Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
+		Hash* hash = &boardHash[key & hash_cutter];
+		
+		if(flag == ALPHA && (hash->flag == EXACT || hash->flag == BETA)) {
+			return;
+		}
+		
+		if(score > INFINITY - 100) {
+			score += real_depth;
+		} else if(score < -INFINITY + 100) {
+			score -= real_depth;
+		}
+		
+		hash->depth = depth;
+		hash->score = score;
+		hash->flag = flag;
+		hash->key = key;
+		
+		if(flag != ALPHA) {
+			hash->move = move;
+		}
+	}

@@ -52,7 +52,7 @@ void Game::clearCash() {
 	cleanBlackHistory();
 
 	for(unsigned int i = 0; i < boardHash.size(); ++i) {
-		boardHash[i].enable = false;
+		boardHash[i].flag = EMPTY;
 	}
 }
 
