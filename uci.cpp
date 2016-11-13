@@ -86,7 +86,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "quit") {
 			return false;
 		} else if(cmd[0] == "uci") {
-			std::cout << "id name Zevra v1.1 build 225\n";
+			std::cout << "id name Zevra v1.1 build 227\n";
 			std::cout << "id author sovaz1997\n";
 			option.print();
 			std::cout << "uciok\n";

@@ -1548,9 +1548,9 @@ BitMove BitBoard::getRandomMove() {
 
 double BitBoard::getEvalute() {
 	if(whiteMove) {
-		return evalute + kingSecurity() / 1000;
+		return evalute;// + kingSecurity() / 1000;
 	} else {
-		return -evalute - kingSecurity() / 1000;
+		return -evalute;// - kingSecurity() / 1000;
 	}
 }
 
