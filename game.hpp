@@ -68,7 +68,7 @@ private:
 	Option option;
 public:
 	Game();
-	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove);
+	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lasyEval);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);
@@ -105,7 +105,7 @@ public:
 
 	double margin = PAWN_EV / 2;
 	void sortMoves(MoveArray& result, int depth);
-	void recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
+	bool recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
 };
 
 #endif

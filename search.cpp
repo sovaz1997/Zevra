@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove) {
+double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lazyEval) {
 	++nodesCounter;
 	/*if(game_board.testOfDraw()) {
 		return 0;
@@ -11,6 +11,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	bool extended = false;
 	
 	double eval = -INFINITY;
+	double margin = PAWN_EV / 2;
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {
@@ -38,7 +39,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 && b.getFiguresCount() > 3) {
-			if(negamax(b, alpha, alpha + 1, nextDepth - 2, real_depth + 1, rule, true) >= beta) {
+			if(negamax(b, alpha, alpha + 1, nextDepth - 2, real_depth + 1, rule, true, true) >= beta) {
 				return beta;
 			}
 		}
@@ -80,7 +81,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		
 		if(currentHash->flag != ALPHA) {
 			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
 			b.goBack();
 			
 			if(tmp > alpha) {
@@ -120,7 +121,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		++num_moves;
 		
 		
-		tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+		if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true) <= alpha) {
+			tmp = alpha;
+		} else {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+		}
+		
+//		tmp = 
 
 		b.goBack();
 		
@@ -269,11 +276,11 @@ double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_d
 	return alpha;
 }
 
-	void Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
+	bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
 		Hash* hash = &boardHash[key & hash_cutter];
 		
 		if(flag == ALPHA && (hash->flag == EXACT || hash->flag == BETA)) {
-			return;
+			return 0;
 		}
 		
 		if(score > INFINITY - 100) {
