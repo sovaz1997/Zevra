@@ -6,22 +6,28 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		if(game_board.whiteMove) {
 			if(result.moveArray[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
-				if(num_attacks) {
+				/*if(num_attacks) {
 					result.moveArray.insert(result.moveArray.begin() + 1, whiteKiller[depth].move);
 				} else {
 					result.moveArray.insert(result.moveArray.begin(), whiteKiller[depth].move);
-				}
+				}*/
+				
+				result.moveArray.insert(result.moveArray.begin() + num_attacks, whiteKiller[depth].move);
+				
 
 				break;
 			}
 		} else {
 			if(result.moveArray[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
-				if(num_attacks) {
+				/*if(num_attacks) {
 					result.moveArray.insert(result.moveArray.begin() + 1, blackKiller[depth].move);
 				} else {
 					result.moveArray.insert(result.moveArray.begin(), blackKiller[depth].move);
-				}
+				}*/
+				
+				result.moveArray.insert(result.moveArray.begin() + num_attacks, blackKiller[depth].move);
+				
 				break;
 			}
 		}
