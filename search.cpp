@@ -81,7 +81,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		
 		if(currentHash->flag != ALPHA) {
 			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
 			b.goBack();
 			
 			if(tmp > alpha) {
@@ -121,13 +121,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		++num_moves;
 		
 		
-		if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true) <= alpha) {
-			tmp = alpha;
-		} else {
+		//if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true) <= alpha) {
+		//	tmp = alpha;
+		//} else {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
-		}
-		
-//		tmp = 
+		//} 
 
 		b.goBack();
 		
