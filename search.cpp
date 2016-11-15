@@ -218,7 +218,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		bestScore = alpha;
 		
 		for(int i = 0; i < pline->count; ++i) {
-			std::cout << pline->line[i].getMoveString() << " ";
+			//std::cout << pline->line[i].getMoveString() << " ";
 		}
 	}
 	
