@@ -37,14 +37,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		inNullMove = true;
 	}
 
-	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 && b.getFiguresCount() > 3) {
-			if(negamax(b, alpha, alpha + 1, nextDepth - 2, real_depth + 1, rule, true, true) >= beta) {
-				return beta;
-			}
-		}
-	}
-
 	int tmp;
 
 	uint64_t hash = b.getColorHash();
@@ -94,6 +86,25 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		}
 	}
 	
+	bool inCheck;
+	if(color == WHITE) {
+		inCheck = b.inCheck(WHITE);
+	} else {
+		inCheck = b.inCheck(BLACK);
+	}
+	
+	/*if(!inNullMove && depth <= 2 && !extended && !b.attacked && !inCheck && b.getEvalute() - margin >= beta) {
+		return beta;
+	}*/
+	
+	if(option.nullMovePrunningEnable) {
+		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 && b.getFiguresCount() > 3) {
+			if(negamax(b, beta - 1, beta, depth - 3, real_depth + 1, rule, true, true) >= beta) {
+				return beta;
+			}
+		}
+	}
+	
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
@@ -124,8 +135,14 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		//if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true) <= alpha) {
 		//	tmp = alpha;
 		//} else {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+			//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
 		//} 
+		
+		tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+		
+		if(tmp > alpha && tmp < beta) {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+		}
 
 		b.goBack();
 		
