@@ -88,3 +88,10 @@ void BitMove::setReplaced(uint8_t figure) {
 void BitMove::setCategory(int cat, double val) {
 	category = Category(cat, val);
 }
+
+bool BitMove::quality() {
+	return (fromY >= 0 && fromY <= 7 &&
+					fromX >= 0 && fromX <= 7 &&
+					toY >= 0 && toY <= 7 &&
+					toX >= 0 && toY <= 7);
+}

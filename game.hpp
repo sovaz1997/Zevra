@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <stack>
+#include <memory.h>
 #include "bitboard.hpp"
 #include "constants.hpp"
 #include "killer.hpp"
@@ -23,6 +24,7 @@
 #include "timer.hpp"
 #include "movearray.hpp"
 #include "option.hpp"
+#include "pv.hpp"
 
 class Game {
 private:
@@ -68,7 +70,7 @@ private:
 	Option option;
 public:
 	Game();
-	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lasyEval);
+	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lasyEval, PV* pline);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);

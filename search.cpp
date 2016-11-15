@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lazyEval) {
+double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lazyEval, PV* pline) {
 	++nodesCounter;
 	/*if(game_board.testOfDraw()) {
 		return 0;
@@ -28,8 +28,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	}
 
 	if(depth <= 0 || real_depth >= 100) {
+		pline->count = 0;
 		return quies(b, alpha, beta, rule, real_depth);
 	}
+	
+	PV line;
 
 	if(b.inCheck(color)) {
 		++nextDepth;
@@ -73,7 +76,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		
 		if(currentHash->flag != ALPHA) {
 			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+			stmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, &line);
 			b.goBack();
 			
 			if(tmp > alpha) {
@@ -99,7 +102,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 	
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 2 && b.getFiguresCount() > 3) {
-			if(negamax(b, beta - 1, beta, depth - 3, real_depth + 1, rule, true, true) >= beta) {
+			if(negamax(b, beta - 1, beta, depth - 3, real_depth + 1, rule, true, true, &line) >= beta) {
 				return beta;
 			}
 		}
@@ -138,10 +141,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
 		//} 
 		
-		tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+		tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, &line);
 		
 		if(tmp > alpha && tmp < beta) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, &line);
 		}
 
 		b.goBack();
@@ -169,15 +172,19 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
 			
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
+			
+			pline->line[0] = local_move;
+			memcpy(pline->line + 1, line.line, line.count * sizeof(local_move));
+			pline->count = line.count + 1;
 		}
 		
 		if(alpha >= beta) {
@@ -209,6 +216,10 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		bestMove = local_move;
 		bestScore = alpha;
+		
+		for(int i = 0; i < pline->count; ++i) {
+			std::cout << pline->line[i].getMoveString() << " ";
+		}
 	}
 	
 	if(alpha == oldAlpha) {
