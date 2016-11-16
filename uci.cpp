@@ -114,6 +114,12 @@ bool Game::uciHandler(std::string str) {
 				} else if(cmd[4] == "false") {
 					option.nullMovePrunningEnable = false;
 				}
+			} else if(cmd[2] == "LMR" && cmd[3] == "value") {
+				if(cmd[4] == "true") {
+					option.lmrEnable = true;
+				} else if(cmd[4] == "false") {
+					option.lmrEnable = false;
+				}
 			}
 		}
 

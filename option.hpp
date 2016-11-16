@@ -6,6 +6,7 @@
 class Option {
 public:
 	bool nullMovePrunningEnable;
+	bool lmrEnable;
 public:
 	Option();
 	void print();

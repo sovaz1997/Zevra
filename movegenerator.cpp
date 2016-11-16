@@ -5,7 +5,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 	
 	/*if(game_board.whiteMove) {
 		for(unsigned int i = result.num_attacks + 1; i < result.count - 1; ++i) {
-			for(int j = i - 1; j >= result.num_attacks && whiteHistorySort[result.moveArray[j].fromY][result.moveArray[j].fromX][result.moveArray[j].toY][result.moveArray[j].toX] < whiteHistorySort[result.moveArray[j+1].fromY][result.moveArray[j+1].fromX][result.moveArray[j+1].toY][result.moveArray[j+1].toX]; --j) {
+			for(int j = i - 1; j >= num_attacks && whiteHistorySort[result.moveArray[j].fromY][result.moveArray[j].fromX][result.moveArray[j].toY][result.moveArray[j].toX] < whiteHistorySort[result.moveArray[j+1].fromY][result.moveArray[j+1].fromX][result.moveArray[j+1].toY][result.moveArray[j+1].toX]; --j) {
 				std::swap(result.moveArray[j], result.moveArray[j+1]);
 			}
 		}
@@ -21,12 +21,6 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		if(game_board.whiteMove) {
 			if(result.moveArray[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
-				/*if(num_attacks) {
-					result.moveArray.insert(result.moveArray.begin() + 1, whiteKiller[depth].move);
-				} else {
-					result.moveArray.insert(result.moveArray.begin(), whiteKiller[depth].move);
-				}*/
-				
 				result.moveArray.insert(result.moveArray.begin() + num_attacks, whiteKiller[depth].move);
 
 				break;
@@ -34,12 +28,6 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		} else {
 			if(result.moveArray[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
-				/*if(num_attacks) {
-					result.moveArray.insert(result.moveArray.begin() + 1, blackKiller[depth].move);
-				} else {
-					result.moveArray.insert(result.moveArray.begin(), blackKiller[depth].move);
-				}*/
-				
 				result.moveArray.insert(result.moveArray.begin() + num_attacks, blackKiller[depth].move);
 				
 				break;
