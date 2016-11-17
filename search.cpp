@@ -142,13 +142,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		//} 
 		
 		if(!option.lmrEnable) {
-			//tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
 		
-			//if(tmp > alpha && tmp < beta) {
+			if(tmp > alpha && tmp < beta) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
-			//}
+			}
 		} else {	
-			if(num_moves <= 3 || b.inCheck(color) || depth + real_depth < 7) {
+			if(num_moves <= 3 || b.inCheck(color) || depth + real_depth < 7 || extended || inNullMove || b.attacked) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
 			} else {
 				tmp = -negamax(b, -beta, -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, lazyEval, pline);
