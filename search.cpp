@@ -70,11 +70,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			}
 		}
 
-		if(alpha >= beta) {
-			return beta;
-		}
-
-		if(currentHash->flag != ALPHA) {
+		if(currentHash->flag != ALPHA && real_depth > 0) { //2k5/8/8/4KP2/8/8/8/8 w - - 0 1
 			b.move(currentHash->move);
 			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false, pline);
 			b.goBack();
@@ -167,7 +163,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				std::cout << "info depth " << max_depth << " currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves;
 				if(num_moves >= 0) {
 					std::cout << " ";
-					printScore(alpha);
+					printScore(eval);
 					std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
 					" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
 				} else {
