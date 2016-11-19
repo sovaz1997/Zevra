@@ -46,7 +46,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash) {
+	/*if(currentHash->flag != EMPTY && currentHash->key == hash) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -74,8 +74,8 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
   			}
 		}
 
-		if(currentHash->flag != ALPHA) {
-			b.bitBoardMoveGenerator(moveArray[real_depth]);
+		//if(currentHash->flag != ALPHA) {
+			//b.bitBoardMoveGenerator(moveArray[real_depth]);
 			bool success = false;
 			for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 				if(moveArray[real_depth].moveArray[i].equal(currentHash->move)) {
@@ -95,9 +95,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		  			return beta;
 				}
 			}
-			}
 		}
-	}
+		//}
+	}*/
 
 	bool inCheck;
 	if(color == WHITE) {
@@ -173,6 +173,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		if(tmp > eval) {
 			eval = tmp;
+		}
+
+
+		if(tmp > alpha) {
+			alpha = tmp;
+			local_move = moveArray[real_depth].moveArray[i];
 
 			if(real_depth == 0) {
 				std::cout << "info depth " << max_depth << " currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves;
@@ -185,19 +191,13 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 					std::cout << "\n";
 				}
 			}
-		}
-
-
-		if(tmp > alpha) {
-			alpha = tmp;
-			local_move = moveArray[real_depth].moveArray[i];
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}

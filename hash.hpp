@@ -13,7 +13,7 @@ public:
 	uint8_t flag;
 	uint64_t key;
 	BitMove move;
-	
+
 	Hash();
 };
 
