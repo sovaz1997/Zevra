@@ -46,7 +46,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash) {
+	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 

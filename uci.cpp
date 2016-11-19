@@ -45,6 +45,9 @@ bool Game::uciHandler(std::string str) {
 			  goFixedDepth();
 			} else if(cmd[1] == "movetime") {
 				goFixedTime(std::stoi(cmd[2]));
+			} else if(cmd[1] == "infinite") {
+				max_depth = 99;
+				goFixedDepth();
 			} else {
 				wtime = 0, btime = 0;
 				winc = 0, binc = 0, movestogo = 0, movestogoEnable = false;
@@ -62,7 +65,7 @@ bool Game::uciHandler(std::string str) {
 						movestogo = std::stoi(cmd[i+1]);
 					}
 				}
-				
+
 				goTournament();
 			}
 		} else if(cmd[0] == "posmoves") {
