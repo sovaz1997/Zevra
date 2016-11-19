@@ -46,7 +46,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	/*if(currentHash->flag != EMPTY && currentHash->key == hash) {
+	if(currentHash->flag != EMPTY && currentHash->key == hash) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -56,36 +56,27 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				score += real_depth;
 			}
 
-			switch(currentHash->flag) {
-				EXACT:BETA: {
-					if(score > alpha) {
-						alpha = score;
-					}
-					if(alpha >= beta) {
-						return beta;
-					}
-				} break;
-
-				ALPHA: {
-					if(score <= alpha) {
-						return alpha;
-					}
-				} break;
-  			}
-		}
-
-		//if(currentHash->flag != ALPHA) {
-			//b.bitBoardMoveGenerator(moveArray[real_depth]);
-			bool success = false;
-			for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
-				if(moveArray[real_depth].moveArray[i].equal(currentHash->move)) {
-					success = true;
+			if(currentHash->flag == EXACT || currentHash->flag == BETA) {
+				if(score > alpha) {
+					alpha = score;
+				}
+				if(alpha >= beta) {
+					return beta;
+				}
+			} else if(currentHash->flag == ALPHA) {
+				if(score <= alpha) {
+					return alpha;
 				}
 			}
+		}
 
-			if(success) {
+		if(alpha >= beta) {
+			return beta;
+		}
+
+		if(currentHash->flag != ALPHA) {
 			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, pline);
+			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false, pline);
 			b.goBack();
 
 			if(tmp > alpha) {
@@ -96,8 +87,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				}
 			}
 		}
-		//}
-	}*/
+	}
 
 	bool inCheck;
 	if(color == WHITE) {
