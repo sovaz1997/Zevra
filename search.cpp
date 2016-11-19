@@ -163,13 +163,6 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		if(tmp > eval) {
 			eval = tmp;
-		}
-
-
-		if(tmp > alpha) {
-			alpha = tmp;
-			local_move = moveArray[real_depth].moveArray[i];
-
 			if(real_depth == 0) {
 				std::cout << "info depth " << max_depth << " currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves;
 				if(num_moves >= 0) {
@@ -181,6 +174,12 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 					std::cout << "\n";
 				}
 			}
+		}
+
+
+		if(tmp > alpha) {
+			alpha = tmp;
+			local_move = moveArray[real_depth].moveArray[i];
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
