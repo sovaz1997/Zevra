@@ -70,7 +70,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 			}
 		}
 
-		if(currentHash->flag != ALPHA && real_depth > 0) { //2k5/8/8/4KP2/8/8/8/8 w - - 0 1
+		if(currentHash->flag != ALPHA && real_depth > 0) {
 			b.move(currentHash->move);
 			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false, pline);
 			b.goBack();
