@@ -19,5 +19,5 @@ void Game::initEngine() {
 	cleanWhiteHistory();
 	cleanBlackHistory();
 	clearCash();
-	moveArray.resize(100);
+	moveArray.resize(200);
 }
