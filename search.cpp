@@ -116,6 +116,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		local_move = moveArray[real_depth].moveArray[0];
 	}
 
+/*	if(real_depth == 0) {
+		std::cout << "info depth " << max_depth << "\n";
+	}*/
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		b.move(moveArray[real_depth].moveArray[i]);
 
@@ -131,11 +134,11 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		++num_moves;
 
 
-		//if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true) <= alpha) {
-		//	tmp = alpha;
-		//} else {
-			//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval);
-		//}
+		/*if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true, pline) <= alpha) {
+			tmp = alpha;
+		} else {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
+		}*/
 
 		if(!option.lmrEnable) {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
@@ -144,7 +147,7 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
 			}
 		} else {
-			if(num_moves <= 3 || b.inCheck(color) /*|| depth + real_depth < 7*/ || extended || inNullMove || b.attacked) {
+			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
 			} else {
 				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, lazyEval, pline);
@@ -159,23 +162,23 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 
 		if(tmp > eval) {
 			eval = tmp;
-			if(real_depth == 0) {
-				std::cout << "info depth " << max_depth << " currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves;
-				if(num_moves >= 0) {
-					std::cout << " ";
-					printScore(eval);
-					std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) <<
-					" time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << "\n";
-				} else {
-					std::cout << "\n";
-				}
-			}
 		}
 
 
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
+			
+			if(real_depth == 0) {
+				if(num_moves >= 0) {
+					std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+					std::cout << " ";
+					printScore(eval);
+					std::cout << " pv " << bestMove.getMoveString() << "\n";
+				} else {
+					std::cout << "\n";
+				}
+			}
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
