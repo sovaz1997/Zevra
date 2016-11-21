@@ -22,7 +22,7 @@ private:
 	uint64_t vertical[8];
 	uint64_t white_bit_mask, black_bit_mask;
 	uint64_t castlingMap;
-	
+
 	uint64_t ROOK_MAGIC[8][8];
 	uint64_t BISHOP_MAGIC[8][8];
 
@@ -38,6 +38,7 @@ private:
 	uint64_t vec1_cells[64];
 	uint64_t bitboard[32][8][8];
 	double kingSecurityArray[64][64];
+	double pawnStructureEvalute();
 
 	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
@@ -49,7 +50,7 @@ private:
 	void magicNumberGenerator();
 	void magicInit();
 	void magicConstantsSet();
-	
+
 	uint64_t magicGenerator();
 
 	std::stack<GoBack> history;
@@ -58,10 +59,10 @@ private:
 	bool wlc();
 	bool bsc();
 	bool blc();
-	
+
 	Magic rookMagic[8][8];
 	Magic bishopMagic[8][8];
-	
+
 	uint64_t rookMagicMask[8][8];
 	uint64_t bishopMagicMask[8][8];
 public:
@@ -88,7 +89,7 @@ public:
 	void totalStaticEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
-	
+
 	int getFiguresCount();
 
 	bool inCheck(uint8_t color);
@@ -97,14 +98,14 @@ public:
 	void generateHash();
 	uint64_t getHash();
 	uint64_t getColorHash();
-	
+
 	bool attacked;
 	double margin;
-	
+
 	bool testOfDraw();
-	
+
 	double kingSecurity();
-	
+
 	std::multiset<uint64_t> gameHash;
 };
 
