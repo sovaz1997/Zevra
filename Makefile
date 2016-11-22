@@ -75,8 +75,8 @@ option.o: option.hpp option.cpp
 pv.o: pv.hpp pv.cpp
 	$(CC) $(CFLAGS) -c pv.cpp
 
-constants.o: constants.hpp
-	$(CC) $(CFLAGS) -c constants.hpp
+constants.o: constants.hpp constants.cpp
+	$(CC) $(CFLAGS) -c constants.cpp
 
 clean:
 	rm -rf *.o $(NAME)
