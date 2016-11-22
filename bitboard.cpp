@@ -1400,8 +1400,8 @@ void BitBoard::pushHistory() {
 	history.push(newHistory);
 }
 
-double BitBoard::kingSecurity() {
-	double result = 0;
+int64_t BitBoard::kingSecurity() {
+	int64_t result = 0;
 
 	uint64_t mask = figures[KING] & white_bit_mask;
 	uint8_t kingPos = firstOne(mask);
@@ -1437,20 +1437,6 @@ void BitBoard::evaluteAll() {
 	evalute -= popcount64(figures[ROOK] & black_bit_mask) * ROOK_EV;
 	evalute += popcount64(figures[QUEEN] & white_bit_mask) * QUEEN_EV;
 	evalute -= popcount64(figures[QUEEN] & black_bit_mask) * QUEEN_EV;
-
-	/*uint8_t mask = figures[PAWN] & black_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		evalute += pawnMatr[7 - pos / 8][pos % 8];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}
-
-	mask = figures[PAWN] & black_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		evalute -= pawnMatr[pos / 8][pos % 8];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}*/
 
 	uint64_t mask = figures[KNIGHT] & white_bit_mask;
 	while(mask != 0) {
@@ -1509,8 +1495,8 @@ void BitBoard::evaluteAll() {
 	}
 }
 
-double BitBoard::pawnStructureEvalute() {
-	double result = 0;
+int64_t BitBoard::pawnStructureEvalute() {
+	int64_t result = 0;
 
 	/*uint64_t mask = figures[PAWN] & white_bit_mask;
 	while(mask != 0) {
@@ -1616,11 +1602,11 @@ BitMove BitBoard::getRandomMove() {
 	return res;
 }
 
-double BitBoard::getEvalute() {
+int64_t BitBoard::getEvalute() {
 	if(whiteMove) {
-		return evalute + pawnStructureEvalute();
+		return evalute + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -evalute - pawnStructureEvalute();
+		return -evalute - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 

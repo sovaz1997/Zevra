@@ -41,7 +41,7 @@ void Game::goFixedDepth() {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_DEPTH, false, false, new PV());
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, false, new PV());
 		hasBestMove = true;
 
 		if(abs(bestScore) >= (WHITE_WIN - 100)) {
@@ -98,7 +98,7 @@ void Game::goFixedTime(int tm) {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -INFINITY, INFINITY, max_depth, 0, FIXED_TIME, false, false, new PV());
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, false, new PV());
 
 		if(abs(bestScore) >= (WHITE_WIN - 100)) {
 			break;

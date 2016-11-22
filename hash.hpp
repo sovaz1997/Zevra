@@ -9,7 +9,7 @@ class BitMove;
 class Hash {
 public:
 	uint8_t depth;
-	double score;
+	int64_t score;
 	uint8_t flag;
 	uint64_t key;
 	BitMove move;

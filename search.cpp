@@ -1,16 +1,16 @@
 #include "game.hpp"
 
-double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lazyEval, PV* pline) {
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool lazyEval, PV* pline) {
 	++nodesCounter;
 	/*if(game_board.testOfDraw()) {
 		return 0;
 	}*/
 
-	double oldAlpha = alpha;
+	int64_t oldAlpha = alpha;
 
 	bool extended = false;
 
-	double eval = -INFINITY;
+	int64_t eval = -WHITE_WIN;
 	double margin = PAWN_EV / 2;
 
 	int nextDepth = depth - 1;
@@ -50,9 +50,9 @@ double Game::negamax(BitBoard & b, double alpha, double beta, int depth, int rea
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
-			if(score > INFINITY - 100) {
+			if(score > WHITE_WIN - 100) {
 				score -= real_depth;
-			} else if(score < -INFINITY + 100) {
+			} else if(score < -WHITE_WIN + 100) {
 				score += real_depth;
 			}
 
@@ -263,8 +263,8 @@ uint64_t Game::perft(int depth) {
 	return res;
 }
 
-double Game::quies(BitBoard & b, double alpha, double beta, int rule, int real_depth) {
-	double val = b.getEvalute();
+int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
+	int64_t val = b.getEvalute();
 
 	if(val >= beta) {
 		return beta;
@@ -315,9 +315,9 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		return 0;
 	}
 
-	if(score > INFINITY - 100) {
+	if(score > WHITE_WIN - 100) {
 		score += real_depth;
-	} else if(score < -INFINITY + 100) {
+	} else if(score < -WHITE_WIN + 100) {
 		score -= real_depth;
 	}
 

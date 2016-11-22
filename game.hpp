@@ -54,26 +54,26 @@ private:
 	std::stack<BitMove>pv_line;
 	int stress;
 	BitMove bestMove;
-	double bestScore;
-	
+	int64_t bestScore;
+
 	//фиксированное время
 	Timer timer;
 	int time;
 	double start_timer, end_timer;
-	
+
 	//турнирный режим
-	
+
 	double wtime, btime, winc, binc;
 	int movestogo;
 	bool movestogoEnable;
-	
+
 	Option option;
 public:
 	Game();
-	double negamax(BitBoard & b, double alpha, double beta, int depth, int real_depth, int rule, bool inNullMove, bool lasyEval, PV* pline);
+	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool lasyEval, PV* pline);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  double quies(BitBoard & b, double alpha, double beta, int rule, int real_depth);
+  int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
