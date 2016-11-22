@@ -54,6 +54,9 @@ const int BETA = 3;
 
 const int MIN_DEPTH = 2;
 
+const uint64_t evalute_type_cutter = 1152921504606846976;
+const uint64_t evalute_cutter = (UINT64_MAX ^ evalute_type_cutter);
+
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV

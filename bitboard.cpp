@@ -226,7 +226,7 @@ void BitBoard::clear() {
 	castlingMap = 0;
 
 	while(!history.empty()) {
-		history.pop();
+		history.pop_front();
 	}
 
 	gameHash.clear();
@@ -1223,23 +1223,23 @@ void BitBoard::goBack() {
 
 	if(!history.empty()) {
 		for(unsigned int i = 0; i < 7; ++i) {
-			figures[i] = history.top().figures[i];
+			figures[i] = history.front().figures[i];
 		}
 
-		white_bit_mask = history.top().white_bit_mask;
-		black_bit_mask = history.top().black_bit_mask;
-		moveNumber = history.top().moveNumber;
-		ruleNumber = history.top().ruleNumber;
-		castlingMap = history.top().castlingMap;
-		whiteMove = history.top().whiteMove;
-		evalute = history.top().evalute;
-		passant_y = history.top().passant_y;
-		passant_x = history.top().passant_x;
-		passant_enable = history.top().passant_enable;
-		hash = history.top().hash;
-		attacked = history.top().attacked;
-		margin = history.top().margin;
-		history.pop();
+		white_bit_mask = history.front().white_bit_mask;
+		black_bit_mask = history.front().black_bit_mask;
+		moveNumber = history.front().moveNumber;
+		ruleNumber = history.front().ruleNumber;
+		castlingMap = history.front().castlingMap;
+		whiteMove = history.front().whiteMove;
+		evalute = history.front().evalute;
+		passant_y = history.front().passant_y;
+		passant_x = history.front().passant_x;
+		passant_enable = history.front().passant_enable;
+		hash = history.front().hash;
+		attacked = history.front().attacked;
+		margin = history.front().margin;
+		history.pop_front();
 	}
 }
 
@@ -1397,7 +1397,7 @@ void BitBoard::pushHistory() {
 	newHistory.hash = hash;
 	newHistory.attacked = attacked;
 	newHistory.margin = margin;
-	history.push(newHistory);
+	history.push_front(newHistory);
 }
 
 int64_t BitBoard::kingSecurity() {

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <random>
 #include <set>
+#include <deque>
 #include "constants.hpp"
 #include "movearray.hpp"
 #include "goback.hpp"
@@ -53,7 +54,7 @@ private:
 
 	uint64_t magicGenerator();
 
-	std::stack<GoBack> history;
+	std::deque<GoBack> history;
 
 	bool wsc();
 	bool wlc();
