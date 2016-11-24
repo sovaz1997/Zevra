@@ -137,6 +137,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		++num_moves;
 
+		if(real_depth == 0 && depth >= 9) {
+			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << "\n";
+		}
+
 
 		/*if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true, pline) <= alpha) {
 			tmp = alpha;
@@ -173,17 +177,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
 
-			if(real_depth == 0) {
-				if(num_moves >= 0) {
-					std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
-					std::cout << " ";
-					printScore(eval);
-					std::cout << " pv " << local_move.getMoveString() << "\n";
-				} else {
-					std::cout << "\n";
-				}
-			}
-
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
 					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
@@ -205,6 +198,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(alpha >= beta) {
+			if(real_depth == 0) {
+				if(num_moves >= 0) {
+					std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+					std::cout << " ";
+					printScore(eval);
+					std::cout << " pv " << local_move.getMoveString() << "\n";
+				} else {
+					std::cout << "\n";
+				}
+			}
+
 			return beta;
 		}
 	}
@@ -233,6 +237,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(alpha == oldAlpha) {
 		recordHash(depth, alpha, ALPHA, hash, local_move, real_depth);
+	}
+
+	if(real_depth == 0) {
+		if(num_moves >= 0) {
+			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+			std::cout << " ";
+			printScore(eval);
+			std::cout << " pv " << local_move.getMoveString() << "\n";
+		} else {
+			std::cout << "\n";
+		}
 	}
 
 	return alpha;
