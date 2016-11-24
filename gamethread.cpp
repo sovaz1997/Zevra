@@ -44,7 +44,7 @@ void Game::goFixedDepth() {
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, false, new PV());
 		hasBestMove = true;
 
-		if(abs(bestScore) >= (WHITE_WIN - 100)) {
+		if(abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99) {
 			break;
 		}
 
