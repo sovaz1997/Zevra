@@ -97,7 +97,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}*/
 
 	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked/* && real_depth > 2 && b.getFiguresCount() > 3*/) {
+		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4 /*&& b.getFiguresCount() > 3*/) {
 			b.whiteMove = !b.whiteMove;
 			double value = -negamax(b, -beta, -(beta - 1), depth - 3, real_depth + 1, rule, true, true, pline);
 			if(value >= beta) {

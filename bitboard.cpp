@@ -1257,7 +1257,7 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 			figure &= TYPE_SAVE;
 			if(figure == PAWN) {
 				evalute -= PAWN_EV;
-				//evalute -= pawnMatr[7 - y][x];
+				evalute -= pawnMatr[7 - y][x];
 			} else
 			if(figure == KNIGHT) {
 				evalute -= KNIGHT_EV;
@@ -1278,7 +1278,7 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 			figure &= TYPE_SAVE;
 			if(figure == PAWN) {
 				evalute += PAWN_EV;
-				//evalute += pawnMatr[y][x];
+				evalute += pawnMatr[y][x];
 			} else
 			if(figure == KNIGHT) {
 				evalute += KNIGHT_EV;
@@ -1315,7 +1315,7 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 			figure &= TYPE_SAVE;
 			if(figure == PAWN) {
 				evalute += PAWN_EV;
-				//evalute += pawnMatr[7 - y][x];
+				evalute += pawnMatr[7 - y][x];
 			} else
 			if(figure == KNIGHT) {
 				evalute += KNIGHT_EV;
@@ -1336,7 +1336,7 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 			figure &= TYPE_SAVE;
 			if(figure == PAWN) {
 				evalute -= PAWN_EV;
-				//evalute -= pawnMatr[y][x];
+				evalute -= pawnMatr[y][x];
 			} else
 			if(figure == KNIGHT) {
 				evalute -= KNIGHT_EV;
@@ -1438,7 +1438,21 @@ void BitBoard::evaluteAll() {
 	evalute += popcount64(figures[QUEEN] & white_bit_mask) * QUEEN_EV;
 	evalute -= popcount64(figures[QUEEN] & black_bit_mask) * QUEEN_EV;
 
-	uint64_t mask = figures[KNIGHT] & white_bit_mask;
+	uint64_t mask = figures[PAWN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += pawnMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[PAWN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= pawnMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KNIGHT] & white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		evalute += knightMatr[7 - pos / 8][pos % 8];
@@ -1604,9 +1618,9 @@ BitMove BitBoard::getRandomMove() {
 
 int64_t BitBoard::getEvalute() {
 	if(whiteMove) {
-		return evalute + pawnStructureEvalute();// + kingSecurity();
+		return evalute;// + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -evalute - pawnStructureEvalute();// - kingSecurity();
+		return -evalute;// - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 
