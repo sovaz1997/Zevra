@@ -12,6 +12,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::getline(std::cin, input_str);
 			if(input_str == "stop") {
 				stopped = true;
+			} else if(input_str == "isready") {
+				std::cout << "readyok\n";
 			}
 		}
 	}
