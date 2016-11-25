@@ -99,7 +99,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4 /*&& b.getFiguresCount() > 3*/) {
 			b.whiteMove = !b.whiteMove;
-			double value = -negamax(b, -beta, -(beta - 1), depth - 3, real_depth + 1, rule, true, true, pline);
+			int R;
+			if(depth > 6) {
+				R = 4;
+			} else {
+				R = 3;
+			}
+
+			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true, true, pline);
 			if(value >= beta) {
 				b.whiteMove = !b.whiteMove;
 				return value;
@@ -286,7 +293,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 	int64_t val = b.getEvalute();
 
 	if(val >= beta) {
-		return beta;
+		return val;
 	}
 
 	if(alpha < val) {
@@ -296,7 +303,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 	b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
 	sortAttacks(moveArray[real_depth]);
 
-	for(unsigned int i = 0; i < moveArray[real_depth].count && alpha < beta; ++i) {
+	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		++nodesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
