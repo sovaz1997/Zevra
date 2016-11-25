@@ -3,8 +3,9 @@
 
 #include <cstdint>
 #include <cwchar>
-#include <windows.h>
 #include <cstdio>
+#include <cstdlib>
+#include <iostream>
 
 bool is_input_available();
 
