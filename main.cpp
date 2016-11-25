@@ -5,7 +5,7 @@
 	#include <windows.h>
 #elif defined(__unix__) || defined(unix) || defined(__unix)
 	#include <unistd.h>
-	
+
 	#include <sys/time.h>
 	#include <sys/types.h>
 	#include <sys/select.h>
