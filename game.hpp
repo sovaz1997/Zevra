@@ -36,6 +36,8 @@ private:
 
 	int max_depth;
 
+	int hash_decrement = 0;
+
 	void initEngine();
 	bool uciHandler(std::string str);
 	void goFixedDepth();

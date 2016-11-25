@@ -160,6 +160,7 @@ bool Game::move(std::string mv) {
 				continue;
 			}
 
+			++hash_decrement;
 			return true;
 		}
 	}

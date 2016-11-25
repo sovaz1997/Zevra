@@ -43,7 +43,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	int tmp;
 
 	uint64_t hash = b.getColorHash();
-
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
 	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
@@ -92,10 +91,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		inCheck = b.inCheck(BLACK);
 	}
 
-	/*if(!inNullMove && depth <= 2 && !extended && !b.attacked && !inCheck && b.getEvalute() - margin >= beta) {
-		return beta;
-	}*/
-
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4 /*&& b.getFiguresCount() > 3*/) {
 			b.whiteMove = !b.whiteMove;
@@ -127,9 +122,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		local_move = moveArray[real_depth].moveArray[0];
 	}
 
-/*	if(real_depth == 0) {
-		std::cout << "info depth " << max_depth << "\n";
-	}*/
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		b.move(moveArray[real_depth].moveArray[i]);
 
@@ -148,19 +140,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << "\n";
 		}
 
-
-		/*if(!lazyEval && b.getEvalute() + margin <= alpha && !b.inCheck(color) && !extended && !b.attacked && -negamax(b, -beta, -alpha, depth - 3, real_depth + 1, rule, inNullMove, true, pline) <= alpha) {
-			tmp = alpha;
-		} else {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
-		}*/
-
 		if(!option.lmrEnable) {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
 
 			if(tmp > alpha && tmp < beta) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
 			}
+
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
@@ -199,9 +185,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			//pline->line[0] = local_move;
 			//memcpy(pline->line + 1, line.line, line.count * sizeof(local_move));
 			//pline->count = line.count + 1;
-			//r7/p2kr1pp/1qp1p3/3pPbQ1/8/RPP2N2/5PPP/R5K1 b - - 6 23
-
-
 		}
 
 		if(alpha >= beta) {
@@ -322,12 +305,12 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
 		b.goBack();
 
-		if(val >= beta) {
-			return val;
-		}
-
 		if(val > alpha) {
 			alpha = val;
+		}
+
+		if(val >= beta) {
+			return beta;
 		}
 	}
 
@@ -338,6 +321,10 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	Hash* hash = &boardHash[key & hash_cutter];
 
 	if(flag == ALPHA && (hash->flag == EXACT || hash->flag == BETA)) {
+		return 0;
+	}
+
+	if(hash->flag != EMPTY && hash->depth > depth) {
 		return 0;
 	}
 

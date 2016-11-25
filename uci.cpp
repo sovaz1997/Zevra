@@ -7,6 +7,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "position") {
 			gameHash.clear();
 			gameHash.resize(0);
+			hash_decrement = 0;
 			if(cmd[1] == "startpos") {
 				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 				if(cmd.size() > 3) {
@@ -104,6 +105,7 @@ bool Game::uciHandler(std::string str) {
 			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
+			--hash_decrement;
 		} else if(cmd[0] == "perft") {
 			int k;
 			std::cin >> k;
