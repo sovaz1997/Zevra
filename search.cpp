@@ -6,6 +6,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return 0;
 	}*/
 
+	if(depth >= 5) {
+		if(is_input_available()) {
+			std::string input_str;
+			std::getline(std::cin, input_str);
+			if(input_str == "stop") {
+				stopped = true;
+			}
+		}
+	}
+
+
 	int64_t oldAlpha = alpha;
 
 	bool extended = false;
@@ -15,7 +26,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {
-		if(rule == FIXED_TIME && timer.getTime() >= time) {
+		if(rule == FIXED_TIME && timer.getTime() >= time || stopped) {
 			return 0;
 		}
 	}
@@ -213,7 +224,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 
 	if(real_depth == 0) {
-		if(rule == FIXED_TIME && timer.getTime() >= time) {
+		if(rule == FIXED_TIME && timer.getTime() >= time || stopped) {
 			return 0;
 		}
 

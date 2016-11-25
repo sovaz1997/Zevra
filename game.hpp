@@ -35,6 +35,7 @@ private:
 	const int BLACK_WIN = -100000000;
 
 	int max_depth;
+	bool stopped;
 
 	int hash_decrement = 0;
 

@@ -3,6 +3,10 @@
 
 #include <cstdint>
 #include <cwchar>
+#include <windows.h>
+#include <cstdio>
+
+bool is_input_available();
 
 const uint8_t PAWN = 1;    //00000001
 const uint8_t KNIGHT = 2;  //00000010
