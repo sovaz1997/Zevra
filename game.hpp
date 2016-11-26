@@ -71,17 +71,20 @@ private:
 	bool movestogoEnable;
 
 	Option option;
+
 public:
 	Game();
-	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool lasyEval, PV* pline);
+	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool quies_find, PV* pline);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
+	std::string getScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
 	bool move(std::string mv);
 	void printBitBitBoard(uint64_t bit_BitBoard);
+	void idPrint();
 
 	std::vector<uint64_t>gameHash;
 	std::vector<Hash>boardHash;

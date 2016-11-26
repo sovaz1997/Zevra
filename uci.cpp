@@ -90,8 +90,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "quit") {
 			return false;
 		} else if(cmd[0] == "uci") {
-			std::cout << "id name Zevra v1.2 r246\n";
-			std::cout << "id author sovaz1997\n";
+			idPrint();
 			option.print();
 			std::cout << "uciok\n";
 		} else if(cmd[0] == "quit") {
@@ -129,4 +128,9 @@ bool Game::uciHandler(std::string str) {
 		}
 
 		return true;
+}
+
+void Game::idPrint() {
+	std::cout << "id name Zevra v1.2 r246\n";
+	std::cout << "id author sovaz1997\n";
 }

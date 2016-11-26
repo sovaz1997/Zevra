@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool lazyEval, PV* pline) {
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool quies_find, PV* pline) {
 	++nodesCounter;
 	/*if(game_board.testOfDraw()) {
 		return 0;
@@ -42,6 +42,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(depth <= 0 || real_depth >= 100) {
 		pline->count = 0;
+
+		if(quies_find) {
+			return b.getEvalute();
+		}
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
@@ -82,7 +86,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 
-		if(currentHash->flag != ALPHA && real_depth > 0) {
+		if(currentHash->flag != ALPHA && real_depth > 0 && !quies_find) {
 			b.move(currentHash->move);
 			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false, pline);
 			b.goBack();
@@ -105,7 +109,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4 /*&& b.getFiguresCount() > 3*/) {
+		if(!quies_find && !inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4 /*&& b.getFiguresCount() > 3*/) {
 			b.whiteMove = !b.whiteMove;
 			int R;
 			if(depth > 6) {
@@ -114,7 +118,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				R = 3;
 			}
 
-			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true, true, pline);
+			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true, quies_find, pline);
 			if(value >= beta) {
 				b.whiteMove = !b.whiteMove;
 				return value;
@@ -149,25 +153,25 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		++num_moves;
 
-		if(real_depth == 0 && depth >= 9) {
+		/*if(real_depth == 0 && depth >= 9) {
 			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << "\n";
-		}
+		}*/
 
 		if(!option.lmrEnable) {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
 			}
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
 			} else {
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, lazyEval, pline);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, quies_find, pline);
 
 				if(tmp > alpha) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, lazyEval, pline);
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
 				}
 			}
 		}
@@ -203,10 +207,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(alpha >= beta) {
 			if(real_depth == 0) {
 				if(num_moves >= 0) {
-					std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+					std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter;
 					std::cout << " ";
 					printScore(eval);
 					std::cout << " pv " << local_move.getMoveString() << "\n";
+					std::cout << "info nps" << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << "\n";
 				} else {
 					std::cout << "\n";
 				}
@@ -244,13 +249,35 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
-			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter;
 			std::cout << " ";
 			printScore(eval);
 			std::cout << " pv " << local_move.getMoveString() << "\n";
+			std::cout << "info nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << "\n";
 		} else {
 			std::cout << "\n";
 		}
+
+		/*std::string output;
+		if(num_moves >= 0) {
+			output += "info depth ";
+			output += std::to_string(max_depth);
+			output += " time ";
+			output += std::to_string((int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)));
+			output += " nodes ";
+			output += std::to_string(nodesCounter);
+			output += " ";
+			output += getScore(eval);
+			output += " pv ";
+			output += local_move.getMoveString();
+			output += "\n";
+			output += "info nps ";
+			output += std::to_string((int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)));
+			output += "\n";
+			printf("%s", output);
+		} else {
+			std::cout << "\n";
+		}*/
 	}
 
 	return alpha;
@@ -287,6 +314,18 @@ uint64_t Game::perft(int depth) {
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
 	int64_t val = b.getEvalute();
+
+	uint8_t color;
+
+	if(b.whiteMove) {
+		color = WHITE;
+	} else {
+		color = BLACK;
+	}
+
+	/*if(b.inCheck(color)) {
+		return negamax(b, alpha, beta, 1, real_depth, rule, false, true, new PV());
+	}*/
 
 	if(val >= beta) {
 		return val;
