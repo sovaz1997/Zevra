@@ -237,10 +237,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
-			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter;
+			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
 			std::cout << " ";
 			printScore(eval);
-			std::cout << " pv " << local_move.getMoveString() << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << std::endl;
+			std::cout << " pv " << local_move.getMoveString() << std::endl;
 		} else {
 			std::cout << std::endl;
 		}
