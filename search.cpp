@@ -153,9 +153,9 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		++num_moves;
 
-		/*if(real_depth == 0 && depth >= 9) {
-			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << "\n";
-		}*/
+		if(real_depth == 0 && depth >= 9) {
+			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+		}
 
 		if(!option.lmrEnable) {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
@@ -205,18 +205,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(alpha >= beta) {
-			if(real_depth == 0) {
-				if(num_moves >= 0) {
-					std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter;
-					std::cout << " ";
-					printScore(eval);
-					std::cout << " pv " << local_move.getMoveString() << "\n";
-					std::cout << "info nps" << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << "\n";
-				} else {
-					std::cout << "\n";
-				}
-			}
-
 			return beta;
 		}
 	}
@@ -252,32 +240,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter;
 			std::cout << " ";
 			printScore(eval);
-			std::cout << " pv " << local_move.getMoveString() << "\n";
-			std::cout << "info nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << "\n";
+			std::cout << " pv " << local_move.getMoveString() << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << std::endl;
 		} else {
-			std::cout << "\n";
+			std::cout << std::endl;
 		}
-
-		/*std::string output;
-		if(num_moves >= 0) {
-			output += "info depth ";
-			output += std::to_string(max_depth);
-			output += " time ";
-			output += std::to_string((int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)));
-			output += " nodes ";
-			output += std::to_string(nodesCounter);
-			output += " ";
-			output += getScore(eval);
-			output += " pv ";
-			output += local_move.getMoveString();
-			output += "\n";
-			output += "info nps ";
-			output += std::to_string((int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)));
-			output += "\n";
-			printf("%s", output);
-		} else {
-			std::cout << "\n";
-		}*/
 	}
 
 	return alpha;
