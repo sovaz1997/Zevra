@@ -361,13 +361,9 @@ std::vector<BitMove> Game::extractPV() {
 		Hash* currentHash = &boardHash[hash & hash_cutter];
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
-			while(!currentHash->prev.empty()/*!testMovePossible(currentHash->move)*/) {
-				if(testMovePossible(currentHash->prev.top())) {
-					break;
-				}
-				
+			while(!testMovePossible(currentHash->move)) {
 				if(!currentHash->back()) {
-					stopped = true;
+				stopped = true;
 					break;
 				}
 			}
@@ -376,8 +372,8 @@ std::vector<BitMove> Game::extractPV() {
 				break;
 			}
 			
-			result.push_back(currentHash->prev.top());
-			game_board.move(currentHash->prev.top());
+			result.push_back(currentHash->move);
+			game_board.move(currentHash->move);
 		} else {
 			break;
 		}

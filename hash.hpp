@@ -21,7 +21,6 @@ public:
 	Hash();
 	bool back();
 	void recordPrev();
-	void clean();
 };
 
 #endif

@@ -4,7 +4,7 @@ Hash::Hash() : flag(EMPTY) {}
 
 bool Hash::back() {
 	if(!prev.empty()) {
-		//move = prev.top();
+		move = prev.top();
 		prev.pop();
 		
 		return true;
@@ -16,12 +16,4 @@ bool Hash::back() {
 
 void Hash::recordPrev() {
 	prev.push(move);
-}
-
-void Hash::clean() {
-	flag = EMPTY;
-	
-	while(!prev.empty()) {
-		prev.pop();
-	}
 }
