@@ -1,19 +1,37 @@
 #include "hash.hpp"
 
-Hash::Hash() : flag(EMPTY) {}
+Hash::Hash() : flag(EMPTY), prev(nullptr) {}
 
 bool Hash::back() {
-	if(!prev.empty()) {
-		move = prev.top();
-		prev.pop();
-		
-		return true;
+	if(prev) {
+		if(!prev->empty()) {
+			move = prev->top();
+			prev->pop();
+
+			return true;
+		}
 	}
-	
+
 	return false;
 }
 
-
 void Hash::recordPrev() {
-	prev.push(move);
+	if(!prev) {
+		prev = new std::stack<BitMove>();
+	}
+
+	prev->push(move);
+}
+
+void Hash::clean() {
+	if(prev) {
+		while(!prev->empty()) {
+			prev->pop();
+		}
+
+		delete prev;
+		prev = nullptr;
+	}
+
+	flag = EMPTY;
 }
