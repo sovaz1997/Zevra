@@ -116,8 +116,8 @@ public:
 	void sortMoves(MoveArray& result, int depth);
 	bool recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
 
-	std::vector<BitMove> extractPV();
-	
+	std::vector<BitMove> extractPV(int depth);
+
 	bool testMovePossible(BitMove move);
 };
 

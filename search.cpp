@@ -222,7 +222,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::cout << " ";
 			printScore(eval);
 			std::cout << " pv ";
-			std::vector<BitMove> main_pv = extractPV();
+			std::vector<BitMove> main_pv = extractPV(depth);
 			for(int i = 0; i < main_pv.size(); ++i) {
 				std::cout << main_pv[i].getMoveString() << " ";
 			}
@@ -352,18 +352,18 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	}
 }
 
-std::vector<BitMove> Game::extractPV() {
+std::vector<BitMove> Game::extractPV(int depth) {
 	int k;
 	std::vector<BitMove> result;
 	bool stopped = false;
-	for(k = 0; ; ++k) {
+	for(k = 0; k < depth + 10; ++k) {
 		uint64_t hash = game_board.getColorHash();
 		Hash* currentHash = &boardHash[hash & hash_cutter];
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
 			while(!testMovePossible(currentHash->move)) {
 				if(!currentHash->back()) {
-				stopped = true;
+          stopped = true;
 					break;
 				}
 			}
