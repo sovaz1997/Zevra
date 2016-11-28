@@ -17,3 +17,11 @@ bool Hash::back() {
 void Hash::recordPrev() {
 	prev.push(move);
 }
+
+void Hash::clean() {
+	flag = EMPTY;
+	
+	while(!prev.empty()) {
+		prev.pop();
+	}
+}
