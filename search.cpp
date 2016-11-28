@@ -1,10 +1,7 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool quies_find, PV* pline) {
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove) {
 	++nodesCounter;
-	/*if(game_board.testOfDraw()) {
-		return 0;
-	}*/
 
 	if(depth >= 5) {
 		if(is_input_available()) {
@@ -17,7 +14,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 	}
-
 
 	int64_t oldAlpha = alpha;
 
@@ -41,15 +37,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(depth <= 0 || real_depth >= 100) {
-		pline->count = 0;
-
-		if(quies_find) {
-			return b.getEvalute();
-		}
 		return quies(b, alpha, beta, rule, real_depth);
 	}
-
-	//PV line;
 
 	if(b.inCheck(color)) {
 		++nextDepth;
@@ -86,13 +75,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 
-		if(currentHash->flag != ALPHA && real_depth > 0 && !quies_find) {
+		if(currentHash->flag != ALPHA && real_depth > 0) {
 			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false, pline);
+			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove);
 			b.goBack();
 
 			if(tmp > alpha) {
 				recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, currentHash->move, real_depth);
+
 				alpha = tmp;
 				if(alpha >= beta) {
 		  			return beta;
@@ -109,7 +99,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.nullMovePrunningEnable) {
-		if(!quies_find && !inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4 /*&& b.getFiguresCount() > 3*/) {
+		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4) {
 			b.whiteMove = !b.whiteMove;
 			int R;
 			if(depth > 6) {
@@ -118,7 +108,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				R = 3;
 			}
 
-			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true, quies_find, pline);
+			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true);
 			if(value >= beta) {
 				b.whiteMove = !b.whiteMove;
 				return value;
@@ -158,20 +148,20 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(!option.lmrEnable) {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 			}
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 			} else {
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, quies_find, pline);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove);
 
 				if(tmp > alpha) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, quies_find, pline);
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 				}
 			}
 		}
@@ -198,10 +188,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
-
-			//pline->line[0] = local_move;
-			//memcpy(pline->line + 1, line.line, line.count * sizeof(local_move));
-			//pline->count = line.count + 1;
 		}
 
 		if(alpha >= beta) {
@@ -217,7 +203,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-
 	if(real_depth == 0) {
 		if(rule == FIXED_TIME && timer.getTime() >= time || stopped) {
 			return 0;
@@ -225,10 +210,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		bestMove = local_move;
 		bestScore = alpha;
-
-		//for(int i = 0; i < pline->count; ++i) {
-			//std::cout << pline->line[i].getMoveString() << " ";
-		//}
 	}
 
 	if(alpha == oldAlpha) {
@@ -240,7 +221,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
 			std::cout << " ";
 			printScore(eval);
-			std::cout << " pv " << local_move.getMoveString() << std::endl;
+			std::cout << " pv ";
+			std::vector<BitMove> main_pv = extractPV();
+			for(int i = 0; i < main_pv.size(); ++i) {
+				std::cout << main_pv[i].getMoveString() << " ";
+			}
+			std::cout << std::endl;
 		} else {
 			std::cout << std::endl;
 		}
@@ -342,9 +328,9 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		return 0;
 	}
 
-	if(hash->flag != EMPTY && hash->depth > depth) {
+	/*if(hash->flag != EMPTY && hash->depth > depth) {
 		return 0;
-	}
+	}*/
 
 	if(score > WHITE_WIN - 100) {
 		score += real_depth;
@@ -360,4 +346,26 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	if(flag != ALPHA) {
 		hash->move = move;
 	}
+}
+
+std::vector<BitMove> Game::extractPV() {
+	int k;
+	std::vector<BitMove> result;
+	for(k = 0; ; ++k) {
+		uint64_t hash = game_board.getColorHash();
+		Hash* currentHash = &boardHash[hash & hash_cutter];
+
+		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
+			result.push_back(currentHash->move);
+			game_board.move(currentHash->move);
+		} else {
+			break;
+		}
+	}
+
+	for(int i = 0; i < k; ++i) {
+		game_board.goBack();
+	}
+
+	return result;
 }

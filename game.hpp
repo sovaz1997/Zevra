@@ -47,6 +47,8 @@ private:
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
+  std::vector<BitMove>pv;
+
 	bool inZugzwang(BitBoard & b, uint8_t color);
 
 	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
@@ -74,7 +76,7 @@ private:
 
 public:
 	Game();
-	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool quies_find, PV* pline);
+	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
@@ -97,7 +99,6 @@ public:
 	std::vector<MoveArray> moveArray;
 
 	void sortAttacks(MoveArray& moves);
-
 	void printVariant();
 
 	//flags - begin
@@ -114,6 +115,8 @@ public:
 	double margin = PAWN_EV / 2;
 	void sortMoves(MoveArray& result, int depth);
 	bool recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
+
+	std::vector<BitMove> extractPV();
 };
 
 #endif

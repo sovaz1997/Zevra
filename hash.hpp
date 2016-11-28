@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "bitmove.hpp"
+#include "pv.hpp"
 
 class BitMove;
 
@@ -13,7 +14,6 @@ public:
 	uint8_t flag;
 	uint64_t key;
 	BitMove move;
-
 	Hash();
 };
 

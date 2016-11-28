@@ -5,9 +5,8 @@
 
 class PV {
 public:
-	int count;
-	BitMove line[100];
-	
+	int cmove;
+	BitMove argmove[100];
 	PV();
 };
 

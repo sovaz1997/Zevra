@@ -1,3 +1,3 @@
 #include "pv.hpp"
 
-PV::PV() : count(0) {}
+PV::PV() : cmove(0) {}

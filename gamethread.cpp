@@ -19,7 +19,6 @@ void Game::goFixedDepth() {
 	variant.resize(max_depth);
 	std::vector<uint64_t>hash;
 
-	std::vector<BitMove>pv;
 	whiteUp = BLACK_WIN;
 	blackUp = WHITE_WIN;
 
@@ -37,12 +36,11 @@ void Game::goFixedDepth() {
 	bestScore = 0;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
-		pv.resize(0);
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, false, new PV());
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
 		hasBestMove = true;
 
 		if(abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99 || stopped) {
@@ -62,6 +60,11 @@ void Game::goFixedDepth() {
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << std::endl;
 	}
+
+	/*for(int i = 0; i < bestPV.size(); ++i) {
+		std::cout << bestPV[i].getMoveString() << " ";
+	}
+	std::cout << std::endl;*/
 }
 
 void Game::goFixedTime(int tm) {
@@ -79,7 +82,6 @@ void Game::goFixedTime(int tm) {
 	variant.resize(max_depth);
 	std::vector<uint64_t>hash;
 
-	std::vector<BitMove>pv;
 	whiteUp = BLACK_WIN;
 	blackUp = WHITE_WIN;
 
@@ -94,13 +96,14 @@ void Game::goFixedTime(int tm) {
 	bestScore = 0;
 	hasBestMove = true;
 
+	std::vector<BitMove> bestPV;
+
 	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
-		pv.resize(0);
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, false, new PV());
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false);
 
 		if(abs(bestScore) >= (WHITE_WIN - 100) || stopped) {
 			break;
@@ -131,7 +134,6 @@ void Game::goTournament() {
 		tm = btime;
 		inc = binc;
 	}
-
 
 	double k = 50;
 
