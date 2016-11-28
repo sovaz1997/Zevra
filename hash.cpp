@@ -4,7 +4,7 @@ Hash::Hash() : flag(EMPTY) {}
 
 bool Hash::back() {
 	if(!prev.empty()) {
-		move = prev.top();
+		//move = prev.top();
 		prev.pop();
 		
 		return true;
