@@ -344,6 +344,10 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	hash->key = key;
 
 	if(flag != ALPHA) {
+		if(flag == EXACT) {
+			hash->recordPrev();
+		}
+		
 		hash->move = move;
 	}
 }
@@ -351,11 +355,23 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 std::vector<BitMove> Game::extractPV() {
 	int k;
 	std::vector<BitMove> result;
+	bool stopped = false;
 	for(k = 0; ; ++k) {
 		uint64_t hash = game_board.getColorHash();
 		Hash* currentHash = &boardHash[hash & hash_cutter];
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
+			while(!testMovePossible(currentHash->move)) {
+				if(!currentHash->back()) {
+				stopped = true;
+					break;
+				}
+			}
+			
+			if(stopped) {
+				break;
+			}
+			
 			result.push_back(currentHash->move);
 			game_board.move(currentHash->move);
 		} else {
@@ -368,4 +384,18 @@ std::vector<BitMove> Game::extractPV() {
 	}
 
 	return result;
+}
+
+
+bool Game::testMovePossible(BitMove move) {
+	MoveArray moves;
+	game_board.bitBoardMoveGenerator(moves);
+	
+	for(int i = 0; i < moves.count; ++i) {
+		if(move.equal(moves.moveArray[i])) {
+			return true;
+		}
+	}
+	
+	return false;
 }
