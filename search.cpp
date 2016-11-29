@@ -167,15 +167,16 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		b.goBack();
+		
 
 		if(tmp > eval) {
 			eval = tmp;
 		}
 
-
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
+			
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
