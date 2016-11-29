@@ -273,7 +273,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 	}
 
 	/*if(b.inCheck(color)) {
-		return negamax(b, alpha, beta, 1, real_depth, rule, false, true, new PV());
+		return negamax(b, alpha, beta, 1, real_depth, rule, false);
 	}*/
 
 	if(val >= beta) {
