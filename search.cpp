@@ -51,7 +51,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash) {
+	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -101,14 +101,15 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4) {
 			b.whiteMove = !b.whiteMove;
-			int R;
-			if(depth > 6) {
+			int R = 2;
+			/*if(depth > 6) {
 				R = 4;
 			} else {
 				R = 3;
-			}
+			}*/
 
-			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true);
+
+			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true);
 			if(value >= beta) {
 				b.whiteMove = !b.whiteMove;
 				return value;
