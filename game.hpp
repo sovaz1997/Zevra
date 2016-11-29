@@ -111,6 +111,7 @@ public:
 	void cleanWhiteHistory();
 	void cleanBlackHistory();
 	void flattenHistory();
+	void printPV(int depth);
 
 	double margin = PAWN_EV / 2;
 	void sortMoves(MoveArray& result, int depth);
