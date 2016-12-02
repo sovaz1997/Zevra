@@ -110,7 +110,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			double value = -negamax(b, -beta, -(beta - 1), depth - 1 - R, real_depth + 1, rule, true);
 			if(value >= beta) {
-				b.whiteMove = !b.whiteMove;
+				//b.whiteMove = !b.whiteMove;
 				return value;
 			}
 			b.whiteMove = !b.whiteMove;
