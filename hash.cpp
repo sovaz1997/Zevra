@@ -16,11 +16,13 @@ bool Hash::back() {
 }
 
 void Hash::recordPrev() {
-	if(!prev) {
-		prev = new std::stack<BitMove>();
-	}
+	if(flag == EXACT) {
+		if(!prev) {
+			prev = new std::stack<BitMove>();
+		}
 
-	prev->push(move);
+		prev->push(move);
+	}
 }
 
 void Hash::clean() {

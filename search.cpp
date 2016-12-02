@@ -111,7 +111,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true);
 			if(value >= beta) {
-				b.whiteMove = !b.whiteMove;
+				//b.whiteMove = !b.whiteMove;
 				return value;
 			}
 			b.whiteMove = !b.whiteMove;
@@ -168,15 +168,16 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		b.goBack();
+		
 
 		if(tmp > eval) {
 			eval = tmp;
 		}
 
-
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
+			
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
@@ -223,11 +224,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::cout << " ";
 			printScore(eval);
 			std::cout << " pv ";
-			std::vector<BitMove> main_pv = extractPV(depth);
-			for(int i = 0; i < main_pv.size(); ++i) {
-				std::cout << main_pv[i].getMoveString() << " ";
-			}
-			std::cout << std::endl;
+			printPV(depth);
 		} else {
 			std::cout << std::endl;
 		}
@@ -277,7 +274,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 	}
 
 	/*if(b.inCheck(color)) {
-		return negamax(b, alpha, beta, 1, real_depth, rule, false, true, new PV());
+		return negamax(b, alpha, beta, 1, real_depth, rule, false);
 	}*/
 
 	if(val >= beta) {
@@ -325,7 +322,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
 	Hash* hash = &boardHash[key & hash_cutter];
 
-	if(flag == ALPHA && (hash->flag == EXACT || hash->flag == BETA)) {
+	if(flag == ALPHA && (hash->flag == EXACT/* || hash->flag == BETA*/)) {
 		return 0;
 	}
 
@@ -362,6 +359,12 @@ std::vector<BitMove> Game::extractPV(int depth) {
 		Hash* currentHash = &boardHash[hash & hash_cutter];
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
+			if(currentHash->flag == BETA) {
+				if(!currentHash->back()) {
+					break;
+				}
+			}
+			
 			while(!testMovePossible(currentHash->move)) {
 				if(!currentHash->back()) {
           stopped = true;
@@ -399,4 +402,12 @@ bool Game::testMovePossible(BitMove move) {
 	}
 
 	return false;
+}
+
+void Game::printPV(int depth) {
+	std::vector<BitMove> main_pv = extractPV(depth);
+	for(int i = 0; i < main_pv.size(); ++i) {
+		std::cout << main_pv[i].getMoveString() << " ";
+	}
+	std::cout << std::endl;
 }
