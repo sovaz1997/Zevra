@@ -51,7 +51,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
+	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -111,7 +111,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true);
 			if(value >= beta) {
-				//b.whiteMove = !b.whiteMove;
+				b.whiteMove = !b.whiteMove;
 				return value;
 			}
 			b.whiteMove = !b.whiteMove;
@@ -168,7 +168,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		b.goBack();
-		
+
 
 		if(tmp > eval) {
 			eval = tmp;
@@ -177,7 +177,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
-			
+
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
@@ -364,7 +364,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 					break;
 				}
 			}
-			
+
 			while(!testMovePossible(currentHash->move)) {
 				if(!currentHash->back()) {
           stopped = true;
