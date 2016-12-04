@@ -1373,7 +1373,7 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
 			std::cout << (bool)((doubler << (y * 8 + x)) & bit_board);
 		}
-		std::cout << "\n";
+		std::cout << std::endl;
 	}
 }
 
@@ -1944,7 +1944,7 @@ void BitBoard::magicNumberGenerator() {
 				}
 				rook_combination[k] = bit_combination;
 				printBitBoard(rook_combination[k]);
-				std::cout << "\n";
+				std::cout << std::endl;
 			}
 
 			bool stopped = false;
@@ -1965,7 +1965,7 @@ void BitBoard::magicNumberGenerator() {
 
 					if(i == rook_combination.size() - 1) {
 						stopped = true;
-						std::cout << "ROOK_MAGIC[" << (int)y << "][" << (int)x << "] = " << (unsigned long long) magic << "ULL;\n";
+						std::cout << "ROOK_MAGIC[" << (int)y << "][" << (int)x << "] = " << (unsigned long long) magic << "ULL;" << std::endl;
 					}
 				}
 			}
@@ -2008,7 +2008,7 @@ void BitBoard::magicNumberGenerator() {
 
 					if(i == bishop_combination.size() - 1) {
 						stopped = true;
-						std::cout << "BISHOP_MAGIC[" << (int)y << "][" << (int)x << "] = " << (unsigned long long) magic << "ULL;\n";
+						std::cout << "BISHOP_MAGIC[" << (int)y << "][" << (int)x << "] = " << (unsigned long long) magic << "ULL;" << std::endl;
 					}
 				}
 			}

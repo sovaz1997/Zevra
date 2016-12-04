@@ -10,7 +10,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			if(input_str == "stop") {
 				stopped = true;
 			} else if(input_str == "isready") {
-				std::cout << "readyok\n";
+				std::cout << "readyok" << std::endl;
 			}
 		}
 	}
@@ -51,7 +51,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended {
+	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 

@@ -6,7 +6,7 @@ void Game::printVariant() {
 			std::cout << variant[i] << " ";
 		}
 
-		std::cout << "\n";
+		std::cout << std::endl;
 	}
 }
 

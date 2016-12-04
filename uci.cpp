@@ -3,7 +3,7 @@
 bool Game::uciHandler(std::string str) {
 	std::vector<std::string> cmd = getStringArray(str);
 		if(cmd[0] == "isready") {
-			std::cout << "readyok\n";
+			std::cout << "readyok" << std::endl;
 		} else if(cmd[0] == "position") {
 			gameHash.clear();
 			gameHash.resize(0);
@@ -75,16 +75,16 @@ bool Game::uciHandler(std::string str) {
 
 			for(unsigned int i = 0; i < moves.count; ++i) {
 				std::cout << moves.moveArray[i].getMoveString();
-				std::cout << "\n";
+				std::cout << std::endl;
 			}
 
 			game_board.evaluteAll();
-			std::cout << game_board.getEvalute() / PAWN_EV * 100 << "\n";
-			std::cout << game_board.getFen() << "\n";
+			std::cout << game_board.getEvalute() / PAWN_EV * 100 << std::endl;
+			std::cout << game_board.getFen() << std::endl;
 
-			std::cout << "inCheck (WHITE) : " << game_board.inCheck(WHITE) << "\n";
-			std::cout << "inCheck (BLACK) : " << game_board.inCheck(BLACK) << "\n";
-			std::cout << "color_hash: " << game_board.getColorHash() << "\n";
+			std::cout << "inCheck (WHITE) : " << game_board.inCheck(WHITE) << std::endl;
+			std::cout << "inCheck (BLACK) : " << game_board.inCheck(BLACK) << std::endl;
+			std::cout << "color_hash: " << game_board.getColorHash() << std::endl;
 		} else if(cmd[0] == "move") {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
@@ -92,7 +92,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "uci") {
 			idPrint();
 			option.print();
-			std::cout << "uciok\n";
+			std::cout << "uciok" << std::endl;
 		} else if(cmd[0] == "quit") {
 			return false;
 		} else if(cmd[0] == "stress") {
@@ -101,7 +101,7 @@ bool Game::uciHandler(std::string str) {
 			for(unsigned int i = 0; i < 1000000; ++i) {
 				game_board.bitBoardMoveGenerator(moveArray[0]);
 			}
-			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << "\n";
+			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
@@ -110,7 +110,7 @@ bool Game::uciHandler(std::string str) {
 			std::cin >> k;
 			double st = clock();
 			uint64_t count = perft(k);
-			std::cout << count << " " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << "\n";
+			std::cout << count << " " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
 		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
 			if(cmd[2] == "nullmove" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
@@ -131,6 +131,6 @@ bool Game::uciHandler(std::string str) {
 }
 
 void Game::idPrint() {
-	std::cout << "id name Zevra v1.2.1 r272\n";
-	std::cout << "id author sovaz1997\n";
+	std::cout << "id name Zevra v1.2.1 r272" << std::endl;
+	std::cout << "id author sovaz1997" << std::endl;
 }
