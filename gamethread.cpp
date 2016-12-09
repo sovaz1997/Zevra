@@ -28,7 +28,7 @@ void Game::goFixedDepth() {
 
 	start_timer = clock();
 	hasBestMove = false;
-	double depth;
+	//double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
@@ -43,11 +43,11 @@ void Game::goFixedDepth() {
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
 		hasBestMove = true;
 
-		if(abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99 || stopped) {
+		if((abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99) || stopped) {
 			break;
 		}
 
-		depth = max_depth;
+		//depth = max_depth;
 	}
 
 	end_timer = clock();
@@ -89,7 +89,7 @@ void Game::goFixedTime(int tm) {
 
 	start_timer = clock();
 	hasBestMove = false;
-	double depth;
+	//double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
@@ -110,7 +110,7 @@ void Game::goFixedTime(int tm) {
 		}
 
 		hasBestMove = true;
-		depth = max_depth;
+		//depth = max_depth;
 	}
 
 	end_timer = clock();

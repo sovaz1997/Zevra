@@ -1,6 +1,6 @@
 #include "hash.hpp"
 
-Hash::Hash() : flag(EMPTY), prev(nullptr) {}
+Hash::Hash() : prev(nullptr), flag(EMPTY) {}
 
 bool Hash::back() {
 	if(prev) {

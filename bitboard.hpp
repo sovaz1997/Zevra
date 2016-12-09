@@ -81,6 +81,8 @@ public:
 	void goBack();
 	void pushHistory();
 	BitMove getRandomMove();
+	void makeNullMove();
+	void unMakeNullMove();
 
 	bool whiteMove, passant_enable;
 

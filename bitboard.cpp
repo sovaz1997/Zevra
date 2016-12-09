@@ -1861,7 +1861,7 @@ uint64_t BitBoard::getHash() {
 
 uint64_t BitBoard::getColorHash() {
 	if(!whiteMove) {
-		return hash + reverse_color_const;
+		return (hash ^ reverse_color_const);
 	}
 
 	return hash;
@@ -2038,6 +2038,16 @@ uint64_t BitBoard::magicGenerator() {
 	}
 
 	return result;
+}
+
+void BitBoard::makeNullMove() {
+	whiteMove = !whiteMove;
+	hash ^= 747489434796739468;
+}
+
+void BitBoard::unMakeNullMove() {
+	whiteMove = !whiteMove;
+	hash ^= 747489434796739468;
 }
 
 void BitBoard::magicConstantsSet() {
