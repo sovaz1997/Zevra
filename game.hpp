@@ -72,6 +72,7 @@ private:
 	double wtime, btime, winc, binc;
 	int movestogo;
 	bool movestogoEnable;
+	uint64_t combinations;
 
 	Option option;
 
