@@ -20,7 +20,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool extended = false;
 
 	int64_t eval = -WHITE_WIN;
-	//double margin = PAWN_EV / 2;
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {

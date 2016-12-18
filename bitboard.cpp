@@ -1141,7 +1141,6 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
-	double oldEvalute = evalute;
 	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
 	attacked = false;
 
@@ -1206,21 +1205,9 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
-	//totalStaticEvalute();
-
-	if(whiteMove) {
-		margin = evalute - oldEvalute;
-	} else {
-		margin = oldEvalute - evalute;
-	}
-
-	//gameHash.insert(getHash());
 }
 
 void BitBoard::goBack() {
-	//std::multiset<uint64_t>::iterator removed = gameHash.find(getHash());
-	//gameHash.erase(removed);
-
 	if(!history.empty()) {
 		for(unsigned int i = 0; i < 7; ++i) {
 			figures[i] = history.front().figures[i];
@@ -1245,11 +1232,15 @@ void BitBoard::goBack() {
 
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
+	if(!(vec2_cells[y][x] & (white_bit_mask | black_bit_mask))) {
+		return;
+	}
+
 	uint8_t figure = getFigure(y, x);
 
-	if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
+	//if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
 		hash ^= zobrist[figure][y][x];
-	}
+	//}
 
 	uint8_t color = (figure & COLOR_SAVE);
 	if(figure) {
@@ -1378,7 +1369,7 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 }
 
 void BitBoard::pushHistory() {
-	GoBack newHistory;
+	//GoBack newHistory;
 
 	for(unsigned int i = 0; i < 7; ++i) {
 		newHistory.figures[i] = figures[i];
