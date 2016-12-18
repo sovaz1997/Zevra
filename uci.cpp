@@ -106,15 +106,14 @@ bool Game::uciHandler(std::string str) {
 			game_board.goBack();
 			--hash_decrement;
 		} else if(cmd[0] == "perft") {
-
-			combinations = 0;
 			int k;
 			k = std::stoi(cmd[1]);
 			for(int i = 1; i <= k; ++i) {
-			double st = clock();
-			uint64_t count = perft(i);
-			std::cout << "Depth: " << i << "; count: " << combinations;
-			std::cout << "; speed: " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
+				combinations = 0;
+				double st = clock();
+				uint64_t count = perft(i);
+				std::cout << "Depth: " << i << "; count: " << combinations;
+				std::cout << "; speed: " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
 			}
 		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
 			if(cmd[2] == "nullmove" && cmd[3] == "value") {
