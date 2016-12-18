@@ -391,7 +391,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 				break;
 			}
 
-			result.push_back(currentHash->move);
+			result.emplace_back(currentHash->move);
 			game_board.move(currentHash->move);
 		} else {
 			break;

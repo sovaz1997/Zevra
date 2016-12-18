@@ -21,14 +21,14 @@ void Game::sortMoves(MoveArray& result, int depth) {
 		if(game_board.whiteMove) {
 			if(result.moveArray[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
-				result.moveArray.insert(result.moveArray.begin() + num_attacks, whiteKiller[depth].move);
+				result.moveArray.emplace(result.moveArray.begin() + num_attacks, whiteKiller[depth].move);
 
 				break;
 			}
 		} else {
 			if(result.moveArray[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
-				result.moveArray.insert(result.moveArray.begin() + num_attacks, blackKiller[depth].move);
+				result.moveArray.emplace(result.moveArray.begin() + num_attacks, blackKiller[depth].move);
 
 				break;
 			}
@@ -43,7 +43,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				if(boardHash[hash & hash_cutter].move.equal(result.moveArray[i])) {
 					BitMove tmp = (BitMove)result.moveArray[i];
 					result.moveArray.erase(result.moveArray.begin() + i);
-					result.moveArray.insert(result.moveArray.begin(), tmp);
+					result.moveArray.emplace(result.moveArray.begin(), tmp);
 					result.moveArray[0].fromHash = true;
 					break;
 				}
