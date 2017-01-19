@@ -8,6 +8,9 @@ BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 BitBoard::~BitBoard() {}
 
 void BitBoard::setFen(std::string fen) {
+	whitePassantMade = false;
+	whitePassantMade = false;
+
 	clear();
 
 	std::vector<std::string> fenArray = splitter(fen, ' ');
@@ -1166,17 +1169,21 @@ void BitBoard::move(BitMove& mv) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
+				whitePassantMade = true;
 			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
 				addFigure(ROOK | WHITE, 0, 3);
 				clearCell(0, 0);
+				whitePassantMade = true;
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
 				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
+				blackPassantMade = true;
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
 				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
+				blackPassantMade = true;
 			}
 		}
 	}
@@ -1226,6 +1233,8 @@ void BitBoard::goBack() {
 		hash = history.front().hash;
 		attacked = history.front().attacked;
 		margin = history.front().margin;
+		whitePassantMade = history.front().whitePassantMade;
+		blackPassantMade = history.front().blackPassantMade;
 		history.pop_front();
 	}
 }
@@ -1388,6 +1397,8 @@ void BitBoard::pushHistory() {
 	newHistory.hash = hash;
 	newHistory.attacked = attacked;
 	newHistory.margin = margin;
+	newHistory.whitePassantMade = whitePassantMade;
+	newHistory.blackPassantMade = blackPassantMade;
 	history.push_front(newHistory);
 }
 
@@ -1497,6 +1508,13 @@ void BitBoard::evaluteAll() {
 		uint8_t pos = firstOne(mask);
 		evalute -= queenMatr[pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	if(whitePassantMade) {
+		evalute += 50;
+	}
+	if(blackPassantMade) {
+		evalute -= 50;
 	}
 }
 
@@ -1942,7 +1960,7 @@ void BitBoard::magicNumberGenerator() {
 
 			uint64_t magic;
 			while(!stopped) {
-				magic = magicGenerator();//dis(gen);
+				magic = magicGenerator();
 				std::vector<int> check(rook_combination.size(), 0);
 
 				for(unsigned int i = 0; i < rook_combination.size(); ++i) {
