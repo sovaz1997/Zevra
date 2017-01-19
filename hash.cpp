@@ -2,6 +2,10 @@
 
 Hash::Hash() : prev(nullptr), flag(EMPTY) {}
 
+Hash::~Hash() {
+	clean();
+}
+
 bool Hash::back() {
 	if(prev) {
 		if(!prev->empty()) {

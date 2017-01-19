@@ -19,6 +19,7 @@ public:
 	BitMove move;
 
 	Hash();
+	~Hash();
 	bool back();
 	void recordPrev();
 	void clean();
