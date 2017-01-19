@@ -106,6 +106,7 @@ bool is_input_available() {
 }
 
 int main() {
-	Game game;
-	game.startGame();
+	Game* game = new Game();
+	game->startGame();
+	delete game;
 }
