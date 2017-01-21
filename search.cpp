@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove) {
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, double depth, int real_depth, int rule, bool inNullMove) {
 	++nodesCounter;
 
 	if(depth >= 5) {
@@ -14,6 +14,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 	}
+
 
 	int64_t oldAlpha = alpha;
 
@@ -43,14 +44,26 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		++nextDepth;
 		extended = true;
 		inNullMove = true;
-	}
+	}/* else if(b.attacked) {
+		nextDepth += 0.75;
+		extended = true;
+		inNullMove = true;
+	}*/
+
+	/*if(depth <= 2) {
+		if(!extended && !b.attacked && !b.inCheck(color) && !inNullMove) {
+			if(b.getEvalute() + PAWN_EV / 2 >= beta) {
+				return beta;
+			}
+		}
+	}*/
 
 	int tmp;
 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended && !option.nullMovePrunningEnable) || (currentHash->flag != EMPTY && currentHash->key == hash && inNullMove && !extended && option.nullMovePrunningEnable)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -197,10 +210,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
 					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
-					//whiteKiller[real_depth] = Killer(local_move);
+					whiteKiller[real_depth] = Killer(local_move);
 				} else {
 					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
-					//blackKiller[real_depth] = Killer(local_move);
+					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
 
@@ -258,7 +271,7 @@ uint64_t Game::perft(int depth) {
 	game_board.bitBoardMoveGenerator(moveArray[depth]);
 
 	for(unsigned int i = 0; i < moveArray[depth].count; ++i) {
-		game_board.move(moveArray[depth].moveArray[i]);
+		game_board.fastMove(moveArray[depth].moveArray[i]);
 		if(game_board.whiteMove) {
 			if(game_board.inCheck(BLACK)) {
 				game_board.goBack();
@@ -282,13 +295,13 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 
 	uint8_t color = WHITE;
 
-	if(!b.whiteMove) {
+	/*if(!b.whiteMove) {
 		color = BLACK;
 	}
 
 	if(b.inCheck(color)) {
 		return negamax_elementary(b, alpha, beta, 1, real_depth, rule, false);
-	}
+	}*/
 
 	int64_t val = b.getEvalute();
 

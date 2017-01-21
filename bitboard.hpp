@@ -48,7 +48,9 @@ private:
 	uint8_t firstOne(uint64_t mask);
 	uint8_t lastOne(uint64_t mask);
 	void clearCell(uint8_t y, uint8_t x);
-	void addFigure(uint8_t figure, uint8_t y, uint8_t x) ;
+	void addFigure(uint8_t figure, uint8_t y, uint8_t x);
+	void fastClearCell(uint8_t y, uint8_t x);
+	void fastAddFigure(uint8_t figure, uint8_t y, uint8_t x);
 	void printBitBoard(uint64_t bit_board);
 	void magicNumberGenerator();
 	void magicInit();
@@ -80,6 +82,7 @@ public:
 	void bitBoardMoveGenerator(MoveArray& moveArray);
 	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
 	void move(BitMove& mv);
+	void fastMove(BitMove& mv);
 	void goBack();
 	void pushHistory();
 	BitMove getRandomMove();

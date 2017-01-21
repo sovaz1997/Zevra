@@ -1214,6 +1214,79 @@ void BitBoard::move(BitMove& mv) {
 	castlingMap &= (figures[KING] | figures[ROOK]);
 }
 
+
+void BitBoard::fastMove(BitMove& mv) {
+	pushHistory();
+	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
+	attacked = false;
+
+	fastClearCell(mv.toY, mv.toX);
+	fastClearCell(mv.fromY, mv.fromX);
+
+	if(mv.replaced) {
+		fastAddFigure(mv.replacedFigure, mv.toY, mv.toX);
+	} else {
+		fastAddFigure(movedFigure, mv.toY, mv.toX);
+	}
+
+	if(mv.passant) {
+		if(whiteMove) {
+			fastClearCell(passant_y - 1, passant_x);
+		} else {
+			fastClearCell(passant_y + 1, passant_x);
+		}
+	}
+
+	if((mv.movedFigure & TYPE_SAVE) == KING) {
+		if(whiteMove) {
+			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
+				fastAddFigure(ROOK | WHITE, 0, 5);
+				fastClearCell(0, 7);
+				whitePassantMade = true;
+			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
+				fastAddFigure(ROOK | WHITE, 0, 3);
+				fastClearCell(0, 0);
+				whitePassantMade = true;
+			}
+		} else {
+			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
+				fastAddFigure(ROOK | BLACK, 7, 5);
+				fastClearCell(7, 7);
+				blackPassantMade = true;
+			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
+				fastAddFigure(ROOK | BLACK, 7, 3);
+				fastClearCell(7, 0);
+				blackPassantMade = true;
+			}
+		}
+	}
+
+	passant_enable = false;
+
+	if((mv.movedFigure & TYPE_SAVE) == PAWN && abs(mv.toY - mv.fromY) > 1) {
+		passant_enable = true;
+		passant_y = (mv.toY + mv.fromY) / 2;
+		passant_x = mv.fromX;
+	}
+
+	whiteMove = !whiteMove;
+	if(whiteMove) {
+		++moveNumber;
+	}
+
+	if(!mv.isAttack && (mv.movedFigure & TYPE_SAVE) != PAWN) {
+		++ruleNumber;
+	} else {
+		ruleNumber = 0;
+	}
+
+	if(mv.isAttack) {
+		attacked = true;
+	}
+
+	castlingMap &= (figures[KING] | figures[ROOK]);
+}
+
 void BitBoard::goBack() {
 	if(!history.empty()) {
 		for(unsigned int i = 0; i < 7; ++i) {
@@ -1365,6 +1438,32 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 	}
 
 	hash ^= zobrist[originalFigure][y][x];
+}
+
+
+void BitBoard::fastClearCell(uint8_t y, uint8_t x) {
+	if(!(vec2_cells[y][x] & (white_bit_mask | black_bit_mask))) {
+		return;
+	}
+
+	if((getFigure(y, x) & TYPE_SAVE) != 0) {
+		figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
+	}
+
+	white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
+	black_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
+}
+
+void BitBoard::fastAddFigure(uint8_t figure, uint8_t y, uint8_t x) {
+	uint8_t color = (figure & COLOR_SAVE);
+
+	figures[figure & TYPE_SAVE] |= vec2_cells[y][x];
+
+	if(color == WHITE) {
+		white_bit_mask |= vec2_cells[y][x];
+	} else if(color == BLACK) {
+		black_bit_mask |= vec2_cells[y][x];
+	}
 }
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
