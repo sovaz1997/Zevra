@@ -41,8 +41,6 @@ private:
 	double kingSecurityArray[64][64];
 	int64_t pawnStructureEvalute();
 
-	GoBack newHistory;
-
 	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
 	uint8_t firstOne(uint64_t mask);
