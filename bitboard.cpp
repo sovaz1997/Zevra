@@ -8,9 +8,6 @@ BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 BitBoard::~BitBoard() {}
 
 void BitBoard::setFen(std::string fen) {
-	whitePassantMade = false;
-	whitePassantMade = false;
-
 	clear();
 
 	std::vector<std::string> fenArray = splitter(fen, ' ');
@@ -228,9 +225,10 @@ void BitBoard::clear() {
 	whiteMove = true;
 	castlingMap = 0;
 
-	while(!history.empty()) {
-		history.pop_front();
-	}
+	//while(!history.empty()) {
+		//history.pop_front();
+		history_iterator = 0;
+	//}
 
 	gameHash.clear();
 }
@@ -268,6 +266,9 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
+	history = std::vector<GoBack> (10000);
+	history_iterator = 0;
+	
 	margin = 0;
 
 	magicConstantsSet();
@@ -1169,94 +1170,17 @@ void BitBoard::move(BitMove& mv) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
-				whitePassantMade = true;
 			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
 				addFigure(ROOK | WHITE, 0, 3);
 				clearCell(0, 0);
-				whitePassantMade = true;
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
 				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
-				blackPassantMade = true;
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
 				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
-				blackPassantMade = true;
-			}
-		}
-	}
-
-	passant_enable = false;
-
-	if((mv.movedFigure & TYPE_SAVE) == PAWN && abs(mv.toY - mv.fromY) > 1) {
-		passant_enable = true;
-		passant_y = (mv.toY + mv.fromY) / 2;
-		passant_x = mv.fromX;
-	}
-
-	whiteMove = !whiteMove;
-	if(whiteMove) {
-		++moveNumber;
-	}
-
-	if(!mv.isAttack && (mv.movedFigure & TYPE_SAVE) != PAWN) {
-		++ruleNumber;
-	} else {
-		ruleNumber = 0;
-	}
-
-	if(mv.isAttack) {
-		attacked = true;
-	}
-
-	castlingMap &= (figures[KING] | figures[ROOK]);
-}
-
-
-void BitBoard::fastMove(BitMove& mv) {
-	pushHistory();
-	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
-	attacked = false;
-
-	fastClearCell(mv.toY, mv.toX);
-	fastClearCell(mv.fromY, mv.fromX);
-
-	if(mv.replaced) {
-		fastAddFigure(mv.replacedFigure, mv.toY, mv.toX);
-	} else {
-		fastAddFigure(movedFigure, mv.toY, mv.toX);
-	}
-
-	if(mv.passant) {
-		if(whiteMove) {
-			fastClearCell(passant_y - 1, passant_x);
-		} else {
-			fastClearCell(passant_y + 1, passant_x);
-		}
-	}
-
-	if((mv.movedFigure & TYPE_SAVE) == KING) {
-		if(whiteMove) {
-			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
-				fastAddFigure(ROOK | WHITE, 0, 5);
-				fastClearCell(0, 7);
-				whitePassantMade = true;
-			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
-				fastAddFigure(ROOK | WHITE, 0, 3);
-				fastClearCell(0, 0);
-				whitePassantMade = true;
-			}
-		} else {
-			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
-				fastAddFigure(ROOK | BLACK, 7, 5);
-				fastClearCell(7, 7);
-				blackPassantMade = true;
-			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
-				fastAddFigure(ROOK | BLACK, 7, 3);
-				fastClearCell(7, 0);
-				blackPassantMade = true;
 			}
 		}
 	}
@@ -1288,27 +1212,26 @@ void BitBoard::fastMove(BitMove& mv) {
 }
 
 void BitBoard::goBack() {
-	if(!history.empty()) {
+	--history_iterator;
+	if(history_iterator >= 0) {
 		for(unsigned int i = 0; i < 7; ++i) {
-			figures[i] = history.front().figures[i];
+			figures[i] = history[history_iterator].figures[i];
 		}
 
-		white_bit_mask = history.front().white_bit_mask;
-		black_bit_mask = history.front().black_bit_mask;
-		moveNumber = history.front().moveNumber;
-		ruleNumber = history.front().ruleNumber;
-		castlingMap = history.front().castlingMap;
-		whiteMove = history.front().whiteMove;
-		evalute = history.front().evalute;
-		passant_y = history.front().passant_y;
-		passant_x = history.front().passant_x;
-		passant_enable = history.front().passant_enable;
-		hash = history.front().hash;
-		attacked = history.front().attacked;
-		margin = history.front().margin;
-		whitePassantMade = history.front().whitePassantMade;
-		blackPassantMade = history.front().blackPassantMade;
-		history.pop_front();
+		white_bit_mask = history[history_iterator].white_bit_mask;
+		black_bit_mask = history[history_iterator].black_bit_mask;
+		moveNumber = history[history_iterator].moveNumber;
+		ruleNumber = history[history_iterator].ruleNumber;
+		castlingMap = history[history_iterator].castlingMap;
+		whiteMove = history[history_iterator].whiteMove;
+		evalute = history[history_iterator].evalute;
+		passant_y = history[history_iterator].passant_y;
+		passant_x = history[history_iterator].passant_x;
+		passant_enable = history[history_iterator].passant_enable;
+		hash = history[history_iterator].hash;
+		attacked = history[history_iterator].attacked;
+		margin = history[history_iterator].margin;
+		//history.pop_front();
 	}
 }
 
@@ -1440,32 +1363,6 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 	hash ^= zobrist[originalFigure][y][x];
 }
 
-
-void BitBoard::fastClearCell(uint8_t y, uint8_t x) {
-	if(!(vec2_cells[y][x] & (white_bit_mask | black_bit_mask))) {
-		return;
-	}
-
-	if((getFigure(y, x) & TYPE_SAVE) != 0) {
-		figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
-	}
-
-	white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
-	black_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
-}
-
-void BitBoard::fastAddFigure(uint8_t figure, uint8_t y, uint8_t x) {
-	uint8_t color = (figure & COLOR_SAVE);
-
-	figures[figure & TYPE_SAVE] |= vec2_cells[y][x];
-
-	if(color == WHITE) {
-		white_bit_mask |= vec2_cells[y][x];
-	} else if(color == BLACK) {
-		black_bit_mask |= vec2_cells[y][x];
-	}
-}
-
 void BitBoard::printBitBoard(uint64_t bit_board) {
 	uint64_t doubler = 1;
 	for(int y = 7; y >= 0; --y) {
@@ -1480,25 +1377,24 @@ void BitBoard::pushHistory() {
 	//GoBack newHistory;
 
 	for(unsigned int i = 0; i < 7; ++i) {
-		newHistory.figures[i] = figures[i];
+		history[history_iterator].figures[i] = figures[i];
 	}
 
-	newHistory.white_bit_mask = white_bit_mask;
-	newHistory.black_bit_mask = black_bit_mask;
-	newHistory.moveNumber = moveNumber;
-	newHistory.ruleNumber = ruleNumber;
-	newHistory.whiteMove = whiteMove;
-	newHistory.evalute = evalute;
-	newHistory.castlingMap = castlingMap;
-	newHistory.passant_enable = passant_enable;
-	newHistory.passant_x = passant_x;
-	newHistory.passant_y = passant_y;
-	newHistory.hash = hash;
-	newHistory.attacked = attacked;
-	newHistory.margin = margin;
-	newHistory.whitePassantMade = whitePassantMade;
-	newHistory.blackPassantMade = blackPassantMade;
-	history.push_front(newHistory);
+	history[history_iterator].white_bit_mask = white_bit_mask;
+	history[history_iterator].black_bit_mask = black_bit_mask;
+	history[history_iterator].moveNumber = moveNumber;
+	history[history_iterator].ruleNumber = ruleNumber;
+	history[history_iterator].whiteMove = whiteMove;
+	history[history_iterator].evalute = evalute;
+	history[history_iterator].castlingMap = castlingMap;
+	history[history_iterator].passant_enable = passant_enable;
+	history[history_iterator].passant_x = passant_x;
+	history[history_iterator].passant_y = passant_y;
+	history[history_iterator].hash = hash;
+	history[history_iterator].attacked = attacked;
+	history[history_iterator].margin = margin;
+	//history.push_front(newHistory);
+	++history_iterator;
 }
 
 int64_t BitBoard::kingSecurity() {
@@ -1607,13 +1503,6 @@ void BitBoard::evaluteAll() {
 		uint8_t pos = firstOne(mask);
 		evalute -= queenMatr[pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}
-
-	if(whitePassantMade) {
-		evalute += 50;
-	}
-	if(blackPassantMade) {
-		evalute -= 50;
 	}
 }
 
@@ -1939,14 +1828,18 @@ bool BitBoard::blc() {
 }
 
 void BitBoard::zobristGenerator() {
-	std::random_device rd;
-	std::mt19937_64 gen(rd());
-	std::uniform_int_distribution<unsigned long long> dis;
+	//std::random_device rd;
+	//std::mt19937_64 gen(rd());
+	//std::uniform_int_distribution<unsigned long long> dis;
 
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
-				zobrist[i][j][k] = dis(gen);
+				for(unsigned int s = 0; s < 64; ++s) {
+					int m = rand() % 2;
+					zobrist[i][j][k] += m * std::pow(2, s);//dis(gen);
+				}
+				//std::cout << zobrist[i][j][k] << std::endl;
 			}
 		}
 	}
@@ -2059,7 +1952,7 @@ void BitBoard::magicNumberGenerator() {
 
 			uint64_t magic;
 			while(!stopped) {
-				magic = magicGenerator();
+				magic = magicGenerator();//dis(gen);
 				std::vector<int> check(rook_combination.size(), 0);
 
 				for(unsigned int i = 0; i < rook_combination.size(); ++i) {
