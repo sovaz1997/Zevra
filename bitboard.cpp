@@ -213,6 +213,10 @@ std::string BitBoard::getFen() {
 void BitBoard::clear() {
 	hash = 0;
 
+	third_repeat = std::vector<int> (pow(2, hash_width), 0);
+
+	hash_enable = true;
+
 	for(unsigned int i = 0; i < 7; ++i) {
 		figures[i] = 0;
 	}
@@ -267,6 +271,7 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 
 void BitBoard::preInit() {
 	history = std::vector<GoBack> (10000);
+	third_repeat = std::vector<int> (pow(2, hash_width), 0);
 	history_iterator = 0;
 	
 	margin = 0;
@@ -1209,6 +1214,12 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
+
+	++third_repeat[hash & hash_cutter];
+
+	if(third_repeat[hash & hash_cutter] >= 3) {
+		hash_enable = false;
+	}
 }
 
 void BitBoard::goBack() {
@@ -1228,10 +1239,11 @@ void BitBoard::goBack() {
 		passant_y = history[history_iterator].passant_y;
 		passant_x = history[history_iterator].passant_x;
 		passant_enable = history[history_iterator].passant_enable;
+		--third_repeat[hash & hash_cutter];
 		hash = history[history_iterator].hash;
+		hash_enable = history[history_iterator].hash_enable;
 		attacked = history[history_iterator].attacked;
 		margin = history[history_iterator].margin;
-		//history.pop_front();
 	}
 }
 
@@ -1391,6 +1403,7 @@ void BitBoard::pushHistory() {
 	history[history_iterator].passant_x = passant_x;
 	history[history_iterator].passant_y = passant_y;
 	history[history_iterator].hash = hash;
+	history[history_iterator].hash_enable = hash_enable;
 	history[history_iterator].attacked = attacked;
 	history[history_iterator].margin = margin;
 	//history.push_front(newHistory);
@@ -1614,6 +1627,8 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
+	if(!hash_enable) { return 0; }
+
 	if(whiteMove) {
 		return evalute;// + pawnStructureEvalute();// + kingSecurity();
 	} else {

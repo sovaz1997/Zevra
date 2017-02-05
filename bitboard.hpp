@@ -68,6 +68,8 @@ private:
 
 	uint64_t rookMagicMask[8][8];
 	uint64_t bishopMagicMask[8][8];
+
+	std::vector<int> third_repeat;
 public:
 	BitBoard();
 	~BitBoard();
@@ -112,6 +114,8 @@ public:
 	int64_t kingSecurity();
 
 	std::multiset<uint64_t> gameHash;
+
+	bool hash_enable = true;
 };
 
 #endif
