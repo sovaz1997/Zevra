@@ -1225,6 +1225,7 @@ void BitBoard::move(BitMove& mv) {
 void BitBoard::goBack() {
 	--history_iterator;
 	if(history_iterator >= 0) {
+		--third_repeat[getColorHash() & hash_cutter];
 		for(unsigned int i = 0; i < 7; ++i) {
 			figures[i] = history[history_iterator].figures[i];
 		}
@@ -1239,7 +1240,6 @@ void BitBoard::goBack() {
 		passant_y = history[history_iterator].passant_y;
 		passant_x = history[history_iterator].passant_x;
 		passant_enable = history[history_iterator].passant_enable;
-		--third_repeat[getColorHash() & hash_cutter];
 		hash = history[history_iterator].hash;
 		hash_enable = history[history_iterator].hash_enable;
 		attacked = history[history_iterator].attacked;
