@@ -16,6 +16,7 @@ public:
 	bool attacked;
 	double margin;
 	bool hash_enable;
+	bool whitePassantMade, blackPassantMade;
 };
 
 #endif

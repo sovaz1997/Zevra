@@ -50,7 +50,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended && b.hash_enable) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended && !option.nullMovePrunningEnable) || (currentHash->flag != EMPTY && currentHash->key == hash && inNullMove && !extended && option.nullMovePrunningEnable)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -274,17 +274,8 @@ uint64_t Game::perft(int depth) {
 }
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
+
 	int64_t val = b.getEvalute();
-
-	/*uint8_t color = WHITE;
-
-	if(!b.whiteMove) {
-		color = BLACK;
-	}*/
-
-	/*if(b.inCheck(color)) {
-		return negamax(b, alpha, beta, 1, real_depth, rule, false);
-	}*/
 
 	if(val >= beta) {
 		return val;
@@ -305,7 +296,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 			if(game_board.inCheck(WHITE)) {
 				b.goBack();
 				continue;
-			}
+			} 
 		} else {
 			if(game_board.inCheck(BLACK)) {
 				b.goBack();
@@ -425,4 +416,147 @@ void Game::printPV(int depth) {
 		std::cout << main_pv[i].getMoveString() << " ";
 	}
 	std::cout << std::endl;
+}
+
+int64_t Game::negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove) {
+	++nodesCounter;
+
+	if(depth >= 5) {
+		if(is_input_available()) {
+			std::string input_str;
+			std::getline(std::cin, input_str);
+			if(input_str == "stop") {
+				stopped = true;
+			} else if(input_str == "isready") {
+				std::cout << "readyok" << std::endl;
+			}
+		}
+	}
+
+	int64_t eval = -WHITE_WIN;
+
+	int nextDepth = depth - 1;
+	if(depth > 2) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
+			return 0;
+		}
+	}
+
+	uint8_t color;
+	if(b.whiteMove) {
+		color = WHITE;
+	} else {
+		color = BLACK;
+	}
+
+	if(depth <= 0 || real_depth >= 100) {
+		return b.getEvalute();
+	}
+
+	int num_moves = 0;
+
+	b.bitBoardMoveGenerator(moveArray[real_depth]);
+	sortAttacks(moveArray[real_depth]);
+	sortMoves(moveArray[real_depth], real_depth);
+
+	BitMove local_move;
+
+	if(moveArray[real_depth].count > 0) {
+		local_move = moveArray[real_depth].moveArray[0];
+	}
+
+	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
+		b.move(moveArray[real_depth].moveArray[i]);
+
+		if(game_board.inCheck(color)) {
+			b.goBack();
+			continue;
+		}
+
+		if(num_moves == 0) {
+			local_move = moveArray[real_depth].moveArray[i];
+		}
+
+		++num_moves;
+
+		if(real_depth == 0 && depth >= 9) {
+			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+		}
+
+		int tmp;
+
+		tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+
+		if(tmp > alpha && tmp < beta) {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+		}
+
+		b.goBack();
+
+
+		if(tmp > eval) {
+			eval = tmp;
+		}
+
+		if(tmp > alpha) {
+			alpha = tmp;
+			local_move = moveArray[real_depth].moveArray[i];
+
+
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+//					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					whiteKiller[real_depth] = Killer(local_move);
+				} else {
+//					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					blackKiller[real_depth] = Killer(local_move);
+				}
+			}
+		}
+
+		if(alpha >= beta) {
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//whiteKiller[real_depth] = Killer(local_move);
+				} else {
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//blackKiller[real_depth] = Killer(local_move);
+				}
+			}
+
+			return beta;
+		}
+	}
+
+	if(num_moves == 0) {
+		if(game_board.inCheck(color)) {
+			return BLACK_WIN + real_depth;
+		} else {
+			return 0;
+		}
+	}
+
+	if(real_depth == 0) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
+			return 0;
+		}
+
+		bestMove = local_move;
+		bestScore = alpha;
+	}
+
+	if(real_depth == 0) {
+		if(num_moves >= 0) {
+			std::cout << "info depth " << max_depth << " time " << (int)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+			std::cout << " ";
+			printScore(eval);
+			std::cout << " pv ";
+			printPV(depth);
+		} else {
+			std::cout << std::endl;
+		}
+	}
+
+	return alpha;
 }
