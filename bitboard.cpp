@@ -213,6 +213,9 @@ std::string BitBoard::getFen() {
 void BitBoard::clear() {
 	hash = 0;
 
+	whitePassantMade = false;
+ 	blackPassantMade = false;
+
 	third_repeat = std::vector<int> (pow(2, hash_width), 0);
 
 	hash_enable = true;
@@ -1175,17 +1178,21 @@ void BitBoard::move(BitMove& mv) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
+				whitePassantMade = true;
 			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
 				addFigure(ROOK | WHITE, 0, 3);
 				clearCell(0, 0);
+				whitePassantMade = true;
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
 				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
+				blackPassantMade = true;
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
 				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
+				blackPassantMade = true;
 			}
 		}
 	}
@@ -1244,6 +1251,8 @@ void BitBoard::goBack() {
 		hash_enable = history[history_iterator].hash_enable;
 		attacked = history[history_iterator].attacked;
 		margin = history[history_iterator].margin;
+		whitePassantMade = history[history_iterator].whitePassantMade;
+ 		blackPassantMade = history[history_iterator].blackPassantMade;
 	}
 }
 
@@ -1404,6 +1413,8 @@ void BitBoard::pushHistory() {
 	history[history_iterator].hash_enable = hash_enable;
 	history[history_iterator].attacked = attacked;
 	history[history_iterator].margin = margin;
+	history[history_iterator].whitePassantMade = whitePassantMade;
+ 	history[history_iterator].blackPassantMade = blackPassantMade;
 	++history_iterator;
 }
 
@@ -1624,6 +1635,13 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
+	if(whitePassantMade) {
+ 		evalute += 50;
+ 	}
+ 	if(blackPassantMade) {
+ 		evalute -= 50;
+ 	}
+
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
@@ -1840,17 +1858,18 @@ bool BitBoard::blc() {
 }
 
 void BitBoard::zobristGenerator() {
-	//std::random_device rd;
-	//std::mt19937_64 gen(rd());
-	//std::uniform_int_distribution<unsigned long long> dis;
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<unsigned long long> dis;
 
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
-				for(unsigned int s = 0; s < 64; ++s) {
+				/*for(unsigned int s = 0; s < 64; ++s) {
 					int m = rand() % 2;
 					zobrist[i][j][k] += m * std::pow(2, s);//dis(gen);
-				}
+				}*/
+				zobrist[i][j][k] = dis(gen);
 				//std::cout << zobrist[i][j][k] << std::endl;
 			}
 		}

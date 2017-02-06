@@ -115,6 +115,7 @@ public:
 
 	bool hash_enable = true;
 	uint64_t hash;
+	bool whitePassantMade, blackPassantMade;
 };
 
 #endif
