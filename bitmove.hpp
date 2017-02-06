@@ -10,7 +10,7 @@
 
 class BitMove {
 private:
-	Category category;
+	//Category category;
 public:
 	uint8_t attackedFigure, movedFigure, fromY, fromX, toY, toX;
 	uint8_t replacedFigure;

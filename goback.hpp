@@ -15,6 +15,7 @@ public:
 	int64_t evalute;
 	bool attacked;
 	double margin;
+	bool hash_enable;
 };
 
 #endif

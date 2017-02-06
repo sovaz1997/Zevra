@@ -28,7 +28,6 @@ private:
 	uint64_t BISHOP_MAGIC[8][8];
 
 	uint64_t zobrist[32][BOARD_SIZE][BOARD_SIZE];
-	uint64_t hash;
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	void preInit();
@@ -54,7 +53,6 @@ private:
 
 	uint64_t magicGenerator();
 
-	//std::deque<GoBack> history;
 	std::vector<GoBack> history;
 	int history_iterator = 0;
 
@@ -68,6 +66,8 @@ private:
 
 	uint64_t rookMagicMask[8][8];
 	uint64_t bishopMagicMask[8][8];
+
+	std::vector<int> third_repeat;
 public:
 	BitBoard();
 	~BitBoard();
@@ -112,6 +112,9 @@ public:
 	int64_t kingSecurity();
 
 	std::multiset<uint64_t> gameHash;
+
+	bool hash_enable = true;
+	uint64_t hash;
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cwchar>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -58,6 +59,8 @@ const int ALPHA = 2;
 const int BETA = 3;
 
 const int MIN_DEPTH = 2;
+
+const uint64_t hash_cutter = std::pow(2, hash_width) - 1;
 
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
