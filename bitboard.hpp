@@ -54,7 +54,6 @@ private:
 
 	uint64_t magicGenerator();
 
-	//std::deque<GoBack> history;
 	std::vector<GoBack> history;
 	int history_iterator = 0;
 
