@@ -1386,8 +1386,6 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 }
 
 void BitBoard::pushHistory() {
-	//GoBack newHistory;
-
 	for(unsigned int i = 0; i < 7; ++i) {
 		history[history_iterator].figures[i] = figures[i];
 	}
@@ -1406,7 +1404,6 @@ void BitBoard::pushHistory() {
 	history[history_iterator].hash_enable = hash_enable;
 	history[history_iterator].attacked = attacked;
 	history[history_iterator].margin = margin;
-	//history.push_front(newHistory);
 	++history_iterator;
 }
 
