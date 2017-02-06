@@ -1215,9 +1215,9 @@ void BitBoard::move(BitMove& mv) {
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
 
-	++third_repeat[hash & hash_cutter];
+	++third_repeat[getColorHash() & hash_cutter];
 
-	if(third_repeat[hash & hash_cutter] >= 3) {
+	if(third_repeat[getColorHash() & hash_cutter] >= 3) {
 		hash_enable = false;
 	}
 }
@@ -1239,7 +1239,7 @@ void BitBoard::goBack() {
 		passant_y = history[history_iterator].passant_y;
 		passant_x = history[history_iterator].passant_x;
 		passant_enable = history[history_iterator].passant_enable;
-		--third_repeat[hash & hash_cutter];
+		--third_repeat[getColorHash() & hash_cutter];
 		hash = history[history_iterator].hash;
 		hash_enable = history[history_iterator].hash_enable;
 		attacked = history[history_iterator].attacked;
