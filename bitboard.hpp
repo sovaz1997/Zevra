@@ -75,7 +75,7 @@ public:
 	void setFen(std::string fen);
 	std::string getFen();
 	void clear();
-	int stress;
+	int64_t stress;
 
 	void bitBoardMoveGenerator(MoveArray& moveArray);
 	void bitBoardAttackMoveGenerator(MoveArray& moveArray);

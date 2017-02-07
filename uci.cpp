@@ -101,7 +101,7 @@ bool Game::uciHandler(std::string str) {
 			for(unsigned int i = 0; i < 1000000; ++i) {
 				game_board.bitBoardMoveGenerator(moveArray[0]);
 			}
-			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
+			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
@@ -113,7 +113,7 @@ bool Game::uciHandler(std::string str) {
 				double st = clock();
 				uint64_t count = perft(i);
 				std::cout << "Depth: " << i << "; count: " << combinations;
-				std::cout << "; speed: " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
+				std::cout << "; speed: " << (int64_t)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
 			}
 		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
 			if(cmd[2] == "nullmove" && cmd[3] == "value") {
@@ -137,6 +137,6 @@ bool Game::uciHandler(std::string str) {
 }
 
 void Game::idPrint() {
-	std::cout << "id name Zevra v1.3 r326" << std::endl;
+	std::cout << "id name Zevra v1.3 r326 popcnt" << std::endl;
 	std::cout << "id author sovaz1997" << std::endl;
 }

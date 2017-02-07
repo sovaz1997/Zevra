@@ -35,7 +35,7 @@ private:
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
 
-	int max_depth;
+	int64_t max_depth;
 	bool stopped;
 
 	int hash_decrement = 0;
@@ -58,19 +58,19 @@ private:
 	bool hasBestMove = false;
 
 	std::stack<BitMove>pv_line;
-	int stress;
+	int64_t stress;
 	BitMove bestMove;
 	int64_t bestScore;
 
 	//фиксированное время
 	Timer timer;
-	int time;
+	int64_t time;
 	double start_timer, end_timer;
 
 	//турнирный режим
 
 	double wtime, btime, winc, binc;
-	int movestogo;
+	uint64_t movestogo;
 	bool movestogoEnable;
 	uint64_t combinations;
 
@@ -82,7 +82,7 @@ public:
 	int64_t negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
+  	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::string getScore(double score);

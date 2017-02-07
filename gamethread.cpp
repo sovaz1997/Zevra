@@ -50,25 +50,13 @@ void Game::goFixedDepth() {
 		if((abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99) || stopped) {
 			break;
 		}
-
-		//depth = max_depth;
 	}
 
 	end_timer = clock();
 
-	/*std::cout << "info depth " << depth << " ";
-	printScore(bestScore);
-	std::cout << " pv " << bestMove.getMoveString();
-	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
-	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << std::endl;*/
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << std::endl;
 	}
-
-	/*for(int i = 0; i < bestPV.size(); ++i) {
-		std::cout << bestPV[i].getMoveString() << " ";
-	}
-	std::cout << std::endl;*/
 }
 
 void Game::goFixedTime(int tm) {
