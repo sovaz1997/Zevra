@@ -168,7 +168,6 @@ bool Game::move(std::string mv) {
 			}
 
 			++hash_decrement;
-			std::cout << game_board.getFen() << " " << game_board.hash_enable << " " << game_board.hash << std::endl;
 			return true;
 		}
 	}
