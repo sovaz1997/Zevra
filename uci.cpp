@@ -93,8 +93,6 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
-		} else if(cmd[0] == "quit") {
-			return false;
 		} else if(cmd[0] == "stress") {
 			game_board.stress = 0;
 			double st = clock();
@@ -129,14 +127,12 @@ bool Game::uciHandler(std::string str) {
 					option.lmrEnable = false;
 				}
 			}
-		} else if(cmd[0] == "ucinewgame") {
-			game_board = BitBoard();
 		}
 
 		return true;
 }
 
 void Game::idPrint() {
-	std::cout << "id name Zevra v1.3 r326 popcnt" << std::endl;
+	std::cout << "id name Zevra v1.3 r326" << std::endl;
 	std::cout << "id author sovaz1997" << std::endl;
 }
