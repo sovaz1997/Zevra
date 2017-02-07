@@ -7,6 +7,6 @@ void Timer::start() {
   startedTime = clock();
 }
 
-int Timer::getTime() {
+int64_t Timer::getTime() {
   return ((clock() - startedTime) / (CLOCKS_PER_SEC / 1000));
 }
