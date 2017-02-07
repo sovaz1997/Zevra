@@ -129,6 +129,8 @@ bool Game::uciHandler(std::string str) {
 					option.lmrEnable = false;
 				}
 			}
+		} else if(cmd[0] == "ucinewgame") {
+			game_board = BitBoard();
 		}
 
 		return true;
