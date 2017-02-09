@@ -90,6 +90,7 @@ public:
 
 	void evaluteAll();
 	int64_t evalute;
+	int64_t kingEvalute();
 	int64_t getEvalute();
 	void totalStaticEvalute();
 

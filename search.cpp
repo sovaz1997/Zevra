@@ -118,6 +118,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
+	/*if(!extended && !inCheck && !b.attacked && depth <= 3) {
+		if(alpha == beta - 1) {
+			if(b.getEvalute() + PAWN_EV / 2 < alpha) {
+				int64_t value = quies(b, alpha, beta, rule, real_depth);
+				
+				if(value < beta) {
+					return value;
+				}
+			}
+		}
+	}*/
+
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
@@ -157,7 +169,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				//tmp = alpha + 1;
+				
+				if(tmp > alpha && tmp < beta) {
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				}
 			} else {
 				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove);
 

@@ -1527,6 +1527,18 @@ void BitBoard::evaluteAll() {
 	}
 }
 
+int64_t BitBoard::kingEvalute() {
+	int8_t white_king_pos = firstOne(figures[KING | WHITE]);
+	int64_t result = (popcount64(white_bit_mask | black_bit_mask) * kingDebuteMatr[7 - white_king_pos / 8][white_king_pos % 3] / 32) + 
+					 ((32 - popcount64(white_bit_mask | black_bit_mask)) * kingEndGameMatr[7 - white_king_pos / 8][white_king_pos % 3] / 32);
+
+	int8_t black_king_pos = firstOne(figures[KING | BLACK]);
+	result -= ((popcount64(white_bit_mask | black_bit_mask) * kingDebuteMatr[white_king_pos / 8][white_king_pos % 3] / 32) + 
+					 ((32 - popcount64(white_bit_mask | black_bit_mask)) * kingEndGameMatr[white_king_pos / 8][black_king_pos % 3] / 32));
+
+	return result;
+}
+
 int64_t BitBoard::pawnStructureEvalute() {
 	int64_t result = 0;
 
@@ -1645,9 +1657,9 @@ int64_t BitBoard::getEvalute() {
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
-		return evalute;// + pawnStructureEvalute();// + kingSecurity();
+		return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -evalute;// - pawnStructureEvalute();// - kingSecurity();
+		return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 
