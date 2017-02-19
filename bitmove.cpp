@@ -33,7 +33,7 @@ std::string BitMove::getMoveString() {
 	return res;
 }
 
-double BitMove::getAttackPrice() {
+double BitMove::getAttackPrice() const {
 	if(!isAttack) {
 		return -INFINITY;
 	}
@@ -70,12 +70,12 @@ bool BitMove::equal(BitMove& mv) {
 	return (mv.fromY == fromY && mv.fromX == fromX && mv.toY == toY && mv.toX == toX && mv.movedFigure == movedFigure);
 }
 
-bool BitMove::operator>(BitMove& mv) {
+bool BitMove::operator>(const BitMove& mv) const {
 	return getAttackPrice() < mv.getAttackPrice();
 	//return category < mv.category;
 }
 
-bool BitMove::operator<(BitMove& mv) {
+bool BitMove::operator<(const BitMove& mv) const {
 	return getAttackPrice() > mv.getAttackPrice();
 	//return category > mv.category;
 }

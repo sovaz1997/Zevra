@@ -21,10 +21,10 @@ public:
 	BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx);
 	BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx, bool psnt);
 
-	bool operator>(BitMove& mv);
-	bool operator<(BitMove& mv);
+	bool operator>(const BitMove& mv) const;
+	bool operator<(const BitMove& mv) const;
 	std::string getMoveString();
-	double getAttackPrice();
+	double getAttackPrice() const;
 	bool equal(BitMove& mv);
 	void setReplaced(uint8_t figure);
 	void setCategory(int cat, double val);

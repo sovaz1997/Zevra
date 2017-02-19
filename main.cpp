@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "game.hpp"
 #include "bitboard.hpp"
 
@@ -96,9 +98,9 @@ bool is_input_available() {
 	time_val->tv_usec = 0;
 
 	val = select(STDIN_FILENO+1,set,NULL,NULL,time_val);
-	/*if (val == -1 && errno != EINTR) {
-	my_fatal("input_available(): select(): %s\n",strerror(errno));
-	}*/
+	//if (val == -1 && errno != EINTR) {
+	//my_fatal("input_available(): select(): %s\n",strerror(errno));
+	//}
 
 	return val > 0;
 
