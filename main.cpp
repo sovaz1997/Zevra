@@ -1,11 +1,9 @@
-#include <unistd.h>
-
 #include "game.hpp"
 #include "bitboard.hpp"
 
 #if defined(_WIN32) || defined(_WIN64)
 	#include <windows.h>
-#elif defined(__unix__) || defined(unix) || defined(__unix)
+#elif defined(__unix__) || defined(unix) || defined(__unix) || defined(__APPLE__)
 	#include <unistd.h>
 
 	#include <sys/time.h>
