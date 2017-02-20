@@ -1,0 +1,22 @@
+1) Уменьшение размера BitMove.
+
+Преимущества:
++ Ускорение работы генератора ходов (т. к. меньше объем выделения памяти);
++ увеличение количества записей в хеше при том же объеме занимаемой памяти.
+
+Реализация:
+
+Поля в старой реализации:
+uint8_t attackedFigure, movedFigure, fromY, fromX, toY, toX;
+uint8_t replacedFigure;
+bool isAttack, replaced, passant, fromHash;
+
+Новая реализация: хранение в одном стандартном типе данных и получение/занесение значений с помощью битовых масок.
+attackedFigure - 5 бит;
+movedFigure - 5 бит;
+fromY/fromX/toY/toX - 12 бит;
+replacedFigure - 5 бит;
+isAttack/replaced/passant/fromHash = 4 бита.
+
+Итого: 31 бит (uint32_t).
+Изменение размера: (11->4) байт (почти в 3 раза меньше).
