@@ -39,5 +39,5 @@ void Hash::clean() {
 		prev = nullptr;
 	}
 
-	flag = EMPTY;
+	//flag = EMPTY;
 }
