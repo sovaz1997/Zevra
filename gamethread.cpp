@@ -26,9 +26,9 @@ void Game::goFixedDepth() {
 	int max_depth_global = max_depth;
 	max_depth = 1;
 
-	if(option.lmrEnable || option.nullMovePrunningEnable) {
+	/*if(option.lmrEnable || option.nullMovePrunningEnable) {
 		max_depth = 5;
-	}
+	}*/
 
 	start_timer = clock();
 	hasBestMove = false;
@@ -89,9 +89,9 @@ void Game::goFixedTime(int tm) {
 	hasBestMove = true;
 	max_depth = 1;
 	
-	if(option.lmrEnable || option.nullMovePrunningEnable) {
+	/*if(option.lmrEnable || option.nullMovePrunningEnable) {
 		max_depth = 5;
-	}
+	}*/
 	
 	std::vector<BitMove> bestPV;
 

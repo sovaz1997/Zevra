@@ -85,13 +85,97 @@ void BitMove::setReplaced(uint8_t figure) {
 	replaced = true;
 }
 
-void BitMove::setCategory(int cat, double val) {
-	//category = Category(cat, val);
-}
-
 bool BitMove::quality() {
 	return (fromY >= 0 && fromY <= 7 &&
 					fromX >= 0 && fromX <= 7 &&
 					toY >= 0 && toY <= 7 &&
 					toX >= 0 && toY <= 7);
 }
+/*
+uint8_t BitMove::getAttackedFigure() {
+
+}
+
+uint8_t BitMove::getMovedFigure() {
+
+}
+
+uint8_t BitMove::getFromY() {
+
+}
+
+uint8_t BitMove::getFromX() {
+
+}
+
+uint8_t BitMove::getToY() {
+
+}
+
+uint8_t BitMove::getToX() {
+
+}
+
+uint8_t BitMove::getReplacedFigure() {
+
+}
+
+uint8_t BitMove::getIsAttack() {
+
+}
+
+uint8_t BitMove::getReplaced() {
+
+}
+
+uint8_t BitMove::getPassant() {
+
+}
+
+uint8_t BitMove::getFromHash() {
+
+}
+
+void BitMove::setAttackedFigure(uint8_t value) {
+	
+}
+
+void BitMove::setMovedFigure(uint8_t value) {
+
+}
+
+void BitMove::setFromY(uint8_t value) {
+
+}
+
+void BitMove::setFromX(uint8_t value) {
+
+}
+
+void BitMove::setToY(uint8_t value) {
+
+}
+
+void BitMove::setToX(uint8_t value) {
+
+}
+
+void BitMove::setReplacedFigure(uint8_t value) {
+
+}
+
+void BitMove::setIsAttack(bool value) {
+
+}
+
+void BitMove::setReplaced(bool value) {
+
+}
+
+void BitMove::setPassant(bool value) {
+
+}
+
+void BitMove::setFromHash(bool value) {
+
+}*/

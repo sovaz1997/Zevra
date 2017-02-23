@@ -50,7 +50,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended && !option.nullMovePrunningEnable) || (currentHash->flag != EMPTY && currentHash->key == hash && inNullMove && !extended && option.nullMovePrunningEnable)) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash /*&& !extended*/ /*&& !option.nullMovePrunningEnable*/) || (currentHash->flag != EMPTY && currentHash->key == hash && /*inNullMove &&*/ !extended /*&& option.nullMovePrunningEnable*/)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -77,6 +77,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(currentHash->flag != ALPHA && real_depth > 0) {
 			b.move(currentHash->move);
 			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove);
+
 			b.goBack();
 
 			if(tmp > alpha) {
@@ -100,7 +101,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !inCheck && !extended && !b.attacked && real_depth > 4) {
 			b.makeNullMove();
-			int R = 2;
+			int R = 4;
 			/*if(depth > 6) {
 				R = 4;
 			} else {
