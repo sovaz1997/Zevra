@@ -92,7 +92,6 @@ public:
 
 	std::vector<uint64_t>gameHash;
 	std::vector<Hash>boardHash;
-	//uint64_t hash_cutter;
 
 	std::vector<std::string>variant;
 	std::vector<Killer>whiteKiller;

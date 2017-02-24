@@ -7,6 +7,8 @@
 class BitMove;
 
 class MoveArray {
+private:
+	const int MAX_SIZE = 288;
 public:
 	std::vector<BitMove> moveArray;
 	MoveArray();

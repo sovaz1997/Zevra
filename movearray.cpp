@@ -1,7 +1,7 @@
 #include "movearray.hpp"
 
 MoveArray::MoveArray() : count(0), num_attacks(0) {
-	moveArray.resize(288);
+	moveArray.resize(MAX_SIZE);
 }
 
 MoveArray::~MoveArray() {}
@@ -12,7 +12,7 @@ void MoveArray::clear() {
 }
 
 void MoveArray::addMove(BitMove mv) {
-	if(count < 288 && count >= 0) {
+	if(count < MAX_SIZE) {
 		moveArray[count] = mv;
 		++count;
 	}
