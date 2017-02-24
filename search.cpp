@@ -293,7 +293,6 @@ uint64_t Game::perft(int depth) {
 }
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
-
 	int64_t val = b.getEvalute();
 
 	if(val >= beta) {
