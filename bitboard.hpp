@@ -38,7 +38,6 @@ private:
 	uint64_t vec1_cells[64];
 	uint64_t bitboard[32][8][8];
 	double kingSecurityArray[64][64];
-	int64_t pawnStructureEvalute();
 
 	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
@@ -90,9 +89,7 @@ public:
 
 	void evaluteAll();
 	int64_t evalute;
-	int64_t kingEvalute();
 	int64_t getEvalute();
-	void totalStaticEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
 
@@ -109,8 +106,6 @@ public:
 	double margin;
 
 	bool testOfDraw();
-
-	int64_t kingSecurity();
 
 	std::multiset<uint64_t> gameHash;
 
