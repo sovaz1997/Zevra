@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include "constants.hpp"
-#include "figurecell.hpp"
 
 class GoBack {
 public:
