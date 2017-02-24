@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <cmath>
 #include "constants.hpp"
-#include "category.hpp"
 
 class BitMove {
 public:
