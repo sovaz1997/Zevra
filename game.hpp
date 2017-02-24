@@ -9,13 +9,11 @@
 #include <string>
 #include <cstdlib>
 #include <random>
-#include <thread>
-#include <cstdio>
 #include <ctime>
 #include <iomanip>
 #include <algorithm>
 #include <stack>
-#include <memory.h>
+#include <memory>
 #include "bitboard.hpp"
 #include "constants.hpp"
 #include "killer.hpp"
