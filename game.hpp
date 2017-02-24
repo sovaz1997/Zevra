@@ -20,7 +20,6 @@
 #include "constants.hpp"
 #include "killer.hpp"
 #include "hash.hpp"
-#include "point.hpp"
 #include "timer.hpp"
 #include "movearray.hpp"
 #include "option.hpp"
