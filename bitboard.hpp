@@ -49,6 +49,8 @@ private:
 	void magicNumberGenerator();
 	void magicInit();
 	void magicConstantsSet();
+	int getAllFiguresWeight();
+	double getPositionStage();
 
 	uint64_t magicGenerator();
 

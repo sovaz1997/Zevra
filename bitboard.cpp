@@ -267,6 +267,22 @@ uint8_t BitBoard::firstOne(uint64_t mask) {
 	return __builtin_ctzll(mask);
 }
 
+int BitBoard::getAllFiguresWeight() {
+	int result = 0;
+
+	result += (popcount64(figures[PAWN])) * PAWN_EV;
+	result += (popcount64(figures[KNIGHT])) * KNIGHT_EV;
+	result += (popcount64(figures[BISHOP])) * BISHOP_EV;
+	result += (popcount64(figures[ROOK])) * ROOK_EV;
+	result += (popcount64(figures[QUEEN])) * QUEEN_EV;
+
+	return result;
+}
+
+double BitBoard::getPositionStage() {
+	return (double)getAllFiguresWeight() / (double) ALL_MATERIAL;
+}
+
 uint8_t BitBoard::lastOne(uint64_t mask) {
 	if(!mask) { return 64; }
 	return 63 - __builtin_clzll(mask);
@@ -1304,6 +1320,8 @@ void BitBoard::pushHistory() {
 }
 
 void BitBoard::evaluteAll() {
+	double positionStage = getPositionStage();
+
 	evalute = 0;
 	evalute += popcount64(figures[PAWN] & white_bit_mask) * PAWN_EV;
 	evalute -= popcount64(figures[PAWN] & black_bit_mask) * PAWN_EV;
@@ -1319,14 +1337,14 @@ void BitBoard::evaluteAll() {
 	uint64_t mask = figures[PAWN] & white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		evalute += pawnMatr[7 - pos / 8][pos % 8];
+		evalute += ((positionStage * pawnMatr[7 - pos / 8][pos % 8]) + ((1 - positionStage) * endGamePawnMatr[7 - pos / 8][pos % 8]));
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
 	mask = figures[PAWN] & black_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		evalute -= pawnMatr[pos / 8][pos % 8];
+		evalute -= ((positionStage * pawnMatr[pos / 8][pos % 8]) + ((1 - positionStage) * endGamePawnMatr[pos / 8][pos % 8]));
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
@@ -1383,6 +1401,20 @@ void BitBoard::evaluteAll() {
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		evalute -= queenMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KING] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += ((positionStage * kingDebuteMatr[7 - pos / 8][pos % 8]) + ((1 - positionStage) * kingEndGameMatr[7 - pos / 8][pos % 8]));
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KING] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= ((positionStage * kingDebuteMatr[pos / 8][pos % 8]) + ((1 - positionStage) * kingEndGameMatr[pos / 8][pos % 8]));
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 

@@ -44,7 +44,7 @@ private:
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
-  std::vector<BitMove>pv;
+  	std::vector<BitMove>pv;
 
 	bool inZugzwang(BitBoard & b, uint8_t color);
 
