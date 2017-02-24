@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -std=c++11 -m64 -Wall -pedantic -O3 -flto -funroll-loops -march=native
-FILES = main.o game.o killer.o hash.o point.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o category.o magic.o option.o pv.o constants.o
+FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o category.o magic.o option.o pv.o constants.o
 NAME = zevra
 
 all: constants.hpp $(FILES)
@@ -17,9 +17,6 @@ killer.o: killer.hpp killer.cpp
 
 hash.o: hash.hpp hash.cpp
 	$(CC) $(CFLAGS) -c hash.cpp
-	
-point.o: point.hpp point.cpp
-	$(CC) $(CFLAGS) -c point.cpp
 
 uci.o: game.hpp uci.cpp
 	$(CC) $(CFLAGS) -c uci.cpp
@@ -74,6 +71,6 @@ pv.o: pv.hpp pv.cpp
 
 constants.o: constants.hpp constants.cpp
 	$(CC) $(CFLAGS) -c constants.cpp
-	
+
 clean:
 	rm -rf *.o $(NAME)
