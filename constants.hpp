@@ -41,6 +41,10 @@ const double BISHOP_EV = 330;
 const double ROOK_EV = 500;
 const double QUEEN_EV = 900;
 
+const double ENDGAME_PAWN_EV = 200;
+const double ENDGAME_KNIGHT_EV = 340;
+const double ENDGAME_BISHOP_EV = 350;
+
 //move types
 const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
