@@ -35,11 +35,11 @@ const uint8_t TRANSFORMATION_MV = 6;
 
 const uint64_t reverse_color_const = 54387554323743313;
 
-const double PAWN_EV = 1000;
-const double KNIGHT_EV = 3200;
-const double BISHOP_EV = 3300;
-const double ROOK_EV = 5000;
-const double QUEEN_EV = 9000;
+const double PAWN_EV = 100;
+const double KNIGHT_EV = 320;
+const double BISHOP_EV = 330;
+const double ROOK_EV = 500;
+const double QUEEN_EV = 900;
 
 const double ENDGAME_PAWN_EV = 150;
 const double ENDGAME_KNIGHT_EV = 340;
