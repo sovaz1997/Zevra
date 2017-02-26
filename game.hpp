@@ -76,6 +76,12 @@ public:
 	Game();
 	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove);
 	int64_t negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove);
+	
+	//experemental_begin
+	int64_t negamax_future(int64_t alpha, int64_t beta, int depth, int ply);
+	int64_t quies_future(int64_t alpha, int64_t beta, int ply);
+	//experemental_end
+
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);

@@ -44,7 +44,8 @@ void Game::goFixedDepth() {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
+		//negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
+		negamax_future(-WHITE_WIN, WHITE_WIN, max_depth, 0);
 		hasBestMove = true;
 
 		/*if((abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99) || stopped) {

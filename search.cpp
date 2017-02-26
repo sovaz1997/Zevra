@@ -210,13 +210,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(alpha >= beta) {
-			if(!local_move.isAttack) {
+			/*if(!local_move.isAttack) {
 				if(color == WHITE) {
 					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 				} else {
 					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 				}
-			}
+			}*/
 
 			return beta;
 		}

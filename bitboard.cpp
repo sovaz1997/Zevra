@@ -280,7 +280,7 @@ int BitBoard::getAllFiguresWeight() {
 }
 
 double BitBoard::getPositionStage() {
-	return (double)getAllFiguresWeight() / (double) ALL_MATERIAL;
+	return std::min(1.0, (double)getAllFiguresWeight() / (double) ALL_MATERIAL);
 }
 
 uint8_t BitBoard::lastOne(uint64_t mask) {
@@ -294,6 +294,16 @@ void BitBoard::preInit() {
 	history_iterator = 0;
 	
 	margin = 0;
+
+	for(unsigned int y1 = 0; y1 < 8; ++y1) {
+		for(unsigned int x1 = 0; x1 < 8; ++x1) {
+			for(unsigned int y2 = 0; y2 < 8; ++y2) {
+				for(unsigned int x2 = 0; x2 < 8; ++x2) {
+					distance[y1][x1][y2][x2] = std::sqrt(std::pow(y1 - y2, 2) + std::pow(x1 - x2, 2));
+				}	
+			}
+		}	
+	}
 
 	magicConstantsSet();
 	zobristGenerator();
@@ -1323,8 +1333,8 @@ void BitBoard::evaluteAll() {
 	double positionStage = getPositionStage();
 
 	evalute = 0;
-	evalute += popcount64(figures[PAWN] & white_bit_mask) * PAWN_EV;
-	evalute -= popcount64(figures[PAWN] & black_bit_mask) * PAWN_EV;
+	evalute += popcount64(figures[PAWN] & white_bit_mask) * (positionStage * PAWN_EV + (1 - positionStage) * ENDGAME_PAWN_EV);
+	evalute -= popcount64(figures[PAWN] & black_bit_mask) * (positionStage * PAWN_EV + (1 - positionStage) * ENDGAME_PAWN_EV);
 	evalute += popcount64(figures[KNIGHT] & white_bit_mask) * KNIGHT_EV;
 	evalute -= popcount64(figures[KNIGHT] & black_bit_mask) * KNIGHT_EV;
 	evalute += popcount64(figures[BISHOP] & white_bit_mask) * BISHOP_EV;
@@ -1424,6 +1434,45 @@ void BitBoard::evaluteAll() {
  	if(blackPassantMade) {
  		evalute -= 50;
  	}
+
+	if(popcount64(figures[BISHOP] & white_bit_mask) >= 2) {
+		evalute += 30;
+	}
+	if(popcount64(figures[BISHOP] & black_bit_mask) >= 2) {
+		evalute -= 30;
+	}
+
+	//uint8_t white_king_pos = firstOne(figures[KING] & white_bit_mask);
+	//uint8_t black_king_pos = firstOne(figures[KING] & black_bit_mask);
+
+	/*mask = figures[KNIGHT] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += king_security[distance[pos / 8][pos % 8][black_king_pos / 8][black_king_pos % 8]];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	
+	mask = figures[KNIGHT] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= king_security[distance[pos / 8][pos % 8][white_king_pos / 8][white_king_pos % 8]];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}*/
+
+	/*mask = figures[KNIGHT] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += king_security[distance[pos / 8][pos % 8][white_king_pos / 8][white_king_pos % 8]];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KNIGHT] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= king_security[distance[pos / 8][pos % 8][black_king_pos / 8][black_king_pos % 8]];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}*/
 }
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {

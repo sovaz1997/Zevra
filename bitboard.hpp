@@ -68,6 +68,8 @@ private:
 	uint64_t rookMagicMask[8][8];
 	uint64_t bishopMagicMask[8][8];
 
+	uint8_t distance[8][8][8][8];
+
 	std::vector<int> third_repeat;
 public:
 	BitBoard();

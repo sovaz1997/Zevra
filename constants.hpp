@@ -35,13 +35,13 @@ const uint8_t TRANSFORMATION_MV = 6;
 
 const uint64_t reverse_color_const = 54387554323743313;
 
-const double PAWN_EV = 100;
-const double KNIGHT_EV = 320;
-const double BISHOP_EV = 330;
-const double ROOK_EV = 500;
-const double QUEEN_EV = 900;
+const double PAWN_EV = 1000;
+const double KNIGHT_EV = 3200;
+const double BISHOP_EV = 3300;
+const double ROOK_EV = 5000;
+const double QUEEN_EV = 9000;
 
-const double ENDGAME_PAWN_EV = 200;
+const double ENDGAME_PAWN_EV = 150;
 const double ENDGAME_KNIGHT_EV = 340;
 const double ENDGAME_BISHOP_EV = 350;
 
@@ -70,7 +70,7 @@ const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV
 +	4 * ROOK_EV
-+	QUEEN_EV;
++	2 * QUEEN_EV;
 
 const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 0, 0, 0, 0, 0},
@@ -164,6 +164,6 @@ const double ISOLATED_PAWN_BONUS = -15;
 const double passed_pawn_line[BOARD_SIZE] = {0, 90, 60, 50, 40, 30, 20, 0};
 
 const double attack_bonus[7] = {0, 1, 3, 6, 10, 14, 20};
-const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
+const double king_security[12] = {10, 9, 8, 7, 5, 3, 2, 1, 0, -1, -2, -3};
 
 #endif
