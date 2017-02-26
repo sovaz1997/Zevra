@@ -7,7 +7,7 @@ Game::Game() {
 
 //experemental
 
-int64_t Game::negamax_future(int64_t alpha, int64_t beta, int depth, int ply, int rule) {
+int64_t Game::negamax_future(int64_t alpha, int64_t beta, int depth, int ply, int rule, bool nullMoveAccess, BitMove* prev) {
 	if(depth <= 0) {
 		return quies_future(alpha, beta, ply + 1)/*game_board.getEvalute()*/;
 	}
@@ -53,14 +53,49 @@ int64_t Game::negamax_future(int64_t alpha, int64_t beta, int depth, int ply, in
 
 		++num_moves;
 
+		int64_t tmp;
 
+		/*int R = 3;
+		if(nullMoveAccess && depth >= R && !extended) {
+			game_board.makeNullMove();
+			int64_t eval = negamax_future(beta - 1, beta, depth - 1 - R, ply + 1, rule, false, prev);
+			game_board.unMakeNullMove();
 
-		int64_t tmp = -negamax_future(-beta, -alpha, depth - 1 + extended, ply + 1, rule);
+			if(eval >= beta) {
+				game_board.goBack();
+				return beta;
+			}
+		}*/
+
+		/*if(i > 3 && !extended && !moveArray[ply].moveArray[i].isAttack) {
+			tmp = -negamax_future(-beta, -alpha, depth - 2, ply + 1, rule, nullMoveAccess, &moveArray[ply].moveArray[i]);
+
+			if(tmp > alpha && tmp < beta) {
+				tmp = -negamax_future(-beta, -alpha, depth - 1, ply + 1, rule, nullMoveAccess, &moveArray[ply].moveArray[i]);	
+			}
+		} else {*/
+		
+			tmp = -negamax_future(-beta, -alpha, depth - 1 + extended, ply + 1, rule, nullMoveAccess, &moveArray[ply].moveArray[i]);
+		//}
 		game_board.goBack();
 
 		if(tmp > alpha) {
 			local_move = moveArray[ply].moveArray[i];
 			alpha = tmp;
+
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+					whiteKiller[ply] = Killer(local_move);
+				} else {
+					blackKiller[ply] = Killer(local_move);
+				}
+
+				if(color == WHITE) {
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, depth);
+				} else {
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, depth);
+				}
+			}
 		}
 		
 		if(alpha >= beta) {
@@ -86,8 +121,8 @@ int64_t Game::negamax_future(int64_t alpha, int64_t beta, int depth, int ply, in
 			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
 			std::cout << " ";
 			printScore(bestScore);
-			std::cout << " pv ";
-			printPV(depth);
+			std::cout << " pv " << bestMove.getMoveString() << std::endl;
+			//printPV(depth);
 		} else {
 			std::cout << std::endl;
 		}
@@ -115,7 +150,7 @@ int64_t Game::quies_future(int64_t alpha, int64_t beta, int ply) {
 	}
 
 	game_board.bitBoardAttackMoveGenerator(moveArray[ply]);
-	sortMoves(moveArray[ply], 100);
+	sortAttacks(moveArray[ply]);
 	BitMove local_move;
 
 	for(unsigned int i = 0; i < moveArray[ply].count; ++i) {
