@@ -1419,6 +1419,8 @@ void BitBoard::evaluteAll() {
 		uint8_t pos = firstOne(mask);
 		evalute += ((positionStage * kingDebuteMatr[7 - pos / 8][pos % 8]) + ((1 - positionStage) * kingEndGameMatr[7 - pos / 8][pos % 8]));
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+
+		evalute += (positionStage * popcount64(bitboard[KING | WHITE][pos / 8][pos % 8] & figures[PAWN] & white_bit_mask) * 3);
 	}
 
 	mask = figures[KING] & black_bit_mask;
@@ -1426,6 +1428,8 @@ void BitBoard::evaluteAll() {
 		uint8_t pos = firstOne(mask);
 		evalute -= ((positionStage * kingDebuteMatr[pos / 8][pos % 8]) + ((1 - positionStage) * kingEndGameMatr[pos / 8][pos % 8]));
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+
+		evalute -= (positionStage * popcount64(bitboard[KING | BLACK][pos / 8][pos % 8] & figures[PAWN] & black_bit_mask) * 3);
 	}
 
 	if(whitePassantMade) {
@@ -1435,6 +1439,7 @@ void BitBoard::evaluteAll() {
  		evalute -= 50;
  	}
 
+	 //преимущество 2 слонов
 	if(popcount64(figures[BISHOP] & white_bit_mask) >= 2) {
 		evalute += 30;
 	}
@@ -1888,13 +1893,19 @@ uint64_t BitBoard::magicGenerator() {
 }
 
 void BitBoard::makeNullMove() {
-	whiteMove = !whiteMove;
-	hash ^= 747489434796739468;
+	if(!in_null_move) {
+		whiteMove = !whiteMove;
+		hash ^= 747489434796739468;
+		in_null_move = true;
+	}
 }
 
 void BitBoard::unMakeNullMove() {
-	whiteMove = !whiteMove;
-	hash ^= 747489434796739468;
+	if(in_null_move) {
+		whiteMove = !whiteMove;
+		hash ^= 747489434796739468;
+		in_null_move = false;
+	}
 }
 
 void BitBoard::magicConstantsSet() {

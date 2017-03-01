@@ -114,6 +114,7 @@ public:
 	std::multiset<uint64_t> gameHash;
 
 	bool hash_enable = true;
+	bool in_null_move = false;
 	uint64_t hash;
 	bool whitePassantMade, blackPassantMade;
 };

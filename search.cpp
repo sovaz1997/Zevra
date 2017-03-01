@@ -101,18 +101,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !inCheck && !extended && !b.attacked && real_depth > 4) {
 			b.makeNullMove();
-			int R = 4;
-			/*if(depth > 6) {
-				R = 4;
-			} else {
-				R = 3;
-			}*/
+			int R = (depth > 6 ? 4 : 3);
 
 
 			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true);
 			if(value >= beta) {
 				b.unMakeNullMove();
-				return value;
+				depth -= 4;
+
+				if(depth <= 0) {
+					return quies(b, alpha, beta, rule, real_depth);
+				}
 			}
 
 			b.unMakeNullMove();
