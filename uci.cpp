@@ -93,6 +93,8 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
+		} else if(cmd[0] == "ucinewgame") {
+			clearCash();
 		} else if(cmd[0] == "stress") {
 			game_board.stress = 0;
 			double st = clock();

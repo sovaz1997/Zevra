@@ -1521,7 +1521,7 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
-	if(!hash_enable) { return 0; }
+	if(!hash_enable || ruleNumber >= 100) { return 0; }
 	evaluteAll();
 
 	if(whiteMove) {
