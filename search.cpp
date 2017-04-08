@@ -49,6 +49,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	} else {
 		color = BLACK;
 	}
+	
 
 	if(depth <= 0 || real_depth >= 100) {
 		return quies(b, alpha, beta, rule, real_depth);
@@ -313,6 +314,10 @@ uint64_t Game::perft(int depth) {
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
 	int64_t val = b.getEvalute();
+
+	if ( val < alpha - QUEEN_EV ) {
+   		return alpha;
+	}
 
 	if(val >= beta) {
 		return val;
