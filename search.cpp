@@ -122,12 +122,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true);
 			if(value >= beta) {
-				b.unMakeNullMove();
 				depth -= 4;
 
-				if(depth <= 0) {
+				//if(depth <= 0) {
+					b.unMakeNullMove();
 					return quies(b, alpha, beta, rule, real_depth);
-				}
+				//}
 			}
 
 			b.unMakeNullMove();
@@ -177,13 +177,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(!option.lmrEnable) {
-			/*tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 
 			if(tmp > alpha && tmp < beta) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
-			}*/
+			}
 
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+			//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked || depth < 4) {
@@ -232,11 +232,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(alpha >= beta) {
 			/*if(!local_move.isAttack) {
 				if(color == WHITE) {
+					whiteKiller[real_depth] = Killer(local_move);
+				} else {
+					blackKiller[real_depth] = Killer(local_move);
+				}
+			}*/
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
 					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 				} else {
 					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 				}
-			}*/
+			}
 
 			return beta;
 		}
