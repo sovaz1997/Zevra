@@ -108,7 +108,7 @@ public:
 	void printBitBitBoard(uint64_t bit_BitBoard);
 	void idPrint();
 
-	std::vector<uint64_t>gameHash;
+	//std::vector<uint64_t>gameHash;
 	std::vector<Hash>boardHash;
 
 	std::vector<std::string>variant;

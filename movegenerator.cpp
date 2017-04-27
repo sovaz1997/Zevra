@@ -18,7 +18,7 @@
 void Game::sortMoves(MoveArray& result, int depth) {
 	int num_attacks = result.num_attacks;
 
-	if(game_board.whiteMove) {
+	/*if(game_board.whiteMove) {
 		for(unsigned int i = result.num_attacks + 1; i < result.count - 1; ++i) {
 			for(int j = i - 1; j >= num_attacks && whiteHistorySort[result.moveArray[j].fromY][result.moveArray[j].fromX][result.moveArray[j].toY][result.moveArray[j].toX] < whiteHistorySort[result.moveArray[j+1].fromY][result.moveArray[j+1].fromX][result.moveArray[j+1].toY][result.moveArray[j+1].toX]; --j) {
 				std::swap(result.moveArray[j], result.moveArray[j+1]);
@@ -30,7 +30,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				std::swap(result.moveArray[j], result.moveArray[j+1]);
 			}
 		}
-	}
+	}*/
 
 	for(unsigned int i = num_attacks; i < result.count; ++i) {
 		if(game_board.whiteMove) {
@@ -50,7 +50,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 
 
 	uint64_t hash = game_board.getColorHash();
-	if(boardHash[hash & hash_cutter].flag != EMPTY /*&& boardHash[hash & hash_cutter].flag != ALPHA*/) {
+	if(boardHash[hash & hash_cutter].flag != EMPTY) {
 		if(boardHash[hash & hash_cutter].key == hash) {
 			for(unsigned int i = 0; i < result.count; ++i) {
 				if(boardHash[hash & hash_cutter].move.equal(result.moveArray[i])) {

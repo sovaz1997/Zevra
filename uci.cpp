@@ -20,8 +20,8 @@ bool Game::uciHandler(std::string str) {
 		if(cmd[0] == "isready") {
 			std::cout << "readyok" << std::endl;
 		} else if(cmd[0] == "position") {
-			gameHash.clear();
-			gameHash.resize(0);
+			//gameHash.clear();
+			//gameHash.resize(0);
 			hash_decrement = 0;
 			if(cmd[1] == "startpos") {
 				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");

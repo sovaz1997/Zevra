@@ -24,6 +24,10 @@ MoveArray::~MoveArray() {}
 void MoveArray::clear() {
 	count = 0;
 	num_attacks = 0;
+
+  for(int i = 0; i < moveArray.size(); ++i) {
+    moveArray[i].fromHash = false;
+  }
 }
 
 void MoveArray::addMove(BitMove mv) {

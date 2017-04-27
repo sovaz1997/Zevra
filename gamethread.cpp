@@ -29,6 +29,7 @@ int Game::startGame() {
 
 void Game::goFixedDepth() {
 	clearCash();
+
 	stopped = false;
 
 	variant.clear();
@@ -59,7 +60,7 @@ void Game::goFixedDepth() {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		//flattenHistory();
-
+		
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
 		//negamax_future(-WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, true, nullptr);
 		hasBestMove = true;

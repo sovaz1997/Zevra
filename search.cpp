@@ -115,7 +115,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !inCheck && !extended && !b.attacked && real_depth > 4) {
+		if(!inNullMove && !inCheck && !extended && !b.attacked && real_depth > 4 && b.getEvalute() >= beta) {
 			b.makeNullMove();
 			int R = (depth > 6 ? 4 : 3);
 
@@ -125,8 +125,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				depth -= 4;
 
 				//if(depth <= 0) {
-					b.unMakeNullMove();
-					return quies(b, alpha, beta, rule, real_depth);
+					//b.unMakeNullMove();
+					//return quies(b, alpha, beta, rule, real_depth);
 				//}
 			}
 
@@ -161,7 +161,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(game_board.inCheck(color)) {
+		if(b.inCheck(color)) {
 			b.goBack();
 			continue;
 		}

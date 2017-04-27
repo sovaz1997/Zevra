@@ -60,6 +60,8 @@ void Game::flattenHistory() {
 			}
 		}
 	}
+
+	
 }
 
 void Game::clearCash() {
@@ -68,6 +70,18 @@ void Game::clearCash() {
 
 	for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].clean();
+	}
+
+	for(int i = 0; i < whiteKiller.size(); ++i) {
+		whiteKiller[i].enable = false;
+	}
+
+	for(int i = 0; i < blackKiller.size(); ++i) {
+		blackKiller[i].enable = false;
+	}
+
+	for(int i = 0; i < moveArray.size(); ++i) {
+		moveArray[i].clear();
 	}
 }
 
