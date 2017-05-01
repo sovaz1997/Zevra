@@ -187,14 +187,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		} else {
 			BitMove* killer_move;
-			//double historyValue = 0;
+			double historyValue = 0;
 			if(color == WHITE) {
 				killer_move = &whiteKiller[real_depth].move;
-				//historyValue = whiteHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].fromX];
+				historyValue = whiteHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].fromX];
 
 			} else {
 				killer_move = &blackKiller[real_depth].move;
-				//historyValue = blackHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].fromX];
+				historyValue = blackHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].fromX];
 			}
 
 			//std::cout << historyValue << "\n";
