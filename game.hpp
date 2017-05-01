@@ -31,6 +31,7 @@ class Game {
 private:
 	BitBoard game_board;
 	unsigned long long nodesCounter = 0;
+	uint64_t combinations;
 
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;

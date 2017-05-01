@@ -232,10 +232,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	return alpha;
 }
-
 uint64_t Game::perft(int depth) {
 	uint64_t res = 0;
 	if(depth == 0) {
+		++combinations;
+		/*if(combinations % 10000000 == 0) {
+			std::cout << combinations << std::endl;
+		}*/
+
 		return 1;
 	}
 
