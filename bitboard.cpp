@@ -1171,17 +1171,21 @@ void BitBoard::move(BitMove& mv) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
+				whitePassantMade = true;
 			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
 				addFigure(ROOK | WHITE, 0, 3);
 				clearCell(0, 0);
+				whitePassantMade = true;
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
 				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
+				blackPassantMade = true;
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
 				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
+				blackPassantMade = true;
 			}
 		}
 	}
@@ -1244,6 +1248,8 @@ void BitBoard::goBack() {
 		ruleNumber = history.front().ruleNumber;
 		castlingMap = history.front().castlingMap;
 		whiteMove = history.front().whiteMove;
+		whitePassantMade = history.front().whitePassantMade;
+		blackPassantMade = history.front().blackPassantMade;
 		evalute = history.front().evalute;
 		passant_y = history.front().passant_y;
 		passant_x = history.front().passant_x;
@@ -1403,6 +1409,8 @@ void BitBoard::pushHistory() {
 	newHistory.ruleNumber = ruleNumber;
 	newHistory.whiteMove = whiteMove;
 	newHistory.evalute = evalute;
+	newHistory.whitePassantMade = whitePassantMade;
+	newHistory.blackPassantMade = blackPassantMade;
 	newHistory.hash_enable = hash_enable;
 	newHistory.castlingMap = castlingMap;
 	newHistory.passant_enable = passant_enable;
@@ -1633,10 +1641,17 @@ BitMove BitBoard::getRandomMove() {
 int64_t BitBoard::getEvalute() {
 	if(!hash_enable || ruleNumber >= 100) { return 0; }
 
+	if(whitePassantMade) {
+ 		evalute += 50;
+ 	}
+ 	if(blackPassantMade) {
+ 		evalute -= 50;
+ 	}
+
 	if(whiteMove) {
-		return evalute;// + pawnStructureEvalute();// + kingSecurity();
+		return evalute + whitePassantMade * 50 - blackPassantMade * 50;
 	} else {
-		return -evalute;// - pawnStructureEvalute();// - kingSecurity();
+		return -evalute - whitePassantMade * 50 + blackPassantMade * 50;
 	}
 }
 

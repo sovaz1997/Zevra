@@ -24,6 +24,8 @@ private:
 	uint64_t white_bit_mask, black_bit_mask;
 	uint64_t castlingMap;
 
+	bool whitePassantMade, blackPassantMade;
+
 	uint64_t ROOK_MAGIC[8][8];
 	uint64_t BISHOP_MAGIC[8][8];
 
