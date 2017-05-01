@@ -35,6 +35,8 @@ private:
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
 
+	std::string start_position_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 	int max_depth;
 	bool stopped;
 
