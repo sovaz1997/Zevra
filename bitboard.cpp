@@ -213,6 +213,8 @@ std::string BitBoard::getFen() {
 void BitBoard::clear() {
 	hash = 0;
 
+	third_repeat = std::vector<int> (pow(2, hash_width), 0);
+
 	for(unsigned int i = 0; i < 7; ++i) {
 		figures[i] = 0;
 	}
@@ -270,6 +272,8 @@ void BitBoard::preInit() {
 	magicConstantsSet();
 	zobristGenerator();
 	castlingMap = 0;
+
+	third_repeat = std::vector<int> (pow(2, hash_width), 0);
 
 	for(int i = 0; i < 64; ++i) {
 		for(int j = 0; j < 64; ++j) {
@@ -1214,6 +1218,12 @@ void BitBoard::move(BitMove& mv) {
 		margin = oldEvalute - evalute;
 	}
 
+	++third_repeat[getColorHash() & hash_cutter];
+
+	if(third_repeat[getColorHash() & hash_cutter] >= 3) {
+		hash_enable = false;
+	}
+
 	//gameHash.insert(getHash());
 }
 
@@ -1222,6 +1232,8 @@ void BitBoard::goBack() {
 	//gameHash.erase(removed);
 
 	if(!history.empty()) {
+		--third_repeat[getColorHash() & hash_cutter];
+
 		for(unsigned int i = 0; i < 7; ++i) {
 			figures[i] = history.front().figures[i];
 		}
@@ -1239,6 +1251,7 @@ void BitBoard::goBack() {
 		hash = history.front().hash;
 		attacked = history.front().attacked;
 		margin = history.front().margin;
+		hash_enable = history.front().hash_enable;
 		history.pop_front();
 	}
 }
@@ -1390,6 +1403,7 @@ void BitBoard::pushHistory() {
 	newHistory.ruleNumber = ruleNumber;
 	newHistory.whiteMove = whiteMove;
 	newHistory.evalute = evalute;
+	newHistory.hash_enable = hash_enable;
 	newHistory.castlingMap = castlingMap;
 	newHistory.passant_enable = passant_enable;
 	newHistory.passant_x = passant_x;
@@ -1617,6 +1631,8 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
+	if(!hash_enable || ruleNumber >= 100) { return 0; }
+
 	if(whiteMove) {
 		return evalute;// + pawnStructureEvalute();// + kingSecurity();
 	} else {

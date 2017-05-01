@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <cmath>
 
 bool is_input_available();
 
@@ -34,11 +35,11 @@ const uint8_t TRANSFORMATION_MV = 6;
 
 const uint64_t reverse_color_const = 54387554323743313;
 
-const double PAWN_EV = 1000;
-const double KNIGHT_EV = 3200;
-const double BISHOP_EV = 3300;
-const double ROOK_EV = 5600;
-const double QUEEN_EV = 11000;
+const double PAWN_EV = 100;
+const double KNIGHT_EV = 320;
+const double BISHOP_EV = 330;
+const double ROOK_EV = 560;
+const double QUEEN_EV = 950;
 
 //move types
 const int FIXED_DEPTH = 0;
@@ -64,15 +65,14 @@ const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * BISHOP_EV
 +	4*ROOK_EV
 +	QUEEN_EV;
-
 const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 0, 0, 0, 0, 0},
-{50, 50, 50, 50, 50, 50, 50, 50},
-{10, 10, 20, 30, 30, 20, 10, 10},
-{5, 5, 10, 25, 25, 10, 5, 5},
-{0, 0, 0, 20, 20, 0, 0, 0},
-{5, -5, -10, 0, 0, -10, -5, 5},
-{5, 10, 10, -20, -20, 10, 10, 5},
+{5, 10, 15, 20, 20, 15, 10, 5},
+{4, 8, 12, 16, 16, 12, 8, 4},
+{3, 6, 9, 12, 12, 9, 6, 3},
+{2, 4, 6, 8, 8, 6, 4, 2},
+{1, 2, 3, -10, -10, 3, 2, 1},
+{0, 0, 0, -40, -40, 0, 0, 0},
 {0, 0, 0, 0, 0, 0, 0, 0}
 };
 
@@ -139,6 +139,9 @@ const double kingEndGameMatr[BOARD_SIZE][BOARD_SIZE] {
 {-30, -10, 20, 30, 30, 20, -10, -30},
 {-50, -30, -30, -30, -30, -30, -30, -50}
 };
+
+
+const uint64_t hash_cutter = std::pow(2, hash_width) - 1;
 
 const double PASSED_PAWN_BONUS = 50;
 const double DUAL_PAWN_BONUS = -15;

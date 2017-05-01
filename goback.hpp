@@ -14,6 +14,7 @@ public:
 	bool whiteMove, passant_enable;
 	int64_t evalute;
 	bool attacked;
+	bool hash_enable;
 	double margin;
 };
 

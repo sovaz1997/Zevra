@@ -328,6 +328,10 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 }
 
 bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
+	if(!game_board.hash_enable) {
+		return false;
+	}
+
 	Hash* hash = &boardHash[key & hash_cutter];
 
 	if(flag == ALPHA && (hash->flag == EXACT/* || hash->flag == BETA*/)) {

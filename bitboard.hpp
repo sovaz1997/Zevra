@@ -56,6 +56,8 @@ private:
 
 	std::deque<GoBack> history;
 
+	std::vector<int> third_repeat;
+
 	bool wsc();
 	bool wlc();
 	bool bsc();
@@ -102,6 +104,7 @@ public:
 
 	bool attacked;
 	double margin;
+	bool hash_enable = true;
 
 	bool testOfDraw();
 
