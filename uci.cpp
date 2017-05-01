@@ -1,18 +1,3 @@
-/*
-  Zevra, a UCI chess playing engine
-  Copyright (C) 2016-2017 Oleg Smirnov (author)
-  Zevra is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  any later version.
-  Zevra is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "game.hpp"
 
 bool Game::uciHandler(std::string str) {
@@ -20,8 +5,8 @@ bool Game::uciHandler(std::string str) {
 		if(cmd[0] == "isready") {
 			std::cout << "readyok" << std::endl;
 		} else if(cmd[0] == "position") {
-			//gameHash.clear();
-			//gameHash.resize(0);
+			gameHash.clear();
+			gameHash.resize(0);
 			hash_decrement = 0;
 			if(cmd[1] == "startpos") {
 				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
@@ -108,28 +93,24 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
-		} else if(cmd[0] == "ucinewgame") {
-			clearCash();
+		} else if(cmd[0] == "quit") {
+			return false;
 		} else if(cmd[0] == "stress") {
 			game_board.stress = 0;
 			double st = clock();
 			for(unsigned int i = 0; i < 1000000; ++i) {
 				game_board.bitBoardMoveGenerator(moveArray[0]);
 			}
-			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
+			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
 		} else if(cmd[0] == "perft") {
 			int k;
-			k = std::stoi(cmd[1]);
-			for(int i = 1; i <= k; ++i) {
-				combinations = 0;
-				double st = clock();
-				uint64_t count = perft(i);
-				std::cout << "Depth: " << i << "; count: " << combinations;
-				std::cout << "; speed: " << (int64_t)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
-			}
+			std::cin >> k;
+			double st = clock();
+			uint64_t count = perft(k);
+			std::cout << count << " " << (int)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
 		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
 			if(cmd[2] == "nullmove" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
@@ -150,6 +131,6 @@ bool Game::uciHandler(std::string str) {
 }
 
 void Game::idPrint() {
-	std::cout << "id name Zevra v1.3.1 r340" << std::endl;
+	std::cout << "id name Zevra v1.2.1 r290" << std::endl;
 	std::cout << "id author sovaz1997" << std::endl;
 }

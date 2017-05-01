@@ -1,24 +1,8 @@
-/*
-  Zevra, a UCI chess playing engine
-  Copyright (C) 2016-2017 Oleg Smirnov (author)
-  Zevra is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  any later version.
-  Zevra is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
 #include <cstdint>
 #include <cwchar>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -50,15 +34,11 @@ const uint8_t TRANSFORMATION_MV = 6;
 
 const uint64_t reverse_color_const = 54387554323743313;
 
-const double PAWN_EV = 100;
-const double KNIGHT_EV = 320;
-const double BISHOP_EV = 330;
-const double ROOK_EV = 500;
-const double QUEEN_EV = 900;
-
-const double ENDGAME_PAWN_EV = 150;
-const double ENDGAME_KNIGHT_EV = 340;
-const double ENDGAME_BISHOP_EV = 350;
+const double PAWN_EV = 1000;
+const double KNIGHT_EV = 3200;
+const double BISHOP_EV = 3300;
+const double ROOK_EV = 5600;
+const double QUEEN_EV = 11000;
 
 //move types
 const int FIXED_DEPTH = 0;
@@ -79,14 +59,12 @@ const int BETA = 3;
 
 const int MIN_DEPTH = 2;
 
-const uint64_t hash_cutter = std::pow(2, hash_width) - 1;
-
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV
-+	4 * ROOK_EV
-+	2 * QUEEN_EV;
-/*
++	4*ROOK_EV
++	QUEEN_EV;
+
 const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 0, 0, 0, 0, 0},
 {50, 50, 50, 50, 50, 50, 50, 50},
@@ -95,27 +73,6 @@ const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {
 {0, 0, 0, 20, 20, 0, 0, 0},
 {5, -5, -10, 0, 0, -10, -5, 5},
 {5, 10, 10, -20, -20, 10, 10, 5},
-{0, 0, 0, 0, 0, 0, 0, 0}
-};
-
-const double endGamePawnMatr[BOARD_SIZE][BOARD_SIZE] = {
-{0, 0, 0, 0, 0, 0, 0, 0},
-{80, 80, 80, 80, 80, 80, 80, 80},
-{40, 40, 40, 40, 40, 40, 40, 40},
-{25, 25, 25, 25, 25, 25, 25, 25},
-{10, 10, 10, 10, 10, 10, 10, 10},
-{-5, -5, -5, -5, -5, -5, -5, -5},
-{-10, -10, -10, -10, -10, -10, -10, -10},
-{0, 0, 0, 0, 0, 0, 0, 0}
-};*/
-const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {
-{0, 0, 0, 0, 0, 0, 0, 0},
-{5, 10, 15, 20, 20, 15, 10, 5},
-{4, 8, 12, 16, 16, 12, 8, 4},
-{3, 6, 9, 12, 12, 9, 6, 3},
-{2, 4, 6, 8, 8, 6, 4, 2},
-{1, 2, 3, -10, -10, 3, 2, 1},
-{0, 0, 0, -40, -40, 0, 0, 0},
 {0, 0, 0, 0, 0, 0, 0, 0}
 };
 
@@ -189,6 +146,6 @@ const double ISOLATED_PAWN_BONUS = -15;
 const double passed_pawn_line[BOARD_SIZE] = {0, 90, 60, 50, 40, 30, 20, 0};
 
 const double attack_bonus[7] = {0, 1, 3, 6, 10, 14, 20};
-const double king_security[12] = {10, 9, 8, 7, 5, 3, 2, 1, 0, -1, -2, -3};
+const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
 
 #endif

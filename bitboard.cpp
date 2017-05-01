@@ -1,18 +1,3 @@
-/*
-  Zevra, a UCI chess playing engine
-  Copyright (C) 2016-2017 Oleg Smirnov (author)
-  Zevra is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  any later version.
-  Zevra is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "bitboard.hpp"
 
 BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
@@ -228,13 +213,6 @@ std::string BitBoard::getFen() {
 void BitBoard::clear() {
 	hash = 0;
 
-	whitePassantMade = false;
- 	blackPassantMade = false;
-
-	third_repeat = std::vector<int> (pow(2, hash_width), 0);
-
-	hash_enable = true;
-
 	for(unsigned int i = 0; i < 7; ++i) {
 		figures[i] = 0;
 	}
@@ -247,10 +225,9 @@ void BitBoard::clear() {
 	whiteMove = true;
 	castlingMap = 0;
 
-	//while(!history.empty()) {
-		//history.pop_front();
-		history_iterator = 0;
-	//}
+	while(!history.empty()) {
+		history.pop_front();
+	}
 
 	gameHash.clear();
 }
@@ -282,43 +259,13 @@ uint8_t BitBoard::firstOne(uint64_t mask) {
 	return __builtin_ctzll(mask);
 }
 
-int BitBoard::getAllFiguresWeight() {
-	int result = 0;
-
-	result += (popcount64(figures[PAWN])) * PAWN_EV;
-	result += (popcount64(figures[KNIGHT])) * KNIGHT_EV;
-	result += (popcount64(figures[BISHOP])) * BISHOP_EV;
-	result += (popcount64(figures[ROOK])) * ROOK_EV;
-	result += (popcount64(figures[QUEEN])) * QUEEN_EV;
-
-	return result;
-}
-
-double BitBoard::getPositionStage() {
-	return std::min(1.0, (double)getAllFiguresWeight() / (double) ALL_MATERIAL);
-}
-
 uint8_t BitBoard::lastOne(uint64_t mask) {
 	if(!mask) { return 64; }
 	return 63 - __builtin_clzll(mask);
 }
 
 void BitBoard::preInit() {
-	history = std::vector<GoBack> (10000);
-	third_repeat = std::vector<int> (pow(2, hash_width), 0);
-	history_iterator = 0;
-	
 	margin = 0;
-
-	for(unsigned int y1 = 0; y1 < 8; ++y1) {
-		for(unsigned int x1 = 0; x1 < 8; ++x1) {
-			for(unsigned int y2 = 0; y2 < 8; ++y2) {
-				for(unsigned int x2 = 0; x2 < 8; ++x2) {
-					distance[y1][x1][y2][x2] = std::sqrt(std::pow(y1 - y2, 2) + std::pow(x1 - x2, 2));
-				}	
-			}
-		}	
-	}
 
 	magicConstantsSet();
 	zobristGenerator();
@@ -613,6 +560,32 @@ void BitBoard::magicInit() {
 			bishopMagicMask[y][x] &= (UINT64_MAX ^ vec2_cells[y][x]);
 		}
 	}
+
+	/*for(uint8_t y = 0; y < 8; ++y) {
+		for(uint8_t x = 0; x < 8; ++x) {
+			std::vector<uint64_t> rook_result_array(popcount64(rookMagicMask[y][x]));
+			for(int s = 0; s < popcount64(rookMagicMask[y][x]); ++s) {
+				uint64_t rook_result = 0;
+				rook_result |= (minus1[y * 8 + x] & (UINT64_MAX ^ minus1[lastOne(minus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+				rook_result |= (minus8[y * 8 + x] & (UINT64_MAX ^ minus8[lastOne(minus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+				rook_result |= ( plus1[y * 8 + x] & (UINT64_MAX ^  plus1[firstOne(plus1[y * 8 + x] & (horizontal[y] & rook_combination[s]))]));
+				rook_result |= ( plus8[y * 8 + x] & (UINT64_MAX ^  plus8[firstOne(plus8[y * 8 + x] & (vertical[x] & rook_combination[s]))]));
+				uint64_t ind = (rook_combination[s] * magic) >> (64 - popcount64(rookMagicMask[y][x]));
+				rook_result_array[ind] = rook_result;
+			}
+
+			std::vector<uint64_t> bishop_result_array(popcount64(bishopMagicMask[y][x]));
+			for(int s = 0; s < popcount64(bishopMagicMask[y][x]); ++s) {
+				uint64_t bishop_result = 0;
+				bishop_result |= (minus7[y * 8 + x] & (UINT64_MAX ^ minus7[lastOne(minus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= (minus9[y * 8 + x] & (UINT64_MAX ^ minus9[lastOne(minus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= ( plus7[y * 8 + x] & (UINT64_MAX ^  plus7[firstOne(plus7[y * 8 + x] & ((plus7[y * 8 + x] | minus7[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				bishop_result |= ( plus9[y * 8 + x] & (UINT64_MAX ^  plus9[firstOne(plus9[y * 8 + x] & ((plus9[y * 8 + x] | minus9[y * 8 + x] | vec2_cells[y][x]) & bishop_combination[s]))]));
+				uint64_t ind = (bishop_combination[s] * magic) >> (64 - popcount64(bishopMagicMask[y][x]));
+				bishop_result_array[ind] = bishop_result;
+			}
+		}
+	}*/
 
 	for(uint8_t y = 0; y < 8; ++y) {
 		for(uint8_t x = 0; x < 8; ++x) {
@@ -1168,6 +1141,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
+	double oldEvalute = evalute;
 	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
 	attacked = false;
 
@@ -1193,21 +1167,17 @@ void BitBoard::move(BitMove& mv) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
-				whitePassantMade = true;
 			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
 				addFigure(ROOK | WHITE, 0, 3);
 				clearCell(0, 0);
-				whitePassantMade = true;
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
 				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
-				blackPassantMade = true;
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
 				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
-				blackPassantMade = true;
 			}
 		}
 	}
@@ -1236,54 +1206,97 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
+	//totalStaticEvalute();
 
-	++third_repeat[getColorHash() & hash_cutter];
-
-	if(third_repeat[getColorHash() & hash_cutter] >= 3) {
-		hash_enable = false;
+	if(whiteMove) {
+		margin = evalute - oldEvalute;
+	} else {
+		margin = oldEvalute - evalute;
 	}
+
+	//gameHash.insert(getHash());
 }
 
 void BitBoard::goBack() {
-	--history_iterator;
-	if(history_iterator >= 0) {
-		--third_repeat[getColorHash() & hash_cutter];
+	//std::multiset<uint64_t>::iterator removed = gameHash.find(getHash());
+	//gameHash.erase(removed);
+
+	if(!history.empty()) {
 		for(unsigned int i = 0; i < 7; ++i) {
-			figures[i] = history[history_iterator].figures[i];
+			figures[i] = history.front().figures[i];
 		}
 
-		white_bit_mask = history[history_iterator].white_bit_mask;
-		black_bit_mask = history[history_iterator].black_bit_mask;
-		moveNumber = history[history_iterator].moveNumber;
-		ruleNumber = history[history_iterator].ruleNumber;
-		castlingMap = history[history_iterator].castlingMap;
-		whiteMove = history[history_iterator].whiteMove;
-		evalute = history[history_iterator].evalute;
-		passant_y = history[history_iterator].passant_y;
-		passant_x = history[history_iterator].passant_x;
-		passant_enable = history[history_iterator].passant_enable;
-		hash = history[history_iterator].hash;
-		hash_enable = history[history_iterator].hash_enable;
-		attacked = history[history_iterator].attacked;
-		margin = history[history_iterator].margin;
-		whitePassantMade = history[history_iterator].whitePassantMade;
- 		blackPassantMade = history[history_iterator].blackPassantMade;
+		white_bit_mask = history.front().white_bit_mask;
+		black_bit_mask = history.front().black_bit_mask;
+		moveNumber = history.front().moveNumber;
+		ruleNumber = history.front().ruleNumber;
+		castlingMap = history.front().castlingMap;
+		whiteMove = history.front().whiteMove;
+		evalute = history.front().evalute;
+		passant_y = history.front().passant_y;
+		passant_x = history.front().passant_x;
+		passant_enable = history.front().passant_enable;
+		hash = history.front().hash;
+		attacked = history.front().attacked;
+		margin = history.front().margin;
+		history.pop_front();
 	}
 }
 
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
-	if(!(vec2_cells[y][x] & (white_bit_mask | black_bit_mask))) {
-		return;
-	}
-
 	uint8_t figure = getFigure(y, x);
 
 	if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
 		hash ^= zobrist[figure][y][x];
 	}
 
+	uint8_t color = (figure & COLOR_SAVE);
 	if(figure) {
+		if(color == WHITE) {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute -= PAWN_EV;
+				evalute -= pawnMatr[7 - y][x];
+			} else
+			if(figure == KNIGHT) {
+				evalute -= KNIGHT_EV;
+				evalute -= knightMatr[7 - y][x];
+			} else if(figure == BISHOP) {
+				evalute -= BISHOP_EV;
+				evalute -= bishopMatr[7 - y][x];
+			} else if(figure == ROOK) {
+				evalute -= ROOK_EV;
+				evalute -= rookMatr[7 - y][x];
+			} else if(figure == QUEEN) {
+				evalute -= QUEEN_EV;
+				evalute -= queenMatr[7 - y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		} else {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute += PAWN_EV;
+				evalute += pawnMatr[y][x];
+			} else
+			if(figure == KNIGHT) {
+				evalute += KNIGHT_EV;
+				evalute += knightMatr[y][x];
+			} else if(figure == BISHOP) {
+				evalute += BISHOP_EV;
+				evalute += bishopMatr[y][x];
+			} else if(figure == ROOK) {
+				evalute += ROOK_EV;
+				evalute += rookMatr[y][x];
+			} else if(figure == QUEEN) {
+				evalute += QUEEN_EV;
+				evalute += queenMatr[y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		}
+
 		if((getFigure(y, x) & TYPE_SAVE) != 0) {
 			figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
 		}
@@ -1298,6 +1311,50 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 	uint8_t originalFigure = figure;
 
 	if(figure) {
+		if(color == WHITE) {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute += PAWN_EV;
+				evalute += pawnMatr[7 - y][x];
+			} else
+			if(figure == KNIGHT) {
+				evalute += KNIGHT_EV;
+				evalute += knightMatr[7 - y][x];
+			} else if(figure == BISHOP) {
+				evalute += BISHOP_EV;
+				evalute += bishopMatr[7 - y][x];
+			} else if(figure == ROOK) {
+				evalute += ROOK_EV;
+				evalute += rookMatr[7 - y][x];
+			} else if(figure == QUEEN) {
+				evalute += QUEEN_EV;
+				evalute += queenMatr[7 - y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		} else {
+			figure &= TYPE_SAVE;
+			if(figure == PAWN) {
+				evalute -= PAWN_EV;
+				evalute -= pawnMatr[y][x];
+			} else
+			if(figure == KNIGHT) {
+				evalute -= KNIGHT_EV;
+				evalute -= knightMatr[y][x];
+			} else if(figure == BISHOP) {
+				evalute -= BISHOP_EV;
+				evalute -= bishopMatr[y][x];
+			} else if(figure == ROOK) {
+				evalute -= ROOK_EV;
+				evalute -= rookMatr[y][x];
+			} else if(figure == QUEEN) {
+				evalute -= QUEEN_EV;
+				evalute -= queenMatr[y][x];
+			} else if(figure == KING) {
+				//evalute -= whitePawnMatr[7 - mv.fromY][mv.fromX];
+			}
+		}
+
 		figures[figure & TYPE_SAVE] |= vec2_cells[y][x];
 
 		if(color == WHITE) {
@@ -1321,35 +1378,57 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 }
 
 void BitBoard::pushHistory() {
+	GoBack newHistory;
+
 	for(unsigned int i = 0; i < 7; ++i) {
-		history[history_iterator].figures[i] = figures[i];
+		newHistory.figures[i] = figures[i];
 	}
 
-	history[history_iterator].white_bit_mask = white_bit_mask;
-	history[history_iterator].black_bit_mask = black_bit_mask;
-	history[history_iterator].moveNumber = moveNumber;
-	history[history_iterator].ruleNumber = ruleNumber;
-	history[history_iterator].whiteMove = whiteMove;
-	history[history_iterator].evalute = evalute;
-	history[history_iterator].castlingMap = castlingMap;
-	history[history_iterator].passant_enable = passant_enable;
-	history[history_iterator].passant_x = passant_x;
-	history[history_iterator].passant_y = passant_y;
-	history[history_iterator].hash = hash;
-	history[history_iterator].hash_enable = hash_enable;
-	history[history_iterator].attacked = attacked;
-	history[history_iterator].margin = margin;
-	history[history_iterator].whitePassantMade = whitePassantMade;
- 	history[history_iterator].blackPassantMade = blackPassantMade;
-	++history_iterator;
+	newHistory.white_bit_mask = white_bit_mask;
+	newHistory.black_bit_mask = black_bit_mask;
+	newHistory.moveNumber = moveNumber;
+	newHistory.ruleNumber = ruleNumber;
+	newHistory.whiteMove = whiteMove;
+	newHistory.evalute = evalute;
+	newHistory.castlingMap = castlingMap;
+	newHistory.passant_enable = passant_enable;
+	newHistory.passant_x = passant_x;
+	newHistory.passant_y = passant_y;
+	newHistory.hash = hash;
+	newHistory.attacked = attacked;
+	newHistory.margin = margin;
+	history.push_front(newHistory);
+}
+
+int64_t BitBoard::kingSecurity() {
+	int64_t result = 0;
+
+	uint64_t mask = figures[KING] & white_bit_mask;
+	uint8_t kingPos = firstOne(mask);
+	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += kingSecurityArray[kingPos][pos];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KING] & black_bit_mask;
+	kingPos = firstOne(mask);
+
+	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= kingSecurityArray[kingPos][pos];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	return result;
 }
 
 void BitBoard::evaluteAll() {
-	double positionStage = getPositionStage();
-
 	evalute = 0;
-	evalute += popcount64(figures[PAWN] & white_bit_mask) * (positionStage * PAWN_EV + (1 - positionStage) * ENDGAME_PAWN_EV);
-	evalute -= popcount64(figures[PAWN] & black_bit_mask) * (positionStage * PAWN_EV + (1 - positionStage) * ENDGAME_PAWN_EV);
+	evalute += popcount64(figures[PAWN] & white_bit_mask) * PAWN_EV;
+	evalute -= popcount64(figures[PAWN] & black_bit_mask) * PAWN_EV;
 	evalute += popcount64(figures[KNIGHT] & white_bit_mask) * KNIGHT_EV;
 	evalute -= popcount64(figures[KNIGHT] & black_bit_mask) * KNIGHT_EV;
 	evalute += popcount64(figures[BISHOP] & white_bit_mask) * BISHOP_EV;
@@ -1428,71 +1507,73 @@ void BitBoard::evaluteAll() {
 		evalute -= queenMatr[pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
+}
 
-	mask = figures[KING] & white_bit_mask;
+int64_t BitBoard::pawnStructureEvalute() {
+	int64_t result = 0;
+
+	/*uint64_t mask = figures[PAWN] & white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		evalute += ((positionStage * kingDebuteMatr[7 - pos / 8][pos % 8]) + ((1 - positionStage) * kingEndGameMatr[7 - pos / 8][pos % 8]));
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-
-		evalute += (positionStage * popcount64(bitboard[KING | WHITE][pos / 8][pos % 8] & figures[PAWN] & white_bit_mask) * 3);
-	}
-
-	mask = figures[KING] & black_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		evalute -= ((positionStage * kingDebuteMatr[pos / 8][pos % 8]) + ((1 - positionStage) * kingEndGameMatr[pos / 8][pos % 8]));
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-
-		evalute -= (positionStage * popcount64(bitboard[KING | BLACK][pos / 8][pos % 8] & figures[PAWN] & black_bit_mask) * 3);
-	}
-
-	if(whitePassantMade) {
- 		evalute += 50;
- 	}
- 	if(blackPassantMade) {
- 		evalute -= 50;
- 	}
-
-	 //преимущество 2 слонов
-	if(popcount64(figures[BISHOP] & white_bit_mask) >= 2) {
-		evalute += 30;
-	}
-	if(popcount64(figures[BISHOP] & black_bit_mask) >= 2) {
-		evalute -= 30;
-	}
-
-	//uint8_t white_king_pos = firstOne(figures[KING] & white_bit_mask);
-	//uint8_t black_king_pos = firstOne(figures[KING] & black_bit_mask);
-
-	/*mask = figures[KNIGHT] & white_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		evalute += king_security[distance[pos / 8][pos % 8][black_king_pos / 8][black_king_pos % 8]];
+		result += pawnMatr[7 - pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	
-	mask = figures[KNIGHT] & black_bit_mask;
+	mask = figures[PAWN] & black_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		evalute -= king_security[distance[pos / 8][pos % 8][white_king_pos / 8][white_king_pos % 8]];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}*/
-
-	/*mask = figures[KNIGHT] & white_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		evalute += king_security[distance[pos / 8][pos % 8][white_king_pos / 8][white_king_pos % 8]];
+		result -= pawnMatr[pos / 8][pos % 8];
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	mask = figures[KNIGHT] & black_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		evalute -= king_security[distance[pos / 8][pos % 8][black_king_pos / 8][black_king_pos % 8]];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}*/
+	return result;*/
+
+	uint64_t whitePawnMask = figures[PAWN] & white_bit_mask;
+	uint64_t blackPawnMask = figures[PAWN] & black_bit_mask;
+
+	for(int x = 0; x < 8; ++x) {
+		uint64_t white_vertical = whitePawnMask & vertical[x];
+		uint64_t black_vertical = blackPawnMask & vertical[x];
+
+		/*if(popcount64(white_vertical) > 1) {
+			result += DUAL_PAWN_BONUS;
+		}
+		if(popcount64(black_vertical) > 1) {
+			result -= DUAL_PAWN_BONUS;
+		}*/
+
+		if(white_vertical && black_vertical) {
+			uint64_t mask = white_vertical;
+			while(mask != 0) {
+				uint8_t pos = firstOne(mask);
+				result += pawnMatr[7 - pos / 8][pos % 8];
+				mask &= (UINT64_MAX ^ vec1_cells[pos]);
+			}
+
+			mask = black_vertical;
+			while(mask != 0) {
+				uint8_t pos = firstOne(mask);
+				result -= pawnMatr[pos / 8][pos % 8];
+				mask &= (UINT64_MAX ^ vec1_cells[pos]);
+			}
+		} else if(white_vertical) {
+			uint64_t mask = white_vertical;
+			while(mask != 0) {
+				uint8_t pos = firstOne(mask);
+				result += passed_pawn_line[7 - pos / 8];
+				mask &= (UINT64_MAX ^ vec1_cells[pos]);
+			}
+		} else if(black_vertical) {
+			uint64_t mask = black_vertical;
+			while(mask != 0) {
+				uint8_t pos = firstOne(mask);
+				result -= passed_pawn_line[pos / 8];
+				mask &= (UINT64_MAX ^ vec1_cells[pos]);
+			}
+		}
+	}
+
+	return result;
 }
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
@@ -1536,13 +1617,10 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
-	if(!hash_enable || ruleNumber >= 100) { return 0; }
-	evaluteAll();
-
 	if(whiteMove) {
-		return evalute;
+		return evalute;// + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -evalute;
+		return -evalute;// - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 
@@ -1760,12 +1838,7 @@ void BitBoard::zobristGenerator() {
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
-				/*for(unsigned int s = 0; s < 64; ++s) {
-					int m = rand() % 2;
-					zobrist[i][j][k] += m * std::pow(2, s);//dis(gen);
-				}*/
 				zobrist[i][j][k] = dis(gen);
-				//std::cout << zobrist[i][j][k] << std::endl;
 			}
 		}
 	}
@@ -1788,10 +1861,70 @@ uint64_t BitBoard::getHash() {
 
 uint64_t BitBoard::getColorHash() {
 	if(!whiteMove) {
-		return (hash ^ reverse_color_const);
+		return hash + reverse_color_const;
 	}
 
 	return hash;
+}
+
+void BitBoard::totalStaticEvalute() {
+	/*uint64_t mask = figures[PAWN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute += pawnMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[PAWN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		evalute -= pawnMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}*/
+
+	/*uint64_t passedBlock = (figures[PAWN] & black_bit_mask);
+	for(uint8_t x = 0; x < 8; ++x) {
+		uint8_t pawnVertical = white_bit_mask & figures[PAWN] & vertical[x];
+		if(pawnVertical) {
+			if(!(passedBlock & vertical[x])) {
+				evalute += PASSED_PAWN_BONUS;
+				uint8_t pos = lastOne(pawnVertical);
+				evalute -= pawnMatr[7 - pos / 8][pos % 8];
+				evalute += passed_pawn_line[7 - pos / 8];
+			}
+
+			evalute -= (popcount64(pawnVertical) - 1);
+		}
+	}
+
+	passedBlock = (figures[PAWN] & white_bit_mask);
+	for(uint8_t x = 0; x < 8; ++x) {
+		uint8_t pawnVertical = black_bit_mask & figures[PAWN] & vertical[x];
+		if(pawnVertical) {
+			if(!(passedBlock & vertical[x])) {
+				evalute -= PASSED_PAWN_BONUS;
+				uint8_t pos = firstOne(pawnVertical);
+				evalute += pawnMatr[pos / 8][pos % 8];
+				evalute -= passed_pawn_line[pos / 8];
+			}
+
+			evalute += (popcount64(pawnVertical) - 1);
+		}
+	}*/
+
+	/*uint8_t whiteKingPos = firstOne(figures[KING] & white_bit_mask);
+	uint8_t blackKingPos = firstOne(figures[KING] & black_bit_mask);
+
+	double beginningPriority = popcount64(white_bit_mask | black_bit_mask);
+	double endPriority = 32 - beginningPriority;
+
+	double bPart = beginningPriority / (beginningPriority + endPriority);
+	double ePart = 1 - bPart;
+
+	evalute += (bPart * kingDebuteMatr[whiteKingPos / 8][whiteKingPos % 8]);
+	evalute += (ePart * kingEndGameMatr[whiteKingPos / 8][whiteKingPos % 8]);
+	evalute -= (bPart * kingDebuteMatr[7 - blackKingPos / 8][7 - blackKingPos % 8]);
+	evalute -= (ePart * kingEndGameMatr[7 - blackKingPos / 8][7 - blackKingPos % 8]);*/
 }
 
 void BitBoard::magicNumberGenerator() {
@@ -1905,22 +2038,6 @@ uint64_t BitBoard::magicGenerator() {
 	}
 
 	return result;
-}
-
-void BitBoard::makeNullMove() {
-	if(!in_null_move) {
-		whiteMove = !whiteMove;
-		hash ^= 747489434796739468;
-		in_null_move = true;
-	}
-}
-
-void BitBoard::unMakeNullMove() {
-	if(in_null_move) {
-		whiteMove = !whiteMove;
-		hash ^= 747489434796739468;
-		in_null_move = false;
-	}
 }
 
 void BitBoard::magicConstantsSet() {

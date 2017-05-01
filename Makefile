@@ -1,22 +1,9 @@
-#  Zevra, a UCI chess playing engine
-#  Copyright (C) 2016-2017 Oleg Smirnov (author)
-#  Zevra is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  any later version.
-#  Zevra is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  You should have received a copy of the GNU General Public License
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 CC = g++
-CFLAGS = -std=c++11 -m64 -Wall -pedantic -O3 -flto -funroll-loops -march=native
-FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o bitmove.o movearray.o bitboard.o magic.o option.o pv.o constants.o
+CFLAGS = -std=c++11 -m64 -O4 -flto -funroll-loops -march=native
+FILES = main.o game.o killer.o hash.o boardinfo.o point.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o category.o magic.o option.o pv.o constants.o extendedmove.o
 NAME = zevra
 
-install: constants.hpp $(FILES)
+all: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o $(NAME)
 
 main.o: main.cpp
@@ -30,6 +17,12 @@ killer.o: killer.hpp killer.cpp
 
 hash.o: hash.hpp hash.cpp
 	$(CC) $(CFLAGS) -c hash.cpp
+
+boardinfo.o: boardinfo.hpp boardinfo.cpp
+	$(CC) $(CFLAGS) -c boardinfo.cpp
+
+point.o: point.hpp point.cpp
+	$(CC) $(CFLAGS) -c point.cpp
 
 uci.o: game.hpp uci.cpp
 	$(CC) $(CFLAGS) -c uci.cpp
@@ -58,6 +51,9 @@ timer.o: timer.hpp timer.cpp
 goback.o: timer.hpp goback.cpp
 	$(CC) $(CFLAGS) -c goback.cpp
 
+figurecell.o: figurecell.hpp figurecell.cpp
+	$(CC) $(CFLAGS) -c figurecell.cpp
+
 bitmove.o: bitmove.hpp bitmove.cpp
 	$(CC) $(CFLAGS) -c bitmove.cpp
 
@@ -66,6 +62,9 @@ movearray.o: bitmove.hpp game.hpp movearray.hpp movearray.cpp
 
 bitboard.o: bitboard.hpp bitboard.cpp
 	$(CC) $(CFLAGS) -c bitboard.cpp
+
+category.o: category.hpp category.cpp
+	$(CC) $(CFLAGS) -c category.cpp
 
 magic.o: magic.hpp magic.cpp
 	$(CC) $(CFLAGS) -c magic.cpp
@@ -78,6 +77,9 @@ pv.o: pv.hpp pv.cpp
 
 constants.o: constants.hpp constants.cpp
 	$(CC) $(CFLAGS) -c constants.cpp
+
+extendedmove.o: extendedmove.hpp extendedmove.cpp
+	$(CC) $(CFLAGS) -c extendedmove.cpp 
 
 clean:
 	rm -rf *.o $(NAME)

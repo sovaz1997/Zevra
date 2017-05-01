@@ -1,23 +1,7 @@
-/*
-  Zevra, a UCI chess playing engine
-  Copyright (C) 2016-2017 Oleg Smirnov (author)
-  Zevra is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  any later version.
-  Zevra is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "game.hpp"
 
 int Game::startGame() {
 	std::string str;
-	game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	while(true) {
 		std::getline(std::cin, str);
 
@@ -29,7 +13,6 @@ int Game::startGame() {
 
 void Game::goFixedDepth() {
 	clearCash();
-
 	stopped = false;
 
 	variant.clear();
@@ -43,13 +26,9 @@ void Game::goFixedDepth() {
 	int max_depth_global = max_depth;
 	max_depth = 1;
 
-	/*if(option.lmrEnable || option.nullMovePrunningEnable) {
-		max_depth = 5;
-	}*/
-
 	start_timer = clock();
 	hasBestMove = false;
-	//double depth;
+	double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
@@ -60,21 +39,32 @@ void Game::goFixedDepth() {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
-		
+
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
-		//negamax_future(-WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, true, nullptr);
 		hasBestMove = true;
 
-		/*if((abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99) || stopped) {
+		if(abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99 || stopped) {
 			break;
-		}*/
+		}
+
+		depth = max_depth;
 	}
 
 	end_timer = clock();
 
+	/*std::cout << "info depth " << depth << " ";
+	printScore(bestScore);
+	std::cout << " pv " << bestMove.getMoveString();
+	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
+	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << std::endl;*/
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << std::endl;
 	}
+
+	/*for(int i = 0; i < bestPV.size(); ++i) {
+		std::cout << bestPV[i].getMoveString() << " ";
+	}
+	std::cout << std::endl;*/
 }
 
 void Game::goFixedTime(int tm) {
@@ -99,36 +89,37 @@ void Game::goFixedTime(int tm) {
 
 	start_timer = clock();
 	hasBestMove = false;
-	//double depth;
+	double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
 	bestScore = 0;
 	hasBestMove = true;
-	max_depth = 1;
-	
-	/*if(option.lmrEnable || option.nullMovePrunningEnable) {
-		max_depth = 5;
-	}*/
-	
+
 	std::vector<BitMove> bestPV;
 
-	for(; timer.getTime() < time; ++max_depth) {
+	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false);
-		//negamax_future(-WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, true, nullptr);
-		/*if(abs(bestScore) >= (WHITE_WIN - 100) || stopped) {
+
+		if(abs(bestScore) >= (WHITE_WIN - 100) || stopped) {
 			break;
-		}*/
+		}
 
 		hasBestMove = true;
+		depth = max_depth;
 	}
 
 	end_timer = clock();
 
+	/*std::cout << "info depth " << depth << " ";
+	printScore(bestScore);
+	std::cout << " pv " << bestMove.getMoveString();
+	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
+	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << std::endl;*/
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << std::endl;
 	}
