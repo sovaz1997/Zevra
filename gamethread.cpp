@@ -59,7 +59,7 @@ void Game::goFixedDepth() {
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
-		//flattenHistory();
+		flattenHistory();
 		
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
 		//negamax_future(-WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, true, nullptr);
@@ -116,7 +116,7 @@ void Game::goFixedTime(int tm) {
 	for(; timer.getTime() < time; ++max_depth) {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
-		//flattenHistory();
+		flattenHistory();
 
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false);
 		//negamax_future(-WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, true, nullptr);

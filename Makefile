@@ -16,7 +16,7 @@ CFLAGS = -std=c++11 -m64 -Wall -pedantic -O3 -flto -funroll-loops -march=native
 FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o bitmove.o movearray.o bitboard.o magic.o option.o pv.o constants.o
 NAME = zevra
 
-all: constants.hpp $(FILES)
+install: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o $(NAME)
 
 main.o: main.cpp

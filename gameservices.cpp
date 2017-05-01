@@ -72,17 +72,17 @@ void Game::clearCash() {
 		boardHash[i].clean();
 	}
 
-	for(int i = 0; i < whiteKiller.size(); ++i) {
+	/*for(int i = 0; i < whiteKiller.size(); ++i) {
 		whiteKiller[i].enable = false;
 	}
 
 	for(int i = 0; i < blackKiller.size(); ++i) {
 		blackKiller[i].enable = false;
-	}
+	}*/
 
-	for(int i = 0; i < moveArray.size(); ++i) {
+	/*for(int i = 0; i < moveArray.size(); ++i) {
 		moveArray[i].clear();
-	}
+	}*/
 }
 
 std::vector<std::string> Game::getStringArray(std::string str) {
