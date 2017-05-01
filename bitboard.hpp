@@ -33,6 +33,7 @@
 
 class BitBoard {
 private:
+	int64_t evalute;
 	uint64_t figures[7];
 	uint64_t horizontal[8];
 	uint64_t vertical[8];
@@ -107,7 +108,7 @@ public:
 	bool whiteMove, passant_enable;
 
 	void evaluteAll();
-	int64_t evalute;
+
 	int64_t getEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
