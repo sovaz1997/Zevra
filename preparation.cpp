@@ -20,4 +20,6 @@ void Game::initEngine() {
 	cleanBlackHistory();
 	clearCash();
 	moveArray.resize(200);
+
+	game_board.setFen(start_position_fen);
 }

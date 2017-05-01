@@ -38,7 +38,7 @@ private:
 
 	std::string start_position_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-	int max_depth;
+	int64_t max_depth;
 	bool stopped;
 
 	int hash_decrement = 0;
@@ -46,7 +46,7 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void goFixedDepth();
-	void goFixedTime(int time);
+	void goFixedTime(int64_t time);
 	void goTournament();
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
@@ -67,7 +67,7 @@ private:
 
 	//фиксированное время
 	Timer timer;
-	int time;
+	int64_t time;
 	double start_timer, end_timer;
 
 	//турнирный режим

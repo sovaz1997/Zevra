@@ -67,7 +67,7 @@ void Game::goFixedDepth() {
 	std::cout << std::endl;*/
 }
 
-void Game::goFixedTime(int tm) {
+void Game::goFixedTime(int64_t tm) {
 	stopped = false;
 	if(tm >= 200) {
 		tm -= 100;

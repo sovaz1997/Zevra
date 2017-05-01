@@ -2,15 +2,16 @@
 #define TIMER_HPP
 
 #include <ctime>
+#include <cstdint>
 
 class Timer {
 private:
-  int startedTime;
+  int64_t startedTime;
 public:
   Timer();
   ~Timer();
   void start();
-  int getTime();
+  int64_t getTime();
 };
 
 #endif

@@ -2,8 +2,6 @@
 
 bool Game::uciHandler(std::string str) {
 	std::vector<std::string> cmd = getStringArray(str);
-
-	game_board.setFen(start_position_fen);
 		if(cmd[0] == "isready") {
 			std::cout << "readyok" << std::endl;
 		} else if(cmd[0] == "position") {
