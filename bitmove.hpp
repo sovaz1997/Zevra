@@ -10,7 +10,7 @@
 
 class BitMove {
 private:
-	Category category;
+	//Category category;
 public:
 	uint8_t attackedFigure, movedFigure, fromY, fromX, toY, toX;
 	uint8_t replacedFigure;
@@ -27,7 +27,6 @@ public:
 	double getAttackPrice() const;
 	bool equal(BitMove& mv);
 	void setReplaced(uint8_t figure);
-	void setCategory(int cat, double val);
 	bool quality();
 };
 
