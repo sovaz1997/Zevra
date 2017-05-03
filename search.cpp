@@ -295,6 +295,10 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 
 	int64_t val = b.getEvalute();
 
+	if ( val < alpha - QUEEN_EV ) {
+   		return alpha;
+	}
+
 	if(val >= beta) {
 		return val;
 	}
