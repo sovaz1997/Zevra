@@ -20,11 +20,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool extended = false;
 
 	int64_t eval = -WHITE_WIN;
-	double margin = PAWN_EV / 2;
 
 	int nextDepth = depth - 1;
 	if(depth > 2) {
-		if(rule == FIXED_TIME && timer.getTime() >= time || stopped) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
 			return 0;
 		}
 	}
@@ -51,7 +50,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag != EMPTY && currentHash->key == hash && !extended) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended && !option.nullMovePrunningEnable) || (currentHash->flag != EMPTY && currentHash->key == hash && inNullMove && !extended && option.nullMovePrunningEnable)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
 
@@ -99,8 +98,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !b.inCheck(color) && !extended && !b.attacked && real_depth > 4) {
-			b.whiteMove = !b.whiteMove;
+		if(!inNullMove && !inCheck && !extended && !b.attacked && real_depth > 4) {
+			b.makeNullMove();
 			int R = 2;
 			/*if(depth > 6) {
 				R = 4;
@@ -111,12 +110,25 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true);
 			if(value >= beta) {
-				b.whiteMove = !b.whiteMove;
+				b.unMakeNullMove();
 				return value;
 			}
-			b.whiteMove = !b.whiteMove;
+
+			b.unMakeNullMove();
 		}
 	}
+
+	/*if(!extended && !inCheck && !b.attacked && depth <= 3) {
+		if(alpha == beta - 1) {
+			if(b.getEvalute() + PAWN_EV / 2 < alpha) {
+				int64_t value = quies(b, alpha, beta, rule, real_depth);
+				
+				if(value < beta) {
+					return value;
+				}
+			}
+		}
+	}*/
 
 	int num_moves = 0;
 
@@ -157,7 +169,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				//tmp = alpha + 1;
+				
+				if(tmp > alpha && tmp < beta) {
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+				}
 			} else {
 				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove);
 
@@ -181,10 +199,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-					//whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
@@ -193,6 +209,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(alpha >= beta) {
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+				} else {
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+				}
+			}
+
 			return beta;
 		}
 	}
@@ -206,7 +230,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(real_depth == 0) {
-		if(rule == FIXED_TIME && timer.getTime() >= time || stopped) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
 			return 0;
 		}
 
@@ -220,7 +244,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
-			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
 			std::cout << " ";
 			printScore(eval);
 			std::cout << " pv ";
@@ -232,6 +256,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	return alpha;
 }
+
 uint64_t Game::perft(int depth) {
 	uint64_t res = 0;
 	if(depth == 0) {
@@ -267,27 +292,8 @@ uint64_t Game::perft(int depth) {
 }
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
+
 	int64_t val = b.getEvalute();
-
-	uint8_t color;
-
-	if ( val < alpha - QUEEN_EV ) {
-   		return alpha;
-	}
-
-	if(b.whiteMove) {
-		color = WHITE;
-	} else {
-		color = BLACK;
-	}
-
-	/*if(b.inCheck(color)) {
-		return negamax(b, alpha, beta, 1, real_depth, rule, false);
-	}*/
-
-	if ( val < alpha - QUEEN_EV ) {
-   		return alpha;
-	}
 
 	if(val >= beta) {
 		return val;
@@ -308,7 +314,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 			if(game_board.inCheck(WHITE)) {
 				b.goBack();
 				continue;
-			}
+			} 
 		} else {
 			if(game_board.inCheck(BLACK)) {
 				b.goBack();
@@ -339,11 +345,11 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	Hash* hash = &boardHash[key & hash_cutter];
 
 	if(flag == ALPHA && (hash->flag == EXACT/* || hash->flag == BETA*/)) {
-		return 0;
+		return false;
 	}
 
 	if(hash->flag != EMPTY && hash->depth > depth) {
-		return 0;
+		return false;
 	}
 
 	if(score > WHITE_WIN - 100) {
@@ -364,6 +370,8 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 
 		hash->move = move;
 	}
+
+	return true;
 }
 
 std::vector<BitMove> Game::extractPV(int depth) {
@@ -392,7 +400,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 				break;
 			}
 
-			result.push_back(currentHash->move);
+			result.emplace_back(currentHash->move);
 			game_board.move(currentHash->move);
 		} else {
 			break;
@@ -411,7 +419,7 @@ bool Game::testMovePossible(BitMove move) {
 	MoveArray moves;
 	game_board.bitBoardMoveGenerator(moves);
 
-	for(int i = 0; i < moves.count; ++i) {
+	for(unsigned int i = 0; i < moves.count; ++i) {
 		if(move.equal(moves.moveArray[i])) {
 			return true;
 		}
@@ -422,8 +430,151 @@ bool Game::testMovePossible(BitMove move) {
 
 void Game::printPV(int depth) {
 	std::vector<BitMove> main_pv = extractPV(depth);
-	for(int i = 0; i < main_pv.size(); ++i) {
+	for(unsigned int i = 0; i < main_pv.size(); ++i) {
 		std::cout << main_pv[i].getMoveString() << " ";
 	}
 	std::cout << std::endl;
+}
+
+int64_t Game::negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove) {
+	++nodesCounter;
+
+	if(depth >= 5) {
+		if(is_input_available()) {
+			std::string input_str;
+			std::getline(std::cin, input_str);
+			if(input_str == "stop") {
+				stopped = true;
+			} else if(input_str == "isready") {
+				std::cout << "readyok" << std::endl;
+			}
+		}
+	}
+
+	int64_t eval = -WHITE_WIN;
+
+	int nextDepth = depth - 1;
+	if(depth > 2) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
+			return 0;
+		}
+	}
+
+	uint8_t color;
+	if(b.whiteMove) {
+		color = WHITE;
+	} else {
+		color = BLACK;
+	}
+
+	if(depth <= 0 || real_depth >= 100) {
+		return b.getEvalute();
+	}
+
+	int num_moves = 0;
+
+	b.bitBoardMoveGenerator(moveArray[real_depth]);
+	sortAttacks(moveArray[real_depth]);
+	sortMoves(moveArray[real_depth], real_depth);
+
+	BitMove local_move;
+
+	if(moveArray[real_depth].count > 0) {
+		local_move = moveArray[real_depth].moveArray[0];
+	}
+
+	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
+		b.move(moveArray[real_depth].moveArray[i]);
+
+		if(game_board.inCheck(color)) {
+			b.goBack();
+			continue;
+		}
+
+		if(num_moves == 0) {
+			local_move = moveArray[real_depth].moveArray[i];
+		}
+
+		++num_moves;
+
+		if(real_depth == 0 && depth >= 9) {
+			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+		}
+
+		int tmp;
+
+		tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+
+		if(tmp > alpha && tmp < beta) {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove);
+		}
+
+		b.goBack();
+
+
+		if(tmp > eval) {
+			eval = tmp;
+		}
+
+		if(tmp > alpha) {
+			alpha = tmp;
+			local_move = moveArray[real_depth].moveArray[i];
+
+
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+//					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					whiteKiller[real_depth] = Killer(local_move);
+				} else {
+//					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					blackKiller[real_depth] = Killer(local_move);
+				}
+			}
+		}
+
+		if(alpha >= beta) {
+			if(!local_move.isAttack) {
+				if(color == WHITE) {
+					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//whiteKiller[real_depth] = Killer(local_move);
+				} else {
+					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+					//blackKiller[real_depth] = Killer(local_move);
+				}
+			}
+
+			return beta;
+		}
+	}
+
+	if(num_moves == 0) {
+		if(game_board.inCheck(color)) {
+			return BLACK_WIN + real_depth;
+		} else {
+			return 0;
+		}
+	}
+
+	if(real_depth == 0) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
+			return 0;
+		}
+
+		bestMove = local_move;
+		bestScore = alpha;
+	}
+
+	if(real_depth == 0) {
+		if(num_moves >= 0) {
+			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+			std::cout << " ";
+			printScore(eval);
+			std::cout << " pv ";
+			printPV(depth);
+		} else {
+			std::cout << std::endl;
+		}
+	}
+
+	return alpha;
 }

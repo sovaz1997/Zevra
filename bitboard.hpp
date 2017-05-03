@@ -24,13 +24,10 @@ private:
 	uint64_t white_bit_mask, black_bit_mask;
 	uint64_t castlingMap;
 
-	bool whitePassantMade, blackPassantMade;
-
 	uint64_t ROOK_MAGIC[8][8];
 	uint64_t BISHOP_MAGIC[8][8];
 
 	uint64_t zobrist[32][BOARD_SIZE][BOARD_SIZE];
-	uint64_t hash;
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	void preInit();
@@ -56,9 +53,8 @@ private:
 
 	uint64_t magicGenerator();
 
-	std::deque<GoBack> history;
-
-	std::vector<int> third_repeat;
+	std::vector<GoBack> history;
+	int history_iterator = 0;
 
 	bool wsc();
 	bool wlc();
@@ -70,6 +66,8 @@ private:
 
 	uint64_t rookMagicMask[8][8];
 	uint64_t bishopMagicMask[8][8];
+
+	std::vector<int> third_repeat;
 public:
 	BitBoard();
 	~BitBoard();
@@ -77,7 +75,7 @@ public:
 	void setFen(std::string fen);
 	std::string getFen();
 	void clear();
-	int stress;
+	int64_t stress;
 
 	void bitBoardMoveGenerator(MoveArray& moveArray);
 	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
@@ -85,11 +83,14 @@ public:
 	void goBack();
 	void pushHistory();
 	BitMove getRandomMove();
+	void makeNullMove();
+	void unMakeNullMove();
 
 	bool whiteMove, passant_enable;
 
 	void evaluteAll();
 	int64_t evalute;
+	int64_t kingEvalute();
 	int64_t getEvalute();
 	void totalStaticEvalute();
 
@@ -106,13 +107,16 @@ public:
 
 	bool attacked;
 	double margin;
-	bool hash_enable = true;
 
 	bool testOfDraw();
 
 	int64_t kingSecurity();
 
 	std::multiset<uint64_t> gameHash;
+
+	bool hash_enable = true;
+	uint64_t hash;
+	bool whitePassantMade, blackPassantMade;
 };
 
 #endif

@@ -9,7 +9,7 @@ bool Game::uciHandler(std::string str) {
 			gameHash.resize(0);
 			hash_decrement = 0;
 			if(cmd[1] == "startpos") {
-				game_board.setFen(start_position_fen);
+				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 				if(cmd.size() > 3) {
 					if(cmd[2] == "moves") {
 						for(unsigned int i = 3; i < cmd.size(); ++i) {
@@ -38,6 +38,8 @@ bool Game::uciHandler(std::string str) {
 					}
 				}
 			}
+
+			//gameHash.push_back(getHash(game_board));
 		} else if(cmd[0] == "go") {
 			if(cmd[1] == "depth") {
 				max_depth = std::stoi(cmd[2]);
@@ -91,15 +93,13 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
-		} else if(cmd[0] == "quit") {
-			return false;
 		} else if(cmd[0] == "stress") {
 			game_board.stress = 0;
 			double st = clock();
 			for(unsigned int i = 0; i < 1000000; ++i) {
 				game_board.bitBoardMoveGenerator(moveArray[0]);
 			}
-			std::cout << (int)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
+			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;

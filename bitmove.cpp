@@ -1,15 +1,15 @@
 #include "bitmove.hpp"
 
-BitMove::BitMove() : isAttack(false), replaced(false), passant(false), fromHash(false) {}
+BitMove::BitMove() : /*category(0, 0),*/ isAttack(false), replaced(false), passant(false), fromHash(false) {}
 
 BitMove::BitMove(uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx) :
-	movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(false), replaced(false), passant(false), fromHash(false) {}
+	/*category(0, 0),*/ movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(false), replaced(false), passant(false), fromHash(false) {}
 
 BitMove::BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx) :
-	attackedFigure(afig), movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(true), replaced(false), passant(false), fromHash(false) {}
+	/*category(0, 0),*/ attackedFigure(afig), movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(true), replaced(false), passant(false), fromHash(false) {}
 
 BitMove::BitMove(uint8_t afig, uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx, bool psnt) :
-	attackedFigure(afig), movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(true), replaced(false), passant(psnt), fromHash(false) {}
+	/*category(0, 0),*/ attackedFigure(afig), movedFigure(fig), fromY(fy), fromX(fx), toY(ty), toX(tx), isAttack(true), replaced(false), passant(psnt), fromHash(false) {}
 
 std::string BitMove::getMoveString() {
 	std::string res;
@@ -83,6 +83,10 @@ bool BitMove::operator<(const BitMove& mv) const {
 void BitMove::setReplaced(uint8_t figure) {
 	replacedFigure = figure;
 	replaced = true;
+}
+
+void BitMove::setCategory(int cat, double val) {
+	//category = Category(cat, val);
 }
 
 bool BitMove::quality() {

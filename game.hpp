@@ -31,12 +31,9 @@ class Game {
 private:
 	BitBoard game_board;
 	unsigned long long nodesCounter = 0;
-	uint64_t combinations;
 
 	const int WHITE_WIN = 100000000;
 	const int BLACK_WIN = -100000000;
-
-	std::string start_position_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 	int64_t max_depth;
 	bool stopped;
@@ -46,7 +43,7 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void goFixedDepth();
-	void goFixedTime(int64_t time);
+	void goFixedTime(int time);
 	void goTournament();
 	void clearCash();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
@@ -61,7 +58,7 @@ private:
 	bool hasBestMove = false;
 
 	std::stack<BitMove>pv_line;
-	int stress;
+	int64_t stress;
 	BitMove bestMove;
 	int64_t bestScore;
 
@@ -73,17 +70,19 @@ private:
 	//турнирный режим
 
 	double wtime, btime, winc, binc;
-	int movestogo;
+	uint64_t movestogo;
 	bool movestogoEnable;
+	uint64_t combinations;
 
 	Option option;
 
 public:
 	Game();
 	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove);
+	int64_t negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
+  	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::string getScore(double score);
@@ -94,7 +93,7 @@ public:
 
 	std::vector<uint64_t>gameHash;
 	std::vector<Hash>boardHash;
-	uint64_t hash_cutter;
+	//uint64_t hash_cutter;
 
 	std::vector<std::string>variant;
 	std::vector<Killer>whiteKiller;

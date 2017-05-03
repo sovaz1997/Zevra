@@ -27,6 +27,7 @@ public:
 	double getAttackPrice() const;
 	bool equal(BitMove& mv);
 	void setReplaced(uint8_t figure);
+	void setCategory(int cat, double val);
 	bool quality();
 };
 

@@ -4,7 +4,6 @@ void Game::initEngine() {
 	whiteKiller.resize(100);
 	blackKiller.resize(100);
 	boardHash.resize(pow(2, hash_width));
-	hash_cutter = pow(2, hash_width) - 1;
 
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
@@ -20,6 +19,4 @@ void Game::initEngine() {
 	cleanBlackHistory();
 	clearCash();
 	moveArray.resize(200);
-
-	game_board.setFen(start_position_fen);
 }

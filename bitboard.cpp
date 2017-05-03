@@ -213,7 +213,12 @@ std::string BitBoard::getFen() {
 void BitBoard::clear() {
 	hash = 0;
 
+	whitePassantMade = false;
+ 	blackPassantMade = false;
+
 	third_repeat = std::vector<int> (pow(2, hash_width), 0);
+
+	hash_enable = true;
 
 	for(unsigned int i = 0; i < 7; ++i) {
 		figures[i] = 0;
@@ -227,9 +232,10 @@ void BitBoard::clear() {
 	whiteMove = true;
 	castlingMap = 0;
 
-	while(!history.empty()) {
-		history.pop_front();
-	}
+	//while(!history.empty()) {
+		//history.pop_front();
+		history_iterator = 0;
+	//}
 
 	gameHash.clear();
 }
@@ -267,13 +273,15 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
+	history = std::vector<GoBack> (10000);
+	third_repeat = std::vector<int> (pow(2, hash_width), 0);
+	history_iterator = 0;
+	
 	margin = 0;
 
 	magicConstantsSet();
 	zobristGenerator();
 	castlingMap = 0;
-
-	third_repeat = std::vector<int> (pow(2, hash_width), 0);
 
 	for(int i = 0; i < 64; ++i) {
 		for(int j = 0; j < 64; ++j) {
@@ -1145,7 +1153,6 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
-	double oldEvalute = evalute;
 	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
 	attacked = false;
 
@@ -1214,61 +1221,52 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	castlingMap &= (figures[KING] | figures[ROOK]);
-	//totalStaticEvalute();
-
-	if(whiteMove) {
-		margin = evalute - oldEvalute;
-	} else {
-		margin = oldEvalute - evalute;
-	}
 
 	++third_repeat[getColorHash() & hash_cutter];
 
 	if(third_repeat[getColorHash() & hash_cutter] >= 3) {
 		hash_enable = false;
 	}
-
-	//gameHash.insert(getHash());
 }
 
 void BitBoard::goBack() {
-	//std::multiset<uint64_t>::iterator removed = gameHash.find(getHash());
-	//gameHash.erase(removed);
-
-	if(!history.empty()) {
+	--history_iterator;
+	if(history_iterator >= 0) {
 		--third_repeat[getColorHash() & hash_cutter];
-
 		for(unsigned int i = 0; i < 7; ++i) {
-			figures[i] = history.front().figures[i];
+			figures[i] = history[history_iterator].figures[i];
 		}
 
-		white_bit_mask = history.front().white_bit_mask;
-		black_bit_mask = history.front().black_bit_mask;
-		moveNumber = history.front().moveNumber;
-		ruleNumber = history.front().ruleNumber;
-		castlingMap = history.front().castlingMap;
-		whiteMove = history.front().whiteMove;
-		whitePassantMade = history.front().whitePassantMade;
-		blackPassantMade = history.front().blackPassantMade;
-		evalute = history.front().evalute;
-		passant_y = history.front().passant_y;
-		passant_x = history.front().passant_x;
-		passant_enable = history.front().passant_enable;
-		hash = history.front().hash;
-		attacked = history.front().attacked;
-		margin = history.front().margin;
-		hash_enable = history.front().hash_enable;
-		history.pop_front();
+		white_bit_mask = history[history_iterator].white_bit_mask;
+		black_bit_mask = history[history_iterator].black_bit_mask;
+		moveNumber = history[history_iterator].moveNumber;
+		ruleNumber = history[history_iterator].ruleNumber;
+		castlingMap = history[history_iterator].castlingMap;
+		whiteMove = history[history_iterator].whiteMove;
+		evalute = history[history_iterator].evalute;
+		passant_y = history[history_iterator].passant_y;
+		passant_x = history[history_iterator].passant_x;
+		passant_enable = history[history_iterator].passant_enable;
+		hash = history[history_iterator].hash;
+		hash_enable = history[history_iterator].hash_enable;
+		attacked = history[history_iterator].attacked;
+		margin = history[history_iterator].margin;
+		whitePassantMade = history[history_iterator].whitePassantMade;
+ 		blackPassantMade = history[history_iterator].blackPassantMade;
 	}
 }
 
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
+	if(!(vec2_cells[y][x] & (white_bit_mask | black_bit_mask))) {
+		return;
+	}
+
 	uint8_t figure = getFigure(y, x);
 
-	if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
+	//if(vec2_cells[y][x] & (white_bit_mask | black_bit_mask)) {
 		hash ^= zobrist[figure][y][x];
-	}
+	//}
 
 	uint8_t color = (figure & COLOR_SAVE);
 	if(figure) {
@@ -1397,29 +1395,27 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 }
 
 void BitBoard::pushHistory() {
-	GoBack newHistory;
-
 	for(unsigned int i = 0; i < 7; ++i) {
-		newHistory.figures[i] = figures[i];
+		history[history_iterator].figures[i] = figures[i];
 	}
 
-	newHistory.white_bit_mask = white_bit_mask;
-	newHistory.black_bit_mask = black_bit_mask;
-	newHistory.moveNumber = moveNumber;
-	newHistory.ruleNumber = ruleNumber;
-	newHistory.whiteMove = whiteMove;
-	newHistory.evalute = evalute;
-	newHistory.whitePassantMade = whitePassantMade;
-	newHistory.blackPassantMade = blackPassantMade;
-	newHistory.hash_enable = hash_enable;
-	newHistory.castlingMap = castlingMap;
-	newHistory.passant_enable = passant_enable;
-	newHistory.passant_x = passant_x;
-	newHistory.passant_y = passant_y;
-	newHistory.hash = hash;
-	newHistory.attacked = attacked;
-	newHistory.margin = margin;
-	history.push_front(newHistory);
+	history[history_iterator].white_bit_mask = white_bit_mask;
+	history[history_iterator].black_bit_mask = black_bit_mask;
+	history[history_iterator].moveNumber = moveNumber;
+	history[history_iterator].ruleNumber = ruleNumber;
+	history[history_iterator].whiteMove = whiteMove;
+	history[history_iterator].evalute = evalute;
+	history[history_iterator].castlingMap = castlingMap;
+	history[history_iterator].passant_enable = passant_enable;
+	history[history_iterator].passant_x = passant_x;
+	history[history_iterator].passant_y = passant_y;
+	history[history_iterator].hash = hash;
+	history[history_iterator].hash_enable = hash_enable;
+	history[history_iterator].attacked = attacked;
+	history[history_iterator].margin = margin;
+	history[history_iterator].whitePassantMade = whitePassantMade;
+ 	history[history_iterator].blackPassantMade = blackPassantMade;
+	++history_iterator;
 }
 
 int64_t BitBoard::kingSecurity() {
@@ -1531,6 +1527,18 @@ void BitBoard::evaluteAll() {
 	}
 }
 
+int64_t BitBoard::kingEvalute() {
+	int8_t white_king_pos = firstOne(figures[KING | WHITE]);
+	int64_t result = (popcount64(white_bit_mask | black_bit_mask) * kingDebuteMatr[7 - white_king_pos / 8][white_king_pos % 3] / 32) + 
+					 ((32 - popcount64(white_bit_mask | black_bit_mask)) * kingEndGameMatr[7 - white_king_pos / 8][white_king_pos % 3] / 32);
+
+	int8_t black_king_pos = firstOne(figures[KING | BLACK]);
+	result -= ((popcount64(white_bit_mask | black_bit_mask) * kingDebuteMatr[white_king_pos / 8][white_king_pos % 3] / 32) + 
+					 ((32 - popcount64(white_bit_mask | black_bit_mask)) * kingEndGameMatr[white_king_pos / 8][black_king_pos % 3] / 32));
+
+	return result;
+}
+
 int64_t BitBoard::pawnStructureEvalute() {
 	int64_t result = 0;
 
@@ -1639,8 +1647,6 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
-	if(!hash_enable || ruleNumber >= 100) { return 0; }
-
 	if(whitePassantMade) {
  		evalute += 50;
  	}
@@ -1648,10 +1654,12 @@ int64_t BitBoard::getEvalute() {
  		evalute -= 50;
  	}
 
+	if(!hash_enable) { return 0; }
+
 	if(whiteMove) {
-		return evalute + whitePassantMade * 50 - blackPassantMade * 50;
+		return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -evalute - whitePassantMade * 50 + blackPassantMade * 50;
+		return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 
@@ -1869,7 +1877,12 @@ void BitBoard::zobristGenerator() {
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
+				/*for(unsigned int s = 0; s < 64; ++s) {
+					int m = rand() % 2;
+					zobrist[i][j][k] += m * std::pow(2, s);//dis(gen);
+				}*/
 				zobrist[i][j][k] = dis(gen);
+				//std::cout << zobrist[i][j][k] << std::endl;
 			}
 		}
 	}
@@ -1892,7 +1905,7 @@ uint64_t BitBoard::getHash() {
 
 uint64_t BitBoard::getColorHash() {
 	if(!whiteMove) {
-		return hash + reverse_color_const;
+		return (hash ^ reverse_color_const);
 	}
 
 	return hash;
@@ -2069,6 +2082,16 @@ uint64_t BitBoard::magicGenerator() {
 	}
 
 	return result;
+}
+
+void BitBoard::makeNullMove() {
+	whiteMove = !whiteMove;
+	hash ^= 747489434796739468;
+}
+
+void BitBoard::unMakeNullMove() {
+	whiteMove = !whiteMove;
+	hash ^= 747489434796739468;
 }
 
 void BitBoard::magicConstantsSet() {

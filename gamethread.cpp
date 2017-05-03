@@ -26,9 +26,13 @@ void Game::goFixedDepth() {
 	int max_depth_global = max_depth;
 	max_depth = 1;
 
+	if(option.lmrEnable || option.nullMovePrunningEnable) {
+		max_depth = 5;
+	}
+
 	start_timer = clock();
 	hasBestMove = false;
-	double depth;
+	//double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
@@ -43,31 +47,19 @@ void Game::goFixedDepth() {
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false);
 		hasBestMove = true;
 
-		if(abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99 || stopped) {
+		if((abs(bestScore) >= (WHITE_WIN - 100) && max_depth_global < 99) || stopped) {
 			break;
 		}
-
-		depth = max_depth;
 	}
 
 	end_timer = clock();
 
-	/*std::cout << "info depth " << depth << " ";
-	printScore(bestScore);
-	std::cout << " pv " << bestMove.getMoveString();
-	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
-	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << std::endl;*/
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << std::endl;
 	}
-
-	/*for(int i = 0; i < bestPV.size(); ++i) {
-		std::cout << bestPV[i].getMoveString() << " ";
-	}
-	std::cout << std::endl;*/
 }
 
-void Game::goFixedTime(int64_t tm) {
+void Game::goFixedTime(int tm) {
 	stopped = false;
 	if(tm >= 200) {
 		tm -= 100;
@@ -89,16 +81,21 @@ void Game::goFixedTime(int64_t tm) {
 
 	start_timer = clock();
 	hasBestMove = false;
-	double depth;
+	//double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
 	bestScore = 0;
 	hasBestMove = true;
-
+	max_depth = 1;
+	
+	if(option.lmrEnable || option.nullMovePrunningEnable) {
+		max_depth = 5;
+	}
+	
 	std::vector<BitMove> bestPV;
 
-	for(max_depth = 1; timer.getTime() < time; ++max_depth) {
+	for(; timer.getTime() < time; ++max_depth) {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
@@ -110,16 +107,10 @@ void Game::goFixedTime(int64_t tm) {
 		}
 
 		hasBestMove = true;
-		depth = max_depth;
 	}
 
 	end_timer = clock();
 
-	/*std::cout << "info depth " << depth << " ";
-	printScore(bestScore);
-	std::cout << " pv " << bestMove.getMoveString();
-	std::cout << " nodes " << nodesCounter << " nps " << (int)(nodesCounter / ((end_timer - start_timer) / CLOCKS_PER_SEC)) <<
-	" time " << (int)((end_timer - start_timer) / (CLOCKS_PER_SEC / 1000)) << std::endl;*/
 	if(hasBestMove) {
 		std::cout << "bestmove " << bestMove.getMoveString() << std::endl;
 	}
