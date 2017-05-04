@@ -50,7 +50,7 @@ void Game::goFixedDepth() {
 		negamax(game_board, current_alpha, current_beta, max_depth, 0, FIXED_DEPTH, false, fail);
 
 
-		if(fail) {
+		if(fail || bestScore >= current_beta || bestScore <= current_alpha ) {
 			current_alpha = -WHITE_WIN, current_beta = WHITE_WIN;
 			--max_depth;
 		} else {
@@ -119,7 +119,7 @@ void Game::goFixedTime(int tm) {
 		//int stack = 0, stop = 6;
 		negamax(game_board, current_alpha, current_beta, max_depth, 0, FIXED_TIME, false, fail);
 
-		if(/*stack <= stop && */fail/*bestScore >= current_beta || bestScore <= current_alpha*/) {
+		if(/*stack <= stop && */fail || bestScore >= current_beta || bestScore <= current_alpha) {
 			/*++stack;
 			if(bestScore >= current_beta) {
 				current_beta += win_size;
