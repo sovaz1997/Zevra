@@ -173,7 +173,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
 		}
 
-		if(!option.lmrEnable) {
+		/*if(!option.lmrEnable) {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
 
 			if(tmp > alpha && tmp < beta) {
@@ -196,9 +196,9 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
 				}
 			}
-		}
+		}*/
 
-		/*if(!option.lmrEnable) {
+		if(!option.lmrEnable) {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
 
 		} else {
@@ -207,7 +207,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			} else {
 				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, fail);
 			}
-		}*/
+		}
 
 		b.goBack();
 
