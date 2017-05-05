@@ -1,10 +1,6 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool& fail) {
-	if(real_depth == 0) {
-		fail = false;
-	}
-
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv) {
 	++nodesCounter;
 
 	if(depth >= 5) {
@@ -69,16 +65,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					alpha = score;
 				}
 				if(alpha >= beta) {
-					if(real_depth == 0) {
-						fail = true;
-					}
+
 					return beta;
 				}
 			} else if(currentHash->flag == ALPHA) {
 				if(score <= alpha) {
-					if(real_depth == 0) {
-						fail = true;
-					}
+
 					return alpha;
 				}
 			}
@@ -86,7 +78,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		if(currentHash->flag != ALPHA && real_depth > 0) {
 			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, fail);
+			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, true);
 			b.goBack();
 
 			if(tmp > alpha) {
@@ -94,9 +86,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 				alpha = tmp;
 				if(alpha >= beta) {
-					if(real_depth == 0) {
-						fail = true;
-					}
+
 		  			return beta;
 				}
 			}
@@ -121,7 +111,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}*/
 
 
-			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true, fail);
+			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true, false);
 			if(value >= beta) {
 				b.unMakeNullMove();
 				return value;
@@ -142,6 +132,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 	}*/
+
+	if(!extended && !inCheck && !b.attacked && depth <= 2 && pv) { //Futility prunning
+		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
+			return beta;
+		}
+	}
+
+	if(!extended && !inCheck && !b.attacked && depth <= 4 && pv) { //Razoring
+		if(b.getEvalute() - QUEEN_EV >= beta) {
+			return beta;
+		}
+	}
 
 	int num_moves = 0;
 
@@ -199,13 +201,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}*/
 
 		if(!option.lmrEnable) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 			} else {
-				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, fail);
+				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, false);
 			}
 		}
 
@@ -239,10 +241,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				} else {
 					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 				}
-			}
-
-			if(real_depth == 0) {
-				fail = true;
 			}
 
 			return beta;

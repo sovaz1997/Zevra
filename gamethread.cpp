@@ -45,18 +45,8 @@ void Game::goFixedDepth() {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
-		bool fail;
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, fail);
-
-
-		/*if(fail || bestScore >= current_beta || bestScore <= current_alpha ) {
-			current_alpha = -WHITE_WIN, current_beta = WHITE_WIN;
-			--max_depth;
-		} else {
-			current_alpha = bestScore - win_size;
-			current_beta = bestScore + win_size;
-		}*/
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 
 		hasBestMove = true;
 
@@ -101,36 +91,18 @@ void Game::goFixedTime(int tm) {
 	bestScore = 0;
 	hasBestMove = true;
 	max_depth = 1;
-	
-	/*if(option.lmrEnable || option.nullMovePrunningEnable) {
-		max_depth = 5;
-	}*/
+
 	
 	std::vector<BitMove> bestPV;
-
-	//int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
 	for(; timer.getTime() < time; ) {
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		bool fail;
-		//int stack = 0, stop = 6;
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, fail);
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 
-		/*if(fail || bestScore >= current_beta || bestScore <= current_alpha) {
-			if(bestScore >= current_beta) {
-				negamax(game_board, current_alpha, WHITE_WIN, max_depth, 0, FIXED_TIME, false, fail);
-			} else if(bestScore <= current_alpha) {
-				negamax(game_board, -WHITE_WIN, current_beta, max_depth, 0, FIXED_TIME, false, fail);
-			} else {
-				negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, fail);
-			}
-		} else {
-			current_alpha = bestScore - win_size;
-			current_beta = bestScore + win_size;
-		}*/
+		
 
 		if(abs(bestScore) >= (WHITE_WIN - 100) || stopped) {
 			break;
