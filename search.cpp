@@ -133,14 +133,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}*/
 
+
 	if(!extended && !inCheck && !b.attacked && depth <= 2 && pv) { //Futility prunning
-		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
+		int64_t value = quies(b, alpha, beta, rule, real_depth);
+		if(value - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
 	if(!extended && !inCheck && !b.attacked && depth <= 4 && pv) { //Razoring
-		if(b.getEvalute() - QUEEN_EV >= beta) {
+		int64_t value = quies(b, alpha, beta, rule, real_depth);
+		if(value - QUEEN_EV >= beta) {
 			return beta;
 		}
 	}
@@ -176,26 +179,26 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		/*if(!option.lmrEnable) {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 			}
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
 				//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 				//tmp = alpha + 1;
 				
 				if(tmp > alpha && tmp < beta) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 				}
 			} else {
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, fail);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, false);
 
 				if(tmp > alpha) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
 				}
 			}
 		}*/
@@ -394,9 +397,9 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	hash->key = key;
 
 	if(flag != ALPHA) {
-		if(flag == EXACT) {
+		/*if(flag == EXACT) {
 			hash->recordPrev();
-		}
+		}*/
 
 		hash->move = move;
 	}
