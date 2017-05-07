@@ -134,16 +134,16 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}*/
 
 
-	if(!extended && !inCheck && !b.attacked && depth <= 2 && pv) { //Futility prunning
-		int64_t value = quies(b, alpha, beta, rule, real_depth);
-		if(value - PAWN_EV / 2 >= beta) {
+	if(!extended && !inCheck && !b.attacked && depth <= 2/* && !pv*/) { //Futility prunning
+		//int64_t value = quies(b, alpha, beta, rule, real_depth);
+		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(!extended && !inCheck && !b.attacked && depth <= 4 && pv) { //Razoring
-		int64_t value = quies(b, alpha, beta, rule, real_depth);
-		if(value - QUEEN_EV >= beta) {
+	if(!extended && !inCheck && !b.attacked && depth <= 4/* && !pv*/) { //Razoring
+		//int64_t value = quies(b, alpha, beta, rule, real_depth);
+		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
 		}
 	}
@@ -204,13 +204,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}*/
 
 		if(!option.lmrEnable) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, num_moves == 1);
 
 		} else {
 			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, num_moves == 1);
 			} else {
-				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, false);
+				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, num_moves == 1);
 			}
 		}
 
