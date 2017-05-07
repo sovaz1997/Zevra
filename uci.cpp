@@ -126,6 +126,24 @@ bool Game::uciHandler(std::string str) {
 				} else if(cmd[4] == "false") {
 					option.lmrEnable = false;
 				}
+			} else if(cmd[2] == "razoring" && cmd[3] == "value") {
+				if(cmd[4] == "true") {
+					option.razoring = true;
+				} else if(cmd[4] == "false") {
+					option.razoring = false;
+				}
+			} else if(cmd[2] == "futility_prunning" && cmd[3] == "value") {
+				if(cmd[4] == "true") {
+					option.futility_prunning = true;
+				} else if(cmd[4] == "false") {
+					option.futility_prunning = false;
+				}
+			} else if(cmd[2] == "checkExtensions" && cmd[3] == "value") {
+				if(cmd[4] == "true") {
+					option.checkExtensions = true;
+				} else if(cmd[4] == "false") {
+					option.checkExtensions = false;
+				}
 			}
 		}
 
