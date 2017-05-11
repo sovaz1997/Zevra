@@ -28,13 +28,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	uint8_t color, enemyColor;
+	uint8_t color;
 	if(b.whiteMove) {
 		color = WHITE;
-		enemyColor = BLACK;
+		//enemyColor = BLACK;
 	} else {
 		color = BLACK;
-		enemyColor = WHITE;
+		//enemyColor = WHITE;
 	}
 
 	if(depth <= 0 || real_depth >= 100) {
@@ -109,20 +109,20 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !inCheck && !extended && !b.attacked && real_depth > 4) {
+		if(!inNullMove && !extended && !b.attacked /*&& real_depth > 4*/) {
 			b.makeNullMove();
 			int R = 2;
-			/*if(depth > 6) {
+			if(depth > 6) {
 				R = 4;
 			} else {
 				R = 3;
-			}*/
+			}
 
 
-			double value = -negamax(b, -beta, -(beta - 1), depth - R - 1, real_depth + 1, rule, true, false);
+			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
 			if(value >= beta) {
 				b.unMakeNullMove();
-				return value;
+				return beta;
 			}
 
 			b.unMakeNullMove();
