@@ -41,12 +41,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
-	if(b.inCheck(color) && option.checkExtensions) { //check extensions
-		++nextDepth;
-		extended = true;
-		inNullMove = true;
-	}
-
 	int tmp;
 
 	uint64_t hash = b.getColorHash();
@@ -98,8 +92,20 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool inCheck;
 	if(color == WHITE) {
 		inCheck = b.inCheck(WHITE);
+
+		if(inCheck && option.checkExtensions) { //check extensions
+			++nextDepth;
+			extended = true;
+			inNullMove = true;
+		}
 	} else {
 		inCheck = b.inCheck(BLACK);
+		
+		if(inCheck && option.checkExtensions) { //check extensions
+			++nextDepth;
+			extended = true;
+			inNullMove = true;
+		}
 	}
 
 	if(option.nullMovePrunningEnable) {
