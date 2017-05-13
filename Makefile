@@ -1,3 +1,6 @@
+PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+
 CC = g++
 CFLAGS = -std=c++11 -m64 -Wall -pedantic -O3 -flto -funroll-loops -march=native
 FILES = main.o game.o killer.o hash.o point.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o category.o magic.o option.o pv.o constants.o extendedmove.o eval.o
@@ -5,6 +8,19 @@ NAME = zevra
 
 all: constants.hpp $(FILES)
 	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o $(NAME)
+
+strip:
+	strip $(NAME)
+
+install:
+	make -j4 clean
+	make -j4 all
+	-mkdir -p -m 755 $(BINDIR)
+	-cp $(NAME) $(BINDIR)
+	-strip $(BINDIR)/$(NAME)
+
+uninstall:
+	rm -rf $(BINDIR)/$(NAME)
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp
