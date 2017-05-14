@@ -1314,8 +1314,9 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 			}
 		}
 
-		if((getFigure(y, x) & TYPE_SAVE) != 0) {
-			figures[getFigure(y, x) & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
+		uint8_t figure_test = getFigure(y, x);
+		if((figure_test & TYPE_SAVE) != 0) {
+			figures[figure_test & TYPE_SAVE] &= (UINT64_MAX ^ vec2_cells[y][x]);
 		}
 
 		white_bit_mask &= (UINT64_MAX ^ vec2_cells[y][x]);
