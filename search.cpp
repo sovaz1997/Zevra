@@ -149,7 +149,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.attacked && depth <= 4/* && !pv*/) { //Razoring
+	/*if(option.razoring && !extended && !inCheck && !b.attacked && depth <= 4) { //Razoring
+		//int64_t value = quies(b, alpha, beta, rule, real_depth);
+		if(b.getEvalute() - QUEEN_EV >= beta) {
+			return beta;
+		}
+	}*/
+
+	if(option.razoring && !extended && !inCheck && !b.attacked) { //Razoring
 		//int64_t value = quies(b, alpha, beta, rule, real_depth);
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
@@ -281,7 +288,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
-			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC));
+			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << " hashfull " << (int)(hash_filled / max_hash_filled * 1000);
 			std::cout << " ";
 			printScore(eval);
 			std::cout << " pv ";
@@ -397,6 +404,10 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		score += real_depth;
 	} else if(score < -WHITE_WIN + 100) {
 		score -= real_depth;
+	}
+
+	if(hash->flag == EMPTY) {
+		++hash_filled;
 	}
 
 	hash->depth = depth;

@@ -61,6 +61,7 @@ private:
 	int64_t stress;
 	BitMove bestMove;
 	int64_t bestScore;
+	double hash_filled, max_hash_filled;
 
 	//фиксированное время
 	Timer timer;

@@ -19,4 +19,7 @@ void Game::initEngine() {
 	cleanBlackHistory();
 	clearCash();
 	moveArray.resize(200);
+
+	hash_filled = 0;
+	max_hash_filled = boardHash.size();
 }
