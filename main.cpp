@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include "bitboard.hpp"
+//#include "newbitmove.hpp"
 
 #if defined(_WIN32) || defined(_WIN64)
 	#include <windows.h>
@@ -106,6 +107,11 @@ bool is_input_available() {
 }
 
 int main() {
+	/*setBitMoveConstants();
+	NewBitMove bitMove;
+	bitMove.setAttackedFigure(WHITE | KING);
+	std::cout << bitMove.getAttackedFigure() << "\n";*/
+
 	Game* game = new Game();
 	game->startGame();
 	delete game;

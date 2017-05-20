@@ -52,6 +52,9 @@ search.o: game.hpp search.cpp
 movegenerator.o: game.hpp movegenerator.cpp
 	$(CC) $(CFLAGS) -c movegenerator.cpp
 
+newbitmove.o: newbitmove.hpp newbitmove.cpp
+	$(CC) $(CFLAGS) -c newbitmove.cpp
+
 gamethread.o: game.hpp gamethread.cpp
 	$(CC) $(CFLAGS) -c gamethread.cpp
 

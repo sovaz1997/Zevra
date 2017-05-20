@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include <vector>
 #include <cstdint>
 #include <cwchar>
 #include <cmath>
@@ -150,5 +151,17 @@ const double passed_pawn_line[BOARD_SIZE] = {0, 90, 60, 50, 40, 30, 20, 0};
 
 const double attack_bonus[7] = {0, 1, 3, 6, 10, 14, 20};
 const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
+
+
+//void setBitMoveConstants();
+//uint8_t figureToIndex[32];
+//uint8_t indexToFigure[12];
+
+/*const uint8_t bit1 = 1;
+const uint8_t bit2 = 3;
+const uint8_t bit3 = 7;
+const uint8_t bit4 = 15;
+
+void initializeArrays();*/
 
 #endif
