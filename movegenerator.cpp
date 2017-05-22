@@ -3,7 +3,7 @@
 void Game::sortMoves(MoveArray& result, int depth) {
 	int num_attacks = result.num_attacks;
 
-	if(result.num_attacks >= 0 && result.num_attacks < result.moveArray.size() && result.count >= 1 && result.count < result.moveArray.size()) {
+	/*if(result.num_attacks >= 0 && result.num_attacks < result.moveArray.size() && result.count >= 1 && result.count < result.moveArray.size()) {
 		if(game_board.whiteMove) {
 			for(unsigned int i = result.num_attacks + 1; i < result.count - 1; ++i) {
 				for(int j = i - 1; j >= num_attacks && whiteHistorySort[result.moveArray[j].fromY][result.moveArray[j].fromX][result.moveArray[j].toY][result.moveArray[j].toX] < whiteHistorySort[result.moveArray[j+1].fromY][result.moveArray[j+1].fromX][result.moveArray[j+1].toY][result.moveArray[j+1].toX]; --j) {
@@ -17,7 +17,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 				}
 			}
 		}
-	}
+	}*/
 
 	for(unsigned int i = num_attacks; i < result.count; ++i) {
 		if(game_board.whiteMove) {
