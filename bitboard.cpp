@@ -1529,15 +1529,15 @@ void BitBoard::evaluteAll() {
 }
 
 int64_t BitBoard::kingEvalute() {
-	int8_t white_king_pos = firstOne(figures[KING | WHITE]);
+	/*int8_t white_king_pos = firstOne(figures[KING | WHITE]);
 	int64_t result = (popcount64(white_bit_mask | black_bit_mask) * kingDebuteMatr[7 - white_king_pos / 8][white_king_pos % 3] / 32) + 
 					 ((32 - popcount64(white_bit_mask | black_bit_mask)) * kingEndGameMatr[7 - white_king_pos / 8][white_king_pos % 3] / 32);
 
 	int8_t black_king_pos = firstOne(figures[KING | BLACK]);
-	result -= ((popcount64(white_bit_mask | black_bit_mask) * kingDebuteMatr[white_king_pos / 8][white_king_pos % 3] / 32) + 
+	result -= ((popcount64(white_bit_mask | black_bit_mask) * kingMiddleGameMatr[white_king_pos / 8][white_king_pos % 3] / 32) + 
 					 ((32 - popcount64(white_bit_mask | black_bit_mask)) * kingEndGameMatr[white_king_pos / 8][black_king_pos % 3] / 32));
-
-	return result;
+*/
+	return 0;
 }
 
 int64_t BitBoard::pawnStructureEvalute() {
@@ -1658,9 +1658,11 @@ int64_t BitBoard::getEvalute() {
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
-		return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
+		return newEvaluteAll();
+		//return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
+		return -newEvaluteAll();
+		//return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 
@@ -2226,3 +2228,126 @@ void BitBoard::magicConstantsSet() {
 	BISHOP_MAGIC[7][6] = 9012215810621696ULL;
 	BISHOP_MAGIC[7][7] = 1706510799372320ULL;
 }
+
+/*--- evalution functions ---*/
+
+double BitBoard::newEvaluteAll() {
+
+	double stage_game = popcount64(white_bit_mask | black_bit_mask) / 32;
+
+	double result = 0;
+
+	int white_pawn_count = popcount64(figures[PAWN] & white_bit_mask);
+	int black_pawn_count = popcount64(figures[PAWN] & black_bit_mask);
+	
+	int white_knight_count = popcount64(figures[KNIGHT] & white_bit_mask);
+	int black_knight_count = popcount64(figures[KNIGHT] & black_bit_mask);
+	
+	int white_bishop_count = popcount64(figures[BISHOP] & white_bit_mask);
+	int black_bishop_count = popcount64(figures[BISHOP] & black_bit_mask);
+	
+	int white_rook_count = popcount64(figures[ROOK] & white_bit_mask);
+	int black_rook_count = popcount64(figures[ROOK] & black_bit_mask);
+	
+	int white_queen_count = popcount64(figures[QUEEN] & white_bit_mask);
+	int black_queen_count = popcount64(figures[QUEEN] & black_bit_mask);
+
+	result += (white_pawn_count - black_pawn_count) * (PAWN_EV * stage_game + ENDGAME_PAWN_EV * (1 - stage_game));
+	//result -= black_pawn_count * PAWN_EV;
+	result += white_knight_count * KNIGHT_EV;
+	result -= black_knight_count * KNIGHT_EV;
+	result += white_bishop_count * BISHOP_EV;
+	result -= black_bishop_count * BISHOP_EV;
+	result += white_rook_count * ROOK_EV;
+	result -= black_rook_count * ROOK_EV;
+	result += white_queen_count * QUEEN_EV;
+	result -= black_queen_count * QUEEN_EV;
+
+	uint64_t mask = figures[PAWN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += pawnMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[PAWN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= pawnMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KNIGHT] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += knightMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KNIGHT] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= knightMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[BISHOP] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += bishopMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[BISHOP] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= bishopMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[ROOK] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += rookMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[ROOK] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= rookMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[QUEEN] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += queenMatr[7 - pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[QUEEN] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= queenMatr[pos / 8][pos % 8];
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = figures[KING] & white_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += (kingMiddleGameMatr[7 - pos / 8][pos % 8] * stage_game + kingEndGameMatr[7 - pos / 8][pos % 8] * (1 - stage_game));
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+	
+	mask = figures[KING] & black_bit_mask;
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= (kingMiddleGameMatr[pos / 8][pos % 8] * stage_game + kingEndGameMatr[pos / 8][pos % 8] * (1 - stage_game));
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	return result;
+}
+
+/*--- evalution functions ---*/

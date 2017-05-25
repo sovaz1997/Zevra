@@ -46,6 +46,7 @@ private:
 	void goFixedTime(int time);
 	void goTournament();
 	void clearCash();
+	void initializeArrays();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
   std::vector<BitMove>pv;

@@ -129,32 +129,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	/*if(!extended && !inCheck && !b.attacked && depth <= 3) {
-		if(alpha == beta - 1) {
-			if(b.getEvalute() + PAWN_EV / 2 < alpha) {
-				int64_t value = quies(b, alpha, beta, rule, real_depth);
-				
-				if(value < beta) {
-					return value;
-				}
-			}
-		}
-	}*/
-
-
-	if(option.futility_prunning && !extended && !inCheck && !b.attacked && depth <= 2/* && !pv*/) { //Futility prunning
+	if(option.futility_prunning && !extended && !inCheck && !b.attacked && depth <= 2) { //Futility prunning
 		//int64_t value = quies(b, alpha, beta, rule, real_depth);
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
-
-	/*if(option.razoring && !extended && !inCheck && !b.attacked && depth <= 4) { //Razoring
-		//int64_t value = quies(b, alpha, beta, rule, real_depth);
-		if(b.getEvalute() - QUEEN_EV >= beta) {
-			return beta;
-		}
-	}*/
 
 	if(option.razoring && !extended && !inCheck && !b.attacked) { //Razoring
 		//int64_t value = quies(b, alpha, beta, rule, real_depth);
@@ -162,6 +142,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			return beta;
 		}
 	}
+
+	/*if(depth >= 2) {
+		if(alpha > b.getEvalute() + PAWN_EV / 2 && !extended && !inCheck && !b.attacked) {
+			--nextDepth;
+		}
+	}*/
 
 	int num_moves = 0;
 

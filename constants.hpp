@@ -36,11 +36,12 @@ const uint8_t TRANSFORMATION_MV = 6;
 
 const uint64_t reverse_color_const = 54387554323743313;
 
-const double PAWN_EV = 1000;
-const double KNIGHT_EV = 3200;
-const double BISHOP_EV = 3300;
-const double ROOK_EV = 5600;
-const double QUEEN_EV = 11000;
+const double PAWN_EV = 100;
+const double KNIGHT_EV = 320;
+const double BISHOP_EV = 330;
+const double ROOK_EV = 560;
+const double QUEEN_EV = 1100;
+const double ENDGAME_PAWN_EV = 150;
 
 //move types
 const int FIXED_DEPTH = 0;
@@ -123,7 +124,7 @@ const double queenMatr[BOARD_SIZE][BOARD_SIZE] {
 {-20, -10, -10, -5, -5, -10, -10, -20}
 };
 
-const double kingDebuteMatr[BOARD_SIZE][BOARD_SIZE] {
+const double kingMiddleGameMatr[BOARD_SIZE][BOARD_SIZE] {
 {-30, -40, -40, -50, -50, -40, -40, -30},
 {-30, -40, -40, -50, -50, -40, -40, -30},
 {-30, -40, -40, -50, -50, -40, -40, -30},
@@ -139,8 +140,8 @@ const double kingEndGameMatr[BOARD_SIZE][BOARD_SIZE] {
 {-30, -20, -10, 0, 0, -10, -20, -30},
 {-30, -10, 20, 30, 30, 20, -10, -30},
 {-30, -10, 30, 40, 40, 30, -10, -30},
-{-30, -10, 30, 40, 40, 30, -10, -30},
 {-30, -10, 20, 30, 30, 20, -10, -30},
+{-30, -30, 0, 0, 0, 0, -30, -30},
 {-50, -30, -30, -30, -30, -30, -30, -50}
 };
 
@@ -154,14 +155,14 @@ const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
 
 
 //void setBitMoveConstants();
-//uint8_t figureToIndex[32];
-//uint8_t indexToFigure[12];
+/*
+uint8_t figureToIndex[32];
+uint8_t indexToFigure[12];
 
-/*const uint8_t bit1 = 1;
+const uint8_t bit1 = 1;
 const uint8_t bit2 = 3;
 const uint8_t bit3 = 7;
 const uint8_t bit4 = 15;
-
-void initializeArrays();*/
+*/
 
 #endif

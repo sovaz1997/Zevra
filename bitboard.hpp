@@ -68,6 +68,9 @@ private:
 	uint64_t bishopMagicMask[8][8];
 
 	std::vector<int> third_repeat;
+
+	/*--- evalution fields ---*/
+	/*--- evalution fields ---*/
 public:
 	BitBoard();
 	~BitBoard();
@@ -117,6 +120,13 @@ public:
 	bool hash_enable = true;
 	uint64_t hash;
 	bool whitePassantMade, blackPassantMade;
+
+	/*--- evalution functions ---*/
+
+	
+	double newEvaluteAll();
+
+	/*--- evalution functions ---*/
 };
 
 #endif
