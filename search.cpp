@@ -337,6 +337,10 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 
 	int64_t val = b.getEvalute();
 
+	/*if(std::abs(val) <= 2 * PAWN_EV || b.popcount64(b.white_bit_mask | b.black_bit_mask) <= 6) {
+		val = b.getEvalute();
+	}*/
+
 	if ( val < alpha - QUEEN_EV ) {
    		return alpha;
 	}

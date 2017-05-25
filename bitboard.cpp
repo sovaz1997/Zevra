@@ -1675,6 +1675,24 @@ int64_t BitBoard::getEvalute() {
 	}
 }
 
+
+int64_t BitBoard::getLazyEvalute() {
+	if(whitePassantMade) {
+ 		evalute += 50;
+ 	}
+ 	if(blackPassantMade) {
+ 		evalute -= 50;
+ 	}
+
+	if(!hash_enable) { return 0; }
+
+	if(whiteMove) {
+		return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
+	} else {
+		return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
+	}
+}
+
 bool BitBoard::inCheck(uint8_t color) {
 	uint64_t mask, emask;
 
@@ -2362,7 +2380,7 @@ double BitBoard::newEvaluteAll() {
 double BitBoard::basicKingSafety() {
 	double result = 0;
 
-	double valueOfAttacks = 0;
+	int valueOfAttacks = 0;
 	double attackingPiecesCount;
 
 	int white_king_pos = firstOne(figures[KING] & white_bit_mask);
@@ -2373,10 +2391,10 @@ double BitBoard::basicKingSafety() {
 		basic_king_figures_rom = std::vector<int>(7, 0);
 		attackedField(BLACK, pos / 8, pos % 8, basic_king_figures_rom, pieces_count);
 
-		valueOfAttacks += (basic_king_figures_rom[KNIGHT] * 20);
-		valueOfAttacks += (basic_king_figures_rom[BISHOP] * 20);
-		valueOfAttacks += (basic_king_figures_rom[ROOK] * 40);
-		valueOfAttacks += (basic_king_figures_rom[QUEEN] * 80);
+		valueOfAttacks += (basic_king_figures_rom[KNIGHT] * 2);
+		valueOfAttacks += (basic_king_figures_rom[BISHOP] * 2);
+		valueOfAttacks += (basic_king_figures_rom[ROOK] * 3);
+		valueOfAttacks += (basic_king_figures_rom[QUEEN] * 5);
 
 		white_king_mask &= (~vec1_cells[pos]);
 	}
@@ -2384,7 +2402,8 @@ double BitBoard::basicKingSafety() {
 	attackingPiecesCount = popcount64(pieces_count);
 	//std::cout << attackingPiecesCount << "\n";
 
-	result -= valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)];
+	//result -= valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)];
+	result -= (SafetyTable[valueOfAttacks]);
 
 	valueOfAttacks = 0;
 
@@ -2396,19 +2415,20 @@ double BitBoard::basicKingSafety() {
 		basic_king_figures_rom = std::vector<int>(7, 0);
 		attackedField(WHITE, pos / 8, pos % 8, basic_king_figures_rom, pieces_count);
 
-		valueOfAttacks += (basic_king_figures_rom[KNIGHT] * 20);
-		valueOfAttacks += (basic_king_figures_rom[BISHOP] * 20);
-		valueOfAttacks += (basic_king_figures_rom[ROOK] * 40);
-		valueOfAttacks += (basic_king_figures_rom[QUEEN] * 80);
+		valueOfAttacks += (basic_king_figures_rom[KNIGHT] * 2);
+		valueOfAttacks += (basic_king_figures_rom[BISHOP] * 2);
+		valueOfAttacks += (basic_king_figures_rom[ROOK] * 3);
+		valueOfAttacks += (basic_king_figures_rom[QUEEN] * 5);
 		
 		black_king_mask &= (~vec1_cells[pos]);
 	}
 
 	attackingPiecesCount = popcount64(pieces_count);
 
-	result += (valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)]);
-	//std::cout << attackingPiecesCount << "\n";
-	return result / 100;
+	//result += (valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)]);
+	result += (SafetyTable[valueOfAttacks]);
+	//std::cout << valueOfAttacks << "\n";
+	return result;
 }
 
 void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<int>& figure_array, uint64_t& pieces_mask) {
