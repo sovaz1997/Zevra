@@ -2408,7 +2408,7 @@ double BitBoard::basicKingSafety() {
 
 	result += (valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)]);
 	//std::cout << attackingPiecesCount << "\n";
-	return result;
+	return result / 100;
 }
 
 void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<int>& figure_array, uint64_t& pieces_mask) {
