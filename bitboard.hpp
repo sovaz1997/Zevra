@@ -17,7 +17,7 @@
 #include "magic.hpp"
 
 class BitBoard {
-private:
+public:
 	uint64_t figures[7];
 	uint64_t horizontal[8];
 	uint64_t vertical[8];

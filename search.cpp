@@ -108,6 +108,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
+	/*if(color == WHITE) {
+		if(b.horizontal[6] & b.figures[PAWN] & b.white_bit_mask) {
+			++nextDepth;
+			extended = true;
+		}
+	} else {
+		if(b.horizontal[1] & b.figures[PAWN] & b.black_bit_mask) {
+			++nextDepth;
+			extended = true;
+		}
+	}*/
+
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !extended && !b.attacked /*&& real_depth > 4*/) {
 			b.makeNullMove();
