@@ -1648,6 +1648,15 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
+	std::vector<int> figures(32, 0);
+
+	//attackedField(WHITE, 4, 4, figures);
+
+	/*for(int i = 0; i < 32; ++i) {
+		std::cout << figures[i] << " ";
+	}
+	std::cout << "\n";*/
+	
 	if(whitePassantMade) {
  		evalute += 50;
  	}
@@ -2347,7 +2356,136 @@ double BitBoard::newEvaluteAll() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
+	return result + basicKingSafety();
+}
+
+double BitBoard::basicKingSafety() {
+	double result = 0;
+
+	double valueOfAttacks = 0;
+	double attackingPiecesCount;
+
+	int white_king_pos = firstOne(figures[KING] & white_bit_mask);
+	uint64_t white_king_mask = bitboard[KING | WHITE][white_king_pos / 8][white_king_pos % 8] & ~(white_bit_mask | black_bit_mask);
+	uint64_t pieces_count = 0;
+	while(white_king_mask) {
+		int pos = firstOne(white_king_mask);
+		basic_king_figures_rom = std::vector<int>(7, 0);
+		attackedField(BLACK, pos / 8, pos % 8, basic_king_figures_rom, pieces_count);
+
+		valueOfAttacks += (basic_king_figures_rom[KNIGHT] * 20);
+		valueOfAttacks += (basic_king_figures_rom[BISHOP] * 20);
+		valueOfAttacks += (basic_king_figures_rom[ROOK] * 40);
+		valueOfAttacks += (basic_king_figures_rom[QUEEN] * 80);
+
+		white_king_mask &= (~vec1_cells[pos]);
+	}
+
+	attackingPiecesCount = popcount64(pieces_count);
+	//std::cout << attackingPiecesCount << "\n";
+
+	result -= valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)];
+
+	valueOfAttacks = 0;
+
+	int black_king_pos = firstOne(figures[KING] & black_bit_mask);
+	uint64_t black_king_mask = bitboard[KING | BLACK][black_king_pos / 8][black_king_pos % 8] & ~(white_bit_mask | black_bit_mask);
+	pieces_count = 0;
+	while(black_king_mask) {
+		int pos = firstOne(black_king_mask);
+		basic_king_figures_rom = std::vector<int>(7, 0);
+		attackedField(WHITE, pos / 8, pos % 8, basic_king_figures_rom, pieces_count);
+
+		valueOfAttacks += (basic_king_figures_rom[KNIGHT] * 20);
+		valueOfAttacks += (basic_king_figures_rom[BISHOP] * 20);
+		valueOfAttacks += (basic_king_figures_rom[ROOK] * 40);
+		valueOfAttacks += (basic_king_figures_rom[QUEEN] * 80);
+		
+		black_king_mask &= (~vec1_cells[pos]);
+	}
+
+	attackingPiecesCount = popcount64(pieces_count);
+
+	result += (valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)]);
+	//std::cout << attackingPiecesCount << "\n";
 	return result;
 }
 
+void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<int>& figure_array, uint64_t& pieces_mask) {
+	uint64_t mask, emask;
+
+	if(color == BLACK) {
+		mask = white_bit_mask & (UINT64_MAX ^ (figures[KING] & WHITE));
+		emask = black_bit_mask & (UINT64_MAX ^ (figures[KING] & BLACK));
+	} else {
+		mask = black_bit_mask & (UINT64_MAX ^ (figures[KING] & BLACK));
+		emask = white_bit_mask & (UINT64_MAX ^ (figures[KING] & WHITE));
+	}
+
+	uint64_t kingPos = vec2_cells[y][x];
+	uint8_t kingCoord = y * 8 + x;
+
+
+	uint64_t figure;
+	figure = firstOne(plus8[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus8[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = firstOne(plus1[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus1[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = lastOne(minus8[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus8[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = lastOne(minus1[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus1[kingCoord] & (mask | emask) && (figure & (figures[ROOK] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = firstOne(plus7[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus7[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = firstOne(plus9[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(plus9[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = lastOne(minus7[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus7[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	figure = lastOne(minus9[kingCoord] & (mask | emask));
+	figure = vec1_cells[figure];
+	if(minus9[kingCoord] & (mask | emask) && (figure & (figures[BISHOP] | figures[QUEEN]) & emask)) {
+		++figure_array[getFigure(firstOne(figure) / 8, firstOne(figure) % 8) & TYPE_SAVE];
+		pieces_mask |= figure;
+	}
+
+	if(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & figures[KNIGHT] & emask) {
+		figure_array[KNIGHT] += popcount64(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & figures[KNIGHT] & emask);
+		pieces_mask |= (bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & figures[KNIGHT] & emask);
+	}
+}
 /*--- evalution functions ---*/

@@ -123,8 +123,13 @@ public:
 
 	/*--- evalution functions ---*/
 
+	std::vector<int>basic_king_figures_rom;
+
+	int attackWeight[8] = {0, 0, 50, 75, 88, 94, 97, 99};
 	
 	double newEvaluteAll();
+	double basicKingSafety();
+	void attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<int>& figure_array, uint64_t& pieces_mask);
 
 	/*--- evalution functions ---*/
 };
