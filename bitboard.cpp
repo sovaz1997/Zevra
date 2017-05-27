@@ -2293,14 +2293,26 @@ double BitBoard::newEvaluteAll() {
 	uint64_t mask = figures[PAWN] & white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		result += pawnMatr[7 - pos / 8][pos % 8];
+		if(vertical[pos % 8] & black_bit_mask & figures[PAWN]) {
+			result += pawnMatr[7 - pos / 8][pos % 8];
+		} else {
+			result += promotePawnBonus[pos / 8];
+		}
+
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
 	mask = figures[PAWN] & black_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		result -= pawnMatr[pos / 8][pos % 8];
+		//result -= pawnMatr[pos / 8][pos % 8];
+
+		if(vertical[pos % 8] & white_bit_mask & figures[PAWN]) {
+			result -= pawnMatr[pos / 8][pos % 8];
+		} else {
+			result -= promotePawnBonus[7 - pos / 8];
+		}
+
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
