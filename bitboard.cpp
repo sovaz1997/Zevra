@@ -1667,11 +1667,11 @@ int64_t BitBoard::getEvalute() {
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
-		return newEvaluteAll();
-		//return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
+		//return newEvaluteAll();
+		return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
 	} else {
-		return -newEvaluteAll();
-		//return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
+		//return -newEvaluteAll();
+		return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
 	}
 }
 

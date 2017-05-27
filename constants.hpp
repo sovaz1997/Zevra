@@ -64,6 +64,8 @@ const int MIN_DEPTH = 2;
 
 const uint64_t hash_cutter = std::pow(2, hash_width) - 1;
 
+const int FutilityMoveCount[9] = {19, 19, 19, 19, 19, 35, 67, 131, 259};
+
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV

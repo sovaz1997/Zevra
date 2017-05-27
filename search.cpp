@@ -173,6 +173,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		local_move = moveArray[real_depth].moveArray[0];
 	}
 
+	int low_moves_count = 0;
+
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 		b.move(moveArray[real_depth].moveArray[i]);
 
@@ -216,6 +218,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}*/
 
+		if(depth < 9 && real_depth > 0) {
+			if(num_moves >= 3 && !b.inCheck(color) && !extended && !inNullMove && !b.attacked) {
+				++low_moves_count;
+
+				/*if(low_moves_count >= FutilityMoveCount[depth]) {
+					b.goBack();
+					continue;
+				}*/
+			}
+		}
+
 		if(!option.lmrEnable) {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, num_moves == 1 && pv);
 
@@ -226,6 +239,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, num_moves == 1 && pv);
 			}
 		}
+
+		++low_moves_count;
 
 		b.goBack();
 
