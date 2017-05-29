@@ -1648,7 +1648,7 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
-	std::vector<int> figures(32, 0);
+	//std::vector<int> figures(32, 0);
 
 	//attackedField(WHITE, 4, 4, figures);
 
