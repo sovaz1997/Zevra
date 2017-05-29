@@ -1656,22 +1656,15 @@ int64_t BitBoard::getEvalute() {
 		std::cout << figures[i] << " ";
 	}
 	std::cout << "\n";*/
-	
-	if(whitePassantMade) {
- 		evalute += 50;
- 	}
- 	if(blackPassantMade) {
- 		evalute -= 50;
- 	}
 
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
 		//return newEvaluteAll();
-		return evalute;// + kingEvalute();// + pawnStructureEvalute();// + kingSecurity();
+		return (evalute + whitePassantMade * 50 - blackPassantMade * 50);
 	} else {
 		//return -newEvaluteAll();
-		return -evalute;// - kingEvalute();// - pawnStructureEvalute();// - kingSecurity();
+		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);
 	}
 }
 
