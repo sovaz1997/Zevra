@@ -67,7 +67,7 @@ double BitMove::getAttackPrice() const {
 }
 
 bool BitMove::equal(BitMove& mv) {
-	return (mv.fromY == fromY && mv.fromX == fromX && mv.toY == toY && mv.toX == toX && mv.movedFigure == movedFigure);
+	return (mv.fromY == fromY && mv.fromX == fromX && mv.toY == toY && mv.toX == toX && mv.movedFigure == movedFigure && (!mv.replaced || mv.replacedFigure == replacedFigure));
 }
 
 bool BitMove::operator>(const BitMove& mv) const {
