@@ -46,6 +46,7 @@ private:
 	void goFixedTime(int time);
 	void goTournament();
 	void clearCash();
+	bool move_comparator(BitMove& m1, BitMove&m2);
 	void initializeArrays();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 

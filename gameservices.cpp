@@ -74,3 +74,8 @@ std::vector<std::string> Game::getStringArray(std::string str) {
 
 	return result;
 }
+
+
+bool Game::move_comparator(BitMove& m1, BitMove&m2) {
+	return whiteHistorySort[m1.fromY][m1.fromX][m1.toY][m1.toX] < whiteHistorySort[m2.fromY][m2.fromX][m2.toY][m2.toX];
+}

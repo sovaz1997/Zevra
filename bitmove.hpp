@@ -36,6 +36,7 @@ private:
 public:
 	uint8_t attackedFigure, movedFigure, fromY, fromX, toY, toX;
 	uint8_t replacedFigure;
+	uint32_t history_weight;
 	bool isAttack, replaced, passant, fromHash;
 
 	BitMove();
@@ -51,6 +52,7 @@ public:
 	void setReplaced(uint8_t figure);
 	void setCategory(int cat, double val);
 	bool quality();
+	bool operator<(BitMove& left);
 };
 
 /*
