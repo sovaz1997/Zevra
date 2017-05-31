@@ -61,12 +61,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					alpha = score;
 				}
 				if(alpha >= beta) {
-
 					return beta;
 				}
 			} else if(currentHash->flag == ALPHA) {
 				if(score <= alpha) {
-
 					return alpha;
 				}
 			}
@@ -82,7 +80,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 				alpha = tmp;
 				if(alpha >= beta) {
-
 		  			return beta;
 				}
 			}
@@ -194,7 +191,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		++num_moves;
 
 		if(real_depth == 0 && depth >= 9) {
-			//std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
 		}
 
 		if(!option.lmrEnable) {
