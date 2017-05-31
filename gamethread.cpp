@@ -11,6 +11,16 @@ int Game::startGame() {
 	}
 }
 
+int64_t Game::mtdf(int64_t f, int depth) {
+   int64_t bound[2] = {-WHITE_WIN, +WHITE_WIN};
+   do {
+      double beta = f + (f == bound[0]);
+      f = negamax(game_board, beta - 1, beta, depth, 0, FIXED_DEPTH, false, true);
+      bound[f < beta] = f;
+   } while (bound[0] < bound[1]);
+   return f;
+}
+
 void Game::goFixedDepth() {
 	clearCash();
 	stopped = false;
@@ -38,6 +48,7 @@ void Game::goFixedDepth() {
 	bestMove = moveCritical;
 	hasBestMove = true;
 	bestScore = 0;
+	int64_t f = 0;
 	
 	//int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
@@ -47,6 +58,7 @@ void Game::goFixedDepth() {
 		flattenHistory();
 
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		//f = mtdf(f, max_depth);
 
 		hasBestMove = true;
 

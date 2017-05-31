@@ -95,7 +95,3 @@ bool BitMove::quality() {
 					toY >= 0 && toY <= 7 &&
 					toX >= 0 && toY <= 7);
 }
-
-bool BitMove::operator<(BitMove& left) {
-	return history_weight > left.history_weight;
-}

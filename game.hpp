@@ -50,6 +50,8 @@ private:
 	void initializeArrays();
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
+	int64_t mtdf(int64_t f, int depth);
+
   std::vector<BitMove>pv;
 
 	bool inZugzwang(BitBoard & b, uint8_t color);

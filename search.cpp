@@ -125,11 +125,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(!inNullMove && !extended && !b.attacked /*&& real_depth > 4*/) {
 			b.makeNullMove();
 			int R = 2;
-			if(depth > 6) {
+
+			/*int pieces_count = b.popcount64(b.white_bit_mask | b.black_bit_mask) - 2;
+			
+			if(depth <= 6 || (depth <= 8 && pieces_count)) {
 				R = 4;
 			} else {
 				R = 3;
-			}
+			}*/
 
 
 			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
@@ -191,7 +194,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		++num_moves;
 
 		if(real_depth == 0 && depth >= 9) {
-			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+			//std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
 		}
 
 		if(!option.lmrEnable) {
@@ -211,7 +214,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 				}
 			} else {
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth-1, real_depth + 1, rule, inNullMove, false);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, false);
 
 				if(tmp > alpha) {
 					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
