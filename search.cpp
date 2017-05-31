@@ -56,7 +56,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				score += real_depth;
 			}
 
-			if(currentHash->flag == EXACT || currentHash->flag == BETA) {
+			/*if(currentHash->flag == EXACT || currentHash->flag == BETA) {
 				if(score > alpha) {
 					alpha = score;
 				}
@@ -66,6 +66,26 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			} else if(currentHash->flag == ALPHA) {
 				if(score <= alpha) {
 					return alpha;
+				}
+			}*/
+
+			//5k2/1p3P2/1P2Pp2/pPp2Pp1/K1p5/2p2pP1/2P2P2/8 w - - 0 1
+
+
+			if(currentHash->flag == BETA) {
+				if(score >= beta) {
+					return beta;
+				}
+			} else if(currentHash->flag == ALPHA) {
+				if(score <= alpha) {
+					return alpha;
+				}
+			} else if(currentHash->flag == EXACT) {
+				if(score <= alpha) {
+					return alpha;
+				}
+				if(score >= beta) {
+					return beta;
 				}
 			}
 		}
