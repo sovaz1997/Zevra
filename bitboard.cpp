@@ -2379,7 +2379,7 @@ double BitBoard::newEvaluteAll() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	return result + basicKingSafety();
+	return result + basicKingSafety() / 1000;
 }
 
 double BitBoard::basicKingSafety() {
