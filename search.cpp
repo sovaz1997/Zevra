@@ -15,6 +15,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
+	if(real_depth) {
+		max_real_depth = std::max(max_real_depth, real_depth);
+	} else {
+		max_real_depth = 0;
+	}
+
 	int64_t oldAlpha = alpha;
 
 	bool extended = false;
@@ -332,7 +338,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
-			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << " hashfull " << (int)(hash_filled / max_hash_filled * 1000);
+			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << " hashfull " << (int)(hash_filled / max_hash_filled * 1000) << " seldepth " << max_real_depth;
 			std::cout << " ";
 			printScore(eval);
 			std::cout << " pv ";
@@ -380,7 +386,6 @@ uint64_t Game::perft(int depth) {
 }
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
-
 	int64_t val = b.getEvalute();
 
 	/*if(std::abs(val) <= 2 * PAWN_EV || b.popcount64(b.white_bit_mask | b.black_bit_mask) <= 6) {

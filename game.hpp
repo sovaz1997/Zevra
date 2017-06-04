@@ -65,6 +65,7 @@ private:
 	int64_t stress;
 	BitMove bestMove;
 	int64_t bestScore;
+	int max_real_depth;
 	double hash_filled, max_hash_filled;
 
 	//фиксированное время
