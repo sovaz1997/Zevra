@@ -217,7 +217,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		++num_moves;
 
 		if(real_depth == 0 && depth >= 9) {
-			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+			if((rule != FIXED_TIME || timer.getTime() < time) && !stopped) {
+				std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << " ";
+				if(num_moves > 1) {
+					printScore(alpha);
+				}
+				std::cout << std::endl;	
+			}	
 		}
 
 		if(!option.lmrEnable) {
@@ -313,6 +319,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				whiteHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] += depth;
 			}
 		}*/
+
+		/*if(real_depth == 0) {
+			if(alpha >= bestScore) {
+				bestMove = local_move;
+				bestScore = alpha;
+			}
+		}*/
+
 	}
 
 	if(num_moves == 0) {
@@ -603,7 +617,7 @@ int64_t Game::negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int 
 		++num_moves;
 
 		if(real_depth == 0 && depth >= 9) {
-			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << std::endl;
+			std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << std::endl;
 		}
 
 		int tmp;
