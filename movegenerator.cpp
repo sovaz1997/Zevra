@@ -8,7 +8,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 	}
 
 	result.setHistoryCompare(true);
-	std::sort(result.moveArray.begin() + result.num_attacks, result.moveArray.begin() + result.count);*/
+	std::sort(result.moveArray.begin() + result.num_attacks, result.moveArray.begin() + result.count);
 
 	/*if(result.num_attacks >= 0 && result.num_attacks < result.moveArray.size() && result.count >= 1 && result.count < result.moveArray.size()) {
 		for(unsigned int i = result.num_attacks + 1; i < result.count; ++i) {

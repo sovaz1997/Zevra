@@ -175,7 +175,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove) { //Razoring
+	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4) { //Razoring
 		//int64_t value = quies(b, alpha, beta, rule, real_depth);
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
