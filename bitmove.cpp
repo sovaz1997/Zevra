@@ -71,11 +71,19 @@ bool BitMove::equal(BitMove& mv) {
 }
 
 bool BitMove::operator>(const BitMove& mv) const {
+	if(historyCompare) {
+		return history_weight < mv.history_weight;
+	}
+
 	return getAttackPrice() < mv.getAttackPrice();
 	//return category < mv.category;
 }
 
 bool BitMove::operator<(const BitMove& mv) const {
+	if(historyCompare) {
+		return history_weight > mv.history_weight;
+	}
+
 	return getAttackPrice() > mv.getAttackPrice();
 	//return category > mv.category;
 }

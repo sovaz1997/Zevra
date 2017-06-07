@@ -17,3 +17,9 @@ void MoveArray::addMove(BitMove mv) {
 		++count;
 	}
 }
+
+void MoveArray::setHistoryCompare(bool val) {
+	for(int i = 0; i < count; ++i) {
+		moveArray[i].historyCompare = val;
+	}
+}

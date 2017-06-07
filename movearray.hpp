@@ -14,6 +14,7 @@ public:
 	unsigned int count, num_attacks;
 	void clear();
 	void addMove(BitMove mv);
+	void setHistoryCompare(bool val);
 };
 
 #endif

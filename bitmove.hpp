@@ -37,6 +37,8 @@ public:
 	uint8_t attackedFigure, movedFigure, fromY, fromX, toY, toX;
 	uint8_t replacedFigure;
 	bool isAttack, replaced, passant, fromHash;
+	double history_weight;
+	bool historyCompare = false;
 
 	BitMove();
 	BitMove(uint8_t fig, uint8_t fy, uint8_t fx, uint8_t ty, uint8_t tx);
