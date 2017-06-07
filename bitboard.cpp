@@ -1224,7 +1224,7 @@ void BitBoard::move(BitMove& mv) {
 
 	++third_repeat[getColorHash() & hash_cutter];
 
-	if(third_repeat[getColorHash() & hash_cutter] >= 3) {
+	if(third_repeat[getColorHash() & hash_cutter] >= 3 || ruleNumber >= 100) {
 		hash_enable = false;
 	}
 }
