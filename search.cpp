@@ -265,7 +265,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}*/
 			double reduction = 0;
 
-			if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced) {
+			if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced &&  (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)) {
 				++low_moves_count;
 
 				if(low_moves_count > 3) {
@@ -333,26 +333,19 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
 
-
-			if(!local_move.isAttack) {
-				if(color == WHITE) {
-					whiteKiller[real_depth] = Killer(local_move);
-				} else {
-					blackKiller[real_depth] = Killer(local_move);
-				}
-			}
-
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
 		}
 		
 
 		if(alpha >= beta) {
 			if(!local_move.isAttack) {
-				//if(color == WHITE) {
-					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
-				//} else {
-					//blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
-				//}
+				whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+
+				if(color == WHITE) {
+					whiteKiller[real_depth] = Killer(local_move);
+				} else {
+					blackKiller[real_depth] = Killer(local_move);
+				}
 			}
 
 			return beta;
