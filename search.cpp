@@ -28,19 +28,20 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	int64_t eval = -WHITE_WIN;
 
 	int nextDepth = depth - 1;
+	int extensions = 0;
 	if(depth > 2) {
 		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
 			return 0;
 		}
 	}
 
-	uint8_t color;
+	uint8_t color, enemyColor;
 	if(b.whiteMove) {
 		color = WHITE;
-		//enemyColor = BLACK;
+		enemyColor = BLACK;
 	} else {
 		color = BLACK;
-		//enemyColor = WHITE;
+		enemyColor = WHITE;
 	}
 
 	if(depth <= 0 || real_depth >= 100) {
@@ -117,19 +118,22 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		inCheck = b.inCheck(WHITE);
 
 		if(inCheck && option.checkExtensions) { //check extensions
-			++nextDepth;
-			extended = true;
+			//++extensions;
+			//extended = true;
 			//inNullMove = true;
 		}
 	} else {
 		inCheck = b.inCheck(BLACK);
 		
 		if(inCheck && option.checkExtensions) { //check extensions
-			++nextDepth;
-			extended = true;
+			//++nextDepth;
+			//++extensions;
+			//extended = true;
 			//inNullMove = true;
 		}
 	}
+
+	bool onPV = (beta - alpha) > 1;
 	
 
 	/*if(color == WHITE) {
@@ -145,23 +149,15 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}*/
 
 	if(option.nullMovePrunningEnable) {
-		if(!inNullMove && !extended && !b.attacked && !inCheck /*&& real_depth > 4*/) {
+		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2) {
 			b.makeNullMove();
-			int R = 2;
-
-			/*int pieces_count = b.popcount64(b.white_bit_mask | b.black_bit_mask) - 2;
-			
-			if(depth <= 6 || (depth <= 8 && pieces_count)) {
-				R = 4;
-			} else {
-				R = 3;
-			}*/
+			int R = 2 + depth / 6;
 
 
 			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
 			if(value >= beta) {
 				b.unMakeNullMove();
-				return value;
+				return beta;
 			}
 
 			b.unMakeNullMove();
@@ -226,6 +222,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}	
 		}
 
+		extensions = 0;
+		if(b.inCheck(enemyColor) && option.checkExtensions) {
+			++extensions;
+		}
+
+		nextDepth = depth - 1;
+		nextDepth += extensions;
+
 		if(!option.lmrEnable) {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 
@@ -234,8 +238,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 
 		} else {
-			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
+			Killer* killer;
+			if(color == WHITE) {
+				killer = &whiteKiller[real_depth];
+			} else {
+				killer = &blackKiller[real_depth];
+			}
+
+			/*if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || moveArray[real_depth].moveArray[i].isAttack || onPV || inCheck || moveArray[real_depth].moveArray[i].replaced || (moveArray[real_depth].moveArray[i].equal(killer->move) && killer->enable)) {
 				//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
+				++low_moves_count;
+
+
 				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 				//tmp = alpha + 1;
 				
@@ -248,7 +262,29 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				if(tmp > alpha) {
 					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
 				}
+			}*/
+
+			if(!b.inCheck(color) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)) {
+				++low_moves_count;
+
+				if(low_moves_count > 3) {
+					nextDepth -= 1;//(1 + low_moves_count / 6);
+				}
 			}
+
+			if(num_moves == 1) {
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);	
+			} else {
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+				
+				if(tmp > alpha) {
+					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+				}
+			}
+
+			
+
+			
 		}
 
 		/*if(depth < 9 && real_depth > 0) {
