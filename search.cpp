@@ -264,11 +264,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				}
 			}*/
 
-			if(!b.inCheck(color) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)) {
+			if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)) {
 				++low_moves_count;
 
 				if(low_moves_count > 3) {
-					nextDepth -= 1;//(1 + low_moves_count / 6);
+					nextDepth -= (1 + low_moves_count / 6);
 				}
 			}
 
@@ -315,8 +315,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}*/
 
-		++low_moves_count;
-
 		b.goBack();
 
 
@@ -339,6 +337,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
 		}
+		
 
 		if(alpha >= beta) {
 			if(!local_move.isAttack) {
