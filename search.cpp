@@ -134,19 +134,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	bool onPV = (beta - alpha) > 1;
-	
-
-	/*if(color == WHITE) {
-		if(b.horizontal[6] & b.figures[PAWN] & b.white_bit_mask) {
-			++nextDepth;
-			extended = true;
-		}
-	} else {
-		if(b.horizontal[1] & b.figures[PAWN] & b.black_bit_mask) {
-			++nextDepth;
-			extended = true;
-		}
-	}*/
 
 	if(option.nullMovePrunningEnable) {
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2) {
@@ -165,24 +152,16 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.futility_prunning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove) { //Futility prunning
-		//int64_t value = quies(b, alpha, beta, rule, real_depth);
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
 	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4) { //Razoring
-		//int64_t value = quies(b, alpha, beta, rule, real_depth);
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
 		}
 	}
-
-	/*if(depth >= 2) {
-		if(alpha > b.getEvalute() + PAWN_EV / 2 && !extended && !inCheck && !b.attacked) {
-			--nextDepth;
-		}
-	}*/
 
 	int num_moves = 0;
 
@@ -288,39 +267,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
 				}
 			}
-
-			
-
-			
 		}
-
-		/*if(depth < 9 && real_depth > 0) {
-			if(num_moves >= 3 && !b.inCheck(color) && !extended && !inNullMove && !b.attacked) {
-				++low_moves_count;
-
-				//if(low_moves_count >= FutilityMoveCount[depth]) {
-				//	b.goBack();
-				//	continue;
-				//}
-			}
-		}*/
-
-		/*if(!option.lmrEnable) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, num_moves == 1 && pv);
-
-		} else {
-			if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || b.attacked) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, num_moves == 1 && pv);
-
-				
-			} else {
-				tmp = -negamax(b, -beta, -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, num_moves == 1 && pv);
-
-				if(tmp > alpha && tmp < beta) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-				}
-			}
-		}*/
 
 		b.goBack();
 
@@ -332,7 +279,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(tmp > alpha) {
 			alpha = tmp;
 			local_move = moveArray[real_depth].moveArray[i];
-
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
 		}
 		
@@ -349,18 +295,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 
 			return beta;
-		}/* else {
-			if(!moveArray[real_depth].moveArray[i].isAttack) {
-				whiteHistorySort[moveArray[real_depth].moveArray[i].fromY][moveArray[real_depth].moveArray[i].fromX][moveArray[real_depth].moveArray[i].toY][moveArray[real_depth].moveArray[i].toX] += depth;
-			}
-		}*/
-
-		/*if(real_depth == 0) {
-			if(alpha >= bestScore) {
-				bestMove = local_move;
-				bestScore = alpha;
-			}
-		}*/
+		}
 
 	}
 
@@ -494,11 +429,11 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 
 	Hash* hash = &boardHash[key & hash_cutter];
 
-	if(flag == ALPHA && (hash->flag == EXACT/* || hash->flag == BETA*/)) {
+	if(flag == ALPHA && (hash->flag == EXACT || hash->flag == BETA)) {
 		return false;
 	}
 
-	if(hash->flag != EMPTY && hash->depth > depth) {
+	if(hash->flag != EMPTY && hash->depth > depth /*&& hash->age == hashAge*/) {
 		return false;
 	}
 
@@ -516,6 +451,7 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 	hash->score = score;
 	hash->flag = flag;
 	hash->key = key;
+	hash->age = hashAge;
 
 	if(flag != ALPHA) {
 		/*if(flag == EXACT) {

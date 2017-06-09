@@ -1,6 +1,6 @@
 #include "hash.hpp"
 
-Hash::Hash() : prev(nullptr), flag(EMPTY) {}
+Hash::Hash() : prev(nullptr), flag(EMPTY), age(0) {}
 
 Hash::~Hash() {
 	clean();

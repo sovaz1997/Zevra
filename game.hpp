@@ -66,6 +66,7 @@ private:
 	BitMove bestMove;
 	int64_t bestScore;
 	int max_real_depth;
+	uint8_t hashAge;
 	double hash_filled, max_hash_filled;
 
 	//фиксированное время

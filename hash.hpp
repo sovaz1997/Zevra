@@ -16,6 +16,7 @@ public:
 	int64_t score;
 	uint8_t flag;
 	uint64_t key;
+	uint8_t age;
 	BitMove move;
 
 	Hash();
