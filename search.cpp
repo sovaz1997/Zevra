@@ -116,30 +116,16 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool inCheck;
 	if(color == WHITE) {
 		inCheck = b.inCheck(WHITE);
-
-		if(inCheck && option.checkExtensions) { //check extensions
-			//++extensions;
-			//extended = true;
-			//inNullMove = true;
-		}
 	} else {
 		inCheck = b.inCheck(BLACK);
-		
-		if(inCheck && option.checkExtensions) { //check extensions
-			//++nextDepth;
-			//++extensions;
-			//extended = true;
-			//inNullMove = true;
-		}
 	}
 
 	bool onPV = (beta - alpha) > 1;
 
-	if(option.nullMovePrunningEnable) {
+	if(option.nullMovePruningEnable) { //Null Move Pruning
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2) {
 			b.makeNullMove();
 			int R = 2 + depth / 6;
-
 
 			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
 			if(value >= beta) {
@@ -151,7 +137,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_prunning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove) { //Futility prunning
+	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
@@ -202,75 +188,47 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		extensions = 0;
-		if((b.inCheck(enemyColor) && option.checkExtensions)/* || moveArray[real_depth].moveArray[i].isAttack || moveArray[real_depth].moveArray[i].replaced*/) {
+		if((b.inCheck(enemyColor) && option.checkExtensions)) {
 			++extensions;
 		}
 
 		nextDepth = depth - 1;
 		nextDepth += extensions;
 
-		if(!option.lmrEnable) {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
+		Killer* killer;
+		if(color == WHITE) {
+			killer = &whiteKiller[real_depth];
+		} else {
+			killer = &blackKiller[real_depth];
+		}
+		
+		double reduction = 0;
+
+		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced &&  (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)) {
+			++low_moves_count;
+
+			if(low_moves_count > 3) {
+				reduction = 1 + low_moves_count / 6;
+				nextDepth -= reduction;
+			}
+		}
+
+		if(num_moves == 1) {
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);	
+		} else {
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+			
+			if(reduction > 0 && tmp > alpha) {
+				nextDepth += reduction;
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+			}
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-			}
-
-		} else {
-			Killer* killer;
-			if(color == WHITE) {
-				killer = &whiteKiller[real_depth];
-			} else {
-				killer = &blackKiller[real_depth];
-			}
-
-			/*if(num_moves <= 3 || b.inCheck(color) || extended || inNullMove || moveArray[real_depth].moveArray[i].isAttack || onPV || inCheck || moveArray[real_depth].moveArray[i].replaced || (moveArray[real_depth].moveArray[i].equal(killer->move) && killer->enable)) {
-				//tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, fail);
-				++low_moves_count;
-
-
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-				//tmp = alpha + 1;
-				
-				if(tmp > alpha && tmp < beta) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-				}
-			} else {
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth - 1, real_depth + 1, rule, inNullMove, false);
-
-				if(tmp > alpha) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
-				}
-			}*/
-			double reduction = 0;
-
-			if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced &&  (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)) {
-				++low_moves_count;
-
-				if(low_moves_count > 3) {
-					reduction = 1 + low_moves_count / 6;
-					nextDepth -= reduction;
-				}
-			}
-
-			if(num_moves == 1) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);	
-			} else {
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
-				
-				if(reduction > 0 && tmp > alpha) {
-					nextDepth += reduction;
-					tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
-				}
-
-				if(tmp > alpha && tmp < beta) {
-					tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
-				}
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
 			}
 		}
 
 		b.goBack();
-
 
 		if(tmp > eval) {
 			eval = tmp;

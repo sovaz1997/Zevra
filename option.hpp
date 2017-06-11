@@ -5,10 +5,9 @@
 
 class Option {
 public:
-	bool nullMovePrunningEnable;
-	bool lmrEnable;
+	bool nullMovePruningEnable;
 	bool razoring;
-	bool futility_prunning;
+	bool futility_pruning;
 	bool checkExtensions;
 public:
 	Option();

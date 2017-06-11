@@ -38,8 +38,6 @@ bool Game::uciHandler(std::string str) {
 					}
 				}
 			}
-
-			//gameHash.push_back(getHash(game_board));
 		} else if(cmd[0] == "go") {
 			if(cmd[1] == "depth") {
 				max_depth = std::stoi(cmd[2]);
@@ -116,15 +114,9 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
 			if(cmd[2] == "nullmove" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
-					option.nullMovePrunningEnable = true;
+					option.nullMovePruningEnable = true;
 				} else if(cmd[4] == "false") {
-					option.nullMovePrunningEnable = false;
-				}
-			} else if(cmd[2] == "LMR" && cmd[3] == "value") {
-				if(cmd[4] == "true") {
-					option.lmrEnable = true;
-				} else if(cmd[4] == "false") {
-					option.lmrEnable = false;
+					option.nullMovePruningEnable = false;
 				}
 			} else if(cmd[2] == "razoring" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
@@ -132,11 +124,11 @@ bool Game::uciHandler(std::string str) {
 				} else if(cmd[4] == "false") {
 					option.razoring = false;
 				}
-			} else if(cmd[2] == "futility_prunning" && cmd[3] == "value") {
+			} else if(cmd[2] == "futility_pruning" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
-					option.futility_prunning = true;
+					option.futility_pruning = true;
 				} else if(cmd[4] == "false") {
-					option.futility_prunning = false;
+					option.futility_pruning = false;
 				}
 			} else if(cmd[2] == "checkExtensions" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
