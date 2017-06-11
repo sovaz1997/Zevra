@@ -202,7 +202,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		extensions = 0;
-		if(b.inCheck(enemyColor) && option.checkExtensions) {
+		if((b.inCheck(enemyColor) && option.checkExtensions)/* || moveArray[real_depth].moveArray[i].isAttack || moveArray[real_depth].moveArray[i].replaced*/) {
 			++extensions;
 		}
 
