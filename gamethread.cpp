@@ -97,7 +97,6 @@ void Game::goFixedTime(int tm) {
 
 	start_timer = clock();
 	hasBestMove = false;
-	//double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
