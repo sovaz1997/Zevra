@@ -137,13 +137,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4) { //Razoring
+	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4 && !onPV) { //Razoring
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
 		}
@@ -212,7 +212,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		
 		double reduction = 0;
 
-		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable)/* && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)*/) {
+		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)) {
 			++low_moves_count;
 
 			if(low_moves_count > 3) {
@@ -251,14 +251,22 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		if(alpha >= beta) {
 			if(!local_move.isAttack) {
-				whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
+				whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += std::pow(depth, 2);
 
 				if(color == WHITE) {
+					if(std::abs(alpha) >= WHITE_WIN - 100) {
+						whiteMateKiller[real_depth] = Killer(local_move);
+					}
+
 					if(whiteKiller[real_depth].enable) {
 						whiteSecondKiller[real_depth] = Killer(whiteKiller[real_depth].move);
 					}
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
+					if(std::abs(alpha) >= WHITE_WIN - 100) {
+						blackMateKiller[real_depth] = Killer(local_move);
+					}
+
 					if(blackKiller[real_depth].enable) {
 						blackSecondKiller[real_depth] = Killer(blackKiller[real_depth].move);
 					}

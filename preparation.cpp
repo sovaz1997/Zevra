@@ -5,6 +5,8 @@ void Game::initEngine() {
 	blackKiller.resize(100);
 	whiteSecondKiller.resize(100);
 	blackSecondKiller.resize(100);
+	whiteMateKiller.resize(100);
+	blackMateKiller.resize(100);
 
 	boardHash.resize(pow(2, hash_width));
 
