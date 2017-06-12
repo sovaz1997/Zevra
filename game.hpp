@@ -105,6 +105,8 @@ public:
 	std::vector<std::string>variant;
 	std::vector<Killer>whiteKiller;
 	std::vector<Killer>blackKiller;
+	std::vector<Killer>whiteSecondKiller;
+	std::vector<Killer>blackSecondKiller;
 
 	std::vector<MoveArray> moveArray;
 

@@ -5,36 +5,61 @@ void Game::sortMoves(MoveArray& result, int depth) {
 
 	for(int i = 0; i < result.count; ++i) {
 		result.moveArray[i].history_weight = whiteHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
+		if(game_board.whiteMove) {
+			if(whiteSecondKiller[depth].enable && result.moveArray[i].equal(whiteSecondKiller[depth].move)) {
+				result.moveArray[i].history_weight = 1000000;
+			}
+			if(whiteKiller[depth].enable && result.moveArray[i].equal(whiteKiller[depth].move)) {
+				result.moveArray[i].history_weight = 10000000;
+			}
+		} else {
+			if(blackSecondKiller[depth].enable && result.moveArray[i].equal(blackSecondKiller[depth].move)) {
+				result.moveArray[i].history_weight = 1000000;
+			}
+			if(blackKiller[depth].enable && result.moveArray[i].equal(blackKiller[depth].move)) {
+				result.moveArray[i].history_weight = 10000000;
+			}
+		}
 	}
 
 	result.setHistoryCompare(true);
 	std::sort(result.moveArray.begin() + result.num_attacks, result.moveArray.begin() + result.count);
 
-	/*if(result.num_attacks >= 0 && result.num_attacks < result.moveArray.size() && result.count >= 1 && result.count < result.moveArray.size()) {
-		for(unsigned int i = result.num_attacks + 1; i < result.count; ++i) {
-			for(int j = i; j > num_attacks && whiteHistorySort[result.moveArray[j - 1].fromY][result.moveArray[j - 1].fromX][result.moveArray[j - 1].toY][result.moveArray[j - 1].toX] < whiteHistorySort[result.moveArray[j].fromY][result.moveArray[j].fromX][result.moveArray[j].toY][result.moveArray[j].toX]; --j) {
-				std::swap(result.moveArray[j], result.moveArray[j-1]);
-			}
-		}
-	}*/
+	/*bool firstKillerEnable = false;
 
 	for(unsigned int i = num_attacks; i < result.count; ++i) {
 		if(game_board.whiteMove) {
 			if(result.moveArray[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
 				result.moveArray.emplace(result.moveArray.begin() + num_attacks, whiteKiller[depth].move);
-
+				firstKillerEnable = true;
 				break;
 			}
 		} else {
 			if(result.moveArray[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
 				result.moveArray.erase(result.moveArray.begin() + i);
 				result.moveArray.emplace(result.moveArray.begin() + num_attacks, blackKiller[depth].move);
-
+				firstKillerEnable = true;
 				break;
 			}
 		}
 	}
+
+	for(unsigned int i = num_attacks + firstKillerEnable; i < result.count; ++i) {
+		if(game_board.whiteMove) {
+			if(result.moveArray[i].equal(whiteSecondKiller[depth].move) && whiteSecondKiller[depth].enable) {
+				result.moveArray.erase(result.moveArray.begin() + i);
+				result.moveArray.emplace(result.moveArray.begin() + num_attacks + firstKillerEnable, whiteSecondKiller[depth].move);
+				break;
+			}
+		} else {
+			if(result.moveArray[i].equal(blackSecondKiller[depth].move) && blackSecondKiller[depth].enable) {
+				result.moveArray.erase(result.moveArray.begin() + i);
+				result.moveArray.emplace(result.moveArray.begin() + num_attacks + firstKillerEnable, blackSecondKiller[depth].move);
+				break;
+			}
+		}
+	}*/
 
 
 	uint64_t hash = game_board.getColorHash();
