@@ -1422,7 +1422,7 @@ void BitBoard::pushHistory() {
 int64_t BitBoard::kingSecurity() {
 	int64_t result = 0;
 
-	uint64_t mask = figures[KING] & white_bit_mask;
+	uint64_t mask = figures[KING];// & white_bit_mask;
 	uint8_t kingPos = firstOne(mask);
 	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & black_bit_mask;
 	while(mask != 0) {
@@ -1431,7 +1431,7 @@ int64_t BitBoard::kingSecurity() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	mask = figures[KING] & black_bit_mask;
+	mask = figures[KING];// & black_bit_mask;
 	kingPos = firstOne(mask);
 
 	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & white_bit_mask;
@@ -2379,7 +2379,12 @@ double BitBoard::newEvaluteAll() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	return result + basicKingSafety() / 1000;
+	double kingSafe = basicKingSafety();
+	if(kingSafe > 0) {
+		return result + std::min(basicKingSafety(), PAWN_EV);
+	} else {
+		return result + std::max(basicKingSafety(), -PAWN_EV);
+	}
 }
 
 double BitBoard::basicKingSafety() {
