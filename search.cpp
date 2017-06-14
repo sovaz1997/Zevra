@@ -63,22 +63,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				score += real_depth;
 			}
 
-			/*if(currentHash->flag == EXACT || currentHash->flag == BETA) {
-				if(score > alpha) {
-					alpha = score;
-				}
-				if(alpha >= beta) {
-					return beta;
-				}
-			} else if(currentHash->flag == ALPHA) {
-				if(score <= alpha) {
-					return alpha;
-				}
-			}*/
-
-			//5k2/1p3P2/1P2Pp2/pPp2Pp1/K1p5/2p2pP1/2P2P2/8 w - - 0 1
-
-
 			if(currentHash->flag == BETA) {
 				if(score >= beta) {
 					return beta;
@@ -137,21 +121,37 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove /*&& !onPV*/) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4 && !onPV) { //Razoring
+	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4/* && !onPV*/) { //Razoring
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
 		}
 	}
 
+	/*bool iid_test_complete = false;
+	if(depth > 2 && !inNullMove && !onPV && !currentHash->flag == EMPTY) { //IID
+		iid_test_complete = true;
+		negamax(b, -beta, -alpha, 2, real_depth + 1, rule, inNullMove, true);
+	}*/
+
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
+
+	/*if(iid_test_complete) {
+		for(int i = 0; i < moveArray[real_depth].count; ++i) {
+			if(moveArray[real_depth].moveArray[i].equal(iid_move)) {
+				moveArray[real_depth].moveArray[i].fromHash = true;
+				break;
+			}
+		}
+	}*/
+
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
 
@@ -212,7 +212,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		
 		double reduction = 0;
 
-		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)) {
+		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced /*&& (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)*/) {
 			++low_moves_count;
 
 			if(low_moves_count > 3) {
@@ -295,6 +295,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		bestMove = local_move;
 		bestScore = alpha;
 	}
+
+	iid_move = local_move;
 
 	if(alpha == oldAlpha) {
 		recordHash(depth, alpha, ALPHA, hash, local_move, real_depth);

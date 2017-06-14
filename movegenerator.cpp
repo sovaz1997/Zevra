@@ -15,6 +15,9 @@ void Game::sortMoves(MoveArray& result, int depth) {
 			if(whiteMateKiller[depth].enable && result.moveArray[i].equal(whiteMateKiller[depth].move)) {
 				result.moveArray[i].history_weight = 100000000;
 			}
+			if(result.moveArray[i].fromHash) {
+				result.moveArray[i].history_weight = 1000000000;
+			}
 		} else {
 			if(blackSecondKiller[depth].enable && result.moveArray[i].equal(blackSecondKiller[depth].move)) {
 				result.moveArray[i].history_weight = 1000000;
@@ -24,6 +27,9 @@ void Game::sortMoves(MoveArray& result, int depth) {
 			}
 			if(blackMateKiller[depth].enable && result.moveArray[i].equal(blackMateKiller[depth].move)) {
 				result.moveArray[i].history_weight = 100000000;
+			}
+			if(result.moveArray[i].fromHash) {
+				result.moveArray[i].history_weight = 1000000000;
 			}
 		}
 	}

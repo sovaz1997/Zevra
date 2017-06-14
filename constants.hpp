@@ -43,7 +43,7 @@ const double KNIGHT_EV = 320 * k;
 const double BISHOP_EV = 330 * k;
 const double ROOK_EV = 560 * k;
 const double QUEEN_EV = 1100 * k;
-const double ENDGAME_PAWN_EV = 150 * k;
+const double ENDGAME_PAWN_EV = 120 * k;
 
 //move types
 const int FIXED_DEPTH = 0;
@@ -71,7 +71,7 @@ const int FutilityMoveCount[9] = {19, 19, 19, 19, 19, 35, 67, 131, 259};
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV
-+	4*ROOK_EV
++	4 * ROOK_EV
 +	QUEEN_EV;
 
 const double pawnMatr[BOARD_SIZE][BOARD_SIZE] = {

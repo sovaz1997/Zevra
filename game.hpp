@@ -113,6 +113,8 @@ public:
 
 	std::vector<MoveArray> moveArray;
 
+	BitMove iid_move;
+
 	void sortAttacks(MoveArray& moves);
 	void printVariant();
 

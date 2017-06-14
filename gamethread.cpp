@@ -36,13 +36,8 @@ void Game::goFixedDepth() {
 	int max_depth_global = max_depth;
 	max_depth = 1;
 
-	/*if(option.lmrEnable || option.nullMovePrunningEnable) {
-		max_depth = 5;
-	}*/
-
 	start_timer = clock();
 	hasBestMove = false;
-	//double depth;
 
 	BitMove moveCritical = game_board.getRandomMove();
 	bestMove = moveCritical;
@@ -50,7 +45,7 @@ void Game::goFixedDepth() {
 	bestScore = 0;
 	int64_t f = 0;
 	
-	//int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
+	int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		++hashAge;
@@ -58,7 +53,23 @@ void Game::goFixedDepth() {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
+		//negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+
+		if(max_depth > 1) {
+			current_alpha = bestScore - 30;
+			current_beta = bestScore + 30;
+		}
+
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		/*std::cout << "!";
+		if(bestScore <= current_alpha) {
+			std::cout << "!";
+			negamax(game_board, -WHITE_WIN, current_beta, max_depth, 0, FIXED_DEPTH, false, true);
+		} else if(bestScore >= current_beta) {
+			std::cout << "!";
+			negamax(game_board, current_alpha, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		}*/
+
 		//f = mtdf(f, max_depth);
 
 		hasBestMove = true;

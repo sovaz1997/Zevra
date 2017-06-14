@@ -1660,10 +1660,10 @@ int64_t BitBoard::getEvalute() {
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
-		//return newEvaluteAll();
+		//return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
 		return (evalute + whitePassantMade * 50 - blackPassantMade * 50);
 	} else {
-		//return -newEvaluteAll();
+		//return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
 		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);
 	}
 }
@@ -1795,7 +1795,6 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 	uint64_t kingPos = vec2_cells[y][x];
 	uint8_t kingCoord = y * 8 + x;
 
-
 	uint64_t figure;
 	figure = firstOne(plus8[kingCoord] & (mask | emask));
 	figure = vec1_cells[figure];
@@ -1900,12 +1899,7 @@ void BitBoard::zobristGenerator() {
 	for(int i = 0; i < 32; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
-				/*for(unsigned int s = 0; s < 64; ++s) {
-					int m = rand() % 2;
-					zobrist[i][j][k] += m * std::pow(2, s);//dis(gen);
-				}*/
 				zobrist[i][j][k] = dis(gen);
-				//std::cout << zobrist[i][j][k] << std::endl;
 			}
 		}
 	}
@@ -2381,9 +2375,9 @@ double BitBoard::newEvaluteAll() {
 
 	double kingSafe = basicKingSafety();
 	if(kingSafe > 0) {
-		return result + std::min(basicKingSafety(), PAWN_EV);
+		return result;// + std::min(basicKingSafety(), PAWN_EV);
 	} else {
-		return result + std::max(basicKingSafety(), -PAWN_EV);
+		return result;// + std::max(basicKingSafety(), -PAWN_EV);
 	}
 }
 
