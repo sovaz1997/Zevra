@@ -17,15 +17,23 @@ Zevra - шахматный движок моей разработки. Подд�
 + `goback` - Сделать возврат хода (если возможно);
 + `perdt [depth]` - Выполнить perft-тест.
 
-Программа работает со скоростью ~3000kN/s (с 20.11.2016) на процессоре Intel Core i7-860 с отключенным HyperThreading. Реализованы основные эвристики, позволяющие отсекать ненужные ветви дерева поиска (9-ю глубину берет за 1-2 секунды в начале партии).
+Эвристики:
++ Late Move Reductions;
++ futility pruning (optional, enable by default);
++ razoring (optional, enable by default);
++ Null Move (optional, disable by default);
++ Check extensions (optional, enable by default);
++ Hash table (no resizeble);
++ History heuristic;
++ Two killers + Mate killer.
 
 Рейтинги CCRL 40/5:
-+ `Zevra 1.31 r340 - 1754`;
-+ `Zevra 1.21 r290 - 1749`;
++ Zevra 1.31 r340 - 1754;
++ Zevra 1.21 r290 - 1749;
 
 Новые версии (не протестированы в системе CCRL):
-+ `Zevra 1.5 vs Zevra 1.4: 146 wins, 92 draws, 62 loses;`
-+ `Zevra 1.5 vs Zevra 1.3: 184 wins, 54 draws, 62 loses.`
++ Zevra 1.5 vs Zevra 1.4: 146 wins, 92 draws, 62 loses;
++ Zevra 1.5 vs Zevra 1.3: 184 wins, 54 draws, 62 loses.
 
 Предположительно, Zevra v1.4 имеет рейтинг 1784, Zevra v1.5 - 1854 пункта ЭЛО (относительно рейтингов CCRL).
 
