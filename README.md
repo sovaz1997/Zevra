@@ -25,7 +25,8 @@ Zevra - шахматный движок моей разработки. Подд�
 + Check extensions (optional, enable by default);
 + Hash table (no resizeble);
 + History heuristic;
-+ Two killers + Mate killer.
++ Two killers + Mate killer;
++ Capture sorting (MVV-LVA).
 
 Рейтинги CCRL 40/5:
 + Zevra 1.31 r340 - 1754;
