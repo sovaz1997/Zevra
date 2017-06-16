@@ -92,5 +92,23 @@ void Game::sortMoves(MoveArray& result, int depth) {
 
 void Game::sortAttacks(MoveArray& moves) {
 	moves.setHistoryCompare(false);
-	std::sort(moves.moveArray.begin(), moves.moveArray.begin() + moves.num_attacks);
+	//std::sort(moves.moveArray.begin(), moves.moveArray.begin() + moves.num_attacks);
+	
+	int recapture_count = 0;
+	BitMove mv;
+	for(int i = moves.num_attacks - 1; i > recapture_count; --i) {
+		if(game_board.vec2_cells[moves.moveArray[i].toY][moves.moveArray[i].toX] == game_board.recapture_position) {
+			mv = moves.moveArray[i];
+			moves.moveArray.erase(moves.moveArray.begin() + i);
+			moves.moveArray.emplace(moves.moveArray.begin(), mv);
+			++recapture_count;
+		}
+	}
+
+	if(recapture_count) {
+		std::sort(moves.moveArray.begin(), moves.moveArray.begin() + recapture_count);
+	}
+	if(moves.num_attacks - recapture_count) {
+		std::sort(moves.moveArray.begin() + recapture_count, moves.moveArray.begin() + moves.num_attacks);
+	}
 }

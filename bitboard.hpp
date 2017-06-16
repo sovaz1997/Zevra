@@ -23,6 +23,7 @@ public:
 	uint64_t vertical[8];
 	uint64_t white_bit_mask, black_bit_mask;
 	uint64_t castlingMap;
+	uint64_t recapture_position;
 
 	uint64_t ROOK_MAGIC[8][8];
 	uint64_t BISHOP_MAGIC[8][8];
