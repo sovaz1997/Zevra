@@ -107,7 +107,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		if(!inNullMove && /*!extended &&*/ !inCheck && /*!onPV &&*/ depth > 2 && (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6)) {
+		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2 && (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6)) {
 			b.makeNullMove();
 			int R = 2 + depth / 6;
 
