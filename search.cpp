@@ -107,7 +107,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2) {
+		if(!inNullMove && /*!extended &&*/ !inCheck && /*!onPV &&*/ depth > 2 && (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6)) {
 			b.makeNullMove();
 			int R = 2 + depth / 6;
 
@@ -248,7 +248,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
 		}
 		
-
 		if(alpha >= beta) {
 			if(!local_move.isAttack) {
 				whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += std::pow(depth, 2);
@@ -350,10 +349,6 @@ uint64_t Game::perft(int depth) {
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
 	int64_t val = b.getEvalute();
-
-	/*if(std::abs(val) <= 2 * PAWN_EV || b.popcount64(b.white_bit_mask | b.black_bit_mask) <= 6) {
-		val = b.getEvalute();
-	}*/
 
 	if (val < alpha - QUEEN_EV) {
    		return alpha;
