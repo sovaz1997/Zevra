@@ -133,24 +133,24 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	bool iid_test_complete = false;
+	/*bool iid_test_complete = false;
 	if(depth > 2 && !inNullMove && !onPV && !currentHash->flag == EMPTY) { //IID
 		iid_test_complete = true;
 		negamax(b, -beta, -alpha, 2, real_depth + 1, rule, inNullMove, true);
-	}
+	}*/
 
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
 
-	if(iid_test_complete) {
+	/*if(iid_test_complete) {
 		for(int i = 0; i < moveArray[real_depth].count; ++i) {
 			if(moveArray[real_depth].moveArray[i].equal(iid_move)) {
 				moveArray[real_depth].moveArray[i].fromHash = true;
 				break;
 			}
 		}
-	}
+	}*/
 
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
