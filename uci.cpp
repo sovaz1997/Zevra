@@ -10,6 +10,7 @@ bool Game::uciHandler(std::string str) {
 			hash_decrement = 0;
 			if(cmd[1] == "startpos") {
 				game_board.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+				hash_decrement = 0;
 				if(cmd.size() > 3) {
 					if(cmd[2] == "moves") {
 						for(unsigned int i = 3; i < cmd.size(); ++i) {
