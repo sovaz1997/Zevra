@@ -48,14 +48,14 @@ void Game::flattenHistory() {
 }
 
 void Game::clearCash() {
-	cleanWhiteHistory();
+	/*cleanWhiteHistory();
 	cleanBlackHistory();
 
 	for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].clean();
 	}
 
-	hash_filled = 0;
+	hash_filled = 0;*/
 }
 
 std::vector<std::string> Game::getStringArray(std::string str) {

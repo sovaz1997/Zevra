@@ -23,6 +23,7 @@ int64_t Game::mtdf(int64_t f, int depth) {
 
 void Game::goFixedDepth() {
 	clearCash();
+	++hashAge;
 	stopped = false;
 
 	variant.clear();
@@ -48,7 +49,6 @@ void Game::goFixedDepth() {
 	int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
-		++hashAge;
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
@@ -96,6 +96,7 @@ void Game::goFixedTime(int tm) {
 	timer.start();
 
 	clearCash();
+	++hashAge;
 
 	variant.clear();
 	variant.resize(max_depth);
@@ -119,7 +120,6 @@ void Game::goFixedTime(int tm) {
 	std::vector<BitMove> bestPV;
 
 	for(; timer.getTime() < time; ) {
-		++hashAge;
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
