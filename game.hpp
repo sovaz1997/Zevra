@@ -68,6 +68,7 @@ private:
 	int max_real_depth;
 	uint8_t hashAge;
 	double hash_filled, max_hash_filled;
+	int halfMoveNumber = 0;
 
 	//фиксированное время
 	Timer timer;

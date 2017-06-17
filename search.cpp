@@ -407,7 +407,7 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		return false;
 	}
 
-	if((hash->flag != EMPTY && hash->age == hashAge) && hash->depth > depth /*&& hash->age == hashAge*/) {
+	if((hash->flag != EMPTY && hash->age == hashAge) && hash->depth > depth - hash_decrement /*&& hash->age == hashAge*/) {
 		return false;
 	}
 
@@ -421,7 +421,7 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		++hash_filled;
 	}
 
-	hash->depth = depth;
+	hash->depth = depth - hash_decrement;
 	hash->score = score;
 	hash->flag = flag;
 	hash->key = key;
