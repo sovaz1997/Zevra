@@ -66,7 +66,7 @@ private:
 	BitMove bestMove;
 	int64_t bestScore;
 	int max_real_depth;
-	uint8_t hashAge;
+	uint8_t hashAge = 0;
 	double hash_filled, max_hash_filled;
 	int halfMoveNumber = 0;
 

@@ -11,6 +11,7 @@ bool Game::uciHandler(std::string str) {
 			if(cmd[1] == "startpos") {
 				game_board.setFen(game_board.startpos_fen);
 				hash_decrement = 0;
+				hashAge = 0;
 				if(cmd.size() > 3) {
 					if(cmd[2] == "moves") {
 						for(unsigned int i = 3; i < cmd.size(); ++i) {
@@ -102,6 +103,7 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
+			--hashAge;
 		} else if(cmd[0] == "perft") {
 			int k;
 			k = std::stoi(cmd[1]);

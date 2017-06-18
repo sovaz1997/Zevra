@@ -23,7 +23,6 @@ int64_t Game::mtdf(int64_t f, int depth) {
 
 void Game::goFixedDepth() {
 	//clearCash();
-	++hashAge;
 	stopped = false;
 
 	variant.clear();
@@ -96,7 +95,6 @@ void Game::goFixedTime(int tm) {
 	timer.start();
 
 	//clearCash();
-	++hashAge;
 
 	variant.clear();
 	variant.resize(max_depth);
@@ -181,6 +179,7 @@ bool Game::move(std::string mv) {
 			}
 
 			++hash_decrement;
+			++hashAge;
 			return true;
 		}
 	}
