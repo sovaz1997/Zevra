@@ -107,7 +107,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2 && (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6)) {
+		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2 && (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 			int R = 2 + depth / 6;
 
@@ -403,7 +403,7 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		return false;
 	}
 
-	if((hash->flag != EMPTY) && hash->depth > depth /*&& hash->age == hashAge*/) {
+	if((hash->flag != EMPTY) && hash->depth > depth + hash_decrement /*&& hash->age == hashAge*/) {
 		return false;
 	}
 
@@ -417,7 +417,7 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		++hash_filled;
 	}
 
-	hash->depth = depth;
+	hash->depth = depth + hash_decrement;
 	hash->score = score;
 	hash->flag = flag;
 	hash->key = key;

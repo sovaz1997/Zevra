@@ -2,7 +2,7 @@
 
 BitBoard::BitBoard() : moveNumber(0), ruleNumber(0) {
 	preInit();
-	clear();
+	setFen(startpos_fen);
 }
 
 BitBoard::~BitBoard() {}

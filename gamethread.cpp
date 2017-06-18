@@ -22,7 +22,7 @@ int64_t Game::mtdf(int64_t f, int depth) {
 }
 
 void Game::goFixedDepth() {
-	clearCash();
+	//clearCash();
 	++hashAge;
 	stopped = false;
 
@@ -95,7 +95,7 @@ void Game::goFixedTime(int tm) {
 	time = tm;
 	timer.start();
 
-	clearCash();
+	//clearCash();
 	++hashAge;
 
 	variant.clear();
