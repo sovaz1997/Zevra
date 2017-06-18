@@ -2490,3 +2490,16 @@ void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<in
 	}
 }
 /*--- evalution functions ---*/
+
+BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable) {
+	bitBoardMoveGenerator(moveArray);
+	enable = false;
+	for(int i = 0; i < moveArray.count; ++i) {
+		if(fromY == moveArray.moveArray[i].fromY && fromX == moveArray.moveArray[i].fromX && toY == moveArray.moveArray[i].toY && toX == moveArray.moveArray[i].toX && (!replaced || moveArray.moveArray[i].replacedFigure == replacedFigure)) {
+			enable = true;
+			return moveArray.moveArray[i];
+		}
+	}
+
+	return BitMove(0, 0, 0, 0, 0);
+}

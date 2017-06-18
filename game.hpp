@@ -20,7 +20,6 @@
 #include "constants.hpp"
 #include "killer.hpp"
 #include "hash.hpp"
-#include "point.hpp"
 #include "timer.hpp"
 #include "movearray.hpp"
 #include "option.hpp"
@@ -32,8 +31,8 @@ private:
 	BitBoard game_board;
 	unsigned long long nodesCounter = 0;
 
-	const int WHITE_WIN = 100000000;
-	const int BLACK_WIN = -100000000;
+	const int WHITE_WIN = 1000000; //20 бит
+	const int BLACK_WIN = -1000000; //20 бит
 
 	int64_t max_depth;
 	bool stopped;

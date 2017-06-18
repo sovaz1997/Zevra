@@ -50,7 +50,7 @@ const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
 const int TOURNAMENT = 2;
 
-const int hash_width = 22;
+const int hash_width = 23;
 
 const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;

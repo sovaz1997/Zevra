@@ -53,6 +53,7 @@ public:
 	void setReplaced(uint8_t figure);
 	void setCategory(int cat, double val);
 	bool quality();
+	void printInfo();
 };
 
 /*

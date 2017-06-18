@@ -103,3 +103,16 @@ bool BitMove::quality() {
 					toY >= 0 && toY <= 7 &&
 					toX >= 0 && toY <= 7);
 }
+
+void BitMove::printInfo() {
+	std::cout << "move: " << getMoveString() << std::endl;
+	std::cout << "attackedFigure: " << (int)attackedFigure << std::endl;
+	std::cout << "movedFigure: " << (int)movedFigure << std::endl;
+	std::cout << "replacedFigure: " << (int)replacedFigure << std::endl;
+	std::cout << "isAttack: " << (int)isAttack << std::endl;
+	std::cout << "replaced: " << (int)replaced << std::endl;
+	std::cout << "passant: " << (int)passant << std::endl;
+	std::cout << "fromHash: " << (int)fromHash << std::endl;
+	std::cout << "history_weight: " << (int)history_weight << std::endl;
+	std::cout << "historyCompare: " << (int)historyCompare << std::endl;
+}

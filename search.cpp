@@ -82,16 +82,26 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(currentHash->flag != ALPHA && real_depth > 0) {
-			b.move(currentHash->move);
-			tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false);
-			b.goBack();
+			bool enable;
+			BitMove mv = game_board.getMove(currentHash->fromY, currentHash->fromX, currentHash->toY, currentHash->toX, currentHash->replaced, currentHash->replacedFigure, enable);// currentHash->getMove();
 
-			if(tmp > alpha) {
-				recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, currentHash->move, real_depth);
+			/*mv.printInfo();
+			std::cout << "\n";
+			mv1.printInfo();
+			std::cout << "\n\n\n\n";*/
 
-				alpha = tmp;
-				if(alpha >= beta) {
-		  			return beta;
+			if(enable) {
+				b.move(mv);
+				tmp = -negamax(b, -beta, -alpha, depth - 1, real_depth + 1, rule, inNullMove, false);
+				b.goBack();
+
+				if(tmp > alpha) {
+					recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, mv, real_depth);
+
+					alpha = tmp;
+					if(alpha >= beta) {
+						return beta;
+					}
 				}
 			}
 		}
@@ -191,20 +201,20 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		nextDepth = depth - 1;
 		nextDepth += extensions;
 
-		Killer* killer;
+		/*Killer* killer;
 		if(color == WHITE) {
 			killer = &whiteKiller[real_depth];
 		} else {
 			killer = &blackKiller[real_depth];
-		}
+		}*/
 
 		
-		Killer* secondKiller;
+		/*Killer* secondKiller;
 		if(color == WHITE) {
 			secondKiller = &whiteSecondKiller[real_depth];
 		} else {
 			secondKiller = &blackSecondKiller[real_depth];
-		}
+		}*/
 		
 		double reduction = 0;
 
@@ -403,7 +413,7 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		return false;
 	}
 
-	if((hash->flag != EMPTY) && hash->depth > depth/* + hash_decrement * 2*/ && hash->age == hashAge) {
+	if((hash->flag != EMPTY) && hash->depth > depth && hash->age == hashAge) {
 		return false;
 	}
 
@@ -417,18 +427,14 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		++hash_filled;
 	}
 
-	hash->depth = depth;/* + hash_decrement * 2*/
+	hash->depth = depth;
 	hash->score = score;
 	hash->flag = flag;
 	hash->key = key;
 	hash->age = hashAge;
 
 	if(flag != ALPHA) {
-		/*if(flag == EXACT) {
-			hash->recordPrev();
-		}*/
-
-		hash->move = move;
+		hash->setMove(move);
 	}
 
 	return true;
@@ -437,31 +443,18 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 std::vector<BitMove> Game::extractPV(int depth) {
 	int k;
 	std::vector<BitMove> result;
-	bool stopped = false;
 	for(k = 0; k < depth + 10; ++k) {
 		uint64_t hash = game_board.getColorHash();
 		Hash* currentHash = &boardHash[hash & hash_cutter];
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
-			if(currentHash->flag == BETA) {
-				if(!currentHash->back()) {
-					break;
-				}
-			}
-
-			while(!testMovePossible(currentHash->move)) {
-				if(!currentHash->back()) {
-          stopped = true;
-					break;
-				}
-			}
-
-			if(stopped) {
+			bool enable;
+			BitMove mv = game_board.getMove(currentHash->fromY, currentHash->fromX, currentHash->toY, currentHash->toX, currentHash->replaced, currentHash->replacedFigure, enable);// currentHash->getMove();
+			if(!enable) {
 				break;
 			}
-
-			result.emplace_back(currentHash->move);
-			game_board.move(currentHash->move);
+			result.emplace_back(mv);
+			game_board.move(mv);
 		} else {
 			break;
 		}
@@ -583,10 +576,8 @@ int64_t Game::negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int 
 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
-//					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-//					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
 					blackKiller[real_depth] = Killer(local_move);
 				}
 			}
@@ -596,10 +587,8 @@ int64_t Game::negamax_elementary(BitBoard & b, int64_t alpha, int64_t beta, int 
 			if(!local_move.isAttack) {
 				if(color == WHITE) {
 					whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
-					//whiteKiller[real_depth] = Killer(local_move);
 				} else {
 					blackHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += pow(depth, 2);
-					//blackKiller[real_depth] = Killer(local_move);
 				}
 			}
 

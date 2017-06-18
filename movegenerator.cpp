@@ -1,9 +1,9 @@
 #include "game.hpp"
 
 void Game::sortMoves(MoveArray& result, int depth) {
-	int num_attacks = result.num_attacks;
+	//int num_attacks = result.num_attacks;
 
-	for(int i = 0; i < result.count; ++i) {
+	for(unsigned int i = 0; i < result.count; ++i) {
 		result.moveArray[i].history_weight = whiteHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
 		if(game_board.whiteMove) {
 			if(whiteSecondKiller[depth].enable && result.moveArray[i].equal(whiteSecondKiller[depth].move)) {
@@ -78,7 +78,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 	if(boardHash[hash & hash_cutter].flag != EMPTY /*&& boardHash[hash & hash_cutter].flag != ALPHA*/) {
 		if(boardHash[hash & hash_cutter].key == hash) {
 			for(unsigned int i = 0; i < result.count; ++i) {
-				if(boardHash[hash & hash_cutter].move.equal(result.moveArray[i])) {
+				if(boardHash[hash & hash_cutter].move_equal(result.moveArray[i])) {
 					BitMove tmp = (BitMove)result.moveArray[i];
 					result.moveArray.erase(result.moveArray.begin() + i);
 					result.moveArray.emplace(result.moveArray.begin(), tmp);

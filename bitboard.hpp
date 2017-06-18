@@ -55,6 +55,8 @@ public:
 
 	uint64_t magicGenerator();
 
+	BitMove getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable);
+
 	std::vector<GoBack> history;
 	int history_iterator = 0;
 
@@ -148,6 +150,8 @@ public:
 	double newEvaluteAll();
 	double basicKingSafety();
 	void attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<int>& figure_array, uint64_t& pieces_mask);
+
+	MoveArray moveArray;
 
 	/*--- evalution functions ---*/
 };

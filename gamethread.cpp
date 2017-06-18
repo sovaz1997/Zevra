@@ -43,9 +43,9 @@ void Game::goFixedDepth() {
 	bestMove = moveCritical;
 	hasBestMove = true;
 	bestScore = 0;
-	int64_t f = 0;
+	//int64_t f = 0;
 	
-	int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
+	//int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		whiteUp = BLACK_WIN;
@@ -54,10 +54,10 @@ void Game::goFixedDepth() {
 
 		//negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 
-		if(max_depth > 1) {
+		/*if(max_depth > 1) {
 			current_alpha = bestScore - 30;
 			current_beta = bestScore + 30;
-		}
+		}*/
 
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 		/*std::cout << "!";

@@ -139,6 +139,9 @@ bool Game::uciHandler(std::string str) {
 				} else if(cmd[4] == "false") {
 					option.checkExtensions = false;
 				}
+			} else if(cmd[2] == "Clear" && cmd[3] == "Hash") {
+				clearCash();
+				std::cout << "info hashfull 0" << std::endl;
 			}
 		}
 
