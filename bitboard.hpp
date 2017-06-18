@@ -25,6 +25,9 @@ public:
 	uint64_t castlingMap;
 	uint64_t recapture_position;
 
+	int hash_width;
+	uint64_t hash_cutter;
+
 	uint64_t ROOK_MAGIC[8][8];
 	uint64_t BISHOP_MAGIC[8][8];
 

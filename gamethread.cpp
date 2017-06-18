@@ -2,6 +2,8 @@
 
 int Game::startGame() {
 	std::string str;
+	uciHandler("position startpos");	
+
 	while(true) {
 		std::getline(std::cin, str);
 

@@ -8,7 +8,7 @@ void Game::initEngine() {
 	whiteMateKiller.resize(100);
 	blackMateKiller.resize(100);
 
-	boardHash.resize(pow(2, hash_width));
+    setHashSize(option.hash_size);
 
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {

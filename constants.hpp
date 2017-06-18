@@ -50,8 +50,6 @@ const int FIXED_DEPTH = 0;
 const int FIXED_TIME = 1;
 const int TOURNAMENT = 2;
 
-const int hash_width = 23;
-
 const int REAL_EV = 0;
 const int BETA_CUT_EV = 1;
 const int ALPHA_CUT_EV = 2;
@@ -64,7 +62,7 @@ const int BETA = 3;
 
 const int MIN_DEPTH = 2;
 
-const uint64_t hash_cutter = std::pow(2, hash_width) - 1;
+//const uint64_t hash_cutter = std::pow(2, hash_width) - 1;
 
 const int FutilityMoveCount[9] = {19, 19, 19, 19, 19, 35, 67, 131, 259};
 

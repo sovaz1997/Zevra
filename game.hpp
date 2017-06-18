@@ -38,6 +38,8 @@ private:
 	bool stopped;
 
 	int hash_decrement = 0;
+	int hash_width;
+	uint64_t hash_cutter;
 
 	void initEngine();
 	bool uciHandler(std::string str);
@@ -47,6 +49,7 @@ private:
 	void clearCash();
 	bool move_comparator(BitMove& m1, BitMove&m2);
 	void initializeArrays();
+	void setHashSize(int mb_size);
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
 	int64_t mtdf(int64_t f, int depth);

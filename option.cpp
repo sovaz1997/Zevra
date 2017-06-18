@@ -12,4 +12,5 @@ void Option::print() {
 	std::cout << "option name futility_pruning type check default true\n";
 	std::cout << "option name checkExtensions type check default true\n";
 	std::cout << "option name Clear Hash type button\n";
+	std::cout << "option name Hash type spin default 256 min " << min_hash_size << " max "<<  max_hash_size << "\n";
 }

@@ -142,6 +142,13 @@ bool Game::uciHandler(std::string str) {
 			} else if(cmd[2] == "Clear" && cmd[3] == "Hash") {
 				clearCash();
 				std::cout << "info hashfull 0" << std::endl;
+			} else if(cmd[2] == "Hash") {
+				int hash_size = std::stoi(cmd[4]);
+
+				hash_size = std::min(hash_size, option.max_hash_size);
+				hash_size = std::max(hash_size, option.min_hash_size);
+
+				setHashSize(hash_size);
 			}
 		}
 

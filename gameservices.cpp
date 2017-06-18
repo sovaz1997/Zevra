@@ -75,7 +75,29 @@ std::vector<std::string> Game::getStringArray(std::string str) {
 	return result;
 }
 
-
 bool Game::move_comparator(BitMove& m1, BitMove&m2) {
 	return whiteHistorySort[m1.fromY][m1.fromX][m1.toY][m1.toX] < whiteHistorySort[m2.fromY][m2.fromX][m2.toY][m2.toX];
+}
+
+void Game::setHashSize(int mb_size) {
+	uint64_t hash_size = ((uint64_t)mb_size * 1024 * 1024);
+
+	int bits = 0;
+	for(uint64_t i = 1; ; i *= 2) {
+		if(i * sizeof(Hash) >= hash_size || i == 0) {
+			break;
+		}
+
+		++bits;
+	}
+
+	hash_width = bits;
+	hash_cutter = std::pow(2, hash_width) - 1;
+
+	game_board.hash_width = bits;
+	game_board.hash_cutter = hash_cutter;
+
+	boardHash.resize(pow(2, hash_width));
+	clearCash();
+	game_board.third_repeat = std::vector<int> (pow(2, hash_width), 0);
 }
