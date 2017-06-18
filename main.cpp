@@ -113,8 +113,6 @@ int main() {
 	std::cout << bitMove.getAttackedFigure() << "\n";*/
 
 	Game* game = new Game();
-	
-	std::cout << sizeof(Hash) << "\n";
 	game->startGame();
 
 
