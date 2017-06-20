@@ -79,6 +79,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					return beta;
 				}
 			}
+			/*if(currentHash->flag == EXACT || currentHash->flag == BETA) {
+				if(score > alpha) {
+					alpha = score;
+				}
+				if(alpha >= beta) {
+					return beta;
+				}
+			} else if(currentHash->flag == ALPHA) {
+				if(score <= alpha) {
+					return alpha;
+				}
+			}*/
 		}
 
 		if(currentHash->flag != ALPHA && real_depth > 0) {
