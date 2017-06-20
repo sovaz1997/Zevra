@@ -72,24 +72,19 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					return alpha;
 				}
 			} else if(currentHash->flag == EXACT) {
-				return score;
-				/*if(score <= alpha) {
+				//return score;
+				if(score <= alpha) {
 					return alpha;
 				}
 				if(score >= beta) {
 					return beta;
-				}*/
+				}
 			}
 		}
 
 		if(currentHash->flag != ALPHA && real_depth > 0) {
 			bool enable;
 			BitMove mv = game_board.getMove(currentHash->fromY, currentHash->fromX, currentHash->toY, currentHash->toX, currentHash->replaced, currentHash->replacedFigure, enable);// currentHash->getMove();
-
-			/*mv.printInfo();
-			std::cout << "\n";
-			mv1.printInfo();
-			std::cout << "\n\n\n\n";*/
 
 			if(enable) {
 				b.move(mv);

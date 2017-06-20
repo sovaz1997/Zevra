@@ -60,6 +60,8 @@ public:
 
 	BitMove getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable);
 
+	uint8_t metric[64][8][8];
+
 	std::vector<GoBack> history;
 	int history_iterator = 0;
 

@@ -290,6 +290,16 @@ void BitBoard::preInit() {
 		}
 	}
 
+	for(int i = 0; i < 64; ++i) {
+		int y_pos = i / 8;
+		int x_pos = i % 8;
+		for(int y = 0; y < 8; ++y) {
+			for(int x = 0; x < 8; ++x) {
+				metric[i][y][x] = std::max(std::abs(y_pos - y), std::abs(x_pos - x));
+			}
+		}
+	}
+
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
@@ -1397,9 +1407,31 @@ void BitBoard::pushHistory() {
 }
 
 int64_t BitBoard::kingSecurity() {
-	int64_t result = 0;
+	//int64_t result = 0;
 
-	uint64_t mask = figures[KING];// & white_bit_mask;
+	int king_pos = firstOne(white_bit_mask & figures[KING]);
+	uint64_t tmp_figure_mask = (black_bit_mask & (figures[QUEEN] | figures[ROOK] | figures[BISHOP] | figures[KNIGHT]));
+	int sum = 0;
+	while(tmp_figure_mask) {
+		int pos = firstOne(tmp_figure_mask);
+		uint64_t pos_bit_mask = vec1_cells[pos];
+		sum -= ((8 - metric[king_pos][pos / 8][pos % 8]) * ((bool)(figures[QUEEN] & pos_bit_mask) * 10 + (bool)(figures[ROOK] & pos_bit_mask) * 5 + (bool)(figures[BISHOP] & pos_bit_mask) * 3 + (bool)(figures[ROOK] & pos_bit_mask) * 2));
+		tmp_figure_mask &= ~pos_bit_mask;
+	}
+
+	king_pos = firstOne(black_bit_mask & figures[KING]);
+	tmp_figure_mask = (white_bit_mask & (figures[QUEEN] | figures[ROOK] | figures[BISHOP] | figures[KNIGHT]));
+
+	while(tmp_figure_mask) {
+		int pos = firstOne(tmp_figure_mask);
+		uint64_t pos_bit_mask = vec1_cells[pos];
+		sum += ((8 - metric[king_pos][pos / 8][pos % 8]) * ((bool)(figures[QUEEN] & pos_bit_mask) * 10 + (bool)(figures[ROOK] & pos_bit_mask) * 5 + (bool)(figures[BISHOP] & pos_bit_mask) * 3 + (bool)(figures[ROOK] & pos_bit_mask) * 2));
+		tmp_figure_mask &= ~pos_bit_mask;
+	}
+
+	return sum;
+
+	/*uint64_t mask = figures[KING];// & white_bit_mask;
 	uint8_t kingPos = firstOne(mask);
 	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & black_bit_mask;
 	while(mask != 0) {
@@ -1418,7 +1450,7 @@ int64_t BitBoard::kingSecurity() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
-	return result;
+	return result;*/
 }
 
 void BitBoard::evaluteAll() {
@@ -1638,10 +1670,10 @@ int64_t BitBoard::getEvalute() {
 
 	if(whiteMove) {
 		//return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
-		return (evalute + whitePassantMade * 50 - blackPassantMade * 50);
+		return (evalute + whitePassantMade * 50 - blackPassantMade * 50) + kingSecurity();
 	} else {
 		//return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
-		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);
+		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50) + kingSecurity();
 	}
 }
 
