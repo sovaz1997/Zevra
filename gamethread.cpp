@@ -126,7 +126,7 @@ void Game::goFixedTime(int tm) {
 
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 		
-		if(abs(bestScore) >= (WHITE_WIN - 100) || stopped) {
+		if(/*abs(bestScore) >= (WHITE_WIN - 100) ||*/ stopped) {
 			break;
 		}
 
