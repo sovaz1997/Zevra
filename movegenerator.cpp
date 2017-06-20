@@ -75,7 +75,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 
 
 	uint64_t hash = game_board.getColorHash();
-	if(boardHash[hash & hash_cutter].flag != EMPTY && boardHash[hash & hash_cutter].flag != ALPHA) {
+	if(boardHash[hash & hash_cutter].flag != EMPTY && boardHash[hash & hash_cutter].flag != ALPHA && boardHash[hash & hash_cutter].depth >= depth) {
 		if(boardHash[hash & hash_cutter].key == hash) {
 			for(unsigned int i = 0; i < result.count; ++i) {
 				if(boardHash[hash & hash_cutter].move_equal(result.moveArray[i])) {
