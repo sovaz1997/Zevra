@@ -217,7 +217,7 @@ void BitBoard::clear() {
 	whitePassantMade = false;
  	blackPassantMade = false;
 
-	third_repeat = std::vector<int> (pow(2, hash_width), 0);
+	third_repeat = std::vector<int> (std::pow(2, hash_width), 0);
 
 	hash_enable = true;
 
@@ -1670,10 +1670,10 @@ int64_t BitBoard::getEvalute() {
 
 	if(whiteMove) {
 		//return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
-		return (evalute + whitePassantMade * 50 - blackPassantMade * 50) + kingSecurity();
+		return (evalute + whitePassantMade * 50 - blackPassantMade * 50);// + kingSecurity();
 	} else {
 		//return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
-		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50) + kingSecurity();
+		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);// + kingSecurity();
 	}
 }
 

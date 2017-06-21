@@ -71,11 +71,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				if(score <= alpha) {
 					return alpha;
 				}
+
 			} else if(currentHash->flag == EXACT) {
-				//return score;
 				if(score <= alpha) {
 					return alpha;
 				}
+
 				if(score >= beta) {
 					return beta;
 				}
@@ -127,13 +128,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove /*&& !onPV*/) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4 && !onPV) { //Razoring
+	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4/* && !onPV*/) { //Razoring
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			return beta;
 		}
