@@ -14,6 +14,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 	}
+	
+	//k7/1p6/8/8/8/4Qppp/5pqq/3K4 w - - 0 1
+	/*if(!b.hash_enable) {
+		return 0; 
+	}*/
 
 	if(real_depth) {
 		max_real_depth = std::max(max_real_depth, real_depth);
@@ -48,11 +53,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
+	
+
 	int tmp;
 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
-	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended )) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended)) {
 	//if((currentHash->flag != EMPTY && currentHash->key == hash && !extended && !option.nullMovePrunningEnable) || (currentHash->flag != EMPTY && currentHash->key == hash && inNullMove && !extended && option.nullMovePrunningEnable)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
