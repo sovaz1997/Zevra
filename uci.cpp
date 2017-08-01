@@ -93,13 +93,16 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
-		} else if(cmd[0] == "stress") {
+		} else if(cmd[0] == "bench") {
+			std::cout << "Benchmarking (15 sec)..." << std::endl;
 			game_board.stress = 0;
 			double st = clock();
-			for(unsigned int i = 0; i < 1000000; ++i) {
-				game_board.bitBoardMoveGenerator(moveArray[0]);
+			while((clock() - st) / CLOCKS_PER_SEC < 15) {
+				for(unsigned int i = 0; i < 10000000; ++i) {
+					game_board.bitBoardMoveGenerator(moveArray[0]);
+				}
 			}
-			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) << std::endl;
+			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) / 10000 << " scores" << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
