@@ -155,7 +155,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	int num_moves = 0;
 
-	b.bitBoardMoveGenerator(moveArray[real_depth]);
+	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
 
 	/*if(iid_test_complete) {
 		for(int i = 0; i < moveArray[real_depth].count; ++i) {
@@ -334,7 +334,7 @@ uint64_t Game::perft(int depth) {
 		return 1;
 	}
 
-	game_board.bitBoardMoveGenerator(moveArray[depth]);
+	game_board.bitBoardMoveGenerator(moveArray[depth], stress);
 
 	for(unsigned int i = 0; i < moveArray[depth].count; ++i) {
 		game_board.move(moveArray[depth].moveArray[i]);
@@ -372,7 +372,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 		alpha = val;
 	}
 
-	b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
+	b.bitBoardAttackMoveGenerator(moveArray[real_depth], stress);
 	sortAttacks(moveArray[real_depth]);
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
@@ -474,7 +474,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 
 bool Game::testMovePossible(BitMove move) {
 	MoveArray moves;
-	game_board.bitBoardMoveGenerator(moves);
+	game_board.bitBoardMoveGenerator(moves, stress);
 
 	for(unsigned int i = 0; i < moves.count; ++i) {
 		if(move.equal(moves.moveArray[i])) {

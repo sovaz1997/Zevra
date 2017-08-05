@@ -71,7 +71,7 @@ bool Game::uciHandler(std::string str) {
 			}
 		} else if(cmd[0] == "posmoves") {
 			MoveArray moves;
-			game_board.bitBoardMoveGenerator(moves);
+			game_board.bitBoardMoveGenerator(moves, stress);
 
 			for(unsigned int i = 0; i < moves.count; ++i) {
 				std::cout << moves.moveArray[i].getMoveString();
@@ -94,15 +94,37 @@ bool Game::uciHandler(std::string str) {
 			option.print();
 			std::cout << "uciok" << std::endl;
 		} else if(cmd[0] == "bench") {
-			std::cout << "Benchmarking (15 sec)..." << std::endl;
+			std::cout << "Benchmarking..." << std::endl;
 			game_board.stress = 0;
 			double st = clock();
-			while((clock() - st) / CLOCKS_PER_SEC < 15) {
-				for(unsigned int i = 0; i < 10000000; ++i) {
-					game_board.bitBoardMoveGenerator(moveArray[0]);
+
+
+			//while((clock() - st) / CLOCKS_PER_SEC < 15) {
+				std::vector<std::future<void>> future(8);
+				count_moves = std::vector<size_t> (future.size(), 0);
+				std::string oldFen = game_board.getFen();
+				game_board.setFen(game_board.startpos_fen);
+
+				
+				for(unsigned int count_threads = 0; count_threads < count_moves.size(); ++count_threads) {
+					future[count_threads] = std::async(std::launch::async, &Game::benchmarkThreadFunction, this, count_threads);
+
+					//thread[count_threads] = std::thread(&Game::benchmarkThreadFunction, this, count_threads);
 				}
-			}
-			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) / 10000 << " scores" << std::endl;
+
+				for(unsigned int count_threads = 0; count_threads < future.size(); ++count_threads) {
+					//thread[count_threads].join();
+					future[count_threads].get();
+				}
+
+				size_t result = 0;
+				for(unsigned int i = 0; i < count_moves.size(); ++i) {
+					result += count_moves[i];
+				}
+			//}
+			std::cout << (int64_t)(result / ((clock() - st) / CLOCKS_PER_SEC))/* / 10000*/ << " scores" << std::endl;
+
+			game_board.setFen(oldFen);
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
@@ -161,4 +183,10 @@ bool Game::uciHandler(std::string str) {
 void Game::idPrint() {
 	std::cout << "id name Zevra v1.5 r446" << std::endl;
 	std::cout << "id author sovaz1997" << std::endl;
+}
+
+void Game::benchmarkThreadFunction(size_t counter) {
+	for(unsigned int i = 0; i < 1000000; ++i) {
+		game_board.bitBoardMoveGenerator(moveArray[counter], count_moves[counter]);
+	}
 }

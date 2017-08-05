@@ -649,8 +649,8 @@ int BitBoard::getFiguresCount() {
 	return popcount64(white_bit_mask | black_bit_mask);
 }
 
-void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
-	bitBoardAttackMoveGenerator(moveArray);
+void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves) {
+	bitBoardAttackMoveGenerator(moveArray, counter_moves);
 	uint64_t possibleMoves, mask, emask;
 
 	uint8_t color;
@@ -673,7 +673,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 		rook &= (UINT64_MAX ^ vec1_cells[pos]);
 
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
@@ -690,7 +690,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (white_bit_mask | black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
 		bishop &= (UINT64_MAX ^ vec1_cells[pos]);
 
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
@@ -708,7 +708,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (white_bit_mask | black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX));
 
 		queen &= (UINT64_MAX ^ vec1_cells[pos]);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
@@ -724,7 +724,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
 		knight &= (UINT64_MAX ^ vec1_cells[pos]);
 		possibleMoves &= (UINT64_MAX ^ emask);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
@@ -741,7 +741,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
 		king &= (UINT64_MAX ^ vec1_cells[pos]);
 		possibleMoves &= (UINT64_MAX ^ emask);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
@@ -794,7 +794,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			possibleMoves &= UINT64_MAX ^ (vec1_cells[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]);
 			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
 			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
-			stress += popcount64(possibleMoves);
+			counter_moves += popcount64(possibleMoves);
 
 			while(possibleMoves != 0) {
 				uint64_t to = firstOne(possibleMoves);
@@ -811,7 +811,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			possibleMoves &= UINT64_MAX ^ (vec1_cells[firstOne(plus8[pos] & (white_bit_mask | black_bit_mask))]);
 			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
 			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
-			stress += popcount64(possibleMoves);
+			counter_moves += popcount64(possibleMoves);
 
 			while(possibleMoves != 0) {
 				uint64_t to = firstOne(possibleMoves);
@@ -841,7 +841,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			possibleMoves &= UINT64_MAX ^ (vec1_cells[lastOne(minus8[pos] & (white_bit_mask | black_bit_mask))]);
 			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
 			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
-			stress += popcount64(possibleMoves);
+			counter_moves += popcount64(possibleMoves);
 
 			while(possibleMoves != 0) {
 				uint64_t to = firstOne(possibleMoves);
@@ -859,7 +859,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 			possibleMoves &= UINT64_MAX ^ (vec1_cells[firstOne(minus8[pos] & (white_bit_mask | black_bit_mask))]);
 			possibleMoves &= ((mask | emask) ^ UINT64_MAX);
 			pawn &= (UINT64_MAX ^ vec1_cells[pos]);
-			stress += popcount64(possibleMoves);
+			counter_moves += popcount64(possibleMoves);
 
 			while(possibleMoves != 0) {
 				uint64_t to = firstOne(possibleMoves);
@@ -883,7 +883,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	}
 }
 
-void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
+void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter_moves) {
 	moveArray.clear();
 	uint64_t possibleMoves, mask, emask;
 
@@ -1053,7 +1053,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
 		possibleMoves &= emask;
 		knight &= (UINT64_MAX ^ vec1_cells[pos]);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 		moveArray.num_attacks += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -1071,7 +1071,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		uint8_t pos = firstOne(bishop);
 		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (white_bit_mask | black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((figures[KING] & emask) ^ UINT64_MAX) & emask & (mask ^ UINT64_MAX);
 		bishop &= (UINT64_MAX ^ vec1_cells[pos]);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 		moveArray.num_attacks += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -1089,7 +1089,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (white_bit_mask | black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((figures[KING] & emask) ^ UINT64_MAX) & emask & (mask ^ UINT64_MAX);
 		rook &= (UINT64_MAX ^ vec1_cells[pos]);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 		moveArray.num_attacks += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -1107,7 +1107,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (white_bit_mask | black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((figures[KING] & emask) ^ UINT64_MAX) & emask & (mask ^ UINT64_MAX);
 		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (white_bit_mask | black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((figures[KING] & emask) ^ UINT64_MAX) & emask & (mask ^ UINT64_MAX));
 		queen &= (UINT64_MAX ^ vec1_cells[pos]);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 		moveArray.num_attacks += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -1124,7 +1124,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (figures[KING] & emask));
 		possibleMoves &= emask;
 		king &= (UINT64_MAX ^ vec1_cells[pos]);
-		stress += popcount64(possibleMoves);
+		counter_moves += popcount64(possibleMoves);
 		moveArray.num_attacks += popcount64(possibleMoves);
 
 		while(possibleMoves != 0) {
@@ -1630,7 +1630,7 @@ uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 
 BitMove BitBoard::getRandomMove() {
 	MoveArray moveArray;
-	bitBoardMoveGenerator(moveArray);
+	bitBoardMoveGenerator(moveArray, stress);
 
 	uint8_t color;
 
@@ -2524,7 +2524,7 @@ void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<in
 /*--- evalution functions ---*/
 
 BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable) {
-	bitBoardMoveGenerator(moveArray);
+	bitBoardMoveGenerator(moveArray, stress);
 	enable = false;
 	for(int i = 0; i < moveArray.count; ++i) {
 		if(fromY == moveArray.moveArray[i].fromY && fromX == moveArray.moveArray[i].fromX && toY == moveArray.moveArray[i].toY && toX == moveArray.moveArray[i].toX && (!replaced || moveArray.moveArray[i].replacedFigure == replacedFigure)) {

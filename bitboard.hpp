@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <mutex>
 #include <string>
 #include <vector>
 #include <stack>
@@ -35,6 +36,7 @@ public:
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	void preInit();
+
 	std::vector<std::string> splitter(std::string str, char sym);
 
 	uint64_t plus1[65], plus7[65], plus8[65], plus9[65], minus1[65], minus7[65], minus8[65], minus9[65];
@@ -87,10 +89,10 @@ public:
 	void setFen(std::string fen);
 	std::string getFen();
 	void clear();
-	int64_t stress;
+	size_t stress;
 
-	void bitBoardMoveGenerator(MoveArray& moveArray);
-	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
+	void bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
+	void bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
 	void move(BitMove& mv);
 	void goBack();
 	void pushHistory();

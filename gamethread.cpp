@@ -163,7 +163,7 @@ void Game::goTournament() {
 
 bool Game::move(std::string mv) {
 	MoveArray moves;
-	game_board.bitBoardMoveGenerator(moves);
+	game_board.bitBoardMoveGenerator(moves, stress);
 	for(unsigned int i = 0; i < moves.count; ++i) {
 		if(moves.moveArray[i].getMoveString() == mv) {
 			game_board.move(moves.moveArray[i]);

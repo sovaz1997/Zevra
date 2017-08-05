@@ -12,6 +12,8 @@
 #include <thread>
 #include <cstdio>
 #include <ctime>
+#include <future>
+#include <thread>
 #include <iomanip>
 #include <algorithm>
 #include <stack>
@@ -50,11 +52,13 @@ private:
 	bool move_comparator(BitMove& m1, BitMove&m2);
 	void initializeArrays();
 	void setHashSize(int mb_size);
+	void benchmarkThreadFunction(size_t count);
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
 	int64_t mtdf(int64_t f, int depth);
 
-  std::vector<BitMove>pv;
+  	std::vector<BitMove>pv;
+	std::vector<size_t> count_moves;
 
 	bool inZugzwang(BitBoard & b, uint8_t color);
 
@@ -64,7 +68,7 @@ private:
 	bool hasBestMove = false;
 
 	std::stack<BitMove>pv_line;
-	int64_t stress;
+	size_t stress;
 	BitMove bestMove;
 	int64_t bestScore;
 	int max_real_depth;
