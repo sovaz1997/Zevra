@@ -4,14 +4,11 @@
 #include <cstdint>
 #include <stack>
 #include "bitmove.hpp"
-#include "pv.hpp"
 
 class BitMove;
 
 class Hash {
 public:
-	//std::stack<BitMove>* prev;
-
 	uint8_t depth;
 	int32_t score;
 	uint8_t flag;

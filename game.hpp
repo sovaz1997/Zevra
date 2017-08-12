@@ -25,9 +25,6 @@
 #include "timer.hpp"
 #include "movearray.hpp"
 #include "option.hpp"
-#include "pv.hpp"
-#include "extendedmove.hpp"
-
 class Game {
 private:
 	BitBoard game_board;

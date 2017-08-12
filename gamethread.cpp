@@ -24,7 +24,11 @@ int64_t Game::mtdf(int64_t f, int depth) {
 }
 
 void Game::goFixedDepth() {
-	//clearCash();
+	
+	if(option.UCI_AnalyseMode) {
+		clearCash();
+	}
+	
 	stopped = false;
 
 	variant.clear();
@@ -96,7 +100,9 @@ void Game::goFixedTime(int tm) {
 	time = tm;
 	timer.start();
 
-	//clearCash();
+	if(option.UCI_AnalyseMode) {
+		clearCash();
+	}
 
 	variant.clear();
 	variant.resize(max_depth);

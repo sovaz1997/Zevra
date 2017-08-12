@@ -174,6 +174,12 @@ bool Game::uciHandler(std::string str) {
 				hash_size = std::max(hash_size, option.min_hash_size);
 
 				setHashSize(hash_size);
+			} else if(cmd[2] == "UCI_AnalyseMode" && cmd[3] == "value") {
+				if(cmd[4] == "true") {
+					option.UCI_AnalyseMode = true;
+				} else if(cmd[4] == "false") {
+					option.UCI_AnalyseMode = false;
+				}
 			}
 		}
 

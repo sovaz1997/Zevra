@@ -3,7 +3,7 @@ BINDIR = $(PREFIX)/bin
 
 CC = g++
 CFLAGS = -std=c++11 -m64 -Wall -pedantic -O3 -flto -march=native -pthread
-FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o category.o magic.o option.o pv.o constants.o extendedmove.o eval.o
+FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o  magic.o option.o constants.o
 NAME = zevra
 
 all: constants.hpp $(FILES)
@@ -76,26 +76,14 @@ movearray.o: bitmove.hpp game.hpp movearray.hpp movearray.cpp
 bitboard.o: bitboard.hpp bitboard.cpp
 	$(CC) $(CFLAGS) -c bitboard.cpp
 
-category.o: category.hpp category.cpp
-	$(CC) $(CFLAGS) -c category.cpp
-
 magic.o: magic.hpp magic.cpp
 	$(CC) $(CFLAGS) -c magic.cpp
 
 option.o: option.hpp option.cpp
 	$(CC) $(CFLAGS) -c option.cpp
 
-pv.o: pv.hpp pv.cpp
-	$(CC) $(CFLAGS) -c pv.cpp
-
 constants.o: constants.hpp constants.cpp
 	$(CC) $(CFLAGS) -c constants.cpp
-
-extendedmove.o: extendedmove.hpp extendedmove.cpp
-	$(CC) $(CFLAGS) -c extendedmove.cpp
-
-eval.o: eval.hpp eval.cpp
-	$(CC) $(CFLAGS) -c eval.cpp
 
 clean:
 	rm -rf *.o $(NAME)

@@ -3,7 +3,8 @@
 Option::Option() : nullMovePruningEnable(false),
 				   razoring(true),
 				   futility_pruning(true),
-				   checkExtensions(true)
+				   checkExtensions(true),
+				   UCI_AnalyseMode(false)
 				   {}
 
 void Option::print() {
@@ -13,4 +14,5 @@ void Option::print() {
 	std::cout << "option name checkExtensions type check default true\n";
 	std::cout << "option name Clear Hash type button\n";
 	std::cout << "option name Hash type spin default 256 min " << min_hash_size << " max "<<  max_hash_size << "\n";
+	std::cout << "option name UCI_AnalyseMode type check default false\n";
 }

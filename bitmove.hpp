@@ -7,7 +7,6 @@
 #include <cmath>
 #include <vector>
 #include "constants.hpp"
-#include "category.hpp"
 
 
 //std::vector<uint8_t>figureToIndex;
