@@ -2394,7 +2394,7 @@ double BitBoard::basicKingSafety() {
 	double result = 0;
 
 	int valueOfAttacks = 0;
-	double attackingPiecesCount;
+	//double attackingPiecesCount;
 
 	int white_king_pos = firstOne(figures[KING] & white_bit_mask);
 	uint64_t white_king_mask = bitboard[KING | WHITE][white_king_pos / 8][white_king_pos % 8] & ~(white_bit_mask | black_bit_mask);
@@ -2412,7 +2412,7 @@ double BitBoard::basicKingSafety() {
 		white_king_mask &= (~vec1_cells[pos]);
 	}
 
-	attackingPiecesCount = popcount64(pieces_count);
+	//attackingPiecesCount = popcount64(pieces_count);
 	//std::cout << attackingPiecesCount << "\n";
 
 	//result -= valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)];
@@ -2436,7 +2436,7 @@ double BitBoard::basicKingSafety() {
 		black_king_mask &= (~vec1_cells[pos]);
 	}
 
-	attackingPiecesCount = popcount64(pieces_count);
+	//attackingPiecesCount = popcount64(pieces_count);
 
 	//result += (valueOfAttacks * attackWeight[std::min((int)attackingPiecesCount, 7)]);
 	result += (SafetyTable[valueOfAttacks]);
@@ -2455,7 +2455,7 @@ void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<in
 		emask = white_bit_mask & (UINT64_MAX ^ (figures[KING] & WHITE));
 	}
 
-	uint64_t kingPos = vec2_cells[y][x];
+	//uint64_t kingPos = vec2_cells[y][x];
 	uint8_t kingCoord = y * 8 + x;
 
 
@@ -2526,7 +2526,7 @@ void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<in
 BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable) {
 	bitBoardMoveGenerator(moveArray, stress);
 	enable = false;
-	for(int i = 0; i < moveArray.count; ++i) {
+	for(unsigned int i = 0; i < moveArray.count; ++i) {
 		if(fromY == moveArray.moveArray[i].fromY && fromX == moveArray.moveArray[i].fromX && toY == moveArray.moveArray[i].toY && toX == moveArray.moveArray[i].toX && (!replaced || moveArray.moveArray[i].replacedFigure == replacedFigure)) {
 			enable = true;
 			return moveArray.moveArray[i];
