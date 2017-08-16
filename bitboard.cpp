@@ -1674,10 +1674,10 @@ int64_t BitBoard::getEvalute() {
 
 	if(whiteMove) {
 		//return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
-		return (evalute + whitePassantMade * 50 - blackPassantMade * 50) + increment;// + kingSecurity();
+		return (evalute + whitePassantMade * 50 - blackPassantMade * 50);// + increment;// + kingSecurity();
 	} else {
 		//return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
-		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50) - increment;// + kingSecurity();
+		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);// - increment;// + kingSecurity();
 	}
 }
 
