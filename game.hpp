@@ -95,7 +95,7 @@ public:
   	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
-	std::string getScore(double score);
+	//std::string getScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
 	bool move(std::string mv);
 	void printBitBitBoard(uint64_t bit_BitBoard);
