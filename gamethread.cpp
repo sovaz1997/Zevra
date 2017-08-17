@@ -25,7 +25,7 @@ int64_t Game::mtdf(int64_t f, int depth) {
 
 void Game::goFixedDepth() {
 	
-	if(option.UCI_AnalyseMode) {
+	if(option.UCI_AnalyseMode || abs(bestScore) >= (WHITE_WIN - 100)) {
 		clearCash();
 	}
 	
@@ -100,7 +100,7 @@ void Game::goFixedTime(int tm) {
 	time = tm;
 	timer.start();
 
-	if(option.UCI_AnalyseMode) {
+	if(option.UCI_AnalyseMode || abs(bestScore) >= (WHITE_WIN - 100)) {
 		clearCash();
 	}
 
