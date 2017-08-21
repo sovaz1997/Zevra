@@ -33,6 +33,8 @@ public:
 	uint64_t BISHOP_MAGIC[8][8];
 
 	uint64_t zobrist[32][BOARD_SIZE][BOARD_SIZE];
+	uint64_t wscZobrist, wlcZobrist, bscZobrist, blcZobrist;
+	uint64_t passantZobrist[8][8];
 
 	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
 	void preInit();

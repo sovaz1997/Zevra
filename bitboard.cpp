@@ -1163,20 +1163,26 @@ void BitBoard::move(BitMove& mv) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
+				hash ^= wscZobrist;
 				whitePassantMade = true;
 			} else if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 2) {
 				addFigure(ROOK | WHITE, 0, 3);
 				clearCell(0, 0);
+
+				hash ^= wlcZobrist;
+
 				whitePassantMade = true;
 			}
 		} else {
 			if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 6) {
 				addFigure(ROOK | BLACK, 7, 5);
 				clearCell(7, 7);
+				hash ^= bscZobrist;
 				blackPassantMade = true;
 			} else if(mv.fromY == 7 && mv.fromX == 4 && mv.toY == 7 && mv.toX == 2) {
 				addFigure(ROOK | BLACK, 7, 3);
 				clearCell(7, 0);
+				hash ^= blcZobrist;
 				blackPassantMade = true;
 			}
 		}
@@ -1914,6 +1920,17 @@ void BitBoard::zobristGenerator() {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
 				zobrist[i][j][k] = dis(gen);
 			}
+		}
+	}
+
+	wscZobrist = dis(gen);
+	wlcZobrist = dis(gen);
+	bscZobrist = dis(gen);
+	blcZobrist = dis(gen);
+
+	for(int i = 0; i < BOARD_SIZE; ++i) {
+		for(int j = 0; j < BOARD_SIZE; ++j) {
+			passantZobrist[i][j] = dis(gen);
 		}
 	}
 }
