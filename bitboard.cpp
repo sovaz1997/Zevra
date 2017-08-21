@@ -1679,11 +1679,12 @@ int64_t BitBoard::getEvalute() {
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
-		//return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
-		return (evalute + whitePassantMade * 50 - blackPassantMade * 50);// + increment;// + kingSecurity();
+		return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
+		//return (evalute + whitePassantMade * 50 - blackPassantMade * 50);// + increment;// + kingSecurity();
+		
 	} else {
-		//return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
-		return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);// - increment;// + kingSecurity();
+		return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
+		//return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);// - increment;// + kingSecurity();
 	}
 }
 
@@ -2296,8 +2297,7 @@ double BitBoard::newEvaluteAll() {
 	int white_queen_count = popcount64(figures[QUEEN] & white_bit_mask);
 	int black_queen_count = popcount64(figures[QUEEN] & black_bit_mask);
 
-	result += (white_pawn_count - black_pawn_count) * (PAWN_EV * stage_game + ENDGAME_PAWN_EV * (1 - stage_game));
-	//result -= black_pawn_count * PAWN_EV;
+	result += (white_pawn_count - black_pawn_count) * PAWN_EV;//(PAWN_EV * stage_game + ENDGAME_PAWN_EV * (1 - stage_game));
 	result += white_knight_count * KNIGHT_EV;
 	result -= black_knight_count * KNIGHT_EV;
 	result += white_bishop_count * BISHOP_EV;
@@ -2403,6 +2403,8 @@ double BitBoard::newEvaluteAll() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
+	return result;
+	
 	double kingSafe = basicKingSafety();
 	if(kingSafe > 0) {
 		return result;// + std::min(basicKingSafety(), PAWN_EV);

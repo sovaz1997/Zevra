@@ -154,7 +154,7 @@ public:
 	500, 500, 500, 500, 500, 500, 500, 500, 500, 500
 	};
 
-	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 55, 70, 0};
+	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 60, 80, 0};
 	
 	double newEvaluteAll();
 	double basicKingSafety();

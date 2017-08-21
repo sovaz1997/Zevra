@@ -36,7 +36,7 @@ const uint8_t TRANSFORMATION_MV = 6;
 
 const uint64_t reverse_color_const = 54387554323743313;
 
-const double k = 10;
+const double k = 1;
 
 const double PAWN_EV = 100 * k;
 const double KNIGHT_EV = 320 * k;
