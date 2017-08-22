@@ -131,8 +131,36 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		if(tournamentTimeControll && timer.getTime() * 2 >= time) {
-			break;
+		if(tournamentTimeControll) {
+			if(timer.getTime() * 2 >= time) {
+				break;
+			}
+
+			if(max_depth == 1) {
+				game_board.bitBoardMoveGenerator(moveArray[0], stress);
+				BitMove mv;
+				uint8_t color;
+				if(game_board.whiteMove) {
+					color = WHITE;
+				} else {
+					color = BLACK;
+				}
+				int count = 0;
+				for(unsigned int i = 0; i < moveArray[0].moveArray.size(); ++i) {
+					game_board.move(moveArray[0].moveArray[i]);
+					if(!game_board.inCheck(color)) {
+						++count;
+						mv = moveArray[0].moveArray[i];
+					}
+					
+					game_board.goBack();
+				}
+				
+				if(count == 1) {
+					bestMove = mv;
+					break;
+				}
+			}
 		}
 
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
