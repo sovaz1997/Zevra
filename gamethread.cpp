@@ -91,7 +91,7 @@ void Game::goFixedDepth() {
 	}
 }
 
-void Game::goFixedTime(int tm) {
+void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 	stopped = false;
 	/*if(tm >= 200) {
 		tm -= 100;
@@ -126,13 +126,18 @@ void Game::goFixedTime(int tm) {
 	std::vector<BitMove> bestPV;
 
 	for(; timer.getTime() < time; ) {
+		
 		whiteUp = BLACK_WIN;
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
+		if(tournamentTimeControll && timer.getTime() * 2 >= time) {
+			break;
+		}
+
 		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 		
-		if(/*abs(bestScore) >= (WHITE_WIN - 100) ||*/ stopped) {
+		if(stopped) {
 			break;
 		}
 
@@ -157,13 +162,13 @@ void Game::goTournament() {
 		inc = binc;
 	}
 
-	double k = 50;
+	double k = 40;
 
 	if(movestogoEnable) {
 		k = movestogo;
-		goFixedTime(tm / k + inc);
+		goFixedTime(tm / k + inc / 2, true);
 	} else {
-		goFixedTime(tm / k + inc - 100);
+		goFixedTime(tm / k + inc / 2 - 100, true);
 	}
 }
 

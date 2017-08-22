@@ -45,7 +45,7 @@ bool Game::uciHandler(std::string str) {
 				max_depth = std::stoi(cmd[2]);
 			  goFixedDepth();
 			} else if(cmd[1] == "movetime") {
-				goFixedTime(std::stoi(cmd[2]));
+				goFixedTime(std::stoi(cmd[2]), false);
 			} else if(cmd[1] == "infinite") {
 				max_depth = 99;
 				goFixedDepth();

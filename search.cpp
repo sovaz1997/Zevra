@@ -121,7 +121,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		if(!inNullMove && !extended && !inCheck && !onPV && depth > 2 && (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6) && real_depth > 0) {
+		if(!inNullMove && !extended && !inCheck && !onPV && /*depth > 2 &&*/ (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 			int R = 2 + depth / 6;
 
@@ -143,7 +143,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4/* && !onPV*/) { //Razoring
 		if(b.getEvalute() - QUEEN_EV >= beta) {
-			return beta;
+			--nextDepth;
 		}
 	}
 

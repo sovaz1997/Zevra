@@ -43,7 +43,7 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void goFixedDepth();
-	void goFixedTime(int time);
+	void goFixedTime(int time, bool tournamentTimeControll);
 	void goTournament();
 	void clearCash();
 	bool move_comparator(BitMove& m1, BitMove&m2);
