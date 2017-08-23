@@ -1663,28 +1663,13 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvalute() {
-	//std::vector<int> figures(32, 0);
-
-	//attackedField(WHITE, 4, 4, figures);
-
-	/*for(int i = 0; i < 32; ++i) {
-		std::cout << figures[i] << " ";
-	}
-	std::cout << "\n";*/
-
-	
-	int multiple = -(evalute < 0 ? -1 : (evalute > 0 ? 1 : 0));
-	int increment = popcount64(white_bit_mask | black_bit_mask) * multiple / 10;
-
 	if(!hash_enable) { return 0; }
 
 	if(whiteMove) {
 		return newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50;
-		//return (evalute + whitePassantMade * 50 - blackPassantMade * 50);// + increment;// + kingSecurity();
 		
 	} else {
 		return -(newEvaluteAll() + whitePassantMade * 50 - blackPassantMade * 50);
-		//return -(evalute + whitePassantMade * 50 - blackPassantMade * 50);// - increment;// + kingSecurity();
 	}
 }
 
