@@ -2424,6 +2424,21 @@ double BitBoard::newEvaluteAll() {
 	result += (isolated_pawn_map[compressVertical(white_bit_mask & figures[PAWN])] * ISOLATED_PAWN_BONUS);
 	result -= (isolated_pawn_map[compressVertical(black_bit_mask & figures[PAWN])] * ISOLATED_PAWN_BONUS);
 
+	//Безопасность короля - пешечный щит
+	uint64_t white_king_pos = figures[KING] & white_bit_mask;
+
+	if(white_king_pos & ((horizontal[0] | horizontal[1]) & ~(vertical[3] | vertical[4]))) {
+		white_king_pos = firstOne(white_king_pos);
+		result += (2 * popcount64(bitboard[PAWN | WHITE][white_king_pos / 8][white_king_pos % 8] | capturePawnMap[WHITE][white_king_pos]) * stage_game);
+	}
+
+	uint64_t black_king_pos = figures[KING] & white_bit_mask;
+	
+	if(black_king_pos & ((horizontal[6] | horizontal[7]) & ~(vertical[3] | vertical[4]))) {
+		black_king_pos = firstOne(black_king_pos);
+		result -= (2 * popcount64(bitboard[PAWN | BLACK][black_king_pos / 8][black_king_pos % 8] | capturePawnMap[BLACK][black_king_pos]) * stage_game);
+	}
+
 	//Форпосты для коней
 
 	/*uint64_t forposts_white = 0;
