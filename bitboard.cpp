@@ -274,6 +274,7 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
+
 	history = std::vector<GoBack> (10000);
 	third_repeat = std::vector<int> (pow(2, hash_width), 0);
 	history_iterator = 0;
@@ -332,6 +333,25 @@ void BitBoard::preInit() {
 		vec1_cells[i] = it;
 		vec2_cells[i / 8][i % 8] = it;
 		it <<= 1;
+	}
+
+	isolated_pawn_map = std::vector<uint8_t>(256, 0);
+
+	uint8_t three_lines = 128 | 64 | 32;
+
+	std::vector<uint8_t> pawn_mask(8);
+	pawn_mask[0] = 128 | 64;
+
+	for(unsigned int i = 1; i < pawn_mask.size(); ++i, three_lines >>= 1) {
+		pawn_mask[i] = three_lines;
+	}
+
+	for(int i = 0; i < 256; ++i) {
+		for(unsigned int j = 0; j < 8; ++j) {
+			if(i & (128 >> j)) {
+				isolated_pawn_map[i] += (popcount64(i & pawn_mask[j]) <= 1);
+			}
+		}
 	}
 
 	for(int y = 0; y < 8; ++y) {
@@ -2282,6 +2302,7 @@ double BitBoard::newEvaluteAll() {
 	int white_queen_count = popcount64(figures[QUEEN] & white_bit_mask);
 	int black_queen_count = popcount64(figures[QUEEN] & black_bit_mask);
 
+	//Материал
 	result += (white_pawn_count - black_pawn_count) * PAWN_EV;//(PAWN_EV * stage_game + ENDGAME_PAWN_EV * (1 - stage_game));
 	result += white_knight_count * KNIGHT_EV;
 	result -= black_knight_count * KNIGHT_EV;
@@ -2292,6 +2313,8 @@ double BitBoard::newEvaluteAll() {
 	result += white_queen_count * QUEEN_EV;
 	result -= black_queen_count * QUEEN_EV;
 
+	//Поле-Фигура
+	//Бонусы и штрафы за проходные и сдвоенные пешки
 	uint64_t mask = figures[PAWN] & white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2307,8 +2330,6 @@ double BitBoard::newEvaluteAll() {
 	mask = figures[PAWN] & black_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		//result -= pawnMatr[pos / 8][pos % 8];
-
 		if(vertical[pos % 8] & white_bit_mask & figures[PAWN]) {
 			result -= pawnMatr[pos / 8][pos % 8];
 		} else {
@@ -2387,6 +2408,11 @@ double BitBoard::newEvaluteAll() {
 		result -= (kingMiddleGameMatr[pos / 8][pos % 8] * stage_game + kingEndGameMatr[pos / 8][pos % 8] * (1 - stage_game));
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
+
+	//Изолированные пешки
+
+	result += (isolated_pawn_map[compressVertical(white_bit_mask & figures[PAWN])] * ISOLATED_PAWN_BONUS);
+	result -= (isolated_pawn_map[compressVertical(black_bit_mask & figures[PAWN])] * ISOLATED_PAWN_BONUS);
 
 	return result;
 	
@@ -2529,7 +2555,6 @@ void BitBoard::attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<in
 		pieces_mask |= (bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & figures[KNIGHT] & emask);
 	}
 }
-/*--- evalution functions ---*/
 
 BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable) {
 	bitBoardMoveGenerator(moveArray, stress);
@@ -2542,4 +2567,14 @@ BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX
 	}
 
 	return BitMove(0, 0, 0, 0, 0);
+}
+
+uint8_t BitBoard::compressVertical(uint64_t value) {
+	uint8_t result = 0;
+
+	for(unsigned int i = 0; i < 8; ++i) {
+		result += ((bool)(value & vertical[i]) << (7 - i));
+	}
+
+	return result;
 }

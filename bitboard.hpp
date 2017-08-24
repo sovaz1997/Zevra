@@ -12,6 +12,7 @@
 #include <random>
 #include <set>
 #include <deque>
+#include <bitset>
 #include "constants.hpp"
 #include "movearray.hpp"
 #include "goback.hpp"
@@ -155,6 +156,8 @@ public:
 	};
 
 	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 60, 80, 0};
+
+	std::vector<uint8_t> isolated_pawn_map;
 	
 	double newEvaluteAll();
 	double basicKingSafety();
@@ -162,7 +165,8 @@ public:
 
 	MoveArray moveArray;
 
-	/*--- evalution functions ---*/
+	uint8_t compressVertical(uint64_t value);
+
 };
 
 #endif
