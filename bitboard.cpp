@@ -546,6 +546,16 @@ void BitBoard::preInit() {
 		res <<= 1;
 	}
 
+	for(unsigned int i = 0; i < 64; ++i) {
+		capturePawnMap[WHITE][i] = 0;
+		capturePawnMap[BLACK][i] = 0;
+
+		capturePawnMap[WHITE][i] |= ((vec1_cells[i]) << 9) & (UINT64_MAX ^ vertical[0]);
+		capturePawnMap[WHITE][i] |= ((vec1_cells[i]) << 7) & (UINT64_MAX ^ vertical[7]);
+		capturePawnMap[BLACK][i] |= ((vec1_cells[i]) >> 9) & (UINT64_MAX ^ vertical[7]);
+		capturePawnMap[BLACK][i] |= ((vec1_cells[i]) >> 7) & (UINT64_MAX ^ vertical[0]);
+	}
+
 	magicInit();
 }
 
@@ -2413,6 +2423,34 @@ double BitBoard::newEvaluteAll() {
 
 	result += (isolated_pawn_map[compressVertical(white_bit_mask & figures[PAWN])] * ISOLATED_PAWN_BONUS);
 	result -= (isolated_pawn_map[compressVertical(black_bit_mask & figures[PAWN])] * ISOLATED_PAWN_BONUS);
+
+	//Форпосты для коней
+
+	/*uint64_t forposts_white = 0;
+	uint64_t forposts_black = 0;
+
+	uint64_t possible_forpost_white = horizontal[4] | horizontal[5]; 
+	uint64_t possible_forpost_black = horizontal[3] | horizontal[2];
+
+	uint64_t white_pawn_mask = (figures[PAWN] & white_bit_mask & (horizontal[3] | horizontal[4]));
+	while(white_pawn_mask) {
+		int pos = firstOne(white_pawn_mask);
+		forposts_white |= capturePawnMap[WHITE][pos];
+		white_pawn_mask &= ~vec1_cells[pos];
+	}
+
+
+	uint64_t black_pawn_mask = (figures[PAWN] & black_bit_mask & (horizontal[3] | horizontal[4]));
+	while(black_pawn_mask) {
+		int pos = firstOne(black_pawn_mask);
+		forposts_black |= capturePawnMap[BLACK][pos];
+		black_pawn_mask &= ~vec1_cells[pos];
+	}
+
+	forposts_white &= (possible_forpost_white & figures[KNIGHT] & white_bit_mask);
+	forposts_black &= (possible_forpost_black & figures[KNIGHT] & black_bit_mask);
+
+	result += ((popcount64(forposts_white) - popcount64(forposts_black)) * FORPOST_BONUS);*/
 
 	return result;
 	
