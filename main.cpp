@@ -107,11 +107,6 @@ bool is_input_available() {
 }
 
 int main() {
-	/*setBitMoveConstants();
-	NewBitMove bitMove;
-	bitMove.setAttackedFigure(WHITE | KING);
-	std::cout << bitMove.getAttackedFigure() << "\n";*/
-
 	Game* game = new Game();
 	game->startGame();
 
