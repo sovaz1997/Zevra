@@ -1758,10 +1758,6 @@ bool BitBoard::inCheck(uint8_t color) {
 	uint64_t kingPos = currentState.figures[KING] & mask;
 	uint8_t kingCoord = firstOne(kingPos);
 
-	/*if(popcount64(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8]) + popcount64(bitboard[KING | WHITE][enemyKingCoord / 8][enemyKingCoord % 8]) < popcount64(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] | bitboard[KING | WHITE][enemyKingCoord / 8][enemyKingCoord % 8])) {
-		return true;
-	}*/
-
 	if(color == WHITE) {
 		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
 		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
@@ -2470,7 +2466,7 @@ double BitBoard::newEvaluteAll() {
 	result -= (isolated_pawn_map[compressVertical(currentState.black_bit_mask & currentState.figures[PAWN])] * ISOLATED_PAWN_BONUS);
 
 	//Безопасность короля - пешечный щит
-	uint64_t white_king_pos = currentState.figures[KING] & currentState.white_bit_mask;
+	/*uint64_t white_king_pos = currentState.figures[KING] & currentState.white_bit_mask;
 
 	if(white_king_pos & ((horizontal[0] | horizontal[1]) & ~(vertical[3] | vertical[4]))) {
 		white_king_pos = firstOne(white_king_pos);
@@ -2482,7 +2478,7 @@ double BitBoard::newEvaluteAll() {
 	if(black_king_pos & ((horizontal[6] | horizontal[7]) & ~(vertical[3] | vertical[4]))) {
 		black_king_pos = firstOne(black_king_pos);
 		result -= (2 * popcount64(bitboard[PAWN | BLACK][black_king_pos / 8][black_king_pos % 8] | capturePawnMap[BLACK][black_king_pos]) * stage_game);
-	}
+	}*/
 
 	//Форпосты для коней
 
