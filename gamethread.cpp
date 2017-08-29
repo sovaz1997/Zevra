@@ -140,7 +140,7 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 				game_board.bitBoardMoveGenerator(moveArray[0], stress);
 				BitMove mv;
 				uint8_t color;
-				if(game_board.whiteMove) {
+				if(game_board.currentState.whiteMove) {
 					color = WHITE;
 				} else {
 					color = BLACK;
@@ -182,7 +182,7 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 
 void Game::goTournament() {
 	double tm, inc;
-	if(game_board.whiteMove) {
+	if(game_board.currentState.whiteMove) {
 		tm = wtime;
 		inc = winc;
 	} else {
@@ -208,7 +208,7 @@ bool Game::move(std::string mv) {
 			game_board.move(moves.moveArray[i]);
 			uint8_t color;
 
-			if(game_board.whiteMove) {
+			if(game_board.currentState.whiteMove) {
 				color = BLACK;
 			} else {
 				color = WHITE;

@@ -41,7 +41,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	uint8_t color, enemyColor;
-	if(b.whiteMove) {
+	if(b.currentState.whiteMove) {
 		color = WHITE;
 		enemyColor = BLACK;
 	} else {
@@ -121,7 +121,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		if(!inNullMove && !extended && !inCheck && !onPV && /*depth > 2 &&*/ (b.popcount64(b.white_bit_mask | b.black_bit_mask) > 6) && real_depth > 0) {
+		if(!inNullMove && !extended && !inCheck && !onPV && /*depth > 2 &&*/ (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 			int R = 2 + depth / 6;
 
@@ -135,13 +135,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && !b.attacked && depth <= 2 && !inNullMove /*&& !onPV*/) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && !b.currentState.attacked && depth <= 2 && !inNullMove /*&& !onPV*/) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.attacked && !inNullMove && depth <= 4/* && !onPV*/) { //Razoring
+	if(option.razoring && !extended && !inCheck && !b.currentState.attacked && !inNullMove && depth <= 4/* && !onPV*/) { //Razoring
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			--nextDepth;
 		}
@@ -338,7 +338,7 @@ uint64_t Game::perft(int depth) {
 
 	for(unsigned int i = 0; i < moveArray[depth].count; ++i) {
 		game_board.move(moveArray[depth].moveArray[i]);
-		if(game_board.whiteMove) {
+		if(game_board.currentState.whiteMove) {
 			if(game_board.inCheck(BLACK)) {
 				game_board.goBack();
 				continue;
@@ -379,7 +379,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 		++nodesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(!b.whiteMove) {
+		if(!b.currentState.whiteMove) {
 			if(game_board.inCheck(WHITE)) {
 				b.goBack();
 				continue;
@@ -407,7 +407,7 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 }
 
 bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
-	if(!game_board.hash_enable) {
+	if(!game_board.currentState.hash_enable) {
 		return false;
 	}
 

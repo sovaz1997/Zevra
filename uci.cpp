@@ -78,7 +78,6 @@ bool Game::uciHandler(std::string str) {
 				std::cout << std::endl;
 			}
 
-			game_board.evaluteAll();
 			std::cout << game_board.getEvalute() / PAWN_EV * 100 << std::endl;
 			std::cout << game_board.getFen() << std::endl;
 

@@ -20,12 +20,12 @@
 
 class BitBoard {
 public:
-	uint64_t figures[7];
+	//uint64_t figures[7];
 	uint64_t horizontal[8];
 	uint64_t vertical[8];
-	uint64_t white_bit_mask, black_bit_mask;
-	uint64_t castlingMap;
-	uint64_t recapture_position;
+	//uint64_t white_bit_mask, black_bit_mask;
+	//uint64_t castlingMap;
+	//uint64_t recapture_position;
 
 	int hash_width;
 	uint64_t hash_cutter;
@@ -37,7 +37,7 @@ public:
 	uint64_t wscZobrist, wlcZobrist, bscZobrist, blcZobrist;
 	uint64_t passantZobrist[8][8];
 
-	uint8_t moveNumber, ruleNumber, passant_x, passant_y;
+	//uint8_t /*moveNumber, ruleNumber, passant_x, passant_y*/;
 	void preInit();
 
 	std::vector<std::string> splitter(std::string str, char sym);
@@ -70,6 +70,7 @@ public:
 	uint8_t metric[64][8][8];
 
 	std::vector<GoBack> history;
+	GoBack currentState;
 	int history_iterator = 0;
 
 	bool wsc();
@@ -105,13 +106,13 @@ public:
 	void makeNullMove();
 	void unMakeNullMove();
 
-	bool whiteMove, passant_enable;
+	//bool whiteMove, passant_enable;
 
-	void evaluteAll();
-	int64_t evalute;
+	//void evaluteAll();
+	//int64_t evalute;
 	int64_t kingEvalute();
 	int64_t getEvalute();
-	int64_t getLazyEvalute();
+	//int64_t getLazyEvalute();
 	void totalStaticEvalute();
 
 	uint8_t getFigure(uint8_t y, uint8_t x);
@@ -125,8 +126,8 @@ public:
 	uint64_t getHash();
 	uint64_t getColorHash();
 
-	bool attacked;
-	double margin;
+	//bool attacked;
+	//double margin;
 
 	bool testOfDraw();
 
@@ -134,9 +135,9 @@ public:
 
 	std::multiset<uint64_t> gameHash;
 
-	bool hash_enable = true;
-	uint64_t hash;
-	bool whitePassantMade, blackPassantMade;
+	//bool hash_enable = true;
+	//uint64_t hash;
+	//bool whitePassantMade, blackPassantMade;
 
 	/*--- evalution functions ---*/
 

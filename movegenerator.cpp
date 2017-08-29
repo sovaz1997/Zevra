@@ -5,7 +5,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 
 	for(unsigned int i = 0; i < result.count; ++i) {
 		result.moveArray[i].history_weight = whiteHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
-		if(game_board.whiteMove) {
+		if(game_board.currentState.whiteMove) {
 			if(whiteSecondKiller[depth].enable && result.moveArray[i].equal(whiteSecondKiller[depth].move)) {
 				result.moveArray[i].history_weight = 1000000;
 			}
@@ -97,7 +97,7 @@ void Game::sortAttacks(MoveArray& moves) {
 	int recapture_count = 0;
 	BitMove mv;
 	for(int i = moves.num_attacks - 1; i > recapture_count; --i) {
-		if(game_board.vec2_cells[moves.moveArray[i].toY][moves.moveArray[i].toX] == game_board.recapture_position) {
+		if(game_board.vec2_cells[moves.moveArray[i].toY][moves.moveArray[i].toX] == game_board.currentState.recapture_position) {
 			mv = moves.moveArray[i];
 			moves.moveArray.erase(moves.moveArray.begin() + i);
 			moves.moveArray.emplace(moves.moveArray.begin(), mv);
