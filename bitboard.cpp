@@ -558,6 +558,31 @@ void BitBoard::preInit() {
 		capturePawnMap[BLACK][i] |= ((vec1_cells[i]) >> 7) & (UINT64_MAX ^ vertical[0]);
 	}
 
+	for(unsigned int i = 0; i < 64; ++i) {
+		whitePawnCheckCells[i] = 0;
+		blackPawnCheckCells[i] = 0;
+	}
+
+	for(unsigned int i = 0; i < 64; ++i) {
+		uint64_t pawnMap = capturePawnMap[WHITE][i];
+
+		while(pawnMap) {
+			int pos = firstOne(pawnMap);
+			pawnMap &= ~vec1_cells[pos];
+
+			whitePawnCheckCells[pos] |= vec1_cells[i];
+		}
+
+		pawnMap = capturePawnMap[BLACK][i];
+		
+		while(pawnMap) {
+			int pos = firstOne(pawnMap);
+			pawnMap &= ~vec1_cells[pos];
+		
+			blackPawnCheckCells[pos] |= vec1_cells[i];
+		}
+	}
+
 	magicInit();
 }
 
@@ -1719,6 +1744,7 @@ int64_t BitBoard::getLazyEvalute() {
 }*/
 
 bool BitBoard::inCheck(uint8_t color) {
+
 	uint64_t mask, emask;
 
 	if(color == WHITE) {
@@ -1731,6 +1757,28 @@ bool BitBoard::inCheck(uint8_t color) {
 
 	uint64_t kingPos = currentState.figures[KING] & mask;
 	uint8_t kingCoord = firstOne(kingPos);
+
+	/*if(popcount64(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8]) + popcount64(bitboard[KING | WHITE][enemyKingCoord / 8][enemyKingCoord % 8]) < popcount64(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] | bitboard[KING | WHITE][enemyKingCoord / 8][enemyKingCoord % 8])) {
+		return true;
+	}*/
+
+	if(color == WHITE) {
+		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KING])) &&
+		   !(capturePawnMap[WHITE][kingCoord] & currentState.black_bit_mask & (currentState.figures[PAWN]))) {
+			   return false;
+		}
+	} else {
+		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KING])) &&
+		   !(capturePawnMap[BLACK][kingCoord] & currentState.white_bit_mask & (currentState.figures[PAWN]))) {
+			return false;
+		}
+	}
 
 
 	uint64_t figure;

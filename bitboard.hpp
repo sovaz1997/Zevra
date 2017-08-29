@@ -170,6 +170,9 @@ public:
 
 	uint8_t compressVertical(uint64_t value);
 
+	uint64_t whitePawnCheckCells[64];
+	uint64_t blackPawnCheckCells[64];
+
 };
 
 #endif
