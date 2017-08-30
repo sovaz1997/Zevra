@@ -59,7 +59,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
-	if((currentHash->flag != EMPTY && currentHash->key == hash && !extended)) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash /*&& !extended*/)) {
 	//if((currentHash->flag != EMPTY && currentHash->key == hash && !extended && !option.nullMovePrunningEnable) || (currentHash->flag != EMPTY && currentHash->key == hash && inNullMove && !extended && option.nullMovePrunningEnable)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
@@ -135,13 +135,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && !b.currentState.attacked && depth <= 2 && !inNullMove /*&& !onPV*/) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && !b.currentState.attacked && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && !b.currentState.attacked && !inNullMove && depth <= 4/* && !onPV*/) { //Razoring
+	if(option.razoring && !extended && !inCheck && !b.currentState.attacked && !inNullMove && depth <= 4 && !onPV) { //Razoring
 		if(b.getEvalute() - QUEEN_EV >= beta) {
 			--nextDepth;
 		}
@@ -158,7 +158,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
 
 	/*if(iid_test_complete) {
-		for(int i = 0; i < moveArray[real_depth].count; ++i) {
+		for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
 			if(moveArray[real_depth].moveArray[i].equal(iid_move)) {
 				moveArray[real_depth].moveArray[i].fromHash = true;
 				break;
