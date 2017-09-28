@@ -164,7 +164,7 @@ bool Game::uciHandler(std::string str) {
 }
 
 void Game::idPrint() {
-	std::cout << "id name Zevra v1.6 r497" << std::endl;
+	std::cout << "id name Zevra v1.6.1 r512" << std::endl;
 	std::cout << "id author sovaz1997" << std::endl;
 }
 
