@@ -19,7 +19,7 @@ install:
 	-cp $(NAME) $(BINDIR)
 	-strip $(BINDIR)/$(NAME)
 
-uninstall:
+#uninstall:
 	rm -rf $(BINDIR)/$(NAME)
 
 main.o: main.cpp

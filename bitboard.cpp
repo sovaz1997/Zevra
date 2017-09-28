@@ -821,7 +821,6 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves
 					moveArray.addMove(BitMove(KING | color, 0, 4, 0, 2));
 				}
 			}
-
 		}
 	} else {
 		if(bsc()) {
