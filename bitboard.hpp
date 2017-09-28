@@ -18,6 +18,16 @@
 #include "goback.hpp"
 #include "magic.hpp"
 
+//Для компиляции в Visual Studio:
+//#ifdef _MSC_VER
+//#include <intrin.h>
+//#pragma intrinsic(_BitScanForward)
+//inline unsigned long long __builtin_ctzll(unsigned long long x) { unsigned long r; _BitScanForward64(&r, x); return r; }
+//inline unsigned long long __builtin_clzll(unsigned long long x) { unsigned long r; _BitScanReverse64(&r, x); return 63 - r; }
+//inline unsigned long long __builtin_ffsll(unsigned long long x) { unsigned long r; return _BitScanForward64(&r, x) ? r + 1 : 0; }
+//inline unsigned long long __builtin_popcountll(unsigned long long x) { return __popcnt64(x); }
+//#endif
+
 class BitBoard {
 public:
 	//uint64_t figures[7];
