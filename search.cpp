@@ -15,10 +15,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 	
-	//k7/1p6/8/8/8/4Qppp/5pqq/3K4 w - - 0 1
-	/*if(!b.hash_enable) {
-		return 0; 
-	}*/
 
 	if(real_depth) {
 		max_real_depth = std::max(max_real_depth, real_depth);
@@ -122,7 +118,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
 		if(!inNullMove && !extended && !inCheck && !onPV && /*depth > 2 &&*/ (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
-			int R = 2 + depth / 2;
+			int R = 2 + depth / 6;
 
 			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
 			if(value >= beta) {
@@ -135,14 +131,15 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.futility_pruning && !extended && !inCheck && !b.currentState.attacked && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
-		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
+		if(/*b.getEvalute()*/quies(b, alpha, beta, rule, real_depth) - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
 	if(option.razoring && !extended && !inCheck && !b.currentState.attacked && !inNullMove && depth <= 4 && !onPV) { //Razoring
-		if(b.getEvalute() - QUEEN_EV >= beta) {
-			--nextDepth;
+		if(/*b.getEvalute()*/quies(b, alpha, beta, rule, real_depth) - QUEEN_EV >= beta) {
+			return beta;
+			//--nextDepth;
 		}
 	}
 

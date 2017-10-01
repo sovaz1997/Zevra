@@ -37,42 +37,6 @@ void Game::sortMoves(MoveArray& result, int depth) {
 	result.setHistoryCompare(true);
 	std::sort(result.moveArray.begin() + result.num_attacks, result.moveArray.begin() + result.count);
 
-	/*bool firstKillerEnable = false;
-
-	for(unsigned int i = num_attacks; i < result.count; ++i) {
-		if(game_board.whiteMove) {
-			if(result.moveArray[i].equal(whiteKiller[depth].move) && whiteKiller[depth].enable) {
-				result.moveArray.erase(result.moveArray.begin() + i);
-				result.moveArray.emplace(result.moveArray.begin() + num_attacks, whiteKiller[depth].move);
-				firstKillerEnable = true;
-				break;
-			}
-		} else {
-			if(result.moveArray[i].equal(blackKiller[depth].move) && blackKiller[depth].enable) {
-				result.moveArray.erase(result.moveArray.begin() + i);
-				result.moveArray.emplace(result.moveArray.begin() + num_attacks, blackKiller[depth].move);
-				firstKillerEnable = true;
-				break;
-			}
-		}
-	}
-
-	for(unsigned int i = num_attacks + firstKillerEnable; i < result.count; ++i) {
-		if(game_board.whiteMove) {
-			if(result.moveArray[i].equal(whiteSecondKiller[depth].move) && whiteSecondKiller[depth].enable) {
-				result.moveArray.erase(result.moveArray.begin() + i);
-				result.moveArray.emplace(result.moveArray.begin() + num_attacks + firstKillerEnable, whiteSecondKiller[depth].move);
-				break;
-			}
-		} else {
-			if(result.moveArray[i].equal(blackSecondKiller[depth].move) && blackSecondKiller[depth].enable) {
-				result.moveArray.erase(result.moveArray.begin() + i);
-				result.moveArray.emplace(result.moveArray.begin() + num_attacks + firstKillerEnable, blackSecondKiller[depth].move);
-				break;
-			}
-		}
-	}*/
-
 
 	uint64_t hash = game_board.getColorHash();
 	if(boardHash[hash & hash_cutter].flag != EMPTY && boardHash[hash & hash_cutter].flag != ALPHA && boardHash[hash & hash_cutter].depth >= depth) {
