@@ -18,7 +18,7 @@
 #include "goback.hpp"
 #include "magic.hpp"
 
-//Для компиляции в Visual Studio:
+//Visual Studio:
 //#ifdef _MSC_VER
 //#include <intrin.h>
 //#pragma intrinsic(_BitScanForward)
