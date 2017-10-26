@@ -170,6 +170,10 @@ public:
 
 	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 60, 80, 0};
 
+	//std::vector<std::vector<std::vectorstd::vector<std::vector<BitMove>>>>> standardMovesStorage; //хранилище всевозможных ходов (+рокировка) [ходящая_фигура][fx][fy][tx][ty]
+	//std::vector<std::vector<std::vector<BitMove>>> promoteMovesStorage; //хранилище всевозможных превращений пешки [фигура_превращения][fx][fy][tx][ty]
+	//std::vector<std::vector<std::vector<BitMove>>> passantMovesStorage; //хранилище всевозможных взятий на проходе 
+
 	std::vector<uint8_t> isolated_pawn_map;
 	
 	double newEvaluteAll();
@@ -182,7 +186,6 @@ public:
 
 	uint64_t whitePawnCheckCells[64];
 	uint64_t blackPawnCheckCells[64];
-
 };
 
 #endif

@@ -584,6 +584,8 @@ void BitBoard::preInit() {
 	}
 
 	magicInit();
+
+	
 }
 
 void BitBoard::magicInit() {
@@ -1189,6 +1191,8 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
+
+	//std::cout << moveArray.num_attacks << " " << counter_moves << std::endl;
 }
 
 void BitBoard::move(BitMove& mv) {

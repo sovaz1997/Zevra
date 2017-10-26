@@ -1,8 +1,6 @@
 #include "game.hpp"
 
 void Game::sortMoves(MoveArray& result, int depth) {
-	//int num_attacks = result.num_attacks;
-
 	for(unsigned int i = 0; i < result.count; ++i) {
 		result.moveArray[i].history_weight = whiteHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
 
