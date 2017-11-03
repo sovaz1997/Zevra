@@ -1,0 +1,6 @@
+r522
+
+STC:
+Score of Zevra 20171102 vs Zevra v1.6.1 r512 popcnt: 2023 - 1836 - 1466  [0,518] 5325
+Elo difference: 12.21 +/- 7.94
+SPRT: llr 2.95, lbound -2.94, ubound 2.94 - H1 was accepted

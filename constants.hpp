@@ -41,9 +41,12 @@ const double k = 1;
 const double PAWN_EV = 100 * k;
 const double KNIGHT_EV = 320 * k;
 const double BISHOP_EV = 330 * k;
-const double ROOK_EV = 560 * k;
+const double ROOK_EV = 550 * k;
 const double QUEEN_EV = 1100 * k;
 const double ENDGAME_PAWN_EV = 120 * k;
+const double ENDGAME_QUEEN_EV = 1000 * k;
+const double ENDGAME_KNIGHT_EV = 330 * k;
+
 
 //move types
 const int FIXED_DEPTH = 0;
