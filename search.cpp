@@ -249,7 +249,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		
 		double reduction = 0;
 
-		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)) {
+		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck/* && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)*/) {
 			++low_moves_count;
 
 			if(low_moves_count > 3) {
