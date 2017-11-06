@@ -1,34 +1,38 @@
 ---------------------------
 r522 vs Zevra 1.6.1 Release
-
 STC (10 + 0.1):
 Score of Zevra 20171102 vs Zevra v1.6.1 r512 popcnt: 2023 - 1836 - 1466  [0,518] 5325
 Elo difference: 12.21 +/- 7.94
 SPRT: llr 2.95, lbound -2.94, ubound 2.94 - H1 was accepted
----------------------------
-r524 vs r522
 
+---------------------------
+
+r524 vs r522:
 STC (10 + 0.1):
 Score of Zevra 20171103 vs Zevra 20171102: 2595 - 2399 - 2071  [0,514] 7065
 Elo difference: 9.64 +/- 6.80
 SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted
 
-LTC (60 + 0.6):
-Патч не ухудшает работу 
 ---------------------------
-r524 vs Zevra 1.6.1 Release
 
+r524 vs Zevra 1.6.1 Release:
 STC (10 + 0.1):
 Score of Zevra 20171103 vs Zevra v1.6.1 r512 popcnt: 931 - 766 - 642  [0,535] 2339
 Elo difference: 24.55 +/- 12.00
 SPRT: llr 2.95, lbound -2.94, ubound 2.94 - H1 was accepted
 
 ---------------------------
-r524 vs Zevra 1.6.1 Release
 
+r524 vs Zevra 1.6.1 Release:
 STC (60 + 0.6):
-
 Score of Zevra 20171103 vs Zevra v1.6.1 r512 popcnt: 423 - 282 - 372  [0,565] 1077
 Elo difference: 45.75 +/- 16.85
+SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted
+
+---------------------------
+r526 vs r524:
+STC (10 + 0.1):
+Score of Zevra 20171105 vs Zevra 20171103: 1146 - 980 - 905  [0.527] 3031
+Elo difference: 19.05 +/- 10.36
 SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted
 

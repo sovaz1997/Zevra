@@ -15,7 +15,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 	
-	//k7/1p6/8/8/8/4Qppp/5pqq/3K4 w - - 0 1
 	/*if(!b.hash_enable) {
 		return 0; 
 	}*/
@@ -52,8 +51,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(depth <= 0 || real_depth >= 100) {
 		return quies(b, alpha, beta, rule, real_depth);
 	}
-
-	
 
 	int tmp;
 
@@ -124,23 +121,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool onPV = (beta - alpha) > 1;
 
-	/*if(option.nullMovePruningEnable) { //Null Move Pruning
-		if(!inNullMove && !extended && !inCheck && !onPV &&  (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
-			b.makeNullMove();
-			int R = 2 + depth / 6;
-
-			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
-			if(value >= beta) {
-				b.unMakeNullMove();
-				return beta;
-			}
-
-			b.unMakeNullMove();
-		}
-	}*/
-
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		int R = 2 + depth / 6;
+		int R = 3;// + depth / 6;
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 
@@ -154,20 +136,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && !b.currentState.attacked && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && /*!b.currentState.attacked &&*/ depth <= 2 && !inNullMove && !onPV) { //Futility pruning
 		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	/*if(option.razoring && !extended && !inCheck && !b.currentState.attacked && !inNullMove && depth <= 6 && !onPV) { //Razoring
-		if(b.getEvalute() - QUEEN_EV >= beta) {
-			//--nextDepth;
-			return beta;
-		}
-	}*/
-
-	if(option.razoring && !extended && !inCheck && !b.currentState.attacked && !inNullMove && depth <= 10 && !onPV) { //Razoring
+	if(option.razoring && !extended && !inCheck && /*!b.currentState.attacked &&*/ !inNullMove && depth <= 10 && !onPV) { //Razoring
 		if(b.getEvalute() - RAZOR_MARGIN[depth] >= beta) {
 			//--nextDepth;
 			return beta;
@@ -232,7 +207,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		nextDepth = depth - 1;
 		nextDepth += extensions;
 
-		Killer* killer;
+		/*Killer* killer;
 		if(color == WHITE) {
 			killer = &whiteKiller[real_depth];
 		} else {
@@ -245,7 +220,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			secondKiller = &whiteSecondKiller[real_depth];
 		} else {
 			secondKiller = &blackSecondKiller[real_depth];
-		}
+		}*/
 		
 		double reduction = 0;
 
