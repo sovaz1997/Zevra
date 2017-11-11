@@ -24,7 +24,7 @@ SPRT: llr 2.95, lbound -2.94, ubound 2.94 - H1 was accepted
 ---------------------------
 
 r524 vs Zevra 1.6.1 Release:
-STC (60 + 0.6):
+LTC (60 + 0.6):
 Score of Zevra 20171103 vs Zevra v1.6.1 r512 popcnt: 423 - 282 - 372  [0,565] 1077
 Elo difference: 45.75 +/- 16.85
 SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted

@@ -3,6 +3,10 @@
 int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv) {
 	++nodesCounter;
 
+	if(depth <= 0 || real_depth >= 100) {
+		return quies(b, alpha, beta, rule, real_depth);
+	}
+
 	if(depth >= 5) {
 		if(is_input_available()) {
 			std::string input_str;
@@ -33,6 +37,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	int nextDepth = depth - 1;
 	int extensions = 0;
+
 	if(depth > 2) {
 		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
 			return 0;
@@ -46,10 +51,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	} else {
 		color = BLACK;
 		enemyColor = WHITE;
-	}
-
-	if(depth <= 0 || real_depth >= 100) {
-		return quies(b, alpha, beta, rule, real_depth);
 	}
 
 	int tmp;
@@ -113,16 +114,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	bool inCheck;
-	if(color == WHITE) {
-		inCheck = b.inCheck(WHITE);
+	inCheck = b.inCheck(color);
+	/*if(color == WHITE) {
+		inCheck = b.inCheck(color);
 	} else {
 		inCheck = b.inCheck(BLACK);
-	}
+	}*/
 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
-		int R = 3;// + depth / 6;
+		int R = 2 + depth / 6;
+		
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 
