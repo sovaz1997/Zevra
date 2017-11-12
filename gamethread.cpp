@@ -206,6 +206,11 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 		parallel_board[i] = game_board;
 	}
 
+	moveArray.resize(option.threads_count);
+	for(int i = 0; i < moveArray.size(); ++i) {
+		moveArray[i].resize(200);
+	}
+
 	for(; timer.getTime() < time; ) {
 		
 		whiteUp = BLACK_WIN;
@@ -233,10 +238,6 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 		//negamax(parallel_board[0], -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 
 		std::vector<Killers> killers(option.threads_count);
-		moveArray.resize(option.threads_count);
-		for(int i = 0; i < moveArray.size(); ++i) {
-			moveArray[i].resize(200);
-		}
 
 		std::thread thread[option.threads_count];
 		bool mainThread = true;

@@ -189,9 +189,12 @@ int64_t Game::negamax(BitBoard & b, std::vector<MoveArray>& moveArray, int64_t a
 
 	if(threadNumber && real_depth == 0) {
 		for(int i = 0; i < 10; ++i) {
-			int swapFirst = 0;
-			int swapSecond = std::min(5, (int)(rand() % moveArray[real_depth].moveArray.size()));
-			std::swap(moveArray[real_depth].moveArray[swapFirst], moveArray[real_depth].moveArray[swapSecond]);
+			//int swapFirst = 0;
+			//int swapSecond = std::min(5, (int)(rand() % moveArray[real_depth].moveArray.size()));
+			//std::swap(moveArray[real_depth].moveArray[swapFirst], moveArray[real_depth].moveArray[swapSecond]);
+			BitMove mv = moveArray[real_depth].moveArray[threadNumber % (moveArray[real_depth].moveArray.size() - 1) + 1];
+			moveArray[real_depth].moveArray.erase(moveArray[real_depth].moveArray.begin() + threadNumber % (moveArray[real_depth].moveArray.size() - 1) + 1);
+			moveArray[real_depth].moveArray.insert(moveArray[real_depth].moveArray.begin(), mv);
 		}
 	}
 
