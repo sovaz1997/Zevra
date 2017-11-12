@@ -1,30 +1,30 @@
 #include "game.hpp"
 
-void Game::sortMoves(MoveArray& result, int depth) {
+void Game::sortMoves(MoveArray& result, Killers& killers, int depth, int threadNumber) {
 	for(unsigned int i = 0; i < result.count; ++i) {
 		result.moveArray[i].history_weight = whiteHistorySort[result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
 
 		if(game_board.currentState.whiteMove) {
-			if(whiteSecondKiller[depth].enable && result.moveArray[i].equal(whiteSecondKiller[depth].move)) {
+			if(killers.whiteSecondKiller[depth].enable && result.moveArray[i].equal(killers.whiteSecondKiller[depth].move)) {
 				result.moveArray[i].history_weight = 1000000;
 			}
-			if(whiteKiller[depth].enable && result.moveArray[i].equal(whiteKiller[depth].move)) {
+			if(killers.whiteKiller[depth].enable && result.moveArray[i].equal(killers.whiteKiller[depth].move)) {
 				result.moveArray[i].history_weight = 10000000;
 			}
-			if(whiteMateKiller[depth].enable && result.moveArray[i].equal(whiteMateKiller[depth].move)) {
+			if(killers.whiteMateKiller[depth].enable && result.moveArray[i].equal(killers.whiteMateKiller[depth].move)) {
 				result.moveArray[i].history_weight = 100000000;
 			}
 			if(result.moveArray[i].fromHash) {
 				result.moveArray[i].history_weight = 1000000000;
 			}
 		} else {
-			if(blackSecondKiller[depth].enable && result.moveArray[i].equal(blackSecondKiller[depth].move)) {
+			if(killers.blackSecondKiller[depth].enable && result.moveArray[i].equal(killers.blackSecondKiller[depth].move)) {
 				result.moveArray[i].history_weight = 1000000;
 			}
-			if(blackKiller[depth].enable && result.moveArray[i].equal(blackKiller[depth].move)) {
+			if(killers.blackKiller[depth].enable && result.moveArray[i].equal(killers.blackKiller[depth].move)) {
 				result.moveArray[i].history_weight = 10000000;
 			}
-			if(blackMateKiller[depth].enable && result.moveArray[i].equal(blackMateKiller[depth].move)) {
+			if(killers.blackMateKiller[depth].enable && result.moveArray[i].equal(killers.blackMateKiller[depth].move)) {
 				result.moveArray[i].history_weight = 100000000;
 			}
 			if(result.moveArray[i].fromHash) {

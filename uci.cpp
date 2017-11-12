@@ -92,16 +92,6 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
-		} else if(cmd[0] == "bench") {
-			std::cout << "Benchmarking (15 sec)..." << std::endl;
-			game_board.stress = 0;
-			double st = clock();
-			while((clock() - st) / CLOCKS_PER_SEC < 15) {
-				for(unsigned int i = 0; i < 10000000; ++i) {
-					game_board.bitBoardMoveGenerator(moveArray[0], game_board.stress);
-				}
-			}
-			std::cout << (int64_t)(game_board.stress / ((clock() - st) / CLOCKS_PER_SEC)) / 10000 << " scores" << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
@@ -151,6 +141,11 @@ bool Game::uciHandler(std::string str) {
 				hash_size = std::max(hash_size, option.min_hash_size);
 
 				setHashSize(hash_size);
+			}  else if(cmd[2] == "Threads" && cmd[3] == "value") {
+				int threads = std::stoi(cmd[4]);
+
+				option.threads_count = std::min(threads, option.max_threads_count);
+				option.threads_count = std::max(threads, option.min_threads_count);
 			} else if(cmd[2] == "UCI_AnalyseMode" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
 					option.UCI_AnalyseMode = true;
@@ -164,12 +159,12 @@ bool Game::uciHandler(std::string str) {
 }
 
 void Game::idPrint() {
-	std::cout << "id name Zevra 20171109" << std::endl;
+	std::cout << "id name Zevra 20171112" << std::endl;
 	std::cout << "id author sovaz1997" << std::endl;
 }
 
 void Game::benchmarkThreadFunction(size_t counter) {
 	for(unsigned int i = 0; i < 1000000; ++i) {
-		game_board.bitBoardMoveGenerator(moveArray[counter], count_moves[counter]);
+		//game_board.bitBoardMoveGenerator(moveArray[counter], count_moves[counter]);
 	}
 }

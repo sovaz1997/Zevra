@@ -14,6 +14,7 @@
 #include <ctime>
 #include <future>
 #include <thread>
+#include <thread>
 #include <iomanip>
 #include <algorithm>
 #include <stack>
@@ -25,6 +26,8 @@
 #include "timer.hpp"
 #include "movearray.hpp"
 #include "option.hpp"
+#include "killers.hpp"
+
 class Game {
 private:
 	BitBoard game_board;
@@ -89,10 +92,10 @@ private:
 
 public:
 	Game();
-	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv);
+	int64_t negamax(BitBoard & b, std::vector<MoveArray>& moveArray, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv, int threadNumber, Killers& killers);
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
+  	int64_t quies(BitBoard & b, std::vector<MoveArray>& moveArray, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	//std::string getScore(double score);
@@ -106,15 +109,15 @@ public:
 	//uint64_t hash_cutter;
 
 	std::vector<std::string>variant;
-	std::vector<Killer>whiteKiller;
+	/*std::vector<Killer>whiteKiller;
 	std::vector<Killer>blackKiller;
 	std::vector<Killer>whiteSecondKiller;
-	std::vector<Killer>blackSecondKiller;
+	std::vector<Killer>blackSecondKiller;*/
 	
 	std::vector<Killer>whiteMateKiller;
 	std::vector<Killer>blackMateKiller;
 
-	std::vector<MoveArray> moveArray;
+	std::vector<std::vector<MoveArray>> moveArray;
 
 	BitMove iid_move;
 
@@ -134,12 +137,12 @@ public:
 	void printPV(int depth);
 
 	double margin = PAWN_EV / 2;
-	void sortMoves(MoveArray& result, int depth);
-	bool recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
+	void sortMoves(MoveArray& result, Killers& killers, int depth, int threadNumber);
+	bool recordHash(BitBoard& b, int depth, int score, int flag, uint64_t key, BitMove move, int real_depth);
 
 	std::vector<BitMove> extractPV(int depth);
 
-	bool testMovePossible(BitMove move);
+	bool testMovePossible(BitBoard& b, BitMove move);
 };
 
 #endif
