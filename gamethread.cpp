@@ -241,7 +241,7 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 		std::thread thread[option.threads_count];
 		bool mainThread = true;
 		for(int i = 0; i < option.threads_count; ++i) {
-			thread[i] = std::thread(&Game::negamax, this, std::ref(parallel_board[i]), std::ref(moveArray[i]), -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true, mainThread, std::ref(killers[i]));
+			thread[i] = std::thread(&Game::negamax, this, std::ref(parallel_board[i]), std::ref(moveArray[i]), -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true, i, std::ref(killers[i]));
 			mainThread = false;
 			//negamax(parallel_board[i], moveArray[i], -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 			
