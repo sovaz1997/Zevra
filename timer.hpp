@@ -3,11 +3,10 @@
 
 #include <cstdint>
 #include <ctime>
-#include <chrono>
 
 class Timer {
 private:
-  std::chrono::time_point<std::chrono::system_clock> startedTime;
+  int64_t startedTime;
 public:
   Timer();
   ~Timer();
