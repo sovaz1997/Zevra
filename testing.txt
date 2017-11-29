@@ -36,3 +36,12 @@ Score of Zevra 20171105 vs Zevra 20171103: 1146 - 980 - 905  [0.527] 3031
 Elo difference: 19.05 +/- 10.36
 SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted
 
+----------------------------------
+Latest vs 1.6.1
+STC (10 + 0.1):
+
+Score of Zevra 20171109 vs Zevra v1.6.1 r512 popcnt: 1264 - 1096 - 1000  [0.525] 3360
+Elo difference: 17.39 +/- 9.84
+SPRT: llr 2.95, lbound -2.94, ubound 2.94 - H1 was accepted
+Elo difference: 17.39 +/- 9.84
+
