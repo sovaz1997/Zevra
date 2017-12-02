@@ -141,8 +141,6 @@ public:
 
 	bool testOfDraw();
 
-	int64_t kingSecurity();
-
 	std::multiset<uint64_t> gameHash;
 
 	/*--- evalution functions ---*/

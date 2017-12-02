@@ -235,10 +235,7 @@ void BitBoard::clear() {
 	currentState.whiteMove = true;
 	currentState.castlingMap = 0;
 
-	//while(!history.empty()) {
-		//history.pop_front();
-		history_iterator = 0;
-	//}
+	history_iterator = 0;
 
 	gameHash.clear();
 }
@@ -1476,53 +1473,6 @@ void BitBoard::pushHistory() {
 	++history_iterator;
 }
 
-int64_t BitBoard::kingSecurity() {
-	//int64_t result = 0;
-
-	int king_pos = firstOne(currentState.white_bit_mask & currentState.figures[KING]);
-	uint64_t tmp_figure_mask = (currentState.black_bit_mask & (currentState.figures[QUEEN] | currentState.figures[ROOK] | currentState.figures[BISHOP] | currentState.figures[KNIGHT]));
-	int sum = 0;
-	while(tmp_figure_mask) {
-		int pos = firstOne(tmp_figure_mask);
-		uint64_t pos_bit_mask = vec1_cells[pos];
-		sum -= ((8 - metric[king_pos][pos / 8][pos % 8]) * ((bool)(currentState.figures[QUEEN] & pos_bit_mask) * 10 + (bool)(currentState.figures[ROOK] & pos_bit_mask) * 5 + (bool)(currentState.figures[BISHOP] & pos_bit_mask) * 3 + (bool)(currentState.figures[ROOK] & pos_bit_mask) * 2));
-		tmp_figure_mask &= ~pos_bit_mask;
-	}
-
-	king_pos = firstOne(currentState.black_bit_mask & currentState.figures[KING]);
-	tmp_figure_mask = (currentState.white_bit_mask & (currentState.figures[QUEEN] | currentState.figures[ROOK] | currentState.figures[BISHOP] | currentState.figures[KNIGHT]));
-
-	while(tmp_figure_mask) {
-		int pos = firstOne(tmp_figure_mask);
-		uint64_t pos_bit_mask = vec1_cells[pos];
-		sum += ((8 - metric[king_pos][pos / 8][pos % 8]) * ((bool)(currentState.figures[QUEEN] & pos_bit_mask) * 10 + (bool)(currentState.figures[ROOK] & pos_bit_mask) * 5 + (bool)(currentState.figures[BISHOP] & pos_bit_mask) * 3 + (bool)(currentState.figures[ROOK] & pos_bit_mask) * 2));
-		tmp_figure_mask &= ~pos_bit_mask;
-	}
-
-	return sum;
-
-	/*uint64_t mask = figures[KING];// & currentState.white_bit_mask;
-	uint8_t kingPos = firstOne(mask);
-	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & currentState.black_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		result += kingSecurityArray[kingPos][pos];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}
-
-	mask = figures[KING];// & currentState.black_bit_mask;
-	kingPos = firstOne(mask);
-
-	mask = (figures[KNIGHT] | figures[QUEEN] | figures[PAWN]) & currentState.white_bit_mask;
-	while(mask != 0) {
-		uint8_t pos = firstOne(mask);
-		result -= kingSecurityArray[kingPos][pos];
-		mask &= (UINT64_MAX ^ vec1_cells[pos]);
-	}
-
-	return result;*/
-}
-
 /*
 void BitBoard::evaluteAll() {
 	evalute = 0;
@@ -2510,6 +2460,77 @@ double BitBoard::newEvaluteAll() {
 	forposts_black &= (possible_forpost_black & figures[KNIGHT] & currentState.black_bit_mask);
 
 	result += ((popcount64(forposts_white) - popcount64(forposts_black)) * FORPOST_BONUS);*/
+
+	//Оценка близости вражеский фигур к королю
+
+	uint64_t white_king_pos = firstOne(currentState.figures[KING] & currentState.white_bit_mask);
+	uint64_t black_king_pos = firstOne(currentState.figures[KING] & currentState.black_bit_mask);
+
+	mask = currentState.figures[ROOK] & currentState.black_bit_mask;
+
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= (kingSecurityArray[white_king_pos][pos] * 4);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[QUEEN] & currentState.black_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= (kingSecurityArray[white_king_pos][pos] * 6);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[KNIGHT] & currentState.black_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= (kingSecurityArray[white_king_pos][pos] * 2);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[BISHOP] & currentState.black_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result -= (kingSecurityArray[white_king_pos][pos] * 1);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[ROOK] & currentState.white_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += (kingSecurityArray[black_king_pos][pos] * 4);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[QUEEN] & currentState.white_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += (kingSecurityArray[black_king_pos][pos] * 6);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[KNIGHT] & currentState.white_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += (kingSecurityArray[black_king_pos][pos] * 2);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+
+	mask = currentState.figures[BISHOP] & currentState.white_bit_mask;
+	
+	while(mask != 0) {
+		uint8_t pos = firstOne(mask);
+		result += (kingSecurityArray[black_king_pos][pos] * 1);
+		mask &= (UINT64_MAX ^ vec1_cells[pos]);
+	}
+	
+
 
 	return result;
 }
