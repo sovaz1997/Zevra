@@ -145,28 +145,8 @@ public:
 
 	std::multiset<uint64_t> gameHash;
 
-	//bool hash_enable = true;
-	//uint64_t hash;
-	//bool whitePassantMade, blackPassantMade;
-
 	/*--- evalution functions ---*/
 
-	std::vector<int>basic_king_figures_rom;
-
-	int attackWeight[8] = {0, 0, 50, 75, 88, 94, 97, 99};
-
-	int SafetyTable[100] = {
-    0,  0,   1,   2,   3,   5,   7,   9,  12,  15,
-	18,  22,  26,  30,  35,  39,  44,  50,  56,  62,
-	68,  75,  82,  85,  89,  97, 105, 113, 122, 131,
-	140, 150, 169, 180, 191, 202, 213, 225, 237, 248,
-	260, 272, 283, 295, 307, 319, 330, 342, 354, 366,
-	377, 389, 401, 412, 424, 436, 448, 459, 471, 483,
-	494, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-	500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-	500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-	500, 500, 500, 500, 500, 500, 500, 500, 500, 500
-	};
 
 	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 60, 80, 0};
 
@@ -177,8 +157,6 @@ public:
 	std::vector<uint8_t> isolated_pawn_map;
 	
 	double newEvaluteAll();
-	double basicKingSafety();
-	void attackedField(uint8_t color, uint8_t y, uint8_t x, std::vector<int>& figure_array, uint64_t& pieces_mask);
 
 	MoveArray moveArray;
 
