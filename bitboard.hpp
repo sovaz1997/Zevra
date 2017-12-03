@@ -55,7 +55,6 @@ public:
 	void magicNumberGenerator();
 	void magicInit();
 	void magicConstantsSet();
-	int SEE(int square, bool whiteMove);
 
 	uint64_t magicGenerator();
 
