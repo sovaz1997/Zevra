@@ -2559,3 +2559,17 @@ uint8_t BitBoard::compressVertical(uint64_t value) {
 
 	return result;
 }
+
+int SEE(int square, bool whiteMove) {
+   int value = 0;
+   int piece = get_smallest_attacker(square, whiteMove);
+
+   if (piece > 0) {
+		BitMove mv = BitMove(0, piece / 8, piece % 8, square / 8, square % 8);
+    	move(mv);
+    	value = std::max(0, piece_just_captured() -SEE(square, !whiteMove));
+      	goBack();
+   }
+
+   return value;
+}

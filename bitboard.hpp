@@ -18,24 +18,10 @@
 #include "goback.hpp"
 #include "magic.hpp"
 
-//Visual Studio:
-//#ifdef _MSC_VER
-//#include <intrin.h>
-//#pragma intrinsic(_BitScanForward)
-//inline unsigned long long __builtin_ctzll(unsigned long long x) { unsigned long r; _BitScanForward64(&r, x); return r; }
-//inline unsigned long long __builtin_clzll(unsigned long long x) { unsigned long r; _BitScanReverse64(&r, x); return 63 - r; }
-//inline unsigned long long __builtin_ffsll(unsigned long long x) { unsigned long r; return _BitScanForward64(&r, x) ? r + 1 : 0; }
-//inline unsigned long long __builtin_popcountll(unsigned long long x) { return __popcnt64(x); }
-//#endif
-
 class BitBoard {
 public:
-	//uint64_t figures[7];
 	uint64_t horizontal[8];
 	uint64_t vertical[8];
-	//uint64_t white_bit_mask, black_bit_mask;
-	//uint64_t castlingMap;
-	//uint64_t recapture_position;
 
 	int hash_width;
 	uint64_t hash_cutter;
@@ -47,7 +33,6 @@ public:
 	uint64_t wscZobrist, wlcZobrist, bscZobrist, blcZobrist;
 	uint64_t passantZobrist[8][8];
 
-	//uint8_t /*moveNumber, ruleNumber, passant_x, passant_y*/;
 	void preInit();
 
 	std::vector<std::string> splitter(std::string str, char sym);
@@ -70,6 +55,7 @@ public:
 	void magicNumberGenerator();
 	void magicInit();
 	void magicConstantsSet();
+	int SEE(int square, bool whiteMove);
 
 	uint64_t magicGenerator();
 
