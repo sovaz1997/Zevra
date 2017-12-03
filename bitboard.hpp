@@ -43,7 +43,6 @@ public:
 	uint64_t bitboard[32][8][8];
 	double kingSecurityArray[64][64];
 	std::string startpos_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-	int64_t pawnStructureEvalute();
 
 	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
@@ -80,9 +79,6 @@ public:
 	uint64_t bishopMagicMask[8][8];
 
 	std::vector<int> third_repeat;
-
-	/*--- evalution fields ---*/
-	/*--- evalution fields ---*/
 public:
 	BitBoard();
 	~BitBoard();
@@ -100,35 +96,19 @@ public:
 	BitMove getRandomMove();
 	void makeNullMove();
 	void unMakeNullMove();
-
-	//bool whiteMove, passant_enable;
-
-	//void evaluteAll();
-	//int64_t evalute;
-	int64_t kingEvalute();
-	int64_t getEvalute();
-	//int64_t getLazyEvalute();
-	void totalStaticEvalute();
-
+	int64_t getEvaluate();
+	void totalStaticEvaluate();
 	uint8_t getFigure(uint8_t y, uint8_t x);
-
 	int getFiguresCount();
-
 	bool inCheck(uint8_t color);
 	bool inCheck(uint8_t color, uint8_t y, uint8_t x);
-
 	void generateHash();
 	uint64_t getHash();
 	uint64_t getColorHash();
 
-	//bool attacked;
-	//double margin;
-
 	bool testOfDraw();
 
 	std::multiset<uint64_t> gameHash;
-
-	/*--- evalution functions ---*/
 
 
 	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 60, 80, 0};
@@ -139,7 +119,7 @@ public:
 
 	std::vector<uint8_t> isolated_pawn_map;
 	
-	double newEvaluteAll();
+	double newEvaluateAll();
 
 	MoveArray moveArray;
 

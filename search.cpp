@@ -140,13 +140,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	if(option.futility_pruning && !extended && !inCheck && /*!b.currentState.attacked &&*/ depth <= 2 && !inNullMove && !onPV) { //Futility pruning
-		if(b.getEvalute() - PAWN_EV / 2 >= beta) {
+		if(b.getEvaluate() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
 	if(option.razoring && !extended && !inCheck && /*!b.currentState.attacked &&*/ !inNullMove && depth <= 10 && !onPV) { //Razoring
-		if(b.getEvalute() - RAZOR_MARGIN[depth] >= beta) {
+		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
 			//--nextDepth;
 			return beta;
 		}
@@ -363,7 +363,7 @@ uint64_t Game::perft(int depth) {
 }
 
 int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
-	int64_t val = b.getEvalute();
+	int64_t val = b.getEvaluate();
 
 	if (val < alpha - QUEEN_EV) {
    		return alpha;
