@@ -53,6 +53,8 @@ private:
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
 	int64_t mtdf(int64_t f, int depth);
+	void mctsEval(int gamesCount);
+	int playGame();
 
   	std::vector<BitMove>pv;
 	std::vector<size_t> count_moves;

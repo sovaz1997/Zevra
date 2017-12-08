@@ -1334,6 +1334,10 @@ void BitBoard::printBitBoard(uint64_t bit_board) {
 void BitBoard::pushHistory() {
 	history[history_iterator] = currentState;
 	++history_iterator;
+
+	if(history_iterator >= history.size()) {
+		history.resize(history_iterator + 1);
+	}
 }
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {

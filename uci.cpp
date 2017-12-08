@@ -88,6 +88,9 @@ bool Game::uciHandler(std::string str) {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
 			return false;
+		} else if(cmd[0] == "mcts") {
+			int count = std::stoi(cmd[1]);
+			mctsEval(count);
 		} else if(cmd[0] == "uci") {
 			idPrint();
 			option.print();
