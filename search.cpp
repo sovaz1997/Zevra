@@ -3,6 +3,13 @@
 int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv) {
 	++nodesCounter;
 
+	uint64_t hash = b.getColorHash();
+	Hash* currentHash = &boardHash[hash & hash_cutter];
+
+	if(currentHash->flag == EXACT && depth == 0) {
+		return currentHash->score;
+	}
+
 	if(depth <= 0 || real_depth >= 100) {
 		return quies(b, alpha, beta, rule, real_depth);
 	}
@@ -55,8 +62,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	int tmp;
 
-	uint64_t hash = b.getColorHash();
-	Hash* currentHash = &boardHash[hash & hash_cutter];
 	if((currentHash->flag != EMPTY && currentHash->key == hash)) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
@@ -78,6 +83,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				}
 
 			} else if(currentHash->flag == EXACT) {
+				return score;
 				/*if(score <= alpha) {
 					return alpha;
 				}
@@ -196,7 +202,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		++num_moves;
 
-		if(real_depth == 0 && depth >= 9) {
+		if(real_depth == 0 && depth >= 12) {
 			if((rule != FIXED_TIME || timer.getTime() < time) && !stopped) {
 				std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << std::endl;
 			}	
