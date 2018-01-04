@@ -1618,6 +1618,7 @@ bool BitBoard::blc() {
 void BitBoard::zobristGenerator() {
 	std::random_device rd;
 	std::mt19937_64 gen(rd());
+	gen.seed(0);
 	std::uniform_int_distribution<unsigned long long> dis;
 
 	for(int i = 0; i < 32; ++i) {

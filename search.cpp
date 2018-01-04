@@ -121,11 +121,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool inCheck;
 	inCheck = b.inCheck(color);
-	/*if(color == WHITE) {
-		inCheck = b.inCheck(color);
-	} else {
-		inCheck = b.inCheck(BLACK);
-	}*/
 
 	bool onPV = (beta - alpha) > 1;
 
@@ -458,9 +453,12 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 std::vector<BitMove> Game::extractPV(int depth) {
 	int k;
 	std::vector<BitMove> result;
-	for(k = 0; k < depth + 10; ++k) {
+	bool stopped = false;
+	for(k = 0; k < depth + 10 && !stopped; ++k) {
 		uint64_t hash = game_board.getColorHash();
 		Hash* currentHash = &boardHash[hash & hash_cutter];
+		MoveArray moves;
+		game_board.bitBoardMoveGenerator(moves, stress);
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
 			bool enable;
@@ -468,8 +466,34 @@ std::vector<BitMove> Game::extractPV(int depth) {
 			if(!enable) {
 				break;
 			}
-			result.emplace_back(mv);
-			game_board.move(mv);
+
+			stopped = true;
+
+			for(int i = 0; i < moves.count; ++i) {
+				if(mv.equal(moves.moveArray[i])) {
+					game_board.move(mv);
+
+					uint8_t color;
+		
+					if(game_board.currentState.whiteMove) {
+						color = WHITE;
+					} else {
+						color = BLACK;
+					}
+
+					if(game_board.inCheck(color)) {
+						stopped = true;
+						break;
+					} else {
+						stopped = false;
+						break;
+					}
+				}
+			}
+
+			if(!stopped) {
+				result.emplace_back(mv);
+			}
 		} else {
 			break;
 		}
