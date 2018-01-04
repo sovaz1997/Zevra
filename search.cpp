@@ -121,13 +121,18 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool inCheck;
 	inCheck = b.inCheck(color);
+	/*if(color == WHITE) {
+		inCheck = b.inCheck(color);
+	} else {
+		inCheck = b.inCheck(BLACK);
+	}*/
 
 	bool onPV = (beta - alpha) > 1;
 
 	if(option.nullMovePruningEnable) { //Null Move Pruning
 		int R = 2 + depth / 6;
 		
-		if(!inNullMove && !extended && !inCheck && !onPV && depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
+		if(!inNullMove && !extended && !inCheck && /*!onPV &&*/ depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 
 			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
@@ -140,37 +145,23 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	if(option.futility_pruning && !extended && !inCheck && /*!b.currentState.attacked &&*/ depth <= 2 && !inNullMove && !onPV) { //Futility pruning
+	if(option.futility_pruning && !extended && !inCheck && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
 		if(b.getEvaluate() - PAWN_EV / 2 >= beta) {
 			return beta;
 		}
 	}
 
-	if(option.razoring && !extended && !inCheck && /*!b.currentState.attacked &&*/ !inNullMove && depth <= 10 && !onPV) { //Razoring
+	if(option.razoring && !extended && !inCheck &&  !inNullMove && depth <= 10 && !onPV) { //Razoring
 		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
 			//--nextDepth;
 			return beta;
 		}
 	}
 
-	/*bool iid_test_complete = false;
-	if(depth > 2 && !inNullMove && !onPV && currentHash->flag == EMPTY) { //IID
-		iid_test_complete = true;
-		negamax(b, -beta, -alpha, 2, real_depth + 1, rule, inNullMove, true);
-	}*/
 
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
-
-	/*if(iid_test_complete) {
-		for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
-			if(moveArray[real_depth].moveArray[i].equal(iid_move)) {
-				moveArray[real_depth].moveArray[i].fromHash = true;
-				break;
-			}
-		}
-	}*/
 
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
@@ -210,22 +201,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		nextDepth = depth - 1;
 		nextDepth += extensions;
-
-		/*Killer* killer;
-		if(color == WHITE) {
-			killer = &whiteKiller[real_depth];
-		} else {
-			killer = &blackKiller[real_depth];
-		}
-
-		
-		Killer* secondKiller;
-		if(color == WHITE) {
-			secondKiller = &whiteSecondKiller[real_depth];
-		} else {
-			secondKiller = &blackSecondKiller[real_depth];
-		}*/
-		
 		double reduction = 0;
 
 		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck/* && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)*/) {
@@ -453,12 +428,9 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 std::vector<BitMove> Game::extractPV(int depth) {
 	int k;
 	std::vector<BitMove> result;
-	bool stopped = false;
-	for(k = 0; k < depth + 10 && !stopped; ++k) {
+	for(k = 0; k < depth + 10; ++k) {
 		uint64_t hash = game_board.getColorHash();
 		Hash* currentHash = &boardHash[hash & hash_cutter];
-		MoveArray moves;
-		game_board.bitBoardMoveGenerator(moves, stress);
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
 			bool enable;
@@ -466,34 +438,8 @@ std::vector<BitMove> Game::extractPV(int depth) {
 			if(!enable) {
 				break;
 			}
-
-			stopped = true;
-
-			for(int i = 0; i < moves.count; ++i) {
-				if(mv.equal(moves.moveArray[i])) {
-					game_board.move(mv);
-
-					uint8_t color;
-		
-					if(game_board.currentState.whiteMove) {
-						color = WHITE;
-					} else {
-						color = BLACK;
-					}
-
-					if(game_board.inCheck(color)) {
-						stopped = true;
-						break;
-					} else {
-						stopped = false;
-						break;
-					}
-				}
-			}
-
-			if(!stopped) {
-				result.emplace_back(mv);
-			}
+			result.emplace_back(mv);
+			game_board.move(mv);
 		} else {
 			break;
 		}
