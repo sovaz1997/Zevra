@@ -98,7 +98,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 
-		if(currentHash->flag != ALPHA && real_depth > 0) {
+		/*if(currentHash->flag != ALPHA && real_depth > 0) {
 			bool enable;
 			BitMove mv = game_board.getMove(currentHash->fromY, currentHash->fromX, currentHash->toY, currentHash->toX, currentHash->replaced, currentHash->replacedFigure, enable);// currentHash->getMove();
 
@@ -116,7 +116,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	bool inCheck;

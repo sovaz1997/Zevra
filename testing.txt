@@ -57,3 +57,11 @@ Score of Zevra 20171202 vs Zevra 20171109: 536 - 386 - 417  [0.556] 1339
 Elo difference: 39.09 +/- 15.48
 SPRT: llr 2.95, lbound -2.94, ubound 2.94 - H1 was accepted
 
+---------------------------
+Zevra 20180105 vs Zevra 20171212
+
+LTC (60+0.6)
+Score of Zevra 20180105 vs Zevra 20171212: 220 - 134 - 540  [0.548] 894
+Elo difference: 33.53 +/- 14.28
+SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted
+
