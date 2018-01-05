@@ -375,12 +375,12 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
 		b.goBack();
 
-		if(val > alpha) {
-			alpha = val;
-		}
-
 		if(val >= beta) {
 			return beta;
+		}
+
+		if(val > alpha) {
+			alpha = val;
 		}
 	}
 
