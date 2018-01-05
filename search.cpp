@@ -144,16 +144,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			b.unMakeNullMove();
 		}
 	}
-
-	if(option.futility_pruning && !extended && !inCheck && depth <= 2 && !inNullMove && !onPV) { //Futility pruning
-		if(b.getEvaluate() - PAWN_EV / 2 >= beta) {
-			return beta;
-		}
-	}
-
 	if(option.razoring && !extended && !inCheck &&  !inNullMove && depth <= 10 && !onPV) { //Razoring
 		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
-			//--nextDepth;
 			return beta;
 		}
 	}
