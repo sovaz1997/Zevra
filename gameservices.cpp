@@ -97,6 +97,7 @@ void Game::setHashSize(int mb_size) {
 	game_board.hash_width = bits;
 	game_board.hash_cutter = hash_cutter;
 
+	max_hash_filled = pow(2, hash_width);
 	boardHash.resize(pow(2, hash_width));
 	clearCash();
 	game_board.third_repeat = std::vector<int> (pow(2, hash_width), 0);
