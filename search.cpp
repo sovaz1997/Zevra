@@ -1,12 +1,12 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv) {
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv, bool cut) {
 	++nodesCounter;
 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(currentHash->flag == EXACT && depth == 0) {
+	if(currentHash->flag == EXACT && currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth) {
 		return currentHash->score;
 	}
 
@@ -117,6 +117,21 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				}
 			}
 		}*/
+
+		/*if(currentHash->flag != ALPHA && real_depth > 0 && depth >= 5 && depth <= 8) {
+			bool enable;
+			BitMove mv = game_board.getMove(currentHash->fromY, currentHash->fromX, currentHash->toY, currentHash->toX, currentHash->replaced, currentHash->replacedFigure, enable);// currentHash->getMove();
+
+			if(enable) {
+				b.move(mv);
+				tmp = -negamax(b, -beta, -alpha, depth - 4, real_depth + 1, rule, inNullMove, false);
+				b.goBack();
+
+				if(tmp >= beta + 50) {
+					return tmp;
+				}
+			}
+		}*/
 	}
 
 	bool inCheck;
@@ -135,7 +150,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(!inNullMove && !extended && !inCheck && /*!onPV &&*/ depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 
-			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false);
+			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false, true);
 			if(value >= beta) {
 				b.unMakeNullMove();
 				return beta;
@@ -150,13 +165,33 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
 
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
+
+	if(cut) { //Multi-Cut
+		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && beta - alpha <= 1) {
+			int c = 0;
+			for (int i = 0; i < std::min((int)moveArray[real_depth].count, 4); ++i) {
+				b.move(moveArray[real_depth].moveArray[i]);
+				if(b.inCheck(color)) {
+					b.goBack();
+					continue;
+				}
+				
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth - 4, real_depth + 1, rule, inNullMove, false, false);
+				b.goBack();
+				if (tmp >= beta) {
+					if (++c == 3) {
+						return beta;
+					}
+				}
+			}
+		}
+	}
 
 	BitMove local_move;
 
@@ -205,17 +240,19 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(num_moves == 1) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);	
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);	
 		} else {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);
+			//tmp = -zwSearch(b, -alpha, nextDepth, real_depth + 1, true, rule);
 			
 			if(reduction > 0 && tmp > alpha) {
 				nextDepth += reduction;
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);
+				//tmp = -zwSearch(b, -alpha, nextDepth, real_depth + 1, true, rule);
 			}
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);
 			}
 		}
 
@@ -297,6 +334,124 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	}
 
 	return alpha;
+}
+
+int64_t Game::zwSearch(BitBoard& b, int64_t beta, int depth, int real_depth, bool cut, int rule) {
+	++nodesCounter;
+
+	uint64_t hash = b.getColorHash();
+	Hash* currentHash = &boardHash[hash & hash_cutter];
+
+	if(currentHash->flag == EXACT && currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth) {
+		return currentHash->score;
+	}
+
+	if(depth <= 0 || real_depth >= 100) {
+		return quies(b, beta - 1, beta, rule, real_depth);
+	}
+
+	if(depth > 2) {
+		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
+			return 0;
+		}
+	}
+
+
+	if((currentHash->flag != EMPTY && currentHash->key == hash)) {
+		if(real_depth > 0 && currentHash->depth >= depth) {
+			double score = currentHash->score;
+
+			if(score > WHITE_WIN - 100) {
+				score -= real_depth;
+			} else if(score < -WHITE_WIN + 100) {
+				score += real_depth;
+			}
+
+			if(currentHash->flag == BETA) {
+				if(score >= beta) {
+					return beta;
+				}
+			} else if(currentHash->flag == EXACT) {
+				return score;
+				/*if(score <= alpha) {
+					return alpha;
+				}
+
+				if(score >= beta) {
+					return beta;
+				}*/
+				if(score >= beta) {
+					return beta;
+				}
+				//return score;
+			}
+		}
+	}
+
+	if(option.razoring && depth <= 10) { //Razoring
+		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
+			return beta;
+		}
+	}
+
+	uint8_t color, enemyColor;
+	if(b.currentState.whiteMove) {
+		color = WHITE;
+		enemyColor = BLACK;
+	} else {
+		color = BLACK;
+		enemyColor = WHITE;
+	}
+ 
+	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
+
+	sortAttacks(moveArray[real_depth]);
+	sortMoves(moveArray[real_depth], real_depth);
+
+	if (depth >= 6 && cut) {
+		int c = 0;
+		for (int i = 0; i < std::min((int)moveArray[real_depth].count, 5); ++i) {
+			b.move(moveArray[real_depth].moveArray[i]);
+			if(b.inCheck(color)) {
+				b.goBack();
+				continue;
+			}
+			int64_t score = -zwSearch(b, 1 - beta, depth - 1 - 6, real_depth + 1, !cut, rule);
+			b.goBack();
+			if (score >= beta) {
+				if (++c == 2) {
+					return beta;
+				}
+			}
+		}
+	}
+
+	int num_moves = 0;
+
+	for (int i = 0; i < moveArray[real_depth].count; ++i) {
+		b.move(moveArray[real_depth].moveArray[i]);
+		if(b.inCheck(color)) {
+			b.goBack();
+			continue;
+		}
+		++num_moves;
+		int64_t score = -zwSearch(b, 1 - beta, depth - 1, real_depth + 1, !cut, rule);
+		b.goBack();
+		if (score >= beta) {
+			recordHash(depth, score, score<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
+			return beta;
+		}
+	}
+
+	if(num_moves == 0) {
+		if(game_board.inCheck(color)) {
+			return BLACK_WIN + real_depth;
+		} else {
+			return 0;
+		}
+	}
+
+   	return beta - 1;
 }
 
 uint64_t Game::perft(int depth) {

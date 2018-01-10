@@ -19,7 +19,7 @@ int64_t Game::mtdf(int64_t f, int depth) {
    int64_t g = f;
    while(lowerbound < upperbound) {
       int64_t beta = std::max(g, lowerbound + 1);
-      g = negamax(game_board, beta - 1, beta, depth, 0, FIXED_DEPTH, false, true);
+      g = negamax(game_board, beta - 1, beta, depth, 0, FIXED_DEPTH, false, true, true);
  
 	  if(g < beta) {
 		  upperbound = g;
@@ -65,7 +65,7 @@ void Game::goFixedDepth() {
 		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true, true);
 
 		/*if(max_depth > 1) {
 			current_alpha = bestScore - 30;
@@ -170,7 +170,7 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 			}
 		}
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true, true);
 		
 		if(stopped) {
 			break;

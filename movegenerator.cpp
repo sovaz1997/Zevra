@@ -55,7 +55,7 @@ void Game::sortMoves(MoveArray& result, int depth) {
 
 void Game::sortAttacks(MoveArray& moves) {
 	moves.setHistoryCompare(false);
-	//std::sort(moves.moveArray.begin(), moves.moveArray.begin() + moves.num_attacks);
+	std::sort(moves.moveArray.begin(), moves.moveArray.begin() + moves.num_attacks);
 	
 	int recapture_count = 0;
 	BitMove mv;
