@@ -154,9 +154,3 @@ void Game::idPrint() {
 	std::cout << "id name Zevra 20180111" << std::endl;
 	std::cout << "id author Oleg Smirnov @sovaz1997" << std::endl;
 }
-
-void Game::benchmarkThreadFunction(size_t counter) {
-	for(unsigned int i = 0; i < 1000000; ++i) {
-		game_board.bitBoardMoveGenerator(moveArray[counter], count_moves[counter]);
-	}
-}

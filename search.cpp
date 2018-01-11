@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv, bool cut) {
+int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool cut) {
 	++nodesCounter;
 
 	uint64_t hash = b.getColorHash();
@@ -99,7 +99,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
 			b.makeNullMove();
 
-			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, false, true);
+			double value = -negamax(b, -beta, -beta + 1, depth - R - 1, real_depth + 1, rule, true, true);
 			if(value >= beta) {
 				b.unMakeNullMove();
 				return beta;
@@ -131,7 +131,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					continue;
 				}
 				
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth - 4, real_depth + 1, rule, inNullMove, false, false);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth - 4, real_depth + 1, rule, inNullMove, false);
 				
 				b.goBack();
 				if (tmp >= beta) {
@@ -190,17 +190,17 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		if(num_moves == 1) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);	
+			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);	
 		} else {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 			
 			if(reduction > 0 && tmp > alpha) {
 				nextDepth += reduction;
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 			}
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, false, true);
+				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 			}
 		}
 

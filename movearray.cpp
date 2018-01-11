@@ -12,7 +12,7 @@ void MoveArray::clear() {
 }
 
 void MoveArray::addMove(BitMove mv) {
-	if(count < 288 && count >= 0) {
+	if(count < 288) {
 		moveArray[count] = mv;
 		++count;
 	}

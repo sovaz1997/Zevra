@@ -13,23 +13,6 @@ int Game::startGame() {
 	}
 }
 
-int64_t Game::mtdf(int64_t f, int depth) {
-   int64_t lowerbound = -WHITE_WIN;
-   int64_t upperbound = WHITE_WIN;
-   int64_t g = f;
-   while(lowerbound < upperbound) {
-      int64_t beta = std::max(g, lowerbound + 1);
-      g = negamax(game_board, beta - 1, beta, depth, 0, FIXED_DEPTH, false, true, true);
- 
-	  if(g < beta) {
-		  upperbound = g;
-	  } else {
-		  lowerbound = g;
-	  }
-   }
-   return f;
-}
-
 void Game::goFixedDepth() {
 	++hashAge;
 	
@@ -38,13 +21,7 @@ void Game::goFixedDepth() {
 	}
 	
 	stopped = false;
-
-	//variant.clear();
-	//variant.resize(max_depth);
 	std::vector<uint64_t>hash;
-
-	whiteUp = BLACK_WIN;
-	blackUp = WHITE_WIN;
 
 	nodesCounter = 0;
 	int max_depth_global = max_depth;
@@ -57,33 +34,11 @@ void Game::goFixedDepth() {
 	bestMove = moveCritical;
 	hasBestMove = true;
 	bestScore = 0;
-	
-	//int64_t f = 0;
-	//int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
-		whiteUp = BLACK_WIN;
-		blackUp = WHITE_WIN;
 		flattenHistory();
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true, true);
-
-		/*if(max_depth > 1) {
-			current_alpha = bestScore - 30;
-			current_beta = bestScore + 30;
-		}*/
-
-		//negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
-		/*std::cout << "!";
-		if(bestScore <= current_alpha) {
-			std::cout << "!";
-			negamax(game_board, -WHITE_WIN, current_beta, max_depth, 0, FIXED_DEPTH, false, true);
-		} else if(bestScore >= current_beta) {
-			std::cout << "!";
-			negamax(game_board, current_alpha, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
-		}*/
-
-		//f = mtdf(f, max_depth);
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 
 		hasBestMove = true;
 
@@ -102,9 +57,6 @@ void Game::goFixedDepth() {
 void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 	++hashAge;
 	stopped = false;
-	/*if(tm >= 200) {
-		tm -= 100;
-	}*/
 
 	time = tm;
 	timer.start();
@@ -114,9 +66,6 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 	}
 
 	std::vector<uint64_t>hash;
-
-	whiteUp = BLACK_WIN;
-	blackUp = WHITE_WIN;
 
 	nodesCounter = 0;
 
@@ -133,9 +82,6 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 	std::vector<BitMove> bestPV;
 
 	for(; timer.getTime() < time; ) {
-		
-		whiteUp = BLACK_WIN;
-		blackUp = WHITE_WIN;
 		flattenHistory();
 
 		if(tournamentTimeControll) {
@@ -170,7 +116,7 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 			}
 		}
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true, true);
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 		
 		if(stopped) {
 			break;
