@@ -77,6 +77,8 @@ public:
 
 	uint64_t rookMagicMask[8][8];
 	uint64_t bishopMagicMask[8][8];
+	
+	uint64_t whiteCells, blackCells;
 
 	std::vector<int> third_repeat;
 

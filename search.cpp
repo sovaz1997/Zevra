@@ -77,11 +77,9 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					return beta;
 				}
 			} else if(currentHash->flag == ALPHA) {
-			
 				if(score <= alpha) {
 					score = alpha;
 				}
-
 			} else if(currentHash->flag == EXACT) {
 				return score;
 			}
@@ -117,12 +115,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
-
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
 
 	if(cut) { //Multi-Cut
-		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && beta - alpha <= 1) {
+		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && beta - alpha <= 1 && !b.currentState.attacked) {
 			int c = 0;
 			for (int i = 0; i < std::min((int)moveArray[real_depth].count, 4); ++i) {
 				b.move(moveArray[real_depth].moveArray[i]);
@@ -243,7 +240,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			return beta;
 		}
-
 	}
 
 	if(num_moves == 0) {
@@ -263,9 +259,9 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		bestScore = alpha;
 	}
 
-	if(alpha == oldAlpha) {
+	/*if(alpha == oldAlpha) {
 		recordHash(depth, alpha, ALPHA, hash, local_move, real_depth);
-	}
+	}*/
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {

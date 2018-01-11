@@ -298,6 +298,8 @@ void BitBoard::preInit() {
 		}
 	}
 
+	blackCells = ~whiteCells;
+
 	uint64_t mul = 1;
 	for(unsigned int y = 0; y < BOARD_SIZE; ++y) {
 		for(unsigned int x = 0; x < BOARD_SIZE; ++x) {
@@ -580,7 +582,19 @@ void BitBoard::preInit() {
 
 	magicInit();
 
-	
+	whiteCells = 0;
+
+	bool white = false;
+	for(int i = 0; i < 64; ++i) {
+		int y_pos = i / 8;
+		int x_pos = i % 8;
+		
+		if((y_pos + x_pos) % 2 != 0) {
+			whiteCells |= vec1_cells[i];
+		}
+	}
+
+	blackCells = ~whiteCells;	
 }
 
 void BitBoard::magicInit() {
@@ -1323,6 +1337,7 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 
 void BitBoard::printBitBoard(uint64_t bit_board) {
 	uint64_t doubler = 1;
+
 	for(int y = 7; y >= 0; --y) {
 		for(int x = 0; x < BOARD_SIZE; ++x) {
 			std::cout << (bool)((doubler << (y * 8 + x)) & bit_board);
@@ -1392,7 +1407,6 @@ int64_t BitBoard::getEvaluate() {
 }
 
 bool BitBoard::inCheck(uint8_t color) {
-
 	uint64_t mask, emask;
 
 	if(color == WHITE) {
@@ -2166,6 +2180,18 @@ double BitBoard::newEvaluateAll() {
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
+	//Бонус за расположение слонов
+	int pawnsOnWhiteCells = popcount64(whiteCells & currentState.figures[PAWN]);
+	int pawnsOnBlackCells = popcount64(blackCells & currentState.figures[PAWN]);
+
+	int whiteBishopsOnBlackCells = popcount64(blackCells & currentState.figures[BISHOP] & currentState.white_bit_mask);
+	int whiteBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.white_bit_mask);
+	int blackBishopsOnBlackCells = popcount64(blackCells & currentState.figures[BISHOP] & currentState.black_bit_mask);
+	int blackBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.black_bit_mask);
+	result += 5 * (((whiteBishopsOnBlackCells - blackBishopsOnBlackCells) * pawnsOnWhiteCells) +
+			   ((whiteBishopsOnWhiteCells - blackBishopsOnWhiteCells) * pawnsOnBlackCells));
+			   
+
 	return result;
 
 	//Безопасность короля (не протестировано, поэтому пока не используется)
@@ -2173,8 +2199,6 @@ double BitBoard::newEvaluateAll() {
 
 	return result;
 }
-
-
 
 BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable) {
 	bitBoardMoveGenerator(moveArray, stress);
