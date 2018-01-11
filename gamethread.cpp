@@ -31,6 +31,7 @@ int64_t Game::mtdf(int64_t f, int depth) {
 }
 
 void Game::goFixedDepth() {
+	++hashAge;
 	
 	if(option.UCI_AnalyseMode || abs(bestScore) >= (WHITE_WIN - 100)) {
 		clearCash();
@@ -99,6 +100,7 @@ void Game::goFixedDepth() {
 }
 
 void Game::goFixedTime(int tm, bool tournamentTimeControll) {
+	++hashAge;
 	stopped = false;
 	/*if(tm >= 200) {
 		tm -= 100;
@@ -227,7 +229,7 @@ bool Game::move(std::string mv) {
 			}
 
 			++hash_decrement;
-			++hashAge;
+			//++hashAge;
 			return true;
 		}
 	}
