@@ -1,5 +1,5 @@
 #include "game.hpp"
-
+/*
 void Game::printVariant() {
 	if(print_variant_enable) {
 		for(unsigned int i = 0; i < variant.size(); ++i) {
@@ -8,7 +8,7 @@ void Game::printVariant() {
 
 		std::cout << std::endl;
 	}
-}
+}*/
 
 void Game::cleanWhiteHistory() {
 	for(int i = 0; i < BOARD_SIZE; ++i) {

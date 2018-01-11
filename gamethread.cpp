@@ -39,8 +39,8 @@ void Game::goFixedDepth() {
 	
 	stopped = false;
 
-	variant.clear();
-	variant.resize(max_depth);
+	//variant.clear();
+	//variant.resize(max_depth);
 	std::vector<uint64_t>hash;
 
 	whiteUp = BLACK_WIN;
@@ -57,8 +57,8 @@ void Game::goFixedDepth() {
 	bestMove = moveCritical;
 	hasBestMove = true;
 	bestScore = 0;
-	int64_t f = 0;
 	
+	//int64_t f = 0;
 	//int64_t current_alpha = -WHITE_WIN, current_beta = WHITE_WIN, win_size = 50;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
@@ -113,8 +113,6 @@ void Game::goFixedTime(int tm, bool tournamentTimeControll) {
 		clearCash();
 	}
 
-	variant.clear();
-	variant.resize(max_depth);
 	std::vector<uint64_t>hash;
 
 	whiteUp = BLACK_WIN;
@@ -229,107 +227,10 @@ bool Game::move(std::string mv) {
 			}
 
 			++hash_decrement;
-			//++hashAge;
+
 			return true;
 		}
 	}
 
 	return false;
-}
-
-void Game::mctsEval(int gamesCount) {
-	int whiteWin = 0;
-	int blackWin = 0;
-	int draw = 0;
-	for(int i = 0; i < gamesCount; ++i) {
-		std::cout << i << "/" << gamesCount << std::endl;
-		int res = playGame();
-
-		if(res == 1) {
-			++whiteWin;
-		} else if(res == -1) {
-			++blackWin;
-		} else {
-			++draw;
-		}
-	}
-
-	std::cout << (whiteWin + draw * 0.5) / (whiteWin + blackWin + draw) * 100 << "%" << std::endl;
-	std::cout << "W: " << whiteWin << "; B: " << blackWin << "; D: " << draw << std::endl;
-
-}
-
-int Game::playGame() {
-	std::string fen = game_board.getFen();
-
-	std::vector<BitMove>possibleMoves;
-
-	for(int i = 0; i < 200; ++i) {
-		possibleMoves.clear();
-		if(game_board.currentState.ruleNumber >= 100) {
-			game_board.setFen(fen);
-			return 0;
-		}
-		size_t count = 0;
-		game_board.bitBoardMoveGenerator(moveArray[0], count);
-
-
-		for(int i = 0; i < moveArray[0].count; ++i) {
-			game_board.move(moveArray[0].moveArray[i]);
-
-			/*if(game_board.currentState.whiteMove) {
-				if(!game_board.inCheck(BLACK)) {
-					possibleMoves.push_back(moveArray[0].moveArray[i]);
-				}
-			} else {
-				if(!game_board.inCheck(WHITE)) {
-					possibleMoves.push_back(moveArray[0].moveArray[i]);
-				}
-			}*/
-
-			uint8_t color;
-
-			if(game_board.currentState.whiteMove) {
-				color = BLACK;
-			} else {
-				color = WHITE;
-			}
-
-			if(game_board.inCheck(color)) {
-				game_board.goBack();
-				continue;
-			}
-
-			possibleMoves.push_back(moveArray[0].moveArray[i]);
-			
-			game_board.goBack();
-		}
-
-		if(possibleMoves.size() == 0) {
-			if(game_board.currentState.whiteMove) {
-				if(game_board.inCheck(WHITE)) {
-					game_board.setFen(fen);
-					return -1;
-				} else {
-					game_board.setFen(fen);
-					return 0;
-				}
-			} else {
-				if(game_board.inCheck(BLACK)) {
-					game_board.setFen(fen);
-					return 1;
-				} else {
-					game_board.setFen(fen);
-					return 0;
-				}
-			}
-		}
-
-		int nextMove = rand() % possibleMoves.size();
-
-		game_board.move(possibleMoves[nextMove]);
-	}
-
-	game_board.setFen(fen);
-	return 0;
 }

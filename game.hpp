@@ -53,8 +53,6 @@ private:
 	double whiteUp = BLACK_WIN, blackUp = WHITE_WIN;
 
 	int64_t mtdf(int64_t f, int depth);
-	void mctsEval(int gamesCount);
-	int playGame();
 
   	std::vector<BitMove>pv;
 	std::vector<size_t> count_moves;
@@ -92,14 +90,12 @@ private:
 public:
 	Game();
 	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool pv, bool cut);
-	int64_t zwSearch(BitBoard& b, int64_t beta, int depth, int real_depth, bool cut, int rule);
 
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
-	//std::string getScore(double score);
 	std::vector<std::string> getStringArray(std::string str);
 	bool move(std::string mv);
 	void printBitBitBoard(uint64_t bit_BitBoard);
@@ -107,9 +103,7 @@ public:
 
 	std::vector<uint64_t>gameHash;
 	std::vector<Hash>boardHash;
-	//uint64_t hash_cutter;
 
-	std::vector<std::string>variant;
 	std::vector<Killer>whiteKiller;
 	std::vector<Killer>blackKiller;
 	std::vector<Killer>whiteSecondKiller;
@@ -120,10 +114,7 @@ public:
 
 	std::vector<MoveArray> moveArray;
 
-	BitMove iid_move;
-
 	void sortAttacks(MoveArray& moves);
-	void printVariant();
 
 	//flags - begin
 	bool nullMoveEnable = false;

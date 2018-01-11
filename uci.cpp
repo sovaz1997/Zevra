@@ -88,9 +88,6 @@ bool Game::uciHandler(std::string str) {
 			move(cmd[1]);
 		} else if(cmd[0] == "quit") {
 			return false;
-		} else if(cmd[0] == "mcts") {
-			int count = std::stoi(cmd[1]);
-			mctsEval(count);
 		} else if(cmd[0] == "uci") {
 			idPrint();
 			option.print();
@@ -108,7 +105,6 @@ bool Game::uciHandler(std::string str) {
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
-			--hashAge;
 		} else if(cmd[0] == "perft") {
 			int k;
 			k = std::stoi(cmd[1]);
@@ -125,18 +121,6 @@ bool Game::uciHandler(std::string str) {
 					option.nullMovePruningEnable = true;
 				} else if(cmd[4] == "false") {
 					option.nullMovePruningEnable = false;
-				}
-			} else if(cmd[2] == "razoring" && cmd[3] == "value") {
-				if(cmd[4] == "true") {
-					option.razoring = true;
-				} else if(cmd[4] == "false") {
-					option.razoring = false;
-				}
-			} else if(cmd[2] == "futility_pruning" && cmd[3] == "value") {
-				if(cmd[4] == "true") {
-					option.futility_pruning = true;
-				} else if(cmd[4] == "false") {
-					option.futility_pruning = false;
 				}
 			} else if(cmd[2] == "checkExtensions" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
