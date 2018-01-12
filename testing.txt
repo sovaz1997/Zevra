@@ -71,3 +71,8 @@ SPRT: llr 2.96, lbound -2.94, ubound 2.94 - H1 was accepted
 LTC (60+0.6):
 Score of Zevra 20180105 vs Zevra v1.6.1 r512 popcnt: 586 - 353 - 699  [0.571] 1638
 Elo difference: 49.76 +/- 12.76
+
+---------------------------
+LTC (60+0.6):
+Score of Zevra 20180111 vs Zevra v1.6.1 r512 popcnt: 845 - 298 - 428  [0.674] 1571
+Elo difference: 126.25 +/- 15.22
