@@ -7,7 +7,7 @@ FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gam
 NAME = zevra
 
 all: constants.hpp $(FILES)
-	$(CC) $(CFLAGS) $(OPTIMIZATION) $(FILES) -o $(NAME)
+	$(CC) $(CFLAGS) $(FILES) -o $(NAME)
 
 strip:
 	strip $(NAME)
