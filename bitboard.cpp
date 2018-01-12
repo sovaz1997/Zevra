@@ -584,7 +584,6 @@ void BitBoard::preInit() {
 
 	whiteCells = 0;
 
-	bool white = false;
 	for(int i = 0; i < 64; ++i) {
 		int y_pos = i / 8;
 		int x_pos = i % 8;
