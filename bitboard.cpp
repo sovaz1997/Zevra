@@ -105,6 +105,8 @@ void BitBoard::setFen(std::string fen) {
 	currentState.moveNumber = std::stoi(fenArray[5]);
 
 	generateHash();
+
+	++third_repeat[getColorHash() & hash_cutter];
 }
 
 std::string BitBoard::getFen() {

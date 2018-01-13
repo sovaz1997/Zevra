@@ -10,8 +10,15 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return 0;
 	}
 
-	if(currentHash->flag == EXACT && currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth && b.currentState.hash_enable) {
-		return currentHash->score;
+	if(currentHash->flag == EXACT && depth == 0 /*&& currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth && b.currentState.hash_enable*/) {
+		double score = currentHash->score;
+
+			if(score > WHITE_WIN - 100) {
+				score -= real_depth;
+			} else if(score < -WHITE_WIN + 100) {
+				score += real_depth;
+			}
+		return score;
 	}
 
 	if(depth <= 0 || real_depth >= 100) {
@@ -79,7 +86,9 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 					score = alpha;
 				}
 			} else if(currentHash->flag == EXACT) {
-				return score;
+				if(score >= beta) {
+					return score;
+				}
 			}
 		}
 	}
@@ -257,10 +266,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		bestScore = alpha;
 	}
 
-	/*if(alpha == oldAlpha) {
-		recordHash(depth, alpha, ALPHA, hash, local_move, real_depth);
-	}*/
-
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
 			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << " hashfull " << (int)(hash_filled / max_hash_filled * 1000) << " seldepth " << max_real_depth;
@@ -358,6 +363,10 @@ int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int rea
 
 bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
 	if(!game_board.currentState.hash_enable) {
+		return false;
+	}
+
+	if(score == 0) {
 		return false;
 	}
 
