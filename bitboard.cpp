@@ -1968,6 +1968,10 @@ double BitBoard::newEvaluateAll() {
 	result += white_queen_count * QUEEN_EV;
 	result -= black_queen_count * QUEEN_EV;
 
+	//Бонус за 2-х слонов
+	result += 30 * (bool)((currentState.figures[BISHOP] & currentState.white_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.white_bit_mask & blackCells));
+	result -= 30 * (bool)((currentState.figures[BISHOP] & currentState.black_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.black_bit_mask & blackCells));
+
 	//Поле-Фигура
 	//Бонусы и штрафы за проходные и сдвоенные пешки
 	uint64_t mask = currentState.figures[PAWN] & currentState.white_bit_mask;
