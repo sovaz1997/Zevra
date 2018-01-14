@@ -10,7 +10,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return 0;
 	}
 
-	if(currentHash->flag == EXACT && depth == 0 /*&& currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth && b.currentState.hash_enable*/) {
+	if(currentHash->flag == EXACT && depth == 0 && currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth && b.currentState.hash_enable) {
 		double score = currentHash->score;
 
 			if(score > WHITE_WIN - 100) {
