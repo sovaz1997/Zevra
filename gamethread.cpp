@@ -143,12 +143,15 @@ void Game::goTournament() {
 		inc = binc;
 	}
 
-	double k = 40;
+	double k;
+
+	int figuresNumber = game_board.popcount64(game_board.currentState.white_bit_mask | game_board.currentState.black_bit_mask);
 
 	if(movestogoEnable) {
 		k = movestogo;
 		goFixedTime(tm / k + inc / 2, true);
 	} else {
+		k = 40 - (32 - figuresNumber);
 		goFixedTime(tm / k + inc / 2 - 100, true);
 	}
 }
