@@ -125,7 +125,7 @@ position fen 8/5P2/8/8/1k6/8/8/4K3 w - - 0 1
 
 	int opposiing_pieces = (color == WHITE ? b.popcount64(b.currentState.black_bit_mask) : b.popcount64(b.currentState.white_bit_mask));
 
-	if(!extended && !inCheck &&  !inNullMove && depth <= 10 && !onPV && !checkMateNode && opposiing_pieces > 3) { //Razoring
+	if(!extended && !inCheck &&  !inNullMove && depth <= 10 && !onPV && opposiing_pieces > 3) { //Razoring
 		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
 			return beta;
 		}
@@ -196,7 +196,7 @@ position fen 8/5P2/8/8/1k6/8/8/4K3 w - - 0 1
 		nextDepth += extensions;
 		double reduction = 0;
 
-		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck/* && !moveArray[real_depth].moveArray[i].replaced && (!moveArray[real_depth].moveArray[i].equal(killer->move) || !killer->enable) && (!moveArray[real_depth].moveArray[i].equal(secondKiller->move) || !secondKiller->enable)*/) {
+		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck) {
 			++low_moves_count;
 
 			if(low_moves_count > 3) {
