@@ -160,16 +160,4 @@ const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
 
 const double RAZOR_MARGIN[10] = {0, 10, 50, 200, 500, 750, 1000, 1500, 2000, 2500};
 
-
-//void setBitMoveConstants();
-/*
-uint8_t figureToIndex[32];
-uint8_t indexToFigure[12];
-
-const uint8_t bit1 = 1;
-const uint8_t bit2 = 3;
-const uint8_t bit3 = 7;
-const uint8_t bit4 = 15;
-*/
-
 #endif

@@ -13,11 +13,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	if(currentHash->flag == EXACT && depth == 0 && currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth && b.currentState.hash_enable) {
 		double score = currentHash->score;
 
-			if(score > WHITE_WIN - 100) {
-				score -= real_depth;
-			} else if(score < -WHITE_WIN + 100) {
-				score += real_depth;
-			}
+		if(score > WHITE_WIN - 100) {
+			score -= real_depth;
+		} else if(score < -WHITE_WIN + 100) {
+			score += real_depth;
+		}
+
 		return score;
 	}
 
@@ -49,6 +50,9 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	int nextDepth = depth - 1;
 	int extensions = 0;
+
+	
+	bool checkMateNode = (std::abs(beta) >= WHITE_WIN - 100);
 
 	if(depth > 2) {
 		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
@@ -98,7 +102,12 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool onPV = (beta - alpha) > 1;
 
-	if(option.nullMovePruningEnable && !cut) { //Null Move Pruning
+	/*
+setoption name checkExtensions value false
+position fen 8/5P2/8/8/1k6/8/8/4K3 w - - 0 1
+	*/
+
+	if(option.nullMovePruningEnable && !cut && !checkMateNode) { //Null Move Pruning
 		int R = 2 + depth / 6;
 		
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
@@ -113,7 +122,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			b.unMakeNullMove();
 		}
 	}
-	if(!extended && !inCheck &&  !inNullMove && depth <= 10 && !onPV) { //Razoring
+
+	int opposiing_pieces = (color == WHITE ? b.popcount64(b.currentState.black_bit_mask) : b.popcount64(b.currentState.white_bit_mask));
+
+	if(!extended && !inCheck &&  !inNullMove && depth <= 10 && !onPV && !checkMateNode && opposiing_pieces > 3) { //Razoring
 		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
 			return beta;
 		}

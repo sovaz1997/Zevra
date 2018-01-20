@@ -1958,7 +1958,7 @@ double BitBoard::newEvaluateAll() {
 	int black_queen_count = popcount64(currentState.figures[QUEEN] & currentState.black_bit_mask);
 
 	//Материал
-	result += (white_pawn_count - black_pawn_count) * PAWN_EV;//(PAWN_EV * stage_game + ENDGAME_PAWN_EV * (1 - stage_game));
+	result += (white_pawn_count - black_pawn_count) * PAWN_EV;
 	result += white_knight_count * KNIGHT_EV;
 	result -= black_knight_count * KNIGHT_EV;
 	result += white_bishop_count * BISHOP_EV;
@@ -1972,8 +1972,16 @@ double BitBoard::newEvaluateAll() {
 	result += 30 * (bool)((currentState.figures[BISHOP] & currentState.white_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.white_bit_mask & blackCells));
 	result -= 30 * (bool)((currentState.figures[BISHOP] & currentState.black_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.black_bit_mask & blackCells));
 
+
+	//Бонус за Пешки перед Фигурами
+	/*for(int i = 0; i < BOARD_SIZE; ++i) {
+		result += stage_game * 15 * popcount64((horizontal[0] | horizontal[1] | horizontal[2]) & minus8[firstOne(vertical[i] & currentState.figures[PAWN] & currentState.white_bit_mask)] & ((currentState.figures[BISHOP] | currentState.figures[KNIGHT]) & currentState.white_bit_mask));
+		result -= stage_game * 15 * popcount64((horizontal[7] | horizontal[6] | horizontal[5]) & plus8[firstOne(vertical[i] & currentState.figures[PAWN] & currentState.black_bit_mask)] & ((currentState.figures[BISHOP] | currentState.figures[KNIGHT]) & currentState.black_bit_mask));
+	}*/
+	
 	//Поле-Фигура
-	//Бонусы и штрафы за проходные и сдвоенные пешки
+
+	//Бонусы и штрафы за проходные и сдвоенные пешки (дополнительно)
 	uint64_t mask = currentState.figures[PAWN] & currentState.white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
