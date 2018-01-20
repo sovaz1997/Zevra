@@ -26,7 +26,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
-	if(depth >= 5) {
+	if(depth > 6) {
 		if(is_input_available()) {
 			std::string input_str;
 			std::getline(std::cin, input_str);
@@ -54,7 +54,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	
 	bool checkMateNode = (std::abs(beta) >= WHITE_WIN - 100);
 
-	if(depth > 2) {
+	if(depth > 6) {
 		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
 			return 0;
 		}
