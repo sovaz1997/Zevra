@@ -102,11 +102,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool onPV = (beta - alpha) > 1;
 
-	/*
-setoption name checkExtensions value false
-position fen 8/5P2/8/8/1k6/8/8/4K3 w - - 0 1
-	*/
-
 	if(option.nullMovePruningEnable && !cut && !checkMateNode) { //Null Move Pruning
 		int R = 2 + depth / 6;
 		
