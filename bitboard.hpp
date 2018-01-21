@@ -20,6 +20,7 @@
 
 class BitBoard {
 public:
+	//Битовые маски горизонталей и вертикалей
 	uint64_t horizontal[8];
 	uint64_t vertical[8];
 
@@ -37,12 +38,15 @@ public:
 
 	std::vector<std::string> splitter(std::string str, char sym);
 
-	uint64_t plus1[65], plus7[65], plus8[65], plus9[65], minus1[65], minus7[65], minus8[65], minus9[65];
+	uint64_t plus1[65], plus7[65], plus8[65], plus9[65], minus1[65], minus7[65], minus8[65], minus9[65]; //Битовые маски лучей
+	
+	//Битовые таблицы полей
 	uint64_t vec2_cells[8][8];
 	uint64_t vec1_cells[64];
+	
 	uint64_t bitboard[32][8][8];
 	double kingSecurityArray[64][64];
-	std::string startpos_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+	std::string startpos_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; //Стартовая позиция
 
 	void zobristGenerator();
 	uint8_t popcount64(uint64_t value);
@@ -53,7 +57,7 @@ public:
 	void printBitBoard(uint64_t bit_board);
 	void magicNumberGenerator();
 	void magicInit();
-	void magicConstantsSet();
+	void magicConstantsSet(); //Константы Magic (предварительно вычеслены, используются в генераторе ходов)
 
 	uint64_t magicGenerator();
 
@@ -125,13 +129,6 @@ public:
 	bool testOfDraw();
 
 	std::multiset<uint64_t> gameHash;
-
-
-	int promotePawnBonus[8] = {0, 10, 20, 30, 40, 60, 80, 0};
-
-	//std::vector<std::vector<std::vectorstd::vector<std::vector<BitMove>>>>> standardMovesStorage; //хранилище всевозможных ходов (+рокировка) [ходящая_фигура][fx][fy][tx][ty]
-	//std::vector<std::vector<std::vector<BitMove>>> promoteMovesStorage; //хранилище всевозможных превращений пешки [фигура_превращения][fx][fy][tx][ty]
-	//std::vector<std::vector<std::vector<BitMove>>> passantMovesStorage; //хранилище всевозможных взятий на проходе 
 
 	std::vector<uint8_t> isolated_pawn_map;
 	

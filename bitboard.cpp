@@ -1942,6 +1942,7 @@ double BitBoard::newEvaluateAll() {
 
 	double result = 0;
 
+	//Подсчет количества фигур (для ускорения работы)
 	int white_pawn_count = popcount64(currentState.figures[PAWN] & currentState.white_bit_mask);
 	int black_pawn_count = popcount64(currentState.figures[PAWN] & currentState.black_bit_mask);
 	
@@ -1973,7 +1974,7 @@ double BitBoard::newEvaluateAll() {
 	result -= 30 * (bool)((currentState.figures[BISHOP] & currentState.black_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.black_bit_mask & blackCells));
 
 
-	//Бонус за Пешки перед Фигурами
+	//Бонус за Пешки перед Фигурами (не исп.)
 	/*for(int i = 0; i < BOARD_SIZE; ++i) {
 		result += stage_game * 15 * popcount64((horizontal[0] | horizontal[1] | horizontal[2]) & minus8[firstOne(vertical[i] & currentState.figures[PAWN] & currentState.white_bit_mask)] & ((currentState.figures[BISHOP] | currentState.figures[KNIGHT]) & currentState.white_bit_mask));
 		result -= stage_game * 15 * popcount64((horizontal[7] | horizontal[6] | horizontal[5]) & plus8[firstOne(vertical[i] & currentState.figures[PAWN] & currentState.black_bit_mask)] & ((currentState.figures[BISHOP] | currentState.figures[KNIGHT]) & currentState.black_bit_mask));
@@ -1981,7 +1982,7 @@ double BitBoard::newEvaluateAll() {
 	
 	//Поле-Фигура
 
-	//Бонусы и штрафы за проходные и сдвоенные пешки (дополнительно)
+	// (+) Бонусы и штрафы за проходные и сдвоенные пешки (дополнительно)
 	uint64_t mask = currentState.figures[PAWN] & currentState.white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2081,7 +2082,7 @@ double BitBoard::newEvaluateAll() {
 	result += (isolated_pawn_map[compressVertical(currentState.white_bit_mask & currentState.figures[PAWN])] * ISOLATED_PAWN_BONUS);
 	result -= (isolated_pawn_map[compressVertical(currentState.black_bit_mask & currentState.figures[PAWN])] * ISOLATED_PAWN_BONUS);
 
-	//Безопасность короля - пешечный щит
+	//Безопасность короля - пешечный щит (не исп.)
 	/*uint64_t white_king_pos = currentState.figures[KING] & currentState.white_bit_mask;
 
 	if(white_king_pos & ((horizontal[0] | horizontal[1]) & ~(vertical[3] | vertical[4]))) {
@@ -2096,7 +2097,7 @@ double BitBoard::newEvaluateAll() {
 		result -= (2 * popcount64(bitboard[PAWN | BLACK][black_king_pos / 8][black_king_pos % 8] | capturePawnMap[BLACK][black_king_pos]) * stage_game);
 	}*/
 
-	//Форпосты для коней
+	//Форпосты для коней (не исп.)
 
 	/*uint64_t forposts_white = 0;
 	uint64_t forposts_black = 0;
@@ -2205,10 +2206,8 @@ double BitBoard::newEvaluateAll() {
 			   ((whiteBishopsOnWhiteCells - blackBishopsOnWhiteCells) * pawnsOnBlackCells));
 			   
 
-	return result;
-
-	//Безопасность короля (не протестировано, поэтому пока не используется)
-	result += kingSafetyEvaluate();
+	//Безопасность короля (не исп.)
+	//result += kingSafetyEvaluate();
 
 	return result;
 }
