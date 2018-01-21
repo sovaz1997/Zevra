@@ -160,5 +160,4 @@ const double RookMobilityBonus   = 5;
 const double QueenMobilityBonus  = 4;
 const double KingMobilityBonus   = 1;
 
-
 #endif
