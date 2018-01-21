@@ -2128,8 +2128,6 @@ double BitBoard::newEvaluateAll() {
 	mask = currentState.figures[KING] & currentState.white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-
-		//result += (kingMiddleGameMatr[7 - pos / 8][pos % 8] * stage_game + kingEndGameMatr[7 - pos / 8][pos % 8] * (1 - stage_game));
 		result += kingPST[7 - pos / 8][pstIndex[pos % 8]].getScore(stage_game);
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
@@ -2137,10 +2135,7 @@ double BitBoard::newEvaluateAll() {
 	mask = currentState.figures[KING] & currentState.black_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-
-		//result -= (kingMiddleGameMatr[pos / 8][pos % 8] * stage_game + kingEndGameMatr[pos / 8][pos % 8] * (1 - stage_game));
 		result -= kingPST[pos / 8][pstIndex[pos % 8]].getScore(stage_game);
-
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
