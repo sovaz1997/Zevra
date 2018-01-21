@@ -47,7 +47,6 @@ const uint8_t TRANSFORMATION_MV = 6;
 const uint64_t reverse_color_const = 54387554323743313;
 
 // Веса фигур Mg и Eg
-
 const Score PAWN_EV = S(100, 140);
 const Score KNIGHT_EV = S(400, 420);
 const Score BISHOP_EV = S(430, 460);
@@ -59,24 +58,11 @@ const int FIXED_DEPTH = 0; //фикс. глубина
 const int FIXED_TIME = 1; //фикс. время на ход
 const int TOURNAMENT = 2; //турнирный режим
 
-const int REAL_EV = 0;
-const int BETA_CUT_EV = 1;
-const int ALPHA_CUT_EV = 2;
-
 //Типы оценки в хеш-таблице
 const int EMPTY = 0;
 const int EXACT = 1;
 const int ALPHA = 2;
 const int BETA = 3;
-
-const int MIN_DEPTH = 2;
-/*
-// Веса всех фигур
-const double ALL_MATERIAL = 16 * PAWN_EV
-+	4 * KNIGHT_EV
-+	4 * BISHOP_EV
-+	4 * ROOK_EV
-+	QUEEN_EV;*/
 
 // Таблицы PST
 
