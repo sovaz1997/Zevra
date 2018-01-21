@@ -2021,15 +2021,15 @@ double BitBoard::newEvaluateAll() {
 	int black_queen_count = popcount64(currentState.figures[QUEEN] & currentState.black_bit_mask);
 
 	//Материал
-	result += (white_pawn_count - black_pawn_count) * PAWN_EV;
-	result += white_knight_count * KNIGHT_EV;
-	result -= black_knight_count * KNIGHT_EV;
-	result += white_bishop_count * BISHOP_EV;
-	result -= black_bishop_count * BISHOP_EV;
-	result += white_rook_count * ROOK_EV;
-	result -= black_rook_count * ROOK_EV;
-	result += white_queen_count * QUEEN_EV;
-	result -= black_queen_count * QUEEN_EV;
+	result += (white_pawn_count - black_pawn_count) * PAWN_EV.getScore(stage_game);
+	result += white_knight_count * KNIGHT_EV.getScore(stage_game);
+	result -= black_knight_count * KNIGHT_EV.getScore(stage_game);
+	result += white_bishop_count * BISHOP_EV.getScore(stage_game);
+	result -= black_bishop_count * BISHOP_EV.getScore(stage_game);
+	result += white_rook_count * ROOK_EV.getScore(stage_game);
+	result -= black_rook_count * ROOK_EV.getScore(stage_game);
+	result += white_queen_count * QUEEN_EV.getScore(stage_game);
+	result -= black_queen_count * QUEEN_EV.getScore(stage_game);
 
 	//Бонус за 2-х слонов
 	result += 30 * (bool)((currentState.figures[BISHOP] & currentState.white_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.white_bit_mask & blackCells));

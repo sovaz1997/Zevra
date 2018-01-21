@@ -48,18 +48,11 @@ const uint64_t reverse_color_const = 54387554323743313;
 
 // Веса фигур Mg и Eg
 
-const double k = 1; //коэффициент масштабирования
-
-const double PAWN_EV = 100 * k;
-const double KNIGHT_EV = 320 * k;
-const double BISHOP_EV = 330 * k;
-const double ROOK_EV = 550 * k;
-const double QUEEN_EV = 1100 * k;
-
-const double ENDGAME_PAWN_EV = 120 * k;
-const double ENDGAME_QUEEN_EV = 1000 * k;
-const double ENDGAME_KNIGHT_EV = 330 * k;
-
+const Score PAWN_EV = S(100, 140);
+const Score KNIGHT_EV = S(400, 420);
+const Score BISHOP_EV = S(430, 460);
+const Score ROOK_EV = S(650, 700);
+const Score QUEEN_EV = S(1100, 1200);
 
 //Типы ходов
 const int FIXED_DEPTH = 0; //фикс. глубина
@@ -77,13 +70,13 @@ const int ALPHA = 2;
 const int BETA = 3;
 
 const int MIN_DEPTH = 2;
-
+/*
 // Веса всех фигур
 const double ALL_MATERIAL = 16 * PAWN_EV
 +	4 * KNIGHT_EV
 +	4 * BISHOP_EV
 +	4 * ROOK_EV
-+	QUEEN_EV;
++	QUEEN_EV;*/
 
 // Таблицы PST
 
@@ -146,6 +139,7 @@ const double queenMatr[BOARD_SIZE][BOARD_SIZE] {
 {-20, -10, -10, -5, -5, -10, -10, -20}
 };
 
+//Короли
 const Score kingPST[BOARD_SIZE][BOARD_SIZE / 2] {
 {S(-30, -50), S(-40, -40), S(-40, -30), S(-50, -20)},
 {S(-30, -30), S(-40, -20), S(-40, -10), S(-50,   0)},
