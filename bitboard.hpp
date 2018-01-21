@@ -109,6 +109,9 @@ public:
 	size_t stress;
 
 	void bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
+	
+	double bitBoardMobilityEval(uint8_t color);
+	
 	void bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
 	void move(BitMove& mv);
 	void goBack();

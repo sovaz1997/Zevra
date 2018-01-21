@@ -3,7 +3,7 @@ BINDIR = $(PREFIX)/bin
 
 CC = g++
 CFLAGS = -std=c++14 -m64 -Ofast -DNDEBUG -Wall -pedantic -flto -march=native
-FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o  magic.o option.o constants.o
+FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o  magic.o option.o constants.o score.o
 NAME = zevra
 
 all: constants.hpp $(FILES)
@@ -51,6 +51,10 @@ movegenerator.o: game.hpp movegenerator.cpp
 
 newbitmove.o: newbitmove.hpp newbitmove.cpp
 	$(CC) $(CFLAGS) -c newbitmove.cpp
+
+
+score.o: score.hpp score.cpp
+	$(CC) $(CFLAGS) -c score.cpp
 
 gamethread.o: game.hpp gamethread.cpp
 	$(CC) $(CFLAGS) -c gamethread.cpp

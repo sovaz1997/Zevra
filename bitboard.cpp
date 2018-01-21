@@ -1201,8 +1201,70 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 			possibleMoves &= (UINT64_MAX ^ vec1_cells[to]);
 		}
 	}
+}
 
-	//std::cout << moveArray.num_attacks << " " << counter_moves << std::endl;
+double BitBoard::bitBoardMobilityEval(uint8_t color) {
+	uint64_t possibleMoves, mask, emask;
+
+	double score = 0;
+
+	if(color == WHITE) {
+		mask = currentState.white_bit_mask;
+		emask = currentState.black_bit_mask;
+	} else {
+		mask = currentState.black_bit_mask;
+		emask = currentState.white_bit_mask;
+	}
+
+	//Ладьи
+	uint64_t rook = currentState.figures[ROOK] & mask;
+	while(rook != 0) {
+		uint8_t pos = firstOne(rook);
+		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
+		rook &= (UINT64_MAX ^ vec1_cells[pos]);
+		score += 5 *  popcount64(possibleMoves);
+	}
+
+	//Слоны
+	uint64_t bishop = currentState.figures[BISHOP] & mask;
+	while(bishop != 0) {
+		uint8_t pos = firstOne(bishop);
+		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
+		bishop &= (UINT64_MAX ^ vec1_cells[pos]);
+		score += 5 * popcount64(possibleMoves);
+	}
+
+	//Ферзи
+	uint64_t queen = currentState.figures[QUEEN] & mask;
+	while(queen != 0) {
+		uint8_t pos = firstOne(queen);
+		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
+		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX));
+		queen &= (UINT64_MAX ^ vec1_cells[pos]);
+		score += 4 * popcount64(possibleMoves);
+	}
+
+	//Кони
+	uint64_t knight = currentState.figures[KNIGHT] & mask;
+	while(knight != 0) {
+		uint8_t pos = firstOne(knight);
+		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (currentState.figures[KING] & emask));
+		knight &= (UINT64_MAX ^ vec1_cells[pos]);
+		possibleMoves &= (UINT64_MAX ^ emask);
+		score += 3 * popcount64(possibleMoves);
+	}
+
+	//Короли
+	uint64_t king = currentState.figures[KING] & mask;
+	while(king != 0) {
+		uint8_t pos = firstOne(king);
+		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (currentState.figures[KING] & emask));
+		king &= (UINT64_MAX ^ vec1_cells[pos]);
+		possibleMoves &= (UINT64_MAX ^ emask);
+		score += 1 * popcount64(possibleMoves);
+	}
+
+	return score;
 }
 
 void BitBoard::move(BitMove& mv) {
@@ -2066,14 +2128,19 @@ double BitBoard::newEvaluateAll() {
 	mask = currentState.figures[KING] & currentState.white_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		result += (kingMiddleGameMatr[7 - pos / 8][pos % 8] * stage_game + kingEndGameMatr[7 - pos / 8][pos % 8] * (1 - stage_game));
+
+		//result += (kingMiddleGameMatr[7 - pos / 8][pos % 8] * stage_game + kingEndGameMatr[7 - pos / 8][pos % 8] * (1 - stage_game));
+		result += kingPST[7 - pos / 8][pstIndex[pos % 8]].getScore(stage_game);
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 	
 	mask = currentState.figures[KING] & currentState.black_bit_mask;
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		result -= (kingMiddleGameMatr[pos / 8][pos % 8] * stage_game + kingEndGameMatr[pos / 8][pos % 8] * (1 - stage_game));
+
+		//result -= (kingMiddleGameMatr[pos / 8][pos % 8] * stage_game + kingEndGameMatr[pos / 8][pos % 8] * (1 - stage_game));
+		result -= kingPST[pos / 8][pstIndex[pos % 8]].getScore(stage_game);
+
 		mask &= (UINT64_MAX ^ vec1_cells[pos]);
 	}
 
@@ -2204,6 +2271,10 @@ double BitBoard::newEvaluateAll() {
 	int blackBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.black_bit_mask);
 	result += 5 * (((whiteBishopsOnBlackCells - blackBishopsOnBlackCells) * pawnsOnWhiteCells) +
 			   ((whiteBishopsOnWhiteCells - blackBishopsOnWhiteCells) * pawnsOnBlackCells));
+
+	//Бонус мобильности
+	result += bitBoardMobilityEval(WHITE);
+	result -= bitBoardMobilityEval(BLACK);
 			   
 
 	//Безопасность короля (не исп.)
