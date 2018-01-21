@@ -153,4 +153,12 @@ const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
 // Таблица отсечений Razoring (допуск отсечки) по глубине от 0-й до 9-й
 const double RAZOR_MARGIN[10] = {0, 10, 50, 200, 500, 750, 1000, 1500, 2000, 2500};
 
+//Бонусы мобильности фигур
+const double KnightMobilityBonus = 3;
+const double BishopMobilityBonus = 5;
+const double RookMobilityBonus   = 5;
+const double QueenMobilityBonus  = 4;
+const double KingMobilityBonus   = 1;
+
+
 #endif
