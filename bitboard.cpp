@@ -1206,42 +1206,56 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 	uint64_t possibleMoves, mask, emask;
 
+	uint8_t enemyColor;
+
 	double score = 0;
 
 	if(color == WHITE) {
 		mask = currentState.white_bit_mask;
 		emask = currentState.black_bit_mask;
+		enemyColor = BLACK;
 	} else {
 		mask = currentState.black_bit_mask;
 		emask = currentState.white_bit_mask;
+		enemyColor = WHITE;
 	}
+
+
+	uint64_t enemyKingPos = currentState.figures[KING] & emask;
+	uint8_t pos = firstOne(enemyKingPos);
+	uint64_t enemyKingPossibleMoves = bitboard[KING | enemyColor][pos / 8][pos % 8] & ~mask & ~emask;
+
+	int kingDanger = 0;
 
 	//Ладьи
 	uint64_t rook = currentState.figures[ROOK] & mask;
 	while(rook != 0) {
 		uint8_t pos = firstOne(rook);
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
+		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] & emask) ^ UINT64_MAX) & (mask ^ UINT64_MAX);
 		rook &= (UINT64_MAX ^ vec1_cells[pos]);
 		score += RookMobilityBonus[(int)popcount64(possibleMoves)];
+		kingDanger += 3 * popcount64(possibleMoves & enemyKingPossibleMoves);
 	}
 
 	//Слоны
 	uint64_t bishop = currentState.figures[BISHOP] & mask;
 	while(bishop != 0) {
 		uint8_t pos = firstOne(bishop);
-		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
+		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] & emask) ^ UINT64_MAX) & (mask ^ UINT64_MAX);
 		bishop &= (UINT64_MAX ^ vec1_cells[pos]);
 		score += BishopMobilityBonus[(int)popcount64(possibleMoves)];
+		kingDanger += 2 * popcount64(possibleMoves & enemyKingPossibleMoves);
 	}
 
 	//Ферзи
 	uint64_t queen = currentState.figures[QUEEN] & mask;
 	while(queen != 0) {
 		uint8_t pos = firstOne(queen);
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX);
-		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] ^ emask) ^ UINT64_MAX) & (UINT64_MAX ^ emask) & (mask ^ UINT64_MAX));
+		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] & emask) ^ UINT64_MAX) & (mask ^ UINT64_MAX);
+		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & (currentState.white_bit_mask | currentState.black_bit_mask) & (UINT64_MAX ^ vec1_cells[pos])) & ((currentState.figures[KING] & emask) ^ UINT64_MAX) & (mask ^ UINT64_MAX));
 		queen &= (UINT64_MAX ^ vec1_cells[pos]);
 		score += QueenMobilityBonus[(int)popcount64(possibleMoves)];
+		kingDanger += 5 * popcount64(possibleMoves & enemyKingPossibleMoves);
 	}
 
 	//Кони
@@ -1250,10 +1264,11 @@ double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 		uint8_t pos = firstOne(knight);
 		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & (UINT64_MAX ^ mask) & (UINT64_MAX ^ (currentState.figures[KING] & emask));
 		knight &= (UINT64_MAX ^ vec1_cells[pos]);
-		possibleMoves &= (UINT64_MAX ^ emask);
 		score += KnightMobilityBonus[(int)popcount64(possibleMoves)];
+		kingDanger += 2 * popcount64(possibleMoves & enemyKingPossibleMoves);
 	}
 
+	score += SafetyTable[std::min(99, kingDanger)];
 	return score;
 }
 
