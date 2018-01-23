@@ -107,7 +107,6 @@ public:
 	void makeNullMove();
 	void unMakeNullMove();
 	int64_t getEvaluate();
-	void totalStaticEvaluate();
 	uint8_t getFigure(uint8_t y, uint8_t x);
 	int getFiguresCount();
 	bool inCheck(uint8_t color);
@@ -123,8 +122,6 @@ public:
 	std::vector<uint8_t> isolated_pawn_map;
 	
 	double newEvaluateAll();
-	int kingSafetyEvaluate();
-	int cellAttacks(int y, int x, uint8_t colorAttackers);
 	MoveArray moveArray;
 
 	uint8_t compressVertical(uint64_t value);

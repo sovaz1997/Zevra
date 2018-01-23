@@ -1204,6 +1204,9 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 }
 
 double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
+	/*
+	Функция оценивает мобильность фигур и безопасность короля одновременно, т. к. это позволяет не замедлять работу оценочной функции
+	*/
 	uint64_t possibleMoves, mask, emask;
 
 	uint8_t enemyColor;
@@ -2138,13 +2141,9 @@ double BitBoard::newEvaluateAll() {
 	result += 5 * (((whiteBishopsOnBlackCells - blackBishopsOnBlackCells) * pawnsOnWhiteCells) +
 			   ((whiteBishopsOnWhiteCells - blackBishopsOnWhiteCells) * pawnsOnBlackCells));
 
-	//Бонус мобильности
+	//Бонус мобильности + Оценка безопасности короля
 	result += bitBoardMobilityEval(WHITE, stage_game);
 	result -= bitBoardMobilityEval(BLACK, stage_game);
-			   
-
-	//Безопасность короля (не исп.)
-	//result += kingSafetyEvaluate();
 
 	return result;
 }
@@ -2170,161 +2169,6 @@ uint8_t BitBoard::compressVertical(uint64_t value) {
 	}
 
 	return result;
-}
-
-int BitBoard::kingSafetyEvaluate() {
-	int result = 0;
-	int kingSafety = 0;
-	int kingPosCell = firstOne(currentState.figures[KING] & currentState.white_bit_mask);
-
-	uint64_t kingMovePossible = (bitboard[KING | WHITE][kingPosCell / 8][kingPosCell % 8]);// & ~(/*currentState.white_bit_mask | */currentState.black_bit_mask));
-
-	while(kingMovePossible) {
-		int pos = firstOne(kingMovePossible);
-		kingMovePossible &= ~(vec1_cells[pos]);
-		kingSafety += cellAttacks(pos / 8, pos % 8, WHITE);
-	}
-
-	result -= SafetyTable[std::min(99, kingSafety)];
-	kingSafety = 0;
-
-	kingPosCell = firstOne(currentState.figures[KING] & currentState.black_bit_mask);
-	kingMovePossible = (bitboard[KING | BLACK][kingPosCell / 8][kingPosCell % 8]);// & ~(currentState.white_bit_mask/* | currentState.black_bit_mask*/));
-
-	while(kingMovePossible) {
-		int pos = firstOne(kingMovePossible);
-		kingMovePossible &= ~(vec1_cells[pos]);
-		kingSafety += cellAttacks(pos / 8, pos % 8, BLACK);
-	}
-
-	result += SafetyTable[std::min(99, kingSafety)];
-
-	return result;
-}
-
-int BitBoard::cellAttacks(int y, int x, uint8_t colorAttackers) {
-	uint64_t mask, emask;
-
-	int attackResult = 0;
-
-	if(colorAttackers == WHITE) {
-		mask = currentState.white_bit_mask & (UINT64_MAX ^ (currentState.figures[KING] & currentState.white_bit_mask));
-		emask = currentState.black_bit_mask & (UINT64_MAX ^ (currentState.figures[KING] & currentState.black_bit_mask));
-	} else {
-		mask = currentState.black_bit_mask & (UINT64_MAX ^ (currentState.figures[KING] & currentState.black_bit_mask));
-		emask = currentState.white_bit_mask & (UINT64_MAX ^ (currentState.figures[KING] & currentState.white_bit_mask));
-	}
-
-	uint64_t kingPos = vec2_cells[y][x];
-	uint8_t kingCoord = y * 8 + x;
-
-	uint64_t figure;
-	figure = firstOne(plus8[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	
-	if(plus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK]) & emask)) {
-		attackResult += 3;
-	}
-
-	if(plus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	figure = firstOne(plus1[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(plus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK]) & emask)) {
-		attackResult += 3;
-	}
-
-	if(plus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	figure = lastOne(minus8[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(minus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK]) & emask)) {
-		attackResult += 3;
-	}
-
-	if(minus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	figure = lastOne(minus1[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(minus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK]) & emask)) {
-		attackResult += 3;
-	}
-
-	if(minus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	figure = firstOne(plus7[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(plus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-
-	}
-
-	if(plus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP]) & emask)) {
-		attackResult += 2;
-
-	}
-
-	figure = firstOne(plus9[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(plus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	if(plus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP]) & emask)) {
-		attackResult += 2;
-	}
-
-	figure = lastOne(minus7[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(minus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	if(minus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP]) & emask)) {
-		attackResult += 2;
-	}
-
-	figure = lastOne(minus9[kingCoord] & (mask | emask));
-	figure = vec1_cells[figure];
-	if(minus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[QUEEN]) & emask)) {
-		attackResult += 5;
-	}
-
-	if(minus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP]) & emask)) {
-		attackResult += 2;
-	}
-
-	if(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.figures[KNIGHT] & emask) {
-		attackResult += 2;
-	}
-
-	if(colorAttackers == WHITE) {
-		if(((currentState.figures[PAWN] & emask) >> 9) & (UINT64_MAX ^ vertical[7]) & kingPos) {
-			attackResult += 2;
-		}
-
-		if(((currentState.figures[PAWN] & emask) >> 7) & (UINT64_MAX ^ vertical[0]) & kingPos) {
-			attackResult += 2;
-		}
-	} else {
-		if(((currentState.figures[PAWN] & emask) << 9) & (UINT64_MAX ^ vertical[0]) & kingPos) {
-			attackResult += 2;
-		}
-
-		if(((currentState.figures[PAWN] & emask) << 7) & (UINT64_MAX ^ vertical[7]) & kingPos) {
-			attackResult += 2;
-		}
-	}
-
-	return attackResult;
 }
 
 void BitBoard::magicConstantsSet() {
