@@ -54,7 +54,10 @@ void Game::goFixedDepth() {
 	}
 }
 
-void Game::goFixedTime(int tm, bool tournamentTimeControll) {
+void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
+	tm -= option.moveOverhead;
+	tm = std::max(tm, (int64_t)10);
+
 	++hashAge;
 	stopped = false;
 

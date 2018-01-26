@@ -44,7 +44,7 @@ private:
 	void initEngine();
 	bool uciHandler(std::string str);
 	void goFixedDepth();
-	void goFixedTime(int time, bool tournamentTimeControll);
+	void goFixedTime(int64_t time, bool tournamentTimeControll);
 	void goTournament();
 	void clearCash();
 	bool move_comparator(BitMove& m1, BitMove&m2);
@@ -75,7 +75,7 @@ private:
 
 	//турнирный режим
 
-	double wtime, btime, winc, binc;
+	int64_t wtime, btime, winc, binc;
 	uint64_t movestogo;
 	bool movestogoEnable;
 	uint64_t combinations;

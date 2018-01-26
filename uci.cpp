@@ -54,13 +54,13 @@ bool Game::uciHandler(std::string str) {
 				winc = 0, binc = 0, movestogo = 0, movestogoEnable = false;
 				for(unsigned int i = 1; i < cmd.size(); ++i) {
 					if(cmd[i] == "wtime") {
-						wtime = std::stoi(cmd[i + 1]);
+						wtime = std::stoll(cmd[i + 1]);
 					} else if(cmd[i] == "btime") {
-						btime = std::stoi(cmd[i + 1]);
+						btime = std::stoll(cmd[i + 1]);
 					} else if(cmd[i] == "winc") {
-						winc = std::stoi(cmd[i + 1]);
+						winc = std::stoll(cmd[i + 1]);
 					} else if(cmd[i] == "binc") {
-						binc = std::stoi(cmd[i + 1]);
+						binc = std::stoll(cmd[i + 1]);
 					} else if(cmd[i] == "movestogo") {
 						movestogoEnable = true;
 						movestogo = std::stoi(cmd[i+1]);
@@ -116,19 +116,7 @@ bool Game::uciHandler(std::string str) {
 				std::cout << "; speed: " << (int64_t)((double)count / (((double)clock() - (double)st) / (double)CLOCKS_PER_SEC)) << std::endl;
 			}
 		} else if(cmd[0] == "setoption" && cmd[1] == "name") {
-			if(cmd[2] == "nullmove" && cmd[3] == "value") {
-				if(cmd[4] == "true") {
-					option.nullMovePruningEnable = true;
-				} else if(cmd[4] == "false") {
-					option.nullMovePruningEnable = false;
-				}
-			} else if(cmd[2] == "checkExtensions" && cmd[3] == "value") {
-				if(cmd[4] == "true") {
-					option.checkExtensions = true;
-				} else if(cmd[4] == "false") {
-					option.checkExtensions = false;
-				}
-			} else if(cmd[2] == "Clear" && cmd[3] == "Hash") {
+			if(cmd[2] == "Clear" && cmd[3] == "Hash") {
 				clearCash();
 				std::cout << "info hashfull 0" << std::endl;
 			} else if(cmd[2] == "Hash" && cmd[3] == "value") {
@@ -138,6 +126,10 @@ bool Game::uciHandler(std::string str) {
 				hash_size = std::max(hash_size, option.min_hash_size);
 
 				setHashSize(hash_size);
+			}  else if(cmd[2] == "Move" && cmd[3] == "Overhead" && cmd[4] == "value") {
+				option.moveOverhead = std::stoi(cmd[5]);
+				option.moveOverhead = std::min(option.moveOverhead, option.maxMoveOverhead);
+				option.moveOverhead = std::max(option.moveOverhead, option.minMoveOverhead);
 			} else if(cmd[2] == "UCI_AnalyseMode" && cmd[3] == "value") {
 				if(cmd[4] == "true") {
 					option.UCI_AnalyseMode = true;

@@ -102,7 +102,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool onPV = (beta - alpha) > 1;
 
-	if(option.nullMovePruningEnable && !cut && !checkMateNode) { //Null Move Pruning
+	/*if(option.nullMovePruningEnable && !cut && !checkMateNode) { //Null Move Pruning
 		int R = 2 + depth / 6;
 		
 		if(!inNullMove && !extended && !inCheck && !onPV && depth > R && (b.popcount64(b.currentState.white_bit_mask | b.currentState.black_bit_mask) > 6) && real_depth > 0) {
@@ -116,7 +116,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 			b.unMakeNullMove();
 		}
-	}
+	}*/
 
 	int opposiing_pieces = (color == WHITE ? b.popcount64(b.currentState.black_bit_mask) : b.popcount64(b.currentState.white_bit_mask));
 
@@ -183,7 +183,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 
 		extensions = 0;
-		if((b.inCheck(enemyColor) && option.checkExtensions)) {
+		if(b.inCheck(enemyColor)) {
 			++extensions;
 		}
 
