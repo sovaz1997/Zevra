@@ -176,11 +176,13 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		++num_moves;
 
-		if(real_depth == 0 && depth >= 2) {
+		if(real_depth == 0 && depth >= 12) {
 			if((rule != FIXED_TIME || timer.getTime() < time) && !stopped) {
 				std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << std::endl;
 			}	
 		}
+
+		
 
 		extensions = 0;
 		if(b.inCheck(enemyColor)) {
@@ -192,6 +194,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		double reduction = 0;
 
 		if(!b.inCheck(enemyColor) && !extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck) {
+			/*if(eval + PAWN_EV.mg <= alpha && nextDepth <= 2) {
+				b.goBack();
+				return beta;
+			}*/
+
 			++low_moves_count;
 
 			if(low_moves_count > 3) {
@@ -373,9 +380,9 @@ bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move
 		return false;
 	}
 
-	if(score == 0) {
+	/*if(score == 0) {
 		return false;
-	}
+	}*/
 
 	Hash* hash = &boardHash[key & hash_cutter];
 

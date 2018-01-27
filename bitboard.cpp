@@ -1899,6 +1899,14 @@ double BitBoard::newEvaluateAll() {
 	int white_queen_count = popcount64(currentState.figures[QUEEN] & currentState.white_bit_mask);
 	int black_queen_count = popcount64(currentState.figures[QUEEN] & currentState.black_bit_mask);
 
+	uint64_t occu = (currentState.white_bit_mask | currentState.black_bit_mask);
+
+	if(popcount64(occu) == 3) {
+		if(white_bishop_count == 1 || black_bishop_count == 1 || white_knight_count == 1 || black_knight_count == 1) {
+			return 0;
+		}
+	}
+
 	//Материал
 	result += (white_pawn_count - black_pawn_count) * PAWN_EV.getScore(stage_game);
 	result += white_knight_count * KNIGHT_EV.getScore(stage_game);
