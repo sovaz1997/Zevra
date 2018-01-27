@@ -152,7 +152,7 @@ void Game::goTournament() {
 
 	if(movestogoEnable) {
 		k = movestogo;
-		goFixedTime(tm / k + inc / 2, true);
+		goFixedTime(tm / (k + 1) + inc / 2, true);
 	} else {
 		k = 40 - (32 - figuresNumber);
 		goFixedTime(tm / k + inc / 2 - 100, true);
