@@ -54,7 +54,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	
 	bool checkMateNode = (std::abs(beta) >= WHITE_WIN - 100);
 
-	if(depth > 6) {
+	if(depth > 2) {
 		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
 			return 0;
 		}
@@ -176,7 +176,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 		++num_moves;
 
-		if(real_depth == 0 && depth >= 12) {
+		if(real_depth == 0 && depth >= 2) {
 			if((rule != FIXED_TIME || timer.getTime() < time) && !stopped) {
 				std::cout << "info currmove " << moveArray[real_depth].moveArray[i].getMoveString() << " currmovenumber " << num_moves << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << std::endl;
 			}	
