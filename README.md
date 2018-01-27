@@ -19,7 +19,7 @@ Zevra - шахматный движок с протоколом UCI. На дан
 
 Эвристики:
 + Late Move Reductions;
-+ razoring;
++ Razoring;
 + Check extensions;
 + Hash table (resizeble);
 + History heuristic;
