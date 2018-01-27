@@ -1,5 +1,5 @@
 # Zevra
-Zevra - шахматный движок моей разработки. Поддерживает UCI.  
+Zevra - шахматный движок с протоколом UCI. На данный момент имеет рейтинг ~2150-2250 пунктов ЭЛО (отн. CCRL 40/5).
 
 Команды UCI:
 + `position [startpos/fen] [moves]` - задать позицию;
@@ -19,11 +19,9 @@ Zevra - шахматный движок моей разработки. Подд�
 
 Эвристики:
 + Late Move Reductions;
-+ futility pruning (optional, enable by default);
-+ razoring (optional, enable by default);
-+ Null Move (optional, disable by default);
-+ Check extensions (optional, enable by default);
-+ Hash table (no resizeble);
++ razoring;
++ Check extensions;
++ Hash table (resizeble);
 + History heuristic;
 + Two killers + Mate killer;
 + Capture sorting (MVV-LVA).
