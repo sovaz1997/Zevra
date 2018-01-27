@@ -595,11 +595,6 @@ void BitBoard::preInit() {
 	}
 
 	blackCells = ~whiteCells;
-
-	//Материальный баланс
-	for(int i = 0; i < 236196; ++i) {
-		
-	}
 }
 
 void BitBoard::magicInit() {
