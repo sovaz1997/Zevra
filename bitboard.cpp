@@ -273,7 +273,6 @@ uint8_t BitBoard::lastOne(uint64_t mask) {
 }
 
 void BitBoard::preInit() {
-
 	history = std::vector<GoBack> (10000);
 	third_repeat = std::vector<int> (pow(2, hash_width), 0);
 	history_iterator = 0;
@@ -595,7 +594,12 @@ void BitBoard::preInit() {
 		}
 	}
 
-	blackCells = ~whiteCells;	
+	blackCells = ~whiteCells;
+
+	//Материальный баланс
+	for(int i = 0; i < 236196; ++i) {
+		
+	}
 }
 
 void BitBoard::magicInit() {
