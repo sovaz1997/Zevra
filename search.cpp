@@ -166,8 +166,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}	
 		}
 
-		
-
 		extensions = 0;
 		if(b.inCheck(enemyColor)) {
 			++extensions;

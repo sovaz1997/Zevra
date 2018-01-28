@@ -11,7 +11,6 @@
 
 #include "score.hpp"
 
-//#define S SCORE
 using S = Score;
 
 bool is_input_available();
@@ -139,26 +138,20 @@ const Score kingPST[BOARD_SIZE][BOARD_SIZE / 2] {
 
 const int pstIndex[8] = {0, 1, 2, 3, 3, 2, 1, 0};
 
-// Бонусы
-const double PASSED_PAWN_BONUS = 50; // проходная пешка
-const double DUAL_PAWN_BONUS = -15; // сдвоенные пешки
-const double ISOLATED_PAWN_BONUS = -15; // изолированные пешки
-const double FORPOST_BONUS = 5; //форпост для коней (не исп.)
-const double promotePawnBonus[BOARD_SIZE] = {0, 10, 20, 30, 40, 60, 80, 0}; //Бонус проходных пешек (вместо таблицы PST)
-
-// Безопасность короля
-const double attack_bonus[7] = {0, 1, 3, 6, 10, 14, 20};
-const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
-
 // Таблица отсечений Razoring (допуск отсечки) по глубине от 0-й до 9-й
 const double RAZOR_MARGIN[10] = {0, 10, 50, 200, 500, 750, 1000, 1500, 2000, 2500};
 
+// Бонусы
+const double IsolatedPawnBonus = -15; // изолированные пешки
+const double DoubleBishopsBonus = 30; // бонус за 2-х слонов
+const double PassedPawnBonus[BOARD_SIZE] = {0, 10, 20, 30, 40, 60, 80, 0}; //Бонус проходных пешек
 const double KnightMobilityBonus[9] = {-44, -32, -31, -4, 3, 7, 14, 17, 20};
 const double BishopMobilityBonus[14] = {-31, -12, 5, 15, 18, 23, 26, 30, 32, 35, 38, 41, 44, 47};
 const double RookMobilityBonus[15] = {-35, -30, -25, -20, -10, -5, 5, 10, 15, 23, 30, 36, 42, 50};
 const double QueenMobilityBonus[28] = {-15, -10, 3, 4, 6, 9, 12, 15, 20, 25, 30, 35, 38, 41, 44, 47, 50, 52, 54, 56, 58, 60, 62, 64, 65, 66, 67, 68};
 
-//Таблица для оценки безопасности короля
+// Безопасность короля
+const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};
 const int SafetyTable[100] = {
 		0,  0,   1,   2,   3,   5,   7,   9,  12,  15,
 	18,  22,  26,  30,  35,  39,  44,  50,  56,  62,
