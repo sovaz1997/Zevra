@@ -10,17 +10,36 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return 0;
 	}
 
-	if(currentHash->flag == EXACT && depth == 0 && currentHash->key == hash && real_depth > 0 && currentHash->depth >= depth && b.currentState.hash_enable) {
-		double score = currentHash->score;
+	if((currentHash->flag != EMPTY && currentHash->key == hash) && real_depth > 2) {
+		if(real_depth > 0 && currentHash->depth >= depth) {
+			double score = currentHash->score;
 
-		if(score > WHITE_WIN - 100) {
-			score -= real_depth;
-		} else if(score < -WHITE_WIN + 100) {
-			score += real_depth;
+			if(score > WHITE_WIN - 100) {
+				score -= real_depth;
+			} else if(score < -WHITE_WIN + 100) {
+				score += real_depth;
+			}
+
+			if(currentHash->flag == BETA) {
+				if(score >= beta) {
+					return beta;
+				}
+			} else if(currentHash->flag == ALPHA) {
+				if(score <= alpha) {
+					score = alpha;
+				}
+			} else if(currentHash->flag == EXACT) {
+				if(score >= beta) {
+					return score;
+				}
+			}
+
+			if(alpha >= beta) {
+				return score;
+			}
 		}
-
-		return score;
 	}
+
 
 	if(depth <= 0 || real_depth >= 100) {
 		return quies(b, alpha, beta, rule, real_depth);
@@ -71,31 +90,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	int tmp;
 
-	if((currentHash->flag != EMPTY && currentHash->key == hash)) {
-		if(real_depth > 0 && currentHash->depth >= depth) {
-			double score = currentHash->score;
-
-			if(score > WHITE_WIN - 100) {
-				score -= real_depth;
-			} else if(score < -WHITE_WIN + 100) {
-				score += real_depth;
-			}
-
-			if(currentHash->flag == BETA) {
-				if(score >= beta) {
-					return beta;
-				}
-			} else if(currentHash->flag == ALPHA) {
-				if(score <= alpha) {
-					score = alpha;
-				}
-			} else if(currentHash->flag == EXACT) {
-				if(score >= beta) {
-					return score;
-				}
-			}
-		}
-	}
 
 	bool inCheck;
 	inCheck = b.inCheck(color);
