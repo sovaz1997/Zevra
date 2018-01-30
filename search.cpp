@@ -10,6 +10,8 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return 0;
 	}
 
+	int64_t oldAlpha = alpha;
+
 	if((currentHash->flag != EMPTY && currentHash->key == hash) && real_depth > 2) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			double score = currentHash->score;
@@ -21,17 +23,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 
 			if(currentHash->flag == BETA) {
-				if(score >= beta) {
-					return beta;
-				}
+				alpha = std::max((int64_t)alpha, (int64_t)score);
 			} else if(currentHash->flag == ALPHA) {
-				if(score <= alpha) {
-					score = alpha;
-				}
+				beta = std::min((int64_t)beta, (int64_t)score);
 			} else if(currentHash->flag == EXACT) {
-				if(score >= beta) {
-					return score;
-				}
+				return score;
 			}
 
 			if(alpha >= beta) {
@@ -39,7 +35,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 			}
 		}
 	}
-
 
 	if(depth <= 0 || real_depth >= 100) {
 		return quies(b, alpha, beta, rule, real_depth);
@@ -70,7 +65,6 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	int nextDepth = depth - 1;
 	int extensions = 0;
 
-	
 	bool checkMateNode = (std::abs(beta) >= WHITE_WIN - 100);
 
 	if(depth > 2) {
@@ -240,6 +234,10 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		} else {
 			return 0;
 		}
+	}
+
+	if(alpha == oldAlpha) {
+		recordHash(depth, eval, ALPHA, hash, local_move, real_depth);
 	}
 
 	if(real_depth == 0) {
