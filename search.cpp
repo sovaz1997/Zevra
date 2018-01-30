@@ -170,6 +170,14 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				reduction = 1 + low_moves_count / 6;
 				nextDepth -= reduction;
 			}
+
+			if(nextDepth <= 2) {
+				if(-b.getEvaluate() + PAWN_EV.mg / 2 <= alpha) {
+					++nodesCounter;
+					b.goBack();
+					continue;
+				}
+			}
 		}
 
 		if(num_moves == 1) {

@@ -81,7 +81,6 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 	hasBestMove = true;
 	max_depth = 1;
 
-	
 	std::vector<BitMove> bestPV;
 
 	for(; timer.getTime() < time; ) {
