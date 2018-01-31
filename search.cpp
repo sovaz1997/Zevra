@@ -212,19 +212,11 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				whiteHistorySort[local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += std::pow(depth, 2);
 
 				if(color == WHITE) {
-					if(std::abs(alpha) >= WHITE_WIN - 100) {
-						whiteMateKiller[real_depth] = Killer(local_move);
-					}
-
 					if(whiteKiller[real_depth].enable) {
 						whiteSecondKiller[real_depth] = Killer(whiteKiller[real_depth].move);
 					}
 					whiteKiller[real_depth] = Killer(local_move);
 				} else {
-					if(std::abs(alpha) >= WHITE_WIN - 100) {
-						blackMateKiller[real_depth] = Killer(local_move);
-					}
-
 					if(blackKiller[real_depth].enable) {
 						blackSecondKiller[real_depth] = Killer(blackKiller[real_depth].move);
 					}
