@@ -27,6 +27,7 @@ Zevra - шахматный движок с протоколом UCI. На дан
 + Capture sorting (MVV-LVA).
 
 Рейтинги CCRL 40/5:
++ Zevra 1.8.1 - 2143;
 + Zevra 1.6.1 - 1937;
 + Zevra 1.5 - 1888;
 + Zevra 1.3.1 - 1754;
