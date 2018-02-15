@@ -1234,14 +1234,30 @@ double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 
 	int kingDanger = 0;
 
+	//Маска с полями, которые бьются пешками противника
+
+	uint64_t goodCells = 0;
+
+
+	uint64_t pawn = currentState.figures[PAWN] & emask;
+
+	while(pawn != 0) {
+		uint8_t pos = firstOne(pawn);
+		goodCells |= capturePawnMap[enemyColor][pos];
+		pawn &= ~vec1_cells[pos];
+	}
+
+	goodCells = ~goodCells;
+
 	//Ладьи
 	uint64_t rook = currentState.figures[ROOK] & mask;
 	while(rook != 0) {
 		uint8_t pos = firstOne(rook);
 		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
 		rook &= ~vec1_cells[pos];
-		score += RookMobilityBonus[(int)popcount64(possibleMoves)];
 		kingDanger += 3 * popcount64(possibleMoves & enemyKingPossibleMoves);
+		possibleMoves &= goodCells;
+		score += RookMobilityBonus[(int)popcount64(possibleMoves)];
 	}
 
 	//Слоны
@@ -1249,9 +1265,10 @@ double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 	while(bishop != 0) {
 		uint8_t pos = firstOne(bishop);
 		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
-		bishop &= ~vec1_cells[pos];
-		score += BishopMobilityBonus[(int)popcount64(possibleMoves)];
+		bishop &= ~vec1_cells[pos];		
 		kingDanger += 2 * popcount64(possibleMoves & enemyKingPossibleMoves);
+		possibleMoves &= goodCells;
+		score += BishopMobilityBonus[(int)popcount64(possibleMoves)];
 	}
 
 	//Ферзи
@@ -1261,8 +1278,10 @@ double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
 		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask);
 		queen &= ~vec1_cells[pos];
-		score += QueenMobilityBonus[(int)popcount64(possibleMoves)];
 		kingDanger += 5 * popcount64(possibleMoves & enemyKingPossibleMoves);
+		possibleMoves &= goodCells;
+		score += QueenMobilityBonus[(int)popcount64(possibleMoves)];
+		
 	}
 
 	//Кони
@@ -1271,8 +1290,9 @@ double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 		uint8_t pos = firstOne(knight);
 		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & ~mask & ~(currentState.figures[KING] & emask);
 		knight &= ~vec1_cells[pos];
-		score += KnightMobilityBonus[(int)popcount64(possibleMoves)];
 		kingDanger += 2 * popcount64(possibleMoves & enemyKingPossibleMoves);
+		possibleMoves &= goodCells;
+		score += KnightMobilityBonus[(int)popcount64(possibleMoves)];
 	}
 
 	score += SafetyTable[std::min(99, kingDanger)];

@@ -45,6 +45,8 @@ public:
 	uint64_t vec1_cells[64];
 	
 	uint64_t bitboard[32][8][8];
+	uint64_t whitePawnAttacks[8][8];
+	uint64_t blackPawnAttacks[8][8];
 	double kingSecurityArray[64][64];
 	std::string startpos_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; //Стартовая позиция
 
