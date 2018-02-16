@@ -59,7 +59,7 @@ public:
 	void printBitBoard(uint64_t bit_board);
 	void magicNumberGenerator();
 	void magicInit();
-	void magicConstantsSet(); //Константы Magic (предварительно вычеслены, используются в генераторе ходов)
+	void magicConstantsSet(); //Константы Magic (предварительно вычислены, используются в генераторе ходов)
 
 	uint64_t magicGenerator();
 

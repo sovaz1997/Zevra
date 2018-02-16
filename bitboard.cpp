@@ -1628,6 +1628,24 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 	uint64_t kingPos = vec2_cells[y][x];
 	uint8_t kingCoord = y * 8 + x;
 
+	if(color == WHITE) {
+		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KING])) &&
+		   !(capturePawnMap[WHITE][kingCoord] & currentState.black_bit_mask & (currentState.figures[PAWN]))) {
+			   return false;
+		}
+	} else {
+		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KING])) &&
+		   !(capturePawnMap[BLACK][kingCoord] & currentState.white_bit_mask & (currentState.figures[PAWN]))) {
+			return false;
+		}
+	}
+
 	uint64_t figure;
 	figure = firstOne(plus8[kingCoord] & (mask | emask));
 	figure = vec1_cells[figure];
