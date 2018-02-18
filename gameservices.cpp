@@ -35,12 +35,25 @@ void Game::cleanBlackHistory() {
 }
 
 void Game::flattenHistory() {
-	for(int i = 0; i < BOARD_SIZE; ++i) {
+	/*for(int i = 0; i < BOARD_SIZE; ++i) {
 		for(int j = 0; j < BOARD_SIZE; ++j) {
 			for(int k = 0; k < BOARD_SIZE; ++k) {
 				for(int m = 0; m < BOARD_SIZE; ++m) {
 					whiteHistorySort[i][j][k][m] /= 1000000;
 					blackHistorySort[i][j][k][m] /= 1000000;
+				}
+			}
+		}
+	}*/
+
+	for(int s = 0; s < 2; ++s) {
+		for(int i = 0; i < BOARD_SIZE; ++i) {
+			for(int j = 0; j < BOARD_SIZE; ++j) {
+				for(int k = 0; k < BOARD_SIZE; ++k) {
+					for(int m = 0; m < BOARD_SIZE; ++m) {
+						historySort[s][i][j][k][m] /= 10000;
+						//blackHistorySort[i][j][k][m] /= 1000000;
+					}
 				}
 			}
 		}
@@ -73,10 +86,6 @@ std::vector<std::string> Game::getStringArray(std::string str) {
 	result.push_back(tmp);
 
 	return result;
-}
-
-bool Game::move_comparator(BitMove& m1, BitMove&m2) {
-	return whiteHistorySort[m1.fromY][m1.fromX][m1.toY][m1.toX] < whiteHistorySort[m2.fromY][m2.fromX][m2.toY][m2.toX];
 }
 
 void Game::setHashSize(int mb_size) {

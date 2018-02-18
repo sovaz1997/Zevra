@@ -47,7 +47,6 @@ private:
 	void goFixedTime(int64_t time, bool tournamentTimeControll);
 	void goTournament();
 	void clearCash();
-	bool move_comparator(BitMove& m1, BitMove&m2);
 	void initializeArrays();
 	void setHashSize(int mb_size);
 
@@ -55,6 +54,7 @@ private:
 	std::vector<size_t> count_moves;
 
 	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
+	double historySort[2][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 
 	bool hasBestMove = false;
