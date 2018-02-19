@@ -1492,10 +1492,10 @@ int64_t BitBoard::getEvaluate() {
 	if(!currentState.hash_enable) { return 0; }
 
 	if(currentState.whiteMove) {
-		return newEvaluateAll() + currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50;
+		return newEvaluateAll() + (popcount64(currentState.white_bit_mask | currentState.black_bit_mask) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
 		
 	} else {
-		return -(newEvaluateAll() + currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
+		return -(newEvaluateAll() + (popcount64(currentState.white_bit_mask | currentState.black_bit_mask) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50));
 	}
 }
 
