@@ -1489,14 +1489,7 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvaluate() {
-	if(!currentState.hash_enable) { return 0; }
-
-	if(currentState.whiteMove) {
-		return newEvaluateAll() + (popcount64(currentState.white_bit_mask | currentState.black_bit_mask) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
-		
-	} else {
-		return -(newEvaluateAll() + (popcount64(currentState.white_bit_mask | currentState.black_bit_mask) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50));
-	}
+	return newEvaluateAll() * (2 * currentState.whiteMove - 1) * (1 - !currentState.hash_enable);
 }
 
 bool BitBoard::inCheck(uint8_t color) {
@@ -1935,9 +1928,10 @@ double BitBoard::newEvaluateAll() {
 	int black_queen_count = popcount64(currentState.figures[QUEEN] & currentState.black_bit_mask);
 
 	uint64_t occu = (currentState.white_bit_mask | currentState.black_bit_mask);
+	int pieces_count = popcount64(occu);
 
-	if(popcount64(occu) == 3) {
-		if(white_bishop_count == 1 || black_bishop_count == 1 || white_knight_count == 1 || black_knight_count == 1) {
+	if(pieces_count <= 3) {
+		if(white_bishop_count == 1 || black_bishop_count == 1 || white_knight_count == 1 || black_knight_count == 1 || pieces_count < 3) {
 			return 0;
 		}
 	}
@@ -2151,6 +2145,10 @@ double BitBoard::newEvaluateAll() {
 
 	result += bitBoardMobilityEval(WHITE, stage_game);
 	result -= bitBoardMobilityEval(BLACK, stage_game);
+
+	//Наличие роировки
+
+	result += (popcount64(currentState.white_bit_mask | currentState.black_bit_mask) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
 
 	return result;
 }
