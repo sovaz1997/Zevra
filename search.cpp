@@ -225,7 +225,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 				}
 			}
 
-			return beta;
+			break;
 		}
 	}
 
@@ -262,7 +262,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		}
 	}
 
-	return alpha;
+	return eval;
 }
 
 uint64_t Game::perft(int depth) {

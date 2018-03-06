@@ -82,6 +82,8 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 	max_depth = 1;
 
 	std::vector<BitMove> bestPV;
+	int window = 30;
+	int a = -window, b = window;
 
 	for(; timer.getTime() < time; ) {
 		flattenHistory();
@@ -118,7 +120,18 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 			}
 		}
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+		//negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+
+		int f = negamax(game_board, a, b, max_depth, 0, FIXED_TIME, false, true);
+
+		if(f <= a) {
+			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_TIME, false, true);
+		} else if(f >= b) {
+			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+		}
+
+		a = f - window;
+		b = f + window;
 		
 		if(stopped) {
 			break;
