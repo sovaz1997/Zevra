@@ -35,7 +35,7 @@ void Game::goFixedDepth() {
 	hasBestMove = true;
 	bestScore = 0;
 
-	int window = 30;
+	int window = 10;
 	int a = -window, b = window;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
@@ -94,7 +94,7 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 	max_depth = 1;
 
 	std::vector<BitMove> bestPV;
-	int window = 30;
+	int window = 10;
 	int a = -window, b = window;
 
 	for(; timer.getTime() < time; ) {
