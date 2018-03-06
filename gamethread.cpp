@@ -35,10 +35,22 @@ void Game::goFixedDepth() {
 	hasBestMove = true;
 	bestScore = 0;
 
+	int window = 30;
+	int a = -window, b = window;
+
 	for(; max_depth <= max_depth_global; ++max_depth) {
 		flattenHistory();
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		int f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
+
+		if(f <= a) {
+			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_DEPTH, false, true);
+		} else if(f >= b) {
+			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		}
+
+		a = f - window;
+		b = f + window;
 
 		hasBestMove = true;
 
@@ -119,8 +131,6 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 				}
 			}
 		}
-
-		//negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 
 		int f = negamax(game_board, a, b, max_depth, 0, FIXED_TIME, false, true);
 
