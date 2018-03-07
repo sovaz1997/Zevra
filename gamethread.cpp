@@ -45,8 +45,16 @@ void Game::goFixedDepth() {
 
 		if(f <= a) {
 			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_DEPTH, false, true);
+
+			if(f > a) {
+				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			}
 		} else if(f >= b) {
 			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+
+			if(f < b) {
+				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			}
 		}
 
 		a = f - window;
@@ -136,8 +144,16 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 
 		if(f <= a) {
 			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_TIME, false, true);
+
+			if(f > a) {
+				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+			}
 		} else if(f >= b) {
 			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+
+			if(f < b) {
+				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+			}
 		}
 
 		a = f - window;

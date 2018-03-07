@@ -105,7 +105,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 	sortMoves(moveArray[real_depth], real_depth);
 
 	if(cut) { //Multi-Cut
-		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && beta - alpha <= 1 && !b.currentState.attacked) {
+		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && !onPV && !b.currentState.attacked) {
 			int c = 0;
 			for (int i = 0; i < std::min((int)moveArray[real_depth].count, 4); ++i) {
 				b.move(moveArray[real_depth].moveArray[i]);
