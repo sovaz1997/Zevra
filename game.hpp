@@ -81,11 +81,11 @@ private:
 
 public:
 	Game();
-	int64_t negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool cut);
+	int negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, int rule, bool inNullMove, bool cut);
 
 	uint64_t perft(int depth);
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
-  	int64_t quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth);
+  	int quies(BitBoard & b, int alpha, int beta, int rule, int real_depth);
 	int startGame();
 	void printScore(double score);
 	std::vector<std::string> getStringArray(std::string str);

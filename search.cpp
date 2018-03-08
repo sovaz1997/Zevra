@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int real_depth, int rule, bool inNullMove, bool cut) {
+int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, int rule, bool inNullMove, bool cut) {
 	++nodesCounter;
 
 	uint64_t hash = b.getColorHash();
@@ -10,7 +10,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 		return 0;
 	}
 
-	int64_t oldAlpha = alpha;
+	int oldAlpha = alpha;
 
 	if((currentHash->flag != EMPTY && currentHash->key == hash) && real_depth > 2) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
@@ -60,7 +60,7 @@ int64_t Game::negamax(BitBoard & b, int64_t alpha, int64_t beta, int depth, int 
 
 	bool extended = false;
 
-	int64_t eval = -WHITE_WIN;
+	int eval = -WHITE_WIN;
 
 	int nextDepth = depth - 1;
 	int extensions = 0;
@@ -295,8 +295,8 @@ uint64_t Game::perft(int depth) {
 	return res;
 }
 
-int64_t Game::quies(BitBoard & b, int64_t alpha, int64_t beta, int rule, int real_depth) {
-	int64_t val = b.getEvaluate();
+int Game::quies(BitBoard & b, int alpha, int beta, int rule, int real_depth) {
+	int val = b.getEvaluate();
 
 	if (val < alpha - QUEEN_EV.mg) {
    		return alpha;
