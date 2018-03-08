@@ -10,7 +10,7 @@ class GoBack {
 public:
 	GoBack();
  	uint64_t figures[7];
-	uint64_t white_bit_mask, black_bit_mask, castlingMap, hash, recapture_position;
+	uint64_t castlingMap, hash, recapture_position, piece_bit_mask[2];
 	uint8_t passant_x, passant_y;
 	uint16_t moveNumber, ruleNumber;
 	bool whiteMove, passant_enable;

@@ -32,7 +32,9 @@ const uint8_t BLACK = 16;  //00010000
 const uint8_t COLOR_SAVE = 24;  //00011000
 const uint8_t TYPE_SAVE = 7; //00000111
 
+
 const int BOARD_SIZE = 8;
+const bool whiteSide = true;
 
 // Типы ходов
 const uint8_t STANDARD_MV = 0;

@@ -186,7 +186,7 @@ void Game::goTournament() {
 
 	double k;
 
-	int figuresNumber = game_board.popcount64(game_board.currentState.white_bit_mask | game_board.currentState.black_bit_mask);
+	int figuresNumber = game_board.popcount64(game_board.currentState.piece_bit_mask[whiteSide] | game_board.currentState.piece_bit_mask[!whiteSide]);
 
 	if(movestogoEnable) {
 		k = movestogo;

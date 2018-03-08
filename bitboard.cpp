@@ -22,51 +22,51 @@ void BitBoard::setFen(std::string fen) {
 		for(unsigned int i = 0; i < notation[y].size(); ++i) {
 			if(notation[y][i] == 'K') {
 				currentState.figures[KING] |= vec2_cells[y][x];
-				currentState.white_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'Q') {
 				currentState.figures[QUEEN] |= vec2_cells[y][x];
-				currentState.white_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'R') {
 				currentState.figures[ROOK] |= vec2_cells[y][x];
-				currentState.white_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'B') {
 				currentState.figures[BISHOP] |= vec2_cells[y][x];
-				currentState.white_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'N') {
 				currentState.figures[KNIGHT] |= vec2_cells[y][x];
-				currentState.white_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'P') {
 				currentState.figures[PAWN] |= vec2_cells[y][x];
-				currentState.white_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'k') {
 				currentState.figures[KING] |= vec2_cells[y][x];
-				currentState.black_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'q') {
 				currentState.figures[QUEEN] |= vec2_cells[y][x];
-				currentState.black_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'r') {
 				currentState.figures[ROOK] |= vec2_cells[y][x];
-				currentState.black_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'b') {
 				currentState.figures[BISHOP] |= vec2_cells[y][x];
-				currentState.black_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'n') {
 				currentState.figures[KNIGHT] |= vec2_cells[y][x];
-				currentState.black_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] == 'p') {
 				currentState.figures[PAWN] |= vec2_cells[y][x];
-				currentState.black_bit_mask |= vec2_cells[y][x];
+				currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 				++x;
 			} else if(notation[y][i] >= '0' && notation[y][i] <= '9') {
 				x += (notation[y][i] - '0');
@@ -115,7 +115,7 @@ std::string BitBoard::getFen() {
 	for(int y = 7; y >= 0; --y) {
 		int space = 0;
 		for(int x = 0; x < 8; ++x) {
-			if(currentState.white_bit_mask & vec2_cells[y][x]) {
+			if(currentState.piece_bit_mask[whiteSide] & vec2_cells[y][x]) {
 				if(space != 0) {
 					res.push_back('0' + space);
 					space = 0;
@@ -134,7 +134,7 @@ std::string BitBoard::getFen() {
 				} else if(currentState.figures[PAWN] & vec2_cells[y][x]) {
 					res.push_back('P');
 				}
-			} else if(currentState.black_bit_mask & vec2_cells[y][x]) {
+			} else if(currentState.piece_bit_mask[!whiteSide] & vec2_cells[y][x]) {
 				if(space != 0) {
 					res.push_back('0' + space);
 					space = 0;
@@ -227,8 +227,8 @@ void BitBoard::clear() {
 		currentState.figures[i] = 0;
 	}
 
-	currentState.white_bit_mask = 0;
-	currentState.black_bit_mask = 0;
+	currentState.piece_bit_mask[whiteSide] = 0;
+	currentState.piece_bit_mask[!whiteSide] = 0;
 	currentState.moveNumber = 0;
 	currentState.ruleNumber = 0;
 	currentState.passant_enable = false;
@@ -712,7 +712,7 @@ void BitBoard::magicInit() {
 }
 
 int BitBoard::getFiguresCount() {
-	return popcount64(currentState.white_bit_mask | currentState.black_bit_mask);
+	return popcount64(currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]);
 }
 
 void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves) {
@@ -722,12 +722,12 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves
 	uint8_t color;
 	if(currentState.whiteMove) {
 		color = WHITE;
-		mask = currentState.white_bit_mask;
-		emask = currentState.black_bit_mask;
+		mask = currentState.piece_bit_mask[whiteSide];
+		emask = currentState.piece_bit_mask[!whiteSide];
 	} else {
 		color = BLACK;
-		mask = currentState.black_bit_mask;
-		emask = currentState.white_bit_mask;
+		mask = currentState.piece_bit_mask[!whiteSide];
+		emask = currentState.piece_bit_mask[whiteSide];
 	}
 
 	occu = (mask | emask);
@@ -957,12 +957,12 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	uint8_t color;
 	if(currentState.whiteMove) {
 		color = WHITE;
-		mask = currentState.white_bit_mask;
-		emask = currentState.black_bit_mask;
+		mask = currentState.piece_bit_mask[whiteSide];
+		emask = currentState.piece_bit_mask[!whiteSide];
 	} else {
 		color = BLACK;
-		mask = currentState.black_bit_mask;
-		emask = currentState.white_bit_mask;
+		mask = currentState.piece_bit_mask[!whiteSide];
+		emask = currentState.piece_bit_mask[whiteSide];
 	}
 
 	occu = (mask | emask);
@@ -1092,7 +1092,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	if(currentState.passant_enable) {
 		if(currentState.whiteMove) {
 			uint64_t passant_cell = vec2_cells[currentState.passant_y][currentState.passant_x];
-			uint64_t whitePawnMask = currentState.figures[PAWN] & currentState.white_bit_mask & horizontal[4];
+			uint64_t whitePawnMask = currentState.figures[PAWN] & currentState.piece_bit_mask[whiteSide] & horizontal[4];
 
 			if(((passant_cell >> 9) & whitePawnMask)) {
 				moveArray.addMove(BitMove(PAWN | BLACK, PAWN | WHITE, currentState.passant_y - 1, currentState.passant_x - 1, currentState.passant_y, currentState.passant_x, true));
@@ -1103,7 +1103,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 			}
 		} else {
 			uint64_t passant_cell = vec2_cells[currentState.passant_y][currentState.passant_x];
-			uint64_t blackPawnMask = currentState.figures[PAWN] & currentState.black_bit_mask & horizontal[3];
+			uint64_t blackPawnMask = currentState.figures[PAWN] & currentState.piece_bit_mask[!whiteSide] & horizontal[3];
 
 			if(((passant_cell << 9) & blackPawnMask)) {
 				moveArray.addMove(BitMove(PAWN | WHITE, PAWN | BLACK, currentState.passant_y + 1, currentState.passant_x + 1, currentState.passant_y, currentState.passant_x, true));
@@ -1215,12 +1215,12 @@ double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
 	double score = 0;
 
 	if(color == WHITE) {
-		mask = currentState.white_bit_mask;
-		emask = currentState.black_bit_mask;
+		mask = currentState.piece_bit_mask[whiteSide];
+		emask = currentState.piece_bit_mask[!whiteSide];
 		enemyColor = BLACK;
 	} else {
-		mask = currentState.black_bit_mask;
-		emask = currentState.white_bit_mask;
+		mask = currentState.piece_bit_mask[!whiteSide];
+		emask = currentState.piece_bit_mask[whiteSide];
 		enemyColor = WHITE;
 	}
 
@@ -1392,7 +1392,7 @@ void BitBoard::goBack() {
 
 
 void BitBoard::clearCell(uint8_t y, uint8_t x) {
-	if(!(vec2_cells[y][x] & (currentState.white_bit_mask | currentState.black_bit_mask))) {
+	if(!(vec2_cells[y][x] & (currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]))) {
 		return;
 	}
 
@@ -1406,8 +1406,8 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 			currentState.figures[figure_test & TYPE_SAVE] &= ~vec2_cells[y][x];
 		}
 
-		currentState.white_bit_mask &= ~vec2_cells[y][x];
-		currentState.black_bit_mask &= ~vec2_cells[y][x];
+		currentState.piece_bit_mask[whiteSide] &= ~vec2_cells[y][x];
+		currentState.piece_bit_mask[!whiteSide] &= ~vec2_cells[y][x];
 	}
 }
 
@@ -1419,9 +1419,9 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 		currentState.figures[figure & TYPE_SAVE] |= vec2_cells[y][x];
 
 		if(color == WHITE) {
-			currentState.white_bit_mask |= vec2_cells[y][x];
+			currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
 		} else if(color == BLACK) {
-			currentState.black_bit_mask |= vec2_cells[y][x];
+			currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
 		}
 	}
 
@@ -1450,9 +1450,9 @@ void BitBoard::pushHistory() {
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 	for(uint8_t i = 1; i < 7; ++i) {
-		if(currentState.figures[i] & vec2_cells[y][x] & currentState.white_bit_mask) {
+		if(currentState.figures[i] & vec2_cells[y][x] & currentState.piece_bit_mask[whiteSide]) {
 			return (i | WHITE);
-		} else if(currentState.figures[i] & vec2_cells[y][x] & currentState.black_bit_mask) {
+		} else if(currentState.figures[i] & vec2_cells[y][x] & currentState.piece_bit_mask[!whiteSide]) {
 			return (i | BLACK);
 		}
 	}
@@ -1496,30 +1496,30 @@ bool BitBoard::inCheck(uint8_t color) {
 	uint64_t mask, emask;
 
 	if(color == WHITE) {
-		mask = currentState.white_bit_mask;
-		emask = currentState.black_bit_mask;
+		mask = currentState.piece_bit_mask[whiteSide];
+		emask = currentState.piece_bit_mask[!whiteSide];
 	} else {
-		mask = currentState.black_bit_mask;
-		emask = currentState.white_bit_mask;
+		mask = currentState.piece_bit_mask[!whiteSide];
+		emask = currentState.piece_bit_mask[whiteSide];
 	}
 
 	uint64_t kingPos = currentState.figures[KING] & mask;
 	uint8_t kingCoord = firstOne(kingPos);
 
 	if(color == WHITE) {
-		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KING])) &&
-		   !(capturePawnMap[WHITE][kingCoord] & currentState.black_bit_mask & (currentState.figures[PAWN]))) {
+		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KING])) &&
+		   !(capturePawnMap[WHITE][kingCoord] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[PAWN]))) {
 			   return false;
 		}
 	} else {
-		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KING])) &&
-		   !(capturePawnMap[BLACK][kingCoord] & currentState.white_bit_mask & (currentState.figures[PAWN]))) {
+		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KING])) &&
+		   !(capturePawnMap[BLACK][kingCoord] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[PAWN]))) {
 			return false;
 		}
 	}
@@ -1609,30 +1609,30 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 	uint64_t mask, emask;
 
 	if(color == WHITE) {
-		mask = currentState.white_bit_mask & ~(currentState.figures[KING] & currentState.white_bit_mask);
-		emask = currentState.black_bit_mask & ~(currentState.figures[KING] & currentState.black_bit_mask);
+		mask = currentState.piece_bit_mask[whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[whiteSide]);
+		emask = currentState.piece_bit_mask[!whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide]);
 	} else {
-		mask = currentState.black_bit_mask & ~(currentState.figures[KING] & currentState.black_bit_mask);
-		emask = currentState.white_bit_mask & ~(currentState.figures[KING] & currentState.white_bit_mask);
+		mask = currentState.piece_bit_mask[!whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide]);
+		emask = currentState.piece_bit_mask[whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[whiteSide]);
 	}
 
 	uint64_t kingPos = vec2_cells[y][x];
 	uint8_t kingCoord = y * 8 + x;
 
 	if(color == WHITE) {
-		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.black_bit_mask & (currentState.figures[KING])) &&
-		   !(capturePawnMap[WHITE][kingCoord] & currentState.black_bit_mask & (currentState.figures[PAWN]))) {
+		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KING])) &&
+		   !(capturePawnMap[WHITE][kingCoord] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[PAWN]))) {
 			   return false;
 		}
 	} else {
-		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.white_bit_mask & (currentState.figures[KING])) &&
-		   !(capturePawnMap[BLACK][kingCoord] & currentState.white_bit_mask & (currentState.figures[PAWN]))) {
+		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KNIGHT])) &&
+		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KING])) &&
+		   !(capturePawnMap[BLACK][kingCoord] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[PAWN]))) {
 			return false;
 		}
 	}
@@ -1760,7 +1760,7 @@ void BitBoard::zobristGenerator() {
 }
 
 void BitBoard::generateHash() {
-	uint64_t figure_positions = (currentState.white_bit_mask | currentState.black_bit_mask);
+	uint64_t figure_positions = (currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]);
 	currentState.hash = 0;
 
 	while(figure_positions) {
@@ -1907,27 +1907,27 @@ void BitBoard::unMakeNullMove() {
 
 double BitBoard::newEvaluateAll() {
 
-	double stage_game = popcount64(currentState.white_bit_mask | currentState.black_bit_mask) / 32;
+	double stage_game = popcount64(currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]) / 32;
 
 	double result = 0;
 
 	//Подсчет количества фигур (для ускорения работы)
-	int white_pawn_count = popcount64(currentState.figures[PAWN] & currentState.white_bit_mask);
-	int black_pawn_count = popcount64(currentState.figures[PAWN] & currentState.black_bit_mask);
+	int white_pawn_count = popcount64(currentState.figures[PAWN] & currentState.piece_bit_mask[whiteSide]);
+	int black_pawn_count = popcount64(currentState.figures[PAWN] & currentState.piece_bit_mask[!whiteSide]);
 	
-	int white_knight_count = popcount64(currentState.figures[KNIGHT] & currentState.white_bit_mask);
-	int black_knight_count = popcount64(currentState.figures[KNIGHT] & currentState.black_bit_mask);
+	int white_knight_count = popcount64(currentState.figures[KNIGHT] & currentState.piece_bit_mask[whiteSide]);
+	int black_knight_count = popcount64(currentState.figures[KNIGHT] & currentState.piece_bit_mask[!whiteSide]);
 	
-	int white_bishop_count = popcount64(currentState.figures[BISHOP] & currentState.white_bit_mask);
-	int black_bishop_count = popcount64(currentState.figures[BISHOP] & currentState.black_bit_mask);
+	int white_bishop_count = popcount64(currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide]);
+	int black_bishop_count = popcount64(currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide]);
 	
-	int white_rook_count = popcount64(currentState.figures[ROOK] & currentState.white_bit_mask);
-	int black_rook_count = popcount64(currentState.figures[ROOK] & currentState.black_bit_mask);
+	int white_rook_count = popcount64(currentState.figures[ROOK] & currentState.piece_bit_mask[whiteSide]);
+	int black_rook_count = popcount64(currentState.figures[ROOK] & currentState.piece_bit_mask[!whiteSide]);
 	
-	int white_queen_count = popcount64(currentState.figures[QUEEN] & currentState.white_bit_mask);
-	int black_queen_count = popcount64(currentState.figures[QUEEN] & currentState.black_bit_mask);
+	int white_queen_count = popcount64(currentState.figures[QUEEN] & currentState.piece_bit_mask[whiteSide]);
+	int black_queen_count = popcount64(currentState.figures[QUEEN] & currentState.piece_bit_mask[!whiteSide]);
 
-	uint64_t occu = (currentState.white_bit_mask | currentState.black_bit_mask);
+	uint64_t occu = (currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]);
 	int pieces_count = popcount64(occu);
 
 	if(pieces_count <= 3) {
@@ -1948,14 +1948,14 @@ double BitBoard::newEvaluateAll() {
 	result -= black_queen_count * QUEEN_EV.getScore(stage_game);
 
 	//Бонус за 2-х слонов
-	result += DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.white_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.white_bit_mask & blackCells));
-	result -= DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.black_bit_mask & whiteCells) && (currentState.figures[BISHOP] & currentState.black_bit_mask & blackCells));
+	result += DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide] & whiteCells) && (currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide] & blackCells));
+	result -= DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide] & whiteCells) && (currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide] & blackCells));
 	
 	//Поле-Фигура
-	uint64_t mask = currentState.figures[PAWN] & currentState.white_bit_mask;
+	uint64_t mask = currentState.figures[PAWN] & currentState.piece_bit_mask[whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		if(vertical[pos % 8] & currentState.black_bit_mask & currentState.figures[PAWN]) {
+		if(vertical[pos % 8] & currentState.piece_bit_mask[!whiteSide] & currentState.figures[PAWN]) {
 			result += pawnMatr[7 - pos / 8][pos % 8];
 		} else {
 			result += PassedPawnBonus[pos / 8];
@@ -1964,10 +1964,10 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[PAWN] & currentState.black_bit_mask;
+	mask = currentState.figures[PAWN] & currentState.piece_bit_mask[!whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
-		if(vertical[pos % 8] & currentState.white_bit_mask & currentState.figures[PAWN]) {
+		if(vertical[pos % 8] & currentState.piece_bit_mask[whiteSide] & currentState.figures[PAWN]) {
 			result -= pawnMatr[pos / 8][pos % 8];
 		} else {
 			result -= PassedPawnBonus[7 - pos / 8];
@@ -1976,78 +1976,78 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[KNIGHT] & currentState.white_bit_mask;
+	mask = currentState.figures[KNIGHT] & currentState.piece_bit_mask[whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result += knightMatr[7 - pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[KNIGHT] & currentState.black_bit_mask;
+	mask = currentState.figures[KNIGHT] & currentState.piece_bit_mask[!whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result -= knightMatr[pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[BISHOP] & currentState.white_bit_mask;
+	mask = currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result += bishopMatr[7 - pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[BISHOP] & currentState.black_bit_mask;
+	mask = currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result -= bishopMatr[pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[ROOK] & currentState.white_bit_mask;
+	mask = currentState.figures[ROOK] & currentState.piece_bit_mask[whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result += rookMatr[7 - pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[ROOK] & currentState.black_bit_mask;
+	mask = currentState.figures[ROOK] & currentState.piece_bit_mask[!whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result -= rookMatr[pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[QUEEN] & currentState.white_bit_mask;
+	mask = currentState.figures[QUEEN] & currentState.piece_bit_mask[whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result += queenMatr[7 - pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[QUEEN] & currentState.black_bit_mask;
+	mask = currentState.figures[QUEEN] & currentState.piece_bit_mask[!whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result -= queenMatr[pos / 8][pos % 8];
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[KING] & currentState.white_bit_mask;
+	mask = currentState.figures[KING] & currentState.piece_bit_mask[whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result += kingPST[7 - pos / 8][pstIndex[pos % 8]].getScore(stage_game);
 		mask &= ~vec1_cells[pos];
 	}
 	
-	mask = currentState.figures[KING] & currentState.black_bit_mask;
+	mask = currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide];
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
 		result -= kingPST[pos / 8][pstIndex[pos % 8]].getScore(stage_game);
 		mask &= ~vec1_cells[pos];
 	}
 
-	uint64_t whitePawns = currentState.white_bit_mask & currentState.figures[PAWN];
-	uint64_t blackPawns = currentState.black_bit_mask & currentState.figures[PAWN];
+	uint64_t whitePawns = currentState.piece_bit_mask[whiteSide] & currentState.figures[PAWN];
+	uint64_t blackPawns = currentState.piece_bit_mask[!whiteSide] & currentState.figures[PAWN];
 
 	//Изолированные пешки
 
@@ -2063,10 +2063,10 @@ double BitBoard::newEvaluateAll() {
 
 	//Оценка близости вражеский фигур к королю
 
-	uint64_t white_king_pos = firstOne(currentState.figures[KING] & currentState.white_bit_mask);
-	uint64_t black_king_pos = firstOne(currentState.figures[KING] & currentState.black_bit_mask);
+	uint64_t white_king_pos = firstOne(currentState.figures[KING] & currentState.piece_bit_mask[whiteSide]);
+	uint64_t black_king_pos = firstOne(currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide]);
 
-	mask = currentState.figures[ROOK] & currentState.black_bit_mask;
+	mask = currentState.figures[ROOK] & currentState.piece_bit_mask[!whiteSide];
 
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2074,7 +2074,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[QUEEN] & currentState.black_bit_mask;
+	mask = currentState.figures[QUEEN] & currentState.piece_bit_mask[!whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2082,7 +2082,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[KNIGHT] & currentState.black_bit_mask;
+	mask = currentState.figures[KNIGHT] & currentState.piece_bit_mask[!whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2090,7 +2090,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[BISHOP] & currentState.black_bit_mask;
+	mask = currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2098,7 +2098,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[ROOK] & currentState.white_bit_mask;
+	mask = currentState.figures[ROOK] & currentState.piece_bit_mask[whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2106,7 +2106,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[QUEEN] & currentState.white_bit_mask;
+	mask = currentState.figures[QUEEN] & currentState.piece_bit_mask[whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2114,7 +2114,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[KNIGHT] & currentState.white_bit_mask;
+	mask = currentState.figures[KNIGHT] & currentState.piece_bit_mask[whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2122,7 +2122,7 @@ double BitBoard::newEvaluateAll() {
 		mask &= ~vec1_cells[pos];
 	}
 
-	mask = currentState.figures[BISHOP] & currentState.white_bit_mask;
+	mask = currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide];
 	
 	while(mask != 0) {
 		uint8_t pos = firstOne(mask);
@@ -2134,10 +2134,10 @@ double BitBoard::newEvaluateAll() {
 	int pawnsOnWhiteCells = popcount64(whiteCells & currentState.figures[PAWN]);
 	int pawnsOnBlackCells = popcount64(blackCells & currentState.figures[PAWN]);
 
-	int whiteBishopsOnBlackCells = popcount64(blackCells & currentState.figures[BISHOP] & currentState.white_bit_mask);
-	int whiteBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.white_bit_mask);
-	int blackBishopsOnBlackCells = popcount64(blackCells & currentState.figures[BISHOP] & currentState.black_bit_mask);
-	int blackBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.black_bit_mask);
+	int whiteBishopsOnBlackCells = popcount64(blackCells & currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide]);
+	int whiteBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide]);
+	int blackBishopsOnBlackCells = popcount64(blackCells & currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide]);
+	int blackBishopsOnWhiteCells = popcount64(whiteCells & currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide]);
 	result += 5 * (((whiteBishopsOnBlackCells - blackBishopsOnBlackCells) * pawnsOnWhiteCells) +
 			   ((whiteBishopsOnWhiteCells - blackBishopsOnWhiteCells) * pawnsOnBlackCells));
 
@@ -2148,7 +2148,7 @@ double BitBoard::newEvaluateAll() {
 
 	//Наличие роировки
 
-	result += (popcount64(currentState.white_bit_mask | currentState.black_bit_mask) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
+	result += (popcount64(currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
 
 	return result;
 }
