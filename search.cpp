@@ -74,7 +74,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	}
 
 	uint8_t color, enemyColor;
-	if(b.currentState.whiteMove) {
+	if(b.currentState.color) {
 		color = WHITE;
 		enemyColor = BLACK;
 	} else {
@@ -209,7 +209,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		
 		if(alpha >= beta) {
 			if(!local_move.isAttack) {
-				historySort[b.currentState.whiteMove][local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += std::pow(depth, 2);
+				historySort[b.currentState.color][local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += std::pow(depth, 2);
 
 				if(color == WHITE) {
 					if(whiteKiller[real_depth].enable) {
@@ -276,7 +276,7 @@ uint64_t Game::perft(int depth) {
 
 	for(unsigned int i = 0; i < moveArray[depth].count; ++i) {
 		game_board.move(moveArray[depth].moveArray[i]);
-		if(game_board.currentState.whiteMove) {
+		if(game_board.currentState.color) {
 			if(game_board.inCheck(BLACK)) {
 				game_board.goBack();
 				continue;
@@ -317,7 +317,7 @@ int Game::quies(BitBoard & b, int alpha, int beta, int rule, int real_depth) {
 		++nodesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(!b.currentState.whiteMove) {
+		if(!b.currentState.color) {
 			if(game_board.inCheck(WHITE)) {
 				b.goBack();
 				continue;
@@ -403,7 +403,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 				if(moves.moveArray[i].equal(mv)) {
 					game_board.move(mv);
 					++stack_count;
-					if(game_board.currentState.whiteMove) {
+					if(game_board.currentState.color) {
 						if(game_board.inCheck(BLACK)) {
 							stopped = true;
 						} else {

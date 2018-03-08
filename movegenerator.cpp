@@ -2,9 +2,9 @@
 
 void Game::sortMoves(MoveArray& result, int depth) {
 	for(unsigned int i = 0; i < result.count; ++i) {
-		result.moveArray[i].history_weight = historySort[game_board.currentState.whiteMove][result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
+		result.moveArray[i].history_weight = historySort[game_board.currentState.color][result.moveArray[i].fromY][result.moveArray[i].fromX][result.moveArray[i].toY][result.moveArray[i].toX];
 
-		if(game_board.currentState.whiteMove) {
+		if(game_board.currentState.color) {
 			if(whiteSecondKiller[depth].enable && result.moveArray[i].equal(whiteSecondKiller[depth].move)) {
 				result.moveArray[i].history_weight = 1000000;
 			}

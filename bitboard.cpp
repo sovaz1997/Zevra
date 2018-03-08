@@ -75,9 +75,9 @@ void BitBoard::setFen(std::string fen) {
 	}
 
 	if(fenArray[1] == "w") {
-		currentState.whiteMove = true;
+		currentState.color = true;
 	} else {
-		currentState.whiteMove = false;
+		currentState.color = false;
 	}
 
 	for(unsigned int i = 0; i < fenArray[2].size() && fenArray[2] != "-"; ++i) {
@@ -169,7 +169,7 @@ std::string BitBoard::getFen() {
 
 	res.push_back(' ');
 
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		res.push_back('w');
 	} else {
 		res.push_back('b');
@@ -232,7 +232,7 @@ void BitBoard::clear() {
 	currentState.moveNumber = 0;
 	currentState.ruleNumber = 0;
 	currentState.passant_enable = false;
-	currentState.whiteMove = true;
+	currentState.color = true;
 	currentState.castlingMap = 0;
 
 	history_iterator = 0;
@@ -720,7 +720,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves
 	uint64_t possibleMoves, mask, emask, occu;
 
 	uint8_t color;
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		color = WHITE;
 		mask = currentState.piece_bit_mask[whiteSide];
 		emask = currentState.piece_bit_mask[!whiteSide];
@@ -818,7 +818,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves
 		}
 	}
 
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		if(wsc()) {
 			if((occu & (vec2_cells[0][5] | vec2_cells[0][6])) == 0) {
 				if(!inCheck(WHITE, 0, 4) && !inCheck(WHITE, 0, 5) && !inCheck(WHITE, 0, 6)) {
@@ -852,7 +852,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves
 	}
 
 	//Пешки
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		uint64_t pawn = currentState.figures[PAWN] & mask & ~horizontal[6];
 		while(pawn != 0) {
 			uint8_t pos = firstOne(pawn);
@@ -955,7 +955,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	uint64_t possibleMoves, mask, emask, occu;
 
 	uint8_t color;
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		color = WHITE;
 		mask = currentState.piece_bit_mask[whiteSide];
 		emask = currentState.piece_bit_mask[!whiteSide];
@@ -968,7 +968,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	occu = (mask | emask);
 
 	//Пешки
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		uint64_t pawn = currentState.figures[PAWN] & mask & ~horizontal[6];
 		uint64_t rightPawnAttack = (pawn << 9) & ~vertical[0] & emask & ~currentState.figures[KING];
 		moveArray.num_attacks += popcount64(rightPawnAttack);
@@ -1090,7 +1090,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	//Пешки (взятие на проходе)
 
 	if(currentState.passant_enable) {
-		if(currentState.whiteMove) {
+		if(currentState.color) {
 			uint64_t passant_cell = vec2_cells[currentState.passant_y][currentState.passant_x];
 			uint64_t whitePawnMask = currentState.figures[PAWN] & currentState.piece_bit_mask[whiteSide] & horizontal[4];
 
@@ -1313,7 +1313,7 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	if(mv.passant) {
-		if(currentState.whiteMove) {
+		if(currentState.color) {
 			clearCell(currentState.passant_y - 1, currentState.passant_x);
 		} else {
 			clearCell(currentState.passant_y + 1, currentState.passant_x);
@@ -1321,7 +1321,7 @@ void BitBoard::move(BitMove& mv) {
 	}
 
 	if((mv.movedFigure & TYPE_SAVE) == KING) {
-		if(currentState.whiteMove) {
+		if(currentState.color) {
 			if(mv.fromY == 0 && mv.fromX == 4 && mv.toY == 0 && mv.toX == 6) {
 				addFigure(ROOK | WHITE, 0, 5);
 				clearCell(0, 7);
@@ -1358,8 +1358,8 @@ void BitBoard::move(BitMove& mv) {
 		currentState.passant_x = mv.fromX;
 	}
 
-	currentState.whiteMove = !currentState.whiteMove;
-	if(currentState.whiteMove) {
+	currentState.color = !currentState.color;
+	if(currentState.color) {
 		++currentState.moveNumber;
 	}
 
@@ -1466,7 +1466,7 @@ BitMove BitBoard::getRandomMove() {
 
 	uint8_t color;
 
-	if(currentState.whiteMove) {
+	if(currentState.color) {
 		color = WHITE;
 	} else {
 		color = BLACK;
@@ -1489,7 +1489,7 @@ BitMove BitBoard::getRandomMove() {
 }
 
 int64_t BitBoard::getEvaluate() {
-	return newEvaluateAll() * (2 * currentState.whiteMove - 1) * (1 - !currentState.hash_enable);
+	return newEvaluateAll() * (2 * currentState.color - 1) * (1 - !currentState.hash_enable);
 }
 
 bool BitBoard::inCheck(uint8_t color) {
@@ -1775,7 +1775,7 @@ uint64_t BitBoard::getHash() {
 }
 
 uint64_t BitBoard::getColorHash() {
-	if(!currentState.whiteMove) {
+	if(!currentState.color) {
 		return (currentState.hash ^ reverse_color_const);
 	}
 
@@ -1896,12 +1896,12 @@ uint64_t BitBoard::magicGenerator() {
 }
 
 void BitBoard::makeNullMove() {
-	currentState.whiteMove = !currentState.whiteMove;
+	currentState.color = !currentState.color;
 	currentState.hash ^= 747489434796739468;
 }
 
 void BitBoard::unMakeNullMove() {
-	currentState.whiteMove = !currentState.whiteMove;
+	currentState.color = !currentState.color;
 	currentState.hash ^= 747489434796739468;
 }
 

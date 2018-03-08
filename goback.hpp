@@ -13,7 +13,7 @@ public:
 	uint64_t castlingMap, hash, recapture_position, piece_bit_mask[2];
 	uint8_t passant_x, passant_y;
 	uint16_t moveNumber, ruleNumber;
-	bool whiteMove, passant_enable;
+	bool color, passant_enable;
 	bool attacked;
 	double margin;
 	bool hash_enable;
