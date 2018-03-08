@@ -73,6 +73,8 @@ public:
 	GoBack currentState;
 	int history_iterator = 0;
 
+	uint8_t colorExtended[2];
+
 	bool wsc();
 	bool wlc();
 	bool bsc();
@@ -99,7 +101,7 @@ public:
 
 	void bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
 	
-	double bitBoardMobilityEval(uint8_t color, double stage_game);
+	double bitBoardMobilityEval(bool clr, double stage_game);
 	
 	void bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
 	void move(BitMove& mv);

@@ -593,6 +593,9 @@ void BitBoard::preInit() {
 	}
 
 	blackCells = ~whiteCells;
+
+	colorExtended[whiteSide] = WHITE;
+	colorExtended[!whiteSide] = BLACK;
 }
 
 void BitBoard::magicInit() {
@@ -719,17 +722,9 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves
 	bitBoardAttackMoveGenerator(moveArray, counter_moves);
 	uint64_t possibleMoves, mask, emask, occu;
 
-	uint8_t color;
-	if(currentState.color) {
-		color = WHITE;
-		mask = currentState.piece_bit_mask[whiteSide];
-		emask = currentState.piece_bit_mask[!whiteSide];
-	} else {
-		color = BLACK;
-		mask = currentState.piece_bit_mask[!whiteSide];
-		emask = currentState.piece_bit_mask[whiteSide];
-	}
-
+	uint8_t color = colorExtended[currentState.color];
+	mask = currentState.piece_bit_mask[currentState.color];
+	emask = currentState.piece_bit_mask[!currentState.color];
 	occu = (mask | emask);
 
 	//Ладьи
@@ -954,17 +949,9 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	moveArray.clear();
 	uint64_t possibleMoves, mask, emask, occu;
 
-	uint8_t color;
-	if(currentState.color) {
-		color = WHITE;
-		mask = currentState.piece_bit_mask[whiteSide];
-		emask = currentState.piece_bit_mask[!whiteSide];
-	} else {
-		color = BLACK;
-		mask = currentState.piece_bit_mask[!whiteSide];
-		emask = currentState.piece_bit_mask[whiteSide];
-	}
-
+	uint8_t color = colorExtended[currentState.color];
+	mask = currentState.piece_bit_mask[currentState.color];
+	emask = currentState.piece_bit_mask[!currentState.color];
 	occu = (mask | emask);
 
 	//Пешки
@@ -1204,27 +1191,19 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter
 	}
 }
 
-double BitBoard::bitBoardMobilityEval(uint8_t color, double stage_game) {
+double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 	/*
 	Функция оценивает мобильность фигур и безопасность короля одновременно, т. к. это позволяет не замедлять работу оценочной функции
 	*/
 	uint64_t possibleMoves, mask, emask, occu;
 
-	uint8_t enemyColor;
+	uint8_t color = colorExtended[clr];
+	uint8_t enemyColor = colorExtended[!clr];
+	mask = currentState.piece_bit_mask[clr];
+	emask = currentState.piece_bit_mask[!clr];
+	occu = (mask | emask);
 
 	double score = 0;
-
-	if(color == WHITE) {
-		mask = currentState.piece_bit_mask[whiteSide];
-		emask = currentState.piece_bit_mask[!whiteSide];
-		enemyColor = BLACK;
-	} else {
-		mask = currentState.piece_bit_mask[!whiteSide];
-		emask = currentState.piece_bit_mask[whiteSide];
-		enemyColor = WHITE;
-	}
-
-	occu = (mask | emask);
 
 	uint64_t enemyKingPos = currentState.figures[KING] & emask;
 	uint8_t pos = firstOne(enemyKingPos);
@@ -2143,8 +2122,8 @@ double BitBoard::newEvaluateAll() {
 
 	//Бонус мобильности + Оценка безопасности короля
 
-	result += bitBoardMobilityEval(WHITE, stage_game);
-	result -= bitBoardMobilityEval(BLACK, stage_game);
+	result += bitBoardMobilityEval(whiteSide, stage_game);
+	result -= bitBoardMobilityEval(!whiteSide, stage_game);
 
 	//Наличие роировки
 
