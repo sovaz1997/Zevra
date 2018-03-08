@@ -37,33 +37,8 @@ double BitMove::getAttackPrice() const {
 	if(!isAttack) {
 		return -INFINITY;
 	}
-	double res = 0;
-
-	if((attackedFigure & TYPE_SAVE) == QUEEN) {
-		res = QUEEN_EV.mg * 100;
-	} else if((attackedFigure & TYPE_SAVE) == ROOK) {
-		res = ROOK_EV.mg * 100;
-	} else if((attackedFigure & TYPE_SAVE) == BISHOP) {
-		res = BISHOP_EV.mg * 100;
-	} else if((attackedFigure & TYPE_SAVE) == KNIGHT) {
-		res = KNIGHT_EV.mg * 100;
-	} else if((attackedFigure & TYPE_SAVE) == PAWN) {
-		res = PAWN_EV.mg;
-	}
-
-	if((movedFigure & TYPE_SAVE) == QUEEN) {
-		return res - QUEEN_EV.mg;
-	} else if((movedFigure & TYPE_SAVE) == ROOK) {
-		return res - ROOK_EV.mg;
-	} else if((movedFigure & TYPE_SAVE) == BISHOP) {
-		return res - BISHOP_EV.mg;
-	} else if((movedFigure & TYPE_SAVE) == KNIGHT) {
-		return res - KNIGHT_EV.mg;
-	} else if((movedFigure & TYPE_SAVE) == PAWN) {
-		return res - PAWN_EV.mg;
-	}
-
-	return res;
+	
+	return attackedPrice[attackedFigure & TYPE_SAVE] * 100 - attackedPrice[movedFigure & TYPE_SAVE];
 }
 
 bool BitMove::equal(BitMove& mv) {

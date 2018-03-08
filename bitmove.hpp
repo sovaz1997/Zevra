@@ -8,26 +8,7 @@
 #include <vector>
 #include "constants.hpp"
 
-
-//std::vector<uint8_t>figureToIndex;
-
-/*
-void setBitMoveConstants() {
-	figureToIndex.resize(32);
-	figureToIndex[EMPTY] = 0;
-	figureToIndex[KING | WHITE] = 1;
-	figureToIndex[QUEEN | WHITE] = 2;
-	figureToIndex[ROOK | WHITE] = 3;
-	figureToIndex[BISHOP | WHITE] = 4;
-	figureToIndex[KNIGHT | WHITE] = 5;
-	figureToIndex[PAWN | WHITE] = 6;
-	figureToIndex[KING | BLACK] = 7;
-	figureToIndex[QUEEN | BLACK] = 8;
-	figureToIndex[ROOK | BLACK] = 9;
-	figureToIndex[BISHOP | BLACK] = 10;
-	figureToIndex[KNIGHT | BLACK] = 11;
-}
-*/	
+const int attackedPrice[6] = {0, PAWN_EV.mg, KNIGHT_EV.mg, BISHOP_EV.mg, ROOK_EV.mg, QUEEN_EV.mg};
 
 class BitMove {
 public:
@@ -51,15 +32,5 @@ public:
 	bool quality();
 	void printInfo();
 };
-
-/*
-Новый BitMove:
-
-4 bits * 3 - figures;
-6 bit - fromY/fromX;
-6 bit-toY/toX
-4 bit - other flags
-All: uint32_t (28 bit)
-*/
 
 #endif
