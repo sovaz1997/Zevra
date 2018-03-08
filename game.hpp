@@ -47,15 +47,12 @@ private:
 	void goFixedTime(int64_t time, bool tournamentTimeControll);
 	void goTournament();
 	void clearCash();
-	void initializeArrays();
 	void setHashSize(int mb_size);
 
   	std::vector<BitMove>pv;
 	std::vector<size_t> count_moves;
 
-	double whiteHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 	double historySort[2][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
-	double blackHistorySort[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
 
 	bool hasBestMove = false;
 
@@ -112,8 +109,7 @@ public:
 	void sortAttacks(MoveArray& moves);
 
 	double evalute_cells_size[BOARD_SIZE][BOARD_SIZE][BOARD_SIZE][BOARD_SIZE];
-	void cleanWhiteHistory();
-	void cleanBlackHistory();
+	void cleanHistory();
 	void flattenHistory();
 	void printPV(int depth);
 

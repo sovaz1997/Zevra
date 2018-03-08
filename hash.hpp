@@ -21,8 +21,6 @@ public:
 
 	Hash();
 	~Hash();
-	//bool back();
-	//void recordPrev();
 	void clean();
 	void setMove(BitMove& mv);
 	bool move_equal(BitMove& mv);

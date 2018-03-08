@@ -5,6 +5,4 @@ Killers::Killers() {
 	blackKiller.resize(100);
 	whiteSecondKiller.resize(100);
 	blackSecondKiller.resize(100);
-	whiteMateKiller.resize(100);
-	blackMateKiller.resize(100);
 }

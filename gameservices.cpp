@@ -1,58 +1,26 @@
 #include "game.hpp"
-/*
-void Game::printVariant() {
-	if(print_variant_enable) {
-		for(unsigned int i = 0; i < variant.size(); ++i) {
-			std::cout << variant[i] << " ";
-		}
-
-		std::cout << std::endl;
-	}
-}*/
-
-void Game::cleanWhiteHistory() {
-	for(int i = 0; i < BOARD_SIZE; ++i) {
-		for(int j = 0; j < BOARD_SIZE; ++j) {
-			for(int k = 0; k < BOARD_SIZE; ++k) {
-				for(int m = 0; m < BOARD_SIZE; ++m) {
-					whiteHistorySort[i][j][k][m] = 0;
-				}
-			}
-		}
-	}
-}
-
-void Game::cleanBlackHistory() {
-	for(int i = 0; i < BOARD_SIZE; ++i) {
-		for(int j = 0; j < BOARD_SIZE; ++j) {
-			for(int k = 0; k < BOARD_SIZE; ++k) {
-				for(int m = 0; m < BOARD_SIZE; ++m) {
-					blackHistorySort[i][j][k][m] = 0;
-				}
-			}
-		}
-	}
-}
 
 void Game::flattenHistory() {
-	/*for(int i = 0; i < BOARD_SIZE; ++i) {
-		for(int j = 0; j < BOARD_SIZE; ++j) {
-			for(int k = 0; k < BOARD_SIZE; ++k) {
-				for(int m = 0; m < BOARD_SIZE; ++m) {
-					whiteHistorySort[i][j][k][m] /= 1000000;
-					blackHistorySort[i][j][k][m] /= 1000000;
-				}
-			}
-		}
-	}*/
-
 	for(int s = 0; s < 2; ++s) {
 		for(int i = 0; i < BOARD_SIZE; ++i) {
 			for(int j = 0; j < BOARD_SIZE; ++j) {
 				for(int k = 0; k < BOARD_SIZE; ++k) {
 					for(int m = 0; m < BOARD_SIZE; ++m) {
 						historySort[s][i][j][k][m] /= 10000;
-						//blackHistorySort[i][j][k][m] /= 1000000;
+					}
+				}
+			}
+		}
+	}
+}
+
+void Game::cleanHistory() {
+	for(int s = 0; s < 2; ++s) {
+		for(int i = 0; i < BOARD_SIZE; ++i) {
+			for(int j = 0; j < BOARD_SIZE; ++j) {
+				for(int k = 0; k < BOARD_SIZE; ++k) {
+					for(int m = 0; m < BOARD_SIZE; ++m) {
+						historySort[s][i][j][k][m] = 0;
 					}
 				}
 			}
@@ -61,8 +29,7 @@ void Game::flattenHistory() {
 }
 
 void Game::clearCash() {
-	cleanWhiteHistory();
-	cleanBlackHistory();
+	cleanHistory();
 
 	for(unsigned int i = 0; i < boardHash.size(); ++i) {
 		boardHash[i].clean();
