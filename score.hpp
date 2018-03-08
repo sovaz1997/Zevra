@@ -3,9 +3,9 @@
 
 class Score {
 public:
-    double mg, eg;
-    Score(double _mg, double _eg);
-    double getScore(double stageGame) const;
+    int mg, eg;
+    Score(int _mg, int _eg);
+    int getScore(int stageGame) const;
 };
 
 #endif

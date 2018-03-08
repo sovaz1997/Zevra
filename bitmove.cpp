@@ -33,11 +33,11 @@ std::string BitMove::getMoveString() {
 	return res;
 }
 
-double BitMove::getAttackPrice() const {
+int BitMove::getAttackPrice() const {
 	if(!isAttack) {
 		return -INFINITY;
 	}
-	
+
 	return attackedPrice[attackedFigure & TYPE_SAVE] * 100 - attackedPrice[movedFigure & TYPE_SAVE];
 }
 
@@ -68,17 +68,4 @@ void BitMove::setReplaced(uint8_t figure) {
 
 bool BitMove::quality() {
 	return (fromY <= 7 && fromX <= 7 && toY <= 7 && toY <= 7);
-}
-
-void BitMove::printInfo() {
-	std::cout << "move: " << getMoveString() << std::endl;
-	std::cout << "attackedFigure: " << (int)attackedFigure << std::endl;
-	std::cout << "movedFigure: " << (int)movedFigure << std::endl;
-	std::cout << "replacedFigure: " << (int)replacedFigure << std::endl;
-	std::cout << "isAttack: " << (int)isAttack << std::endl;
-	std::cout << "replaced: " << (int)replaced << std::endl;
-	std::cout << "passant: " << (int)passant << std::endl;
-	std::cout << "fromHash: " << (int)fromHash << std::endl;
-	std::cout << "history_weight: " << (int)history_weight << std::endl;
-	std::cout << "historyCompare: " << (int)historyCompare << std::endl;
 }

@@ -26,11 +26,10 @@ public:
 	bool operator>(const BitMove& mv) const;
 	bool operator<(const BitMove& mv) const;
 	std::string getMoveString();
-	double getAttackPrice() const;
+	int getAttackPrice() const;
 	bool equal(BitMove& mv);
 	void setReplaced(uint8_t figure);
 	bool quality();
-	void printInfo();
 };
 
 #endif
