@@ -151,6 +151,7 @@ const double KnightMobilityBonus[9] = {-44, -32, -31, -4, 3, 7, 14, 17, 20};
 const double BishopMobilityBonus[14] = {-31, -12, 5, 15, 18, 23, 26, 30, 32, 35, 38, 41, 44, 47};
 const double RookMobilityBonus[15] = {-35, -30, -25, -20, -10, -5, 5, 10, 15, 23, 30, 36, 42, 50};
 const double QueenMobilityBonus[28] = {-15, -10, 3, 4, 6, 9, 12, 15, 20, 25, 30, 35, 38, 41, 44, 47, 50, 52, 54, 56, 58, 60, 62, 64, 65, 66, 67, 68};
+const double DualPawnBonus[9] = {0, 0, -5, -10, -15, -15, -15, -15, -15};
 
 // Безопасность короля
 const double king_security[8] = {8, 7, 6, 5, 4, 3, 2, 1};

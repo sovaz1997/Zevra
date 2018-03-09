@@ -2006,13 +2006,13 @@ double BitBoard::newEvaluateAll() {
 
 	result += (isolated_pawn_map[compressVertical(whitePawns)] * IsolatedPawnBonus);
 	result -= (isolated_pawn_map[compressVertical(blackPawns)] * IsolatedPawnBonus);
-/*
+
 	//Сдвоенные пешки
 	
 	for(int i = 0; i < BOARD_SIZE; ++i) {
 		result += DualPawnBonus[popcount64(whitePawns & vertical[i])];
 		result -= DualPawnBonus[popcount64(blackPawns & vertical[i])];
-	}*/
+	}
 
 	//Оценка близости вражеский фигур к королю
 
