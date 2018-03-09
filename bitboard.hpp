@@ -73,8 +73,6 @@ public:
 	GoBack currentState;
 	int history_iterator = 0;
 
-	uint8_t colorExtended[2];
-
 	bool wsc();
 	bool wlc();
 	bool bsc();

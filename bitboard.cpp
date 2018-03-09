@@ -593,9 +593,6 @@ void BitBoard::preInit() {
 	}
 
 	blackCells = ~whiteCells;
-
-	colorExtended[whiteSide] = WHITE;
-	colorExtended[!whiteSide] = BLACK;
 }
 
 void BitBoard::magicInit() {

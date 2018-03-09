@@ -167,4 +167,6 @@ const int SafetyTable[100] = {
 	500, 500, 500, 500, 500, 500, 500, 500, 500, 500
 	};
 
+const uint8_t colorExtended[2] = {BLACK, WHITE};
+
 #endif

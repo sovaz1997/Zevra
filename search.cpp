@@ -73,23 +73,12 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		}
 	}
 
-	uint8_t color, enemyColor;
-	if(b.currentState.color) {
-		color = WHITE;
-		enemyColor = BLACK;
-	} else {
-		color = BLACK;
-		enemyColor = WHITE;
-	}
+	uint8_t color = colorExtended[b.currentState.color];
+	uint8_t enemyColor = colorExtended[!b.currentState.color];
 
 	int tmp;
-
-
-	bool inCheck;
-	inCheck = b.inCheck(color);
-
+	bool inCheck = b.inCheck(color);
 	bool onPV = (beta - alpha) > 1;
-
 	int opposiing_pieces = (color == WHITE ? b.popcount64(b.currentState.piece_bit_mask[!whiteSide]) : b.popcount64(b.currentState.piece_bit_mask[whiteSide]));
 
 	if(!extended && !inCheck &&  !inNullMove && depth < 10 && !onPV && opposiing_pieces > 3) { //Razoring
