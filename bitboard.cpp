@@ -1428,11 +1428,21 @@ void BitBoard::pushHistory() {
 }
 
 uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
+	uint64_t bit_mask;
+	uint8_t color;
+	if(vec2_cells[y][x] & currentState.piece_bit_mask[whiteSide]) {
+		bit_mask = currentState.piece_bit_mask[whiteSide];
+		color = WHITE;
+	} else if(vec2_cells[y][x] & currentState.piece_bit_mask[!whiteSide]) {
+		bit_mask = currentState.piece_bit_mask[!whiteSide];
+		color = BLACK;
+	} else {
+		return 0;
+	}
+
 	for(uint8_t i = 1; i < 7; ++i) {
-		if(currentState.figures[i] & vec2_cells[y][x] & currentState.piece_bit_mask[whiteSide]) {
-			return (i | WHITE);
-		} else if(currentState.figures[i] & vec2_cells[y][x] & currentState.piece_bit_mask[!whiteSide]) {
-			return (i | BLACK);
+		if(currentState.figures[i] & vec2_cells[y][x]) {
+			return (i | color);
 		}
 	}
 
