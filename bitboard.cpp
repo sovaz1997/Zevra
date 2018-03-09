@@ -1472,84 +1472,70 @@ int64_t BitBoard::getEvaluate() {
 }
 
 bool BitBoard::inCheck(uint8_t color) {
-	uint64_t mask, emask;
+	bool compressColor = color & (1 << 3);
 
-	if(color == WHITE) {
-		mask = currentState.piece_bit_mask[whiteSide];
-		emask = currentState.piece_bit_mask[!whiteSide];
-	} else {
-		mask = currentState.piece_bit_mask[!whiteSide];
-		emask = currentState.piece_bit_mask[whiteSide];
-	}
+	uint64_t mask = currentState.piece_bit_mask[compressColor];
+	uint64_t emask = currentState.piece_bit_mask[!compressColor];
+	uint64_t occu = (mask | emask);
 
 	uint64_t kingPos = currentState.figures[KING] & mask;
 	uint8_t kingCoord = firstOne(kingPos);
 
-	if(color == WHITE) {
-		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KING])) &&
-		   !(capturePawnMap[WHITE][kingCoord] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[PAWN]))) {
-			   return false;
-		}
-	} else {
-		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KING])) &&
-		   !(capturePawnMap[BLACK][kingCoord] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[PAWN]))) {
+	if(!(bitboard[ROOK | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		!(bitboard[BISHOP | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		!(bitboard[KNIGHT | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KNIGHT])) &&
+		!(bitboard[KING | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KING])) &&
+		!(capturePawnMap[colorExtended[compressColor]][kingCoord] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[PAWN]))) {
 			return false;
-		}
 	}
 
 
 	uint64_t figure;
-	figure = firstOne(plus8[kingCoord] & (mask | emask));
+	figure = firstOne(plus8[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(plus8[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = firstOne(plus1[kingCoord] & (mask | emask));
+	figure = firstOne(plus1[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(plus1[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus8[kingCoord] & (mask | emask));
+	figure = lastOne(minus8[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(minus8[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus1[kingCoord] & (mask | emask));
+	figure = lastOne(minus1[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(minus1[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = firstOne(plus7[kingCoord] & (mask | emask));
+	figure = firstOne(plus7[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(plus7[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = firstOne(plus9[kingCoord] & (mask | emask));
+	figure = firstOne(plus9[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(plus9[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus7[kingCoord] & (mask | emask));
+	figure = lastOne(minus7[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(minus7[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus9[kingCoord] & (mask | emask));
+	figure = lastOne(minus9[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(minus9[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
@@ -1585,83 +1571,69 @@ bool BitBoard::inCheck(uint8_t color) {
 }
 
 bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
-	uint64_t mask, emask;
+	bool compressColor = color & (1 << 3);
 
-	if(color == WHITE) {
-		mask = currentState.piece_bit_mask[whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[whiteSide]);
-		emask = currentState.piece_bit_mask[!whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide]);
-	} else {
-		mask = currentState.piece_bit_mask[!whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide]);
-		emask = currentState.piece_bit_mask[whiteSide] & ~(currentState.figures[KING] & currentState.piece_bit_mask[whiteSide]);
-	}
+	uint64_t mask = currentState.piece_bit_mask[compressColor];
+	uint64_t emask = currentState.piece_bit_mask[!compressColor];
+	uint64_t occu = (mask | emask);
 
 	uint64_t kingPos = vec2_cells[y][x];
 	uint8_t kingCoord = y * 8 + x;
 
-	if(color == WHITE) {
-		if(!(bitboard[ROOK | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | BLACK][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[KING])) &&
-		   !(capturePawnMap[WHITE][kingCoord] & currentState.piece_bit_mask[!whiteSide] & (currentState.figures[PAWN]))) {
-			   return false;
-		}
-	} else {
-		if(!(bitboard[ROOK | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		   !(bitboard[BISHOP | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		   !(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KNIGHT])) &&
-		   !(bitboard[KING | WHITE][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[KING])) &&
-		   !(capturePawnMap[BLACK][kingCoord] & currentState.piece_bit_mask[whiteSide] & (currentState.figures[PAWN]))) {
+	if(!(bitboard[ROOK | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		!(bitboard[BISHOP | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		!(bitboard[KNIGHT | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KNIGHT])) &&
+		!(bitboard[KING | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KING])) &&
+		!(capturePawnMap[colorExtended[compressColor]][kingCoord] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[PAWN]))) {
 			return false;
-		}
 	}
 
 	uint64_t figure;
-	figure = firstOne(plus8[kingCoord] & (mask | emask));
+	figure = firstOne(plus8[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(plus8[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = firstOne(plus1[kingCoord] & (mask | emask));
+	figure = firstOne(plus1[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(plus1[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus8[kingCoord] & (mask | emask));
+	figure = lastOne(minus8[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus8[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(minus8[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus1[kingCoord] & (mask | emask));
+	figure = lastOne(minus1[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus1[kingCoord] & (mask | emask) && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
+	if(minus1[kingCoord] & occu && (figure & (currentState.figures[ROOK] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = firstOne(plus7[kingCoord] & (mask | emask));
+	figure = firstOne(plus7[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(plus7[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = firstOne(plus9[kingCoord] & (mask | emask));
+	figure = firstOne(plus9[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(plus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(plus9[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus7[kingCoord] & (mask | emask));
+	figure = lastOne(minus7[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus7[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(minus7[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
-	figure = lastOne(minus9[kingCoord] & (mask | emask));
+	figure = lastOne(minus9[kingCoord] & occu);
 	figure = vec1_cells[figure];
-	if(minus9[kingCoord] & (mask | emask) && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
+	if(minus9[kingCoord] & occu && (figure & (currentState.figures[BISHOP] | currentState.figures[QUEEN]) & emask)) {
 		return true;
 	}
 
