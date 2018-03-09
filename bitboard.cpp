@@ -1396,12 +1396,7 @@ void BitBoard::addFigure(uint8_t figure, uint8_t y, uint8_t x) {
 
 	if(figure) {
 		currentState.figures[figure & TYPE_SAVE] |= vec2_cells[y][x];
-
-		if(color == WHITE) {
-			currentState.piece_bit_mask[whiteSide] |= vec2_cells[y][x];
-		} else if(color == BLACK) {
-			currentState.piece_bit_mask[!whiteSide] |= vec2_cells[y][x];
-		}
+		currentState.piece_bit_mask[(bool)(color & (1 << 3))] |= vec2_cells[y][x];
 	}
 
 	currentState.hash ^= zobrist[originalFigure][y][x];
