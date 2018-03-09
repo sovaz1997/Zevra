@@ -14,7 +14,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 	if((currentHash->flag != EMPTY && currentHash->key == hash) && real_depth > 2) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
-			double score = currentHash->score;
+			int score = currentHash->score;
 
 			if(score > WHITE_WIN - 100) {
 				score -= real_depth;
@@ -23,9 +23,9 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 			}
 
 			if(currentHash->flag == BETA) {
-				alpha = std::max((int64_t)alpha, (int64_t)score);
+				alpha = std::max(alpha, score);
 			} else if(currentHash->flag == ALPHA) {
-				beta = std::min((int64_t)beta, (int64_t)score);
+				beta = std::min(beta, score);
 			} else if(currentHash->flag == EXACT) {
 				return score;
 			}
