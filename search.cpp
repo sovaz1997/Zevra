@@ -40,6 +40,18 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
+	/*int R = 2 + depth / 6;
+
+	if(!extended && !inCheck && !inNullMove && depth > R) { //Null Move Pruning
+		b.makeNullMove();
+		int res = -negamax(b, -beta, -beta + 1, nextDepth - R, real_depth + 1, rule, true, true);	
+		if(res >= beta) {
+			b.unMakeNullMove();
+			return res;
+		}
+		b.unMakeNullMove();
+	}*/
+
 	if(depth > 6) {
 		if(is_input_available()) {
 			std::string input_str;
