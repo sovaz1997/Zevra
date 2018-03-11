@@ -2014,7 +2014,7 @@ double BitBoard::newEvaluateAll() {
 		result -= DualPawnBonus[popcount64(blackPawns & vertical[i])];
 	}
 
-	//Оценка близости вражеский фигур к королю
+	//Оценка близости вражеских фигур к королю
 
 	uint64_t white_king_pos = firstOne(currentState.figures[KING] & currentState.piece_bit_mask[whiteSide]);
 	uint64_t black_king_pos = firstOne(currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide]);
