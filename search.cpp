@@ -119,7 +119,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				
 				b.goBack();
 				if (tmp >= beta) {
-					if (++c == 3) {
+					if (++c == 2) {
 						return beta;
 					}
 				}
