@@ -1524,7 +1524,7 @@ bool BitBoard::inCheck(uint8_t color) {
 		return true;
 	}
 
-	if(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.figures[KNIGHT] & emask) {
+	if(*(*bitboard[KNIGHT | WHITE] + kingCoord) & currentState.figures[KNIGHT] & emask) {
 		return true;
 	}
 
@@ -1548,7 +1548,7 @@ bool BitBoard::inCheck(uint8_t color) {
 
 	uint8_t eKingCoord = firstOne(currentState.figures[KING] & emask);
 
-	if(bitboard[KING | WHITE][eKingCoord / 8][eKingCoord % 8] & kingPos) {
+	if(*(*bitboard[KING | WHITE] + eKingCoord) & kingPos) {
 		return true;
 	}
 
@@ -1622,7 +1622,7 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 		return true;
 	}
 
-	if(bitboard[KNIGHT | WHITE][kingCoord / 8][kingCoord % 8] & currentState.figures[KNIGHT] & emask) {
+	if(*(*bitboard[KNIGHT | WHITE] + kingCoord) & currentState.figures[KNIGHT] & emask) {
 		return true;
 	}
 
@@ -1646,7 +1646,7 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 
 	uint8_t eKingCoord = firstOne(currentState.figures[KING] & emask);
 
-	if(bitboard[KING | WHITE][eKingCoord / 8][eKingCoord % 8] & kingPos) {
+	if(*(*bitboard[KING | WHITE] + eKingCoord) & kingPos) {
 		return true;
 	}
 
