@@ -729,7 +729,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	while(rook != 0) {
 		uint8_t pos = firstOne(rook);
 
-		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask;
+		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~emask & ~mask;
 
 		rook &= ~vec1_cells[pos];
 
@@ -745,7 +745,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	while(bishop != 0) {
 		uint8_t pos = firstOne(bishop);
 
-		possibleMoves = (*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask;
+		possibleMoves = (*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~emask & ~mask;
 		bishop &= ~vec1_cells[pos];
 
 		while(possibleMoves != 0) {
@@ -760,8 +760,8 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	while(queen != 0) {
 		uint8_t pos = firstOne(queen);
 
-		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask |
-						((*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask);
+		possibleMoves = ~occu & ((*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos])  |
+						((*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos])));
 
 		queen &= ~vec1_cells[pos];
 
