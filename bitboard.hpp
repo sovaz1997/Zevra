@@ -97,11 +97,11 @@ public:
 	void clear();
 	size_t stress;
 
-	void bitBoardMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
+	void bitBoardMoveGenerator(MoveArray& moveArray);
 	
 	double bitBoardMobilityEval(bool clr, double stage_game);
 	
-	void bitBoardAttackMoveGenerator(MoveArray& moveArray, size_t& counter_moves);
+	void bitBoardAttackMoveGenerator(MoveArray& moveArray);
 	void move(BitMove& mv);
 	void goBack();
 	void pushHistory();

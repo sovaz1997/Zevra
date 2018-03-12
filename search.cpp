@@ -87,7 +87,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 	int num_moves = 0;
 
-	b.bitBoardMoveGenerator(moveArray[real_depth], stress);
+	b.bitBoardMoveGenerator(moveArray[real_depth]);
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
 
@@ -259,7 +259,7 @@ uint64_t Game::perft(int depth) {
 		return 1;
 	}
 
-	game_board.bitBoardMoveGenerator(moveArray[depth], stress);
+	game_board.bitBoardMoveGenerator(moveArray[depth]);
 
 	for(unsigned int i = 0; i < moveArray[depth].count; ++i) {
 		game_board.move(moveArray[depth].moveArray[i]);
@@ -297,7 +297,7 @@ int Game::quies(BitBoard & b, int alpha, int beta, int rule, int real_depth) {
 		alpha = val;
 	}
 
-	b.bitBoardAttackMoveGenerator(moveArray[real_depth], stress);
+	b.bitBoardAttackMoveGenerator(moveArray[real_depth]);
 	sortAttacks(moveArray[real_depth]);
 
 	for(unsigned int i = 0; i < moveArray[real_depth].count; ++i) {
@@ -381,7 +381,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 		Hash* currentHash = &boardHash[hash & hash_cutter];
 
 		if(currentHash->flag == EXACT || currentHash->flag == BETA) {
-			game_board.bitBoardMoveGenerator(moves, stress);
+			game_board.bitBoardMoveGenerator(moves);
 
 			bool enable;
 			BitMove mv = game_board.getMove(currentHash->fromY, currentHash->fromX, currentHash->toY, currentHash->toX, currentHash->replaced, currentHash->replacedFigure, enable);// currentHash->getMove();
@@ -426,7 +426,7 @@ std::vector<BitMove> Game::extractPV(int depth) {
 
 bool Game::testMovePossible(BitMove move) {
 	MoveArray moves;
-	game_board.bitBoardMoveGenerator(moves, stress);
+	game_board.bitBoardMoveGenerator(moves);
 
 	for(unsigned int i = 0; i < moves.count; ++i) {
 		if(move.equal(moves.moveArray[i])) {

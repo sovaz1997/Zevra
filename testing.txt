@@ -88,3 +88,7 @@ Zevra r564 vs Zevra 1.7.1
 LTC (60+0.6):
 Score of Zevra 20180114 vs Zevra v1.7.1 r563: 111 - 77 - 68  [0.566] 256
 Elo difference: 46.42 +/- 36.77
+
+---------------------------
+Score of Zevra 180311 vs Zevra v1.8.1 r594 popcnt: 648 - 292 - 260  [0.648] 1200
+Elo difference: 106.27 +/- 17.97

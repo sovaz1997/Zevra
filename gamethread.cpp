@@ -114,7 +114,7 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 			}
 
 			if(max_depth == 1) {
-				game_board.bitBoardMoveGenerator(moveArray[0], stress);
+				game_board.bitBoardMoveGenerator(moveArray[0]);
 				BitMove mv;
 				uint8_t color;
 				if(game_board.currentState.color) {
@@ -199,7 +199,7 @@ void Game::goTournament() {
 
 bool Game::move(std::string mv) {
 	MoveArray moves;
-	game_board.bitBoardMoveGenerator(moves, stress);
+	game_board.bitBoardMoveGenerator(moves);
 	for(unsigned int i = 0; i < moves.count; ++i) {
 		if(moves.moveArray[i].getMoveString() == mv) {
 			game_board.move(moves.moveArray[i]);
