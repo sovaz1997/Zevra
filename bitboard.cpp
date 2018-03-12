@@ -947,14 +947,14 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8));
 			rightPawnAttack &= ~vec1_cells[to];
 		}
 		uint64_t leftPawnAttack = (pawn << 7) & ~vertical[7] & emask & ~currentState.figures[KING];
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8));
 			leftPawnAttack &= ~vec1_cells[to];
 		}
 
@@ -963,7 +963,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
+			BitMove replaced = BitMove(getFigure(to), PAWN | color, to / 8 - 1, to % 8 - 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -983,7 +983,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8);
+			BitMove replaced = BitMove(getFigure(to), PAWN | color, to / 8 - 1, to % 8 + 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -1005,7 +1005,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8));
 			rightPawnAttack &= ~vec1_cells[to];
 		}
 
@@ -1013,7 +1013,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8));
 			leftPawnAttack &= ~vec1_cells[to];
 		}
 
@@ -1022,7 +1022,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(rightPawnAttack);
 		while(rightPawnAttack != 0) {
 			uint64_t to = firstOne(rightPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8);
+			BitMove replaced = BitMove(getFigure(to), PAWN | color, to / 8 + 1, to % 8 + 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -1042,7 +1042,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		moveArray.num_attacks += popcount64(leftPawnAttack);
 		while(leftPawnAttack != 0) {
 			uint64_t to = firstOne(leftPawnAttack);
-			BitMove replaced = BitMove(getFigure(to / 8, to % 8), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8);
+			BitMove replaced = BitMove(getFigure(to), PAWN | color, to / 8 + 1, to % 8 - 1, to / 8, to % 8);
 
 			replaced.setReplaced(KNIGHT | color);
 			moveArray.addMove(replaced);
@@ -1099,7 +1099,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), KNIGHT | color, pos / 8, pos % 8, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), KNIGHT | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= ~vec1_cells[to];
 			possibleMoves &= ~(currentState.figures[KING] & emask);
 		}
@@ -1116,7 +1116,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), BISHOP | color, pos / 8, pos % 8, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), BISHOP | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= ~vec1_cells[to];
 		}
 	}
@@ -1133,7 +1133,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), ROOK | color, pos / 8, pos % 8, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), ROOK | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= ~vec1_cells[to];
 		}
 	}
@@ -1150,7 +1150,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), QUEEN | color, pos / 8, pos % 8, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), QUEEN | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= ~vec1_cells[to];
 		}
 	}
@@ -1166,7 +1166,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 
 		while(possibleMoves != 0) {
 			uint64_t to = firstOne(possibleMoves);
-			moveArray.addMove(BitMove(getFigure(to / 8, to % 8), KING | color, pos / 8, pos % 8, to / 8, to % 8));
+			moveArray.addMove(BitMove(getFigure(to), KING | color, pos / 8, pos % 8, to / 8, to % 8));
 			possibleMoves &= ~vec1_cells[to];
 		}
 	}
@@ -1258,7 +1258,7 @@ double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 
 void BitBoard::move(BitMove& mv) {
 	pushHistory();
-	uint8_t movedFigure = getFigure(mv.fromY, mv.fromX);
+	uint8_t movedFigure = getFigure(mv.fromY * 8 + mv.fromX);
 	currentState.recapture_position = vec2_cells[mv.toY][mv.toX];
 	currentState.attacked = false;
 
@@ -1355,7 +1355,7 @@ void BitBoard::clearCell(uint8_t y, uint8_t x) {
 		return;
 	}
 
-	uint8_t figure = getFigure(y, x);
+	uint8_t figure = getFigure(y * 8 + x);
 
 	currentState.hash ^= zobrist[figure][y][x];
 
@@ -1402,13 +1402,13 @@ void BitBoard::pushHistory() {
 	}
 }
 
-uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
+uint8_t BitBoard::getFigure(uint8_t pos) {
 	uint64_t bit_mask;
 	uint8_t color;
-	if(vec2_cells[y][x] & currentState.piece_bit_mask[whiteSide]) {
+	if(vec1_cells[pos] & currentState.piece_bit_mask[whiteSide]) {
 		bit_mask = currentState.piece_bit_mask[whiteSide];
 		color = WHITE;
-	} else if(vec2_cells[y][x] & currentState.piece_bit_mask[!whiteSide]) {
+	} else if(vec1_cells[pos] & currentState.piece_bit_mask[!whiteSide]) {
 		bit_mask = currentState.piece_bit_mask[!whiteSide];
 		color = BLACK;
 	} else {
@@ -1416,7 +1416,7 @@ uint8_t BitBoard::getFigure(uint8_t y, uint8_t x) {
 	}
 
 	for(uint8_t i = 1; i < 7; ++i) {
-		if(currentState.figures[i] & vec2_cells[y][x]) {
+		if(currentState.figures[i] & vec1_cells[pos]) {
 			return (i | color);
 		}
 	}
@@ -1701,7 +1701,7 @@ void BitBoard::generateHash() {
 
 	while(figure_positions) {
 		uint8_t pos = firstOne(figure_positions);
-		currentState.hash ^= (zobrist[getFigure(pos / 8, pos % 8)][pos / 8][pos % 8]);
+		currentState.hash ^= (zobrist[getFigure(pos)][pos / 8][pos % 8]);
 		figure_positions &= ~vec1_cells[pos];
 	}
 }

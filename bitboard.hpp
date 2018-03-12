@@ -109,7 +109,7 @@ public:
 	void makeNullMove();
 	void unMakeNullMove();
 	int64_t getEvaluate();
-	uint8_t getFigure(uint8_t y, uint8_t x);
+	uint8_t getFigure(uint8_t pos);
 	int getFiguresCount();
 	bool inCheck(uint8_t color);
 	bool inCheck(uint8_t color, uint8_t y, uint8_t x);
