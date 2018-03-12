@@ -729,7 +729,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	while(rook != 0) {
 		uint8_t pos = firstOne(rook);
 
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] ^ emask) & ~emask & ~mask;
+		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask;
 
 		rook &= ~vec1_cells[pos];
 
@@ -745,7 +745,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	while(bishop != 0) {
 		uint8_t pos = firstOne(bishop);
 
-		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] ^ emask) & ~emask & ~mask;
+		possibleMoves = (*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask;
 		bishop &= ~vec1_cells[pos];
 
 		while(possibleMoves != 0) {
@@ -760,8 +760,8 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	while(queen != 0) {
 		uint8_t pos = firstOne(queen);
 
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] ^ emask) & ~emask & ~mask;
-		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] ^ emask) & ~emask & ~mask);
+		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask |
+						((*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~emask & ~mask);
 
 		queen &= ~vec1_cells[pos];
 
@@ -776,7 +776,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	uint64_t knight = currentState.figures[KNIGHT] & mask;
 	while(knight != 0) {
 		uint8_t pos = firstOne(knight);
-		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & ~mask & ~(currentState.figures[KING] & emask);
+		possibleMoves = *(*bitboard[KNIGHT | color] + pos) & ~mask & ~(currentState.figures[KING] & emask);
 		knight &= ~vec1_cells[pos];
 		possibleMoves &= ~emask;
 
@@ -792,7 +792,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 	uint64_t king = currentState.figures[KING] & mask;
 	while(king != 0) {
 		uint8_t pos = firstOne(king);
-		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & ~mask & ~(currentState.figures[KING] & emask);
+		possibleMoves = *(*bitboard[KING | color] + pos) & ~mask & ~(currentState.figures[KING] & emask);
 		king &= ~vec1_cells[pos];
 		possibleMoves &= ~emask;
 
@@ -903,7 +903,7 @@ void BitBoard::bitBoardMoveGenerator(MoveArray& moveArray) {
 
 		while(pawn != 0) {
 			uint8_t pos = firstOne(pawn);
-			possibleMoves = bitboard[PAWN | BLACK][pos / 8][pos % 8];
+			possibleMoves = *(*bitboard[PAWN | BLACK] + pos);
 			possibleMoves &= ( minus8[pos] & ~minus8[firstOne(minus8[pos] & occu)]);
 			possibleMoves &= ~vec1_cells[firstOne(minus8[pos] & occu)];
 			possibleMoves &= ~(mask | emask);
@@ -1092,7 +1092,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 	uint64_t knight = currentState.figures[KNIGHT] & mask;
 	while(knight != 0) {
 		uint8_t pos = firstOne(knight);
-		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & ~mask & ~(currentState.figures[KING] & emask);
+		possibleMoves = *(*bitboard[KNIGHT | color] + pos) & ~mask & ~(currentState.figures[KING] & emask);
 		possibleMoves &= emask;
 		knight &= ~vec1_cells[pos];
 		moveArray.num_attacks += popcount64(possibleMoves);
@@ -1110,7 +1110,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 	while(bishop != 0) {
 		possibleMoves = 0;
 		uint8_t pos = firstOne(bishop);
-		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask;
+		possibleMoves = (*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask;
 		bishop &= ~vec1_cells[pos];
 		moveArray.num_attacks += popcount64(possibleMoves);
 
@@ -1127,7 +1127,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 		possibleMoves = 0;
 		uint8_t pos = firstOne(rook);
 
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask;
+		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask;
 		rook &= ~vec1_cells[pos];
 		moveArray.num_attacks += popcount64(possibleMoves);
 
@@ -1143,8 +1143,8 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 	while(queen != 0) {
 		possibleMoves = 0;
 		uint8_t pos = firstOne(queen);
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask;
-		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask);
+		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask;
+		possibleMoves |= ((*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & emask & ~mask);
 		queen &= ~vec1_cells[pos];
 		moveArray.num_attacks += popcount64(possibleMoves);
 
@@ -1159,7 +1159,7 @@ void BitBoard::bitBoardAttackMoveGenerator(MoveArray& moveArray) {
 	uint64_t king = currentState.figures[KING] & mask;
 	while(king != 0) {
 		uint8_t pos = firstOne(king);
-		possibleMoves = bitboard[KING | color][pos / 8][pos % 8] & ~mask & ~(currentState.figures[KING] & emask);
+		possibleMoves = *(*bitboard[KING | color] + pos) & ~mask & ~(currentState.figures[KING] & emask);
 		possibleMoves &= emask;
 		king &= ~vec1_cells[pos];
 		moveArray.num_attacks += popcount64(possibleMoves);
@@ -1188,14 +1188,13 @@ double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 
 	uint64_t enemyKingPos = currentState.figures[KING] & emask;
 	uint8_t pos = firstOne(enemyKingPos);
-	uint64_t enemyKingPossibleMoves = bitboard[KING | enemyColor][pos / 8][pos % 8] & ~mask & ~emask;
+	uint64_t enemyKingPossibleMoves = *(*bitboard[KING | enemyColor] + pos) & ~mask & ~emask;
 
 	int kingDanger = 0;
 
 	//Маска с полями, которые бьются пешками противника
 
 	uint64_t goodCells = 0;
-
 
 	uint64_t pawn = currentState.figures[PAWN] & emask;
 
@@ -1211,7 +1210,7 @@ double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 	uint64_t rook = currentState.figures[ROOK] & mask;
 	while(rook != 0) {
 		uint8_t pos = firstOne(rook);
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
+		possibleMoves = (*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
 		rook &= ~vec1_cells[pos];
 		kingDanger += 3 * popcount64(possibleMoves & enemyKingPossibleMoves);
 		possibleMoves &= goodCells;
@@ -1222,7 +1221,7 @@ double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 	uint64_t bishop = currentState.figures[BISHOP] & mask;
 	while(bishop != 0) {
 		uint8_t pos = firstOne(bishop);
-		possibleMoves = bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
+		possibleMoves = (*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
 		bishop &= ~vec1_cells[pos];		
 		kingDanger += 2 * popcount64(possibleMoves & enemyKingPossibleMoves);
 		possibleMoves &= goodCells;
@@ -1233,8 +1232,8 @@ double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 	uint64_t queen = currentState.figures[QUEEN] & mask;
 	while(queen != 0) {
 		uint8_t pos = firstOne(queen);
-		possibleMoves = rookMagic[pos / 8][pos % 8].getPossibleMoves(rookMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask;
-		possibleMoves |= (bishopMagic[pos / 8][pos % 8].getPossibleMoves(bishopMagicMask[pos / 8][pos % 8] & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask);
+		possibleMoves = ((*rookMagic + pos)->getPossibleMoves(*(*rookMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask) |
+						((*bishopMagic + pos)->getPossibleMoves(*(*bishopMagicMask + pos) & occu & ~vec1_cells[pos]) & ~(currentState.figures[KING] & emask) & ~mask);
 		queen &= ~vec1_cells[pos];
 		kingDanger += 5 * popcount64(possibleMoves & enemyKingPossibleMoves);
 		possibleMoves &= goodCells;
@@ -1246,7 +1245,7 @@ double BitBoard::bitBoardMobilityEval(bool clr, double stage_game) {
 	uint64_t knight = currentState.figures[KNIGHT] & mask;
 	while(knight != 0) {
 		uint8_t pos = firstOne(knight);
-		possibleMoves = bitboard[KNIGHT | color][pos / 8][pos % 8] & ~mask & ~(currentState.figures[KING] & emask);
+		possibleMoves = *(*bitboard[KNIGHT | color] + pos) & ~mask & ~(currentState.figures[KING] & emask);
 		knight &= ~vec1_cells[pos];
 		kingDanger += 2 * popcount64(possibleMoves & enemyKingPossibleMoves);
 		possibleMoves &= goodCells;
@@ -1467,10 +1466,10 @@ bool BitBoard::inCheck(uint8_t color) {
 	uint64_t kingPos = currentState.figures[KING] & mask;
 	uint8_t kingCoord = firstOne(kingPos);
 
-	if(!(bitboard[ROOK | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		!(bitboard[BISHOP | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		!(bitboard[KNIGHT | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KNIGHT])) &&
-		!(bitboard[KING | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KING])) &&
+	if(!(*(*bitboard[ROOK | colorExtended[!compressColor]] + kingCoord) & currentState.piece_bit_mask[!compressColor] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		!(*(*bitboard[BISHOP | colorExtended[!compressColor]] + kingCoord)  & currentState.piece_bit_mask[!compressColor] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		!(*(*bitboard[KNIGHT | colorExtended[!compressColor]] + kingCoord) & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KNIGHT])) &&
+		!(*(*bitboard[KING | colorExtended[!compressColor]] + kingCoord)  & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KING])) &&
 		!(capturePawnMap[colorExtended[compressColor]][kingCoord] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[PAWN]))) {
 			return false;
 	}
@@ -1566,10 +1565,10 @@ bool BitBoard::inCheck(uint8_t color, uint8_t y, uint8_t x) {
 	uint64_t kingPos = vec2_cells[y][x];
 	uint8_t kingCoord = y * 8 + x;
 
-	if(!(bitboard[ROOK | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
-		!(bitboard[BISHOP | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
-		!(bitboard[KNIGHT | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KNIGHT])) &&
-		!(bitboard[KING | colorExtended[!compressColor]][kingCoord / 8][kingCoord % 8] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KING])) &&
+	if(!(*(*bitboard[ROOK | colorExtended[!compressColor]] + kingCoord) & currentState.piece_bit_mask[!compressColor] & (currentState.figures[ROOK] | currentState.figures[QUEEN])) &&
+		!(*(*bitboard[BISHOP | colorExtended[!compressColor]] + kingCoord) & currentState.piece_bit_mask[!compressColor] & (currentState.figures[BISHOP] | currentState.figures[QUEEN])) &&
+		!(*(*bitboard[KNIGHT | colorExtended[!compressColor]] + kingCoord)  & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KNIGHT])) &&
+		!(*(*bitboard[KING | colorExtended[!compressColor]] + kingCoord)  & currentState.piece_bit_mask[!compressColor] & (currentState.figures[KING])) &&
 		!(capturePawnMap[colorExtended[compressColor]][kingCoord] & currentState.piece_bit_mask[!compressColor] & (currentState.figures[PAWN]))) {
 			return false;
 	}
