@@ -304,16 +304,9 @@ int Game::quies(BitBoard & b, int alpha, int beta, int rule, int real_depth) {
 		++nodesCounter;
 		b.move(moveArray[real_depth].moveArray[i]);
 
-		if(!b.currentState.color) {
-			if(game_board.inCheck(WHITE)) {
-				b.goBack();
-				continue;
-			} 
-		} else {
-			if(game_board.inCheck(BLACK)) {
-				b.goBack();
-				continue;
-			}
+		if(game_board.inCheck(colorExtended[!game_board.currentState.color])) {
+			b.goBack();
+			continue;
 		}
 
 		val = -quies(b, -beta, -alpha, rule, real_depth + 1);
