@@ -77,7 +77,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	int tmp;
 	bool inCheck = b.inCheck(color);
 	bool onPV = (beta - alpha) > 1;
-	int opposiing_pieces = (color == WHITE ? b.popcount64(b.currentState.piece_bit_mask[!whiteSide]) : b.popcount64(b.currentState.piece_bit_mask[whiteSide]));
+	int opposiing_pieces =  b.popcount64(b.currentState.piece_bit_mask[!b.currentState.color]);
 
 	if(!extended && !inCheck &&  !inNullMove && depth < 10 && !onPV && opposiing_pieces > 3) { //Razoring
 		if(b.getEvaluate() - RAZOR_MARGIN[depth] >= beta) {
