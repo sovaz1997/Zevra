@@ -1,5 +1,6 @@
 # Zevra
 Zevra - шахматный движок с протоколом UCI. На данный момент имеет рейтинг ~2220 пунктов ЭЛО на CCRL.
+
 Official lichess bot: https://lichess.org/@/zevra_chess
 
 Команды UCI:
