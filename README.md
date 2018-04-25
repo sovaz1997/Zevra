@@ -1,5 +1,6 @@
 # Zevra
-Zevra - шахматный движок с протоколом UCI. На данный момент имеет рейтинг 2143 пункта ЭЛО на CCRL 40/4
+Zevra - шахматный движок с протоколом UCI. На данный момент имеет рейтинг ~2220 пунктов ЭЛО на CCRL.
+Official lichess bot: https://lichess.org/@/zevra_chess
 
 Команды UCI:
 + `position [startpos/fen] [moves]` - задать позицию;
@@ -23,12 +24,19 @@ Zevra - шахматный движок с протоколом UCI. На дан
 + Check extensions;
 + Hash table (resizeble);
 + History heuristic;
-+ Two killers + Mate killer;
-+ Capture sorting (MVV-LVA).
++ Two killers;
++ Capture sorting (MVV-LVA);
++ Multi-Cut;
 
-Рейтинги CCRL 40/5:
-+ Zevra 1.8.1 - 2143;
-+ Zevra 1.6.1 - 1937;
-+ Zevra 1.5 - 1888;
-+ Zevra 1.3.1 - 1754;
-+ Zevra 1.2.1 - 1749.
+Рейтинги CCRL 40/4:
++ Zevra 1.8.4 - 2219;
++ Zevra 1.8.3 - 2217;
++ Zevra 1.8.1 - 2146;
++ Zevra 1.6.1 - 1949;
++ Zevra 1.5 - 1882;
++ Zevra 1.3.1 - 1755;
++ Zevra 1.2.1 - 1748.
+
+Рейтинги CCRL 40/40:
++ Zevra 1.8.4 - 2226;
++ Zevra 1.8.2 - 2190;
