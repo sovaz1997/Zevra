@@ -8,12 +8,18 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include "score.hpp"
 
 using S = Score;
 
 bool is_input_available();
+
+//Название движка
+const std::string engine_name = "Zevra 20180621";
+const std::string engine_author = "Oleg Smirnov";
+
 
 // Битовое обозначение фигур
 
