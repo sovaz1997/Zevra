@@ -113,10 +113,10 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		}
 	}
 
-	BitMove local_move;
+	BitMove* local_move = nullptr;
 
 	if(moveArray[real_depth].count > 0) {
-		local_move = moveArray[real_depth].moveArray[0];
+		local_move = &moveArray[real_depth].moveArray[0];
 	}
 
 	int low_moves_count = 0;
@@ -130,7 +130,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		}
 
 		if(num_moves == 0) {
-			local_move = moveArray[real_depth].moveArray[i];
+			local_move = &moveArray[real_depth].moveArray[i];
 		}
 
 		++num_moves;
@@ -190,24 +190,24 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 		if(tmp > alpha) {
 			alpha = tmp;
-			local_move = moveArray[real_depth].moveArray[i];
+			local_move = &moveArray[real_depth].moveArray[i];
 			recordHash(depth, tmp, tmp<beta?EXACT:BETA, hash, moveArray[real_depth].moveArray[i], real_depth);
 		}
 		
 		if(alpha >= beta) {
-			if(!local_move.isAttack) {
-				historySort[b.currentState.color][local_move.fromY][local_move.fromX][local_move.toY][local_move.toX] += std::pow(depth, 2);
+			if(!local_move->isAttack) {
+				historySort[b.currentState.color][local_move->fromY][local_move->fromX][local_move->toY][local_move->toX] += std::pow(depth, 2);
 
 				if(color == WHITE) {
 					if(whiteKiller[real_depth].enable) {
 						whiteSecondKiller[real_depth] = Killer(whiteKiller[real_depth].move);
 					}
-					whiteKiller[real_depth] = Killer(local_move);
+					whiteKiller[real_depth] = Killer(*local_move);
 				} else {
 					if(blackKiller[real_depth].enable) {
 						blackSecondKiller[real_depth] = Killer(blackKiller[real_depth].move);
 					}
-					blackKiller[real_depth] = Killer(local_move);
+					blackKiller[real_depth] = Killer(*local_move);
 				}
 			}
 
@@ -224,7 +224,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	}
 
 	if(alpha == oldAlpha) {
-		recordHash(depth, eval, ALPHA, hash, local_move, real_depth);
+		recordHash(depth, eval, ALPHA, hash, *local_move, real_depth);
 	}
 
 	if(real_depth == 0) {
@@ -232,7 +232,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 			return 0;
 		}
 
-		bestMove = local_move;
+		bestMove = *local_move;
 		bestScore = alpha;
 	}
 
