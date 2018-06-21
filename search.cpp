@@ -12,7 +12,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 	int oldAlpha = alpha;
 
-	if((currentHash->flag != EMPTY && currentHash->key == hash) && real_depth > 2) {
+	if((currentHash->flag != EMPTY && currentHash->key == hash) && b.third_repeat[hash & hash_cutter] <= 1) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			int score = currentHash->score;
 
@@ -325,9 +325,9 @@ int Game::quies(BitBoard & b, int alpha, int beta, int rule, int real_depth) {
 }
 
 bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
-	if(!game_board.currentState.hash_enable) {
+	/*if(!game_board.currentState.hash_enable) {
 		return false;
-	}
+	}*/
 
 	Hash* hash = &boardHash[key & hash_cutter];
 

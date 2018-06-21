@@ -65,6 +65,7 @@ void Game::sortAttacks(MoveArray& moves) {
 	if(recapture_count) {
 		std::sort(moves.moveArray.begin(), moves.moveArray.begin() + recapture_count);
 	}
+	
 	if(moves.num_attacks - recapture_count) {
 		std::sort(moves.moveArray.begin() + recapture_count, moves.moveArray.begin() + moves.num_attacks);
 	}
