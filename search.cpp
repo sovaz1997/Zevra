@@ -6,10 +6,6 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	uint64_t hash = b.getColorHash();
 	Hash* currentHash = &boardHash[hash & hash_cutter];
 
-	if(!b.currentState.hash_enable && real_depth > 0) {
-		return 0;
-	}
-
 	int oldAlpha = alpha;
 
 	if((currentHash->flag != EMPTY && currentHash->key == hash) && b.third_repeat[hash & hash_cutter] <= 1) {
@@ -61,8 +57,6 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	int eval = -WHITE_WIN;
 	int nextDepth = depth - 1;
 	int extensions = 0;
-
-	bool checkMateNode = (std::abs(beta) >= WHITE_WIN - 100);
 
 	if(depth > 2) {
 		if((rule == FIXED_TIME && timer.getTime() >= time) || stopped) {
@@ -325,10 +319,6 @@ int Game::quies(BitBoard & b, int alpha, int beta, int rule, int real_depth) {
 }
 
 bool Game::recordHash(int depth, int score, int flag, uint64_t key, BitMove move, int real_depth) {
-	/*if(!game_board.currentState.hash_enable) {
-		return false;
-	}*/
-
 	Hash* hash = &boardHash[key & hash_cutter];
 
 	if(flag == ALPHA && (hash->flag == EXACT || hash->flag == BETA)) {
