@@ -1835,8 +1835,8 @@ void BitBoard::unMakeNullMove() {
 }
 
 double BitBoard::newEvaluateAll() {
-
-	double stage_game = popcount64(currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]) / 32;
+	int figuresCount = popcount64(currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]);
+	double stage_game = figuresCount / 32.0;
 
 	double result = 0;
 
@@ -1866,15 +1866,15 @@ double BitBoard::newEvaluateAll() {
 	}
 
 	//Материал
-	result += (white_pawn_count - black_pawn_count) * PAWN_EV.getScore(stage_game);
-	result += white_knight_count * KNIGHT_EV.getScore(stage_game);
-	result -= black_knight_count * KNIGHT_EV.getScore(stage_game);
-	result += white_bishop_count * BISHOP_EV.getScore(stage_game);
-	result -= black_bishop_count * BISHOP_EV.getScore(stage_game);
-	result += white_rook_count * ROOK_EV.getScore(stage_game);
-	result -= black_rook_count * ROOK_EV.getScore(stage_game);
-	result += white_queen_count * QUEEN_EV.getScore(stage_game);
-	result -= black_queen_count * QUEEN_EV.getScore(stage_game);
+	result += (white_pawn_count - black_pawn_count) * PAWN_EV.scoreCash[figuresCount];
+	result += white_knight_count * KNIGHT_EV.scoreCash[figuresCount];
+	result -= black_knight_count * KNIGHT_EV.scoreCash[figuresCount];
+	result += white_bishop_count * BISHOP_EV.scoreCash[figuresCount];
+	result -= black_bishop_count * BISHOP_EV.scoreCash[figuresCount];
+	result += white_rook_count * ROOK_EV.scoreCash[figuresCount];
+	result -= black_rook_count * ROOK_EV.scoreCash[figuresCount];
+	result += white_queen_count * QUEEN_EV.scoreCash[figuresCount];
+	result -= black_queen_count * QUEEN_EV.scoreCash[figuresCount];
 
 	//Бонус за 2-х слонов
 	result += DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide] & whiteCells) && (currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide] & blackCells));
@@ -1885,7 +1885,7 @@ double BitBoard::newEvaluateAll() {
 	while(mask) {
 		uint8_t pos = firstOne(mask);
 		if(vertical[pos % 8] & currentState.piece_bit_mask[!whiteSide] & currentState.figures[PAWN]) {
-			result += pawnMatr[7 - pos / 8][pos % 8];
+			result += pawnPST[7 - pos / 8][pstIndex[pos % 8]].scoreCash[figuresCount];
 		} else {
 			result += PassedPawnBonus[pos / 8];
 		}
@@ -1897,7 +1897,7 @@ double BitBoard::newEvaluateAll() {
 	while(mask) {
 		uint8_t pos = firstOne(mask);
 		if(vertical[pos % 8] & currentState.piece_bit_mask[whiteSide] & currentState.figures[PAWN]) {
-			result -= pawnMatr[pos / 8][pos % 8];
+			result -= pawnPST[pos / 8][pstIndex[pos % 8]].scoreCash[figuresCount];
 		} else {
 			result -= PassedPawnBonus[7 - pos / 8];
 		}
@@ -1964,14 +1964,14 @@ double BitBoard::newEvaluateAll() {
 	mask = currentState.figures[KING] & currentState.piece_bit_mask[whiteSide];
 	while(mask) {
 		uint8_t pos = firstOne(mask);
-		result += kingPST[7 - pos / 8][pstIndex[pos % 8]].getScore(stage_game);
+		result += kingPST[7 - pos / 8][pstIndex[pos % 8]].scoreCash[figuresCount];
 		mask &= ~vec1_cells[pos];
 	}
 	
 	mask = currentState.figures[KING] & currentState.piece_bit_mask[!whiteSide];
 	while(mask) {
 		uint8_t pos = firstOne(mask);
-		result -= kingPST[pos / 8][pstIndex[pos % 8]].getScore(stage_game);
+		result -= kingPST[pos / 8][pstIndex[pos % 8]].scoreCash[figuresCount];
 		mask &= ~vec1_cells[pos];
 	}
 
