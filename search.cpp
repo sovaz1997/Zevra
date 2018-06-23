@@ -18,15 +18,11 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				score += real_depth;
 			}
 
-			if(currentHash->flag == BETA) {
-				alpha = std::max(alpha, score);
-			} else if(currentHash->flag == ALPHA) {
-				beta = std::min(beta, score);
-			} else if(currentHash->flag == EXACT) {
-				return score;
-			}
-
-			if(alpha >= beta) {
+			if(currentHash->flag == BETA && score >= beta) {
+				return beta;
+			} else if(currentHash->flag == ALPHA && score <= alpha) {
+				return alpha;
+			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
 				return score;
 			}
 		}
@@ -72,12 +68,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	bool onPV = (beta - alpha) > 1;
 	int opposiing_pieces =  b.popcount64(b.currentState.piece_bit_mask[!b.currentState.color]);
 
-	if(!inCheck && !inNullMove && depth < 10 && !onPV && opposiing_pieces > 3) { //Razoring
-		int evaluate = b.getEvaluate();
-		if(evaluate - RAZOR_MARGIN[depth] >= beta) {
-			return beta;
-		}
-	}
+	
 
 	int num_moves = 0;
 
@@ -86,6 +77,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	sortMoves(moveArray[real_depth], real_depth);
 
 	if(cut) { //Multi-Cut 82.91 +/- 24.04 (10+0.1)
+	
 		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && !onPV && !b.currentState.attacked) {
 			int c = 0;
 			for (int i = 0; i < std::min((int)moveArray[real_depth].count, 6); ++i) {
