@@ -17,7 +17,7 @@ using S = Score;
 bool is_input_available();
 
 //Название движка
-const std::string engine_name = "Zevra 20180622";
+const std::string engine_name = "Zevra v1.8.5 r664";
 const std::string engine_author = "Oleg Smirnov";
 
 
