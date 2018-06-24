@@ -2,7 +2,7 @@ PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 
 CC = g++
-CFLAGS = -std=c++17 -Ofast -m64 -DNDEBUG -Wall -pedantic -flto -march=native
+CFLAGS = -std=c++17 -O3 -m64 -DNDEBUG -Wall -pedantic -flto -march=native
 FILES = main.o game.o killer.o hash.o uci.o preparation.o printer.o search.o gamethread.o gameservices.o movegenerator.o timer.o goback.o figurecell.o bitmove.o movearray.o bitboard.o  magic.o option.o constants.o score.o
 NAME = zevra
 
@@ -51,7 +51,6 @@ movegenerator.o: game.hpp movegenerator.cpp
 
 newbitmove.o: newbitmove.hpp newbitmove.cpp
 	$(CC) $(CFLAGS) -c newbitmove.cpp
-
 
 score.o: score.hpp score.cpp
 	$(CC) $(CFLAGS) -c score.cpp

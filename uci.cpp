@@ -92,6 +92,9 @@ bool Game::uciHandler(std::string str) {
 			idPrint();
 			option.print();
 			std::cout << "uciok" << std::endl;
+		} else if(cmd[0] == "ucinewgame") {
+			clearCash();
+			std::cout << "info hashfull 0" << std::endl;
 		} else if(cmd[0] == "goback") {
 			game_board.goBack();
 			--hash_decrement;
