@@ -42,7 +42,6 @@ Official lichess bot: https://lichess.org/@/zevra_chess
 + Zevra 1.2.1 - 1753.
 
 **Рейтинги CCRL 40/40:**
-+ Zevra 1.8.5 - 2293;
 + Zevra 1.8.5 - 2233;
 + Zevra 1.8.4 - 2237;
 + Zevra 1.8.2 - 2198;
