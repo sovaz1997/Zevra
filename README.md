@@ -32,21 +32,21 @@ Official lichess bot: https://lichess.org/@/zevra_chess
 + Multi-Cut;
 
 **Рейтинги CCRL 40/4:**
-+ Zevra 1.8.5 - 2273;
-+ Zevra 1.8.4 - 2221;
-+ Zevra 1.8.3 - 2214;
-+ Zevra 1.8.1 - 2151;
-+ Zevra 1.6.1 - 1952;
-+ Zevra 1.5 - 1885;
-+ Zevra 1.3.1 - 1759;
-+ Zevra 1.2.1 - 1753.
++ Zevra v1.8.5 - 2273;
++ Zevra v1.8.4 - 2221;
++ Zevra v1.8.3 - 2214;
++ Zevra v1.8.1 - 2151;
++ Zevra v1.6.1 - 1952;
++ Zevra v1.5 - 1885;
++ Zevra v1.3.1 - 1759;
++ Zevra v1.2.1 - 1753.
 
 **Рейтинги CCRL 40/40:**
-+ Zevra 1.8.5 - 2233;
-+ Zevra 1.8.4 - 2237;
-+ Zevra 1.8.2 - 2198;
++ Zevra v1.8.5 - 2233;
++ Zevra v1.8.4 - 2237;
++ Zevra v1.8.2 - 2198;
 
-**Тестирование Zevra v1.8.6**
+**Тестирование Zevra v1.8.6:**
 
 + Zevra v1.8.6 vs Zevra v1.8.5
   ```
