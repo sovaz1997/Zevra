@@ -50,14 +50,14 @@ Official lichess bot: https://lichess.org/@/zevra_chess
 
 + Zevra v1.8.6 vs Zevra v1.8.5
 ```
-  tc=5s+0.05s, Hash=64mb, book=8moves_GM.pgn
-  Score of Zevra v1.8.6 r672 vs Zevra v1.8.5 r664: 457 - 244 - 299  [0.607] 1000
-  Elo difference: 75.15 +/- 18.26
-  ```
-  ```
-  tc=20s+0.2s, Hash=64mb, book=8moves_GM.pgn
-  Score of Zevra v1.8.6 r672 vs Zevra v1.8.5 r664: 423 - 192 - 385  [0.616] 1000
-  Elo difference: 81.73 +/- 17.04
+tc=5s+0.05s, Hash=64mb, book=8moves_GM.pgn
+Score of Zevra v1.8.6 r672 vs Zevra v1.8.5 r664: 457 - 244 - 299  [0.607] 1000
+Elo difference: 75.15 +/- 18.26
+```
+```
+tc=20s+0.2s, Hash=64mb, book=8moves_GM.pgn
+Score of Zevra v1.8.6 r672 vs Zevra v1.8.5 r664: 423 - 192 - 385  [0.616] 1000
+Elo difference: 81.73 +/- 17.04
 ```
 
 + Zevra Gaunlet
