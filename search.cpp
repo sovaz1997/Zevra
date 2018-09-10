@@ -67,12 +67,12 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	bool inCheck = b.inCheck(color);
 	bool onPV = (beta - alpha) > 1;
 
-	if(!inCheck && !inNullMove && depth < 10 && !onPV) { //Razoring
+	/*if(!inCheck && !inNullMove && depth < 10 && !onPV) { //Razoring
 		int evaluate = b.getEvaluate();
 		if(evaluate - RAZOR_MARGIN[depth] >= beta) {
 			return beta;
 		}
-	}
+	}*/
 
 	int num_moves = 0;
 
@@ -80,7 +80,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
 
-	if(cut) { //Multi-Cut 82.91 +/- 24.04 (10+0.1)
+	/*if(cut) { //Multi-Cut 82.91 +/- 24.04 (10+0.1)
 	
 		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && !onPV && !b.currentState.attacked) {
 			int c = 0;
@@ -101,7 +101,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				}
 			}
 		}
-	}
+	}*/
 
 	BitMove* local_move = nullptr;
 
@@ -140,7 +140,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		nextDepth += extensions;
 		double reduction = 0;
 
-		if(!extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck) {
+		/*if(!extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck) {
 			++low_moves_count;
 
 			if(low_moves_count > 3) {
@@ -155,17 +155,17 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 					continue;
 				}
 			}
-		}
+		}*/
 
 		if(num_moves == 1) {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);	
 		} else {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
 			
-			if(reduction > 0 && tmp > alpha) {
+			/*if(reduction > 0 && tmp > alpha) {
 				nextDepth += reduction;
 				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-			}
+			}*/
 
 			if(tmp > alpha && tmp < beta) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
