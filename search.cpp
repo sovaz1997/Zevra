@@ -18,12 +18,22 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				score += real_depth;
 			}
 
-			if(currentHash->flag == BETA && score >= beta) {
-				return beta;
-			} else if(currentHash->flag == ALPHA && score <= alpha) {
-				return alpha;
+			if(currentHash->flag == BETA) {
+				alpha = std::max(score, alpha);
+				if(score >= beta) {
+					return beta;
+				}
+			} else if(currentHash->flag == ALPHA) {
+				beta = std::min(score, beta);
+				if(score <= alpha) {
+					return alpha;
+				}
 			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
 				return score;
+			}
+
+			if(alpha >= beta) {
+				return alpha;
 			}
 		}
 	}
@@ -187,20 +197,19 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		if(alpha >= beta) {
 			if(!local_move->isAttack) {
 				historySort[b.currentState.color][local_move->fromY][local_move->fromX][local_move->toY][local_move->toX] += std::pow(depth, 2);
-
+			
 				if(color == WHITE) {
-					if(whiteKiller[real_depth].enable) {
-						whiteSecondKiller[real_depth] = Killer(whiteKiller[real_depth].move);
-					}
-					whiteKiller[real_depth] = Killer(*local_move);
+				/*if(whiteKiller[real_depth].enable) {
+					whiteSecondKiller[real_depth] = Killer(whiteKiller[real_depth].move);
+				}*/
+				whiteKiller[real_depth] = Killer(*local_move);
 				} else {
-					if(blackKiller[real_depth].enable) {
+					/*if(blackKiller[real_depth].enable) {
 						blackSecondKiller[real_depth] = Killer(blackKiller[real_depth].move);
-					}
+					}*/
 					blackKiller[real_depth] = Killer(*local_move);
 				}
 			}
-
 			break;
 		}
 	}
