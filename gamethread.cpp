@@ -161,7 +161,7 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 		//a = f - window;
 		//b = f + window;
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 		
 		if(stopped) {
 			break;

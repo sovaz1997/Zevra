@@ -42,7 +42,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
-	if(depth > 6) {
+	if(depth > 3) {
 		if(is_input_available()) {
 			std::string input_str;
 			std::getline(std::cin, input_str);
@@ -77,41 +77,25 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	bool inCheck = b.inCheck(color);
 	bool onPV = (beta - alpha) > 1;
 
-	/*if(!inCheck && !inNullMove && depth < 10 && !onPV) { //Razoring
-		int evaluate = b.getEvaluate();
-		if(evaluate - RAZOR_MARGIN[depth] >= beta) {
-			return beta;
+	int R = 2;
+
+	if(!inNullMove && !inCheck && depth > R && real_depth > 0 && !onPV) {
+		b.makeNullMove();
+
+		int eval = -negamax(b, -beta, -beta + 1, nextDepth - R, real_depth + 1, rule, true, true);
+		b.unMakeNullMove();
+
+
+		if(eval >= beta) {
+			return eval;
 		}
-	}*/
+	}
 
 	int num_moves = 0;
 
 	b.bitBoardMoveGenerator(moveArray[real_depth]);
 	sortAttacks(moveArray[real_depth]);
 	sortMoves(moveArray[real_depth], real_depth);
-
-	/*if(cut) { //Multi-Cut 82.91 +/- 24.04 (10+0.1)
-	
-		if (depth >= 4 && real_depth > 0 && !inCheck && !inNullMove && !extensions && !onPV && !b.currentState.attacked) {
-			int c = 0;
-			for (int i = 0; i < std::min((int)moveArray[real_depth].count, 6); ++i) {
-				b.move(moveArray[real_depth].moveArray[i]);
-				if(b.inCheck(color)) {
-					b.goBack();
-					continue;
-				}
-				
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth - 4, real_depth + 1, rule, inNullMove, false);
-				
-				b.goBack();
-				if (tmp >= beta) {
-					if (++c == 2) {
-						return beta;
-					}
-				}
-			}
-		}
-	}*/
 
 	BitMove* local_move = nullptr;
 
@@ -150,32 +134,10 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		nextDepth += extensions;
 		double reduction = 0;
 
-		/*if(!extensions && !inNullMove && !moveArray[real_depth].moveArray[i].isAttack && !onPV && !inCheck) {
-			++low_moves_count;
-
-			if(low_moves_count > 3) {
-				reduction = 1 + low_moves_count / 6;
-				nextDepth -= reduction;
-			}
-
-			if(nextDepth <= 2) {
-				if(-b.getEvaluate() + PAWN_EV.mg / 2 <= alpha) {
-					++nodesCounter;
-					b.goBack();
-					continue;
-				}
-			}
-		}*/
-
 		if(num_moves == 1) {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);	
 		} else {
 			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-			
-			/*if(reduction > 0 && tmp > alpha) {
-				nextDepth += reduction;
-				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
-			}*/
 
 			if(tmp > alpha && tmp < beta) {
 				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
@@ -199,14 +161,9 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				historySort[b.currentState.color][local_move->fromY][local_move->fromX][local_move->toY][local_move->toX] += std::pow(depth, 2);
 			
 				if(color == WHITE) {
-				/*if(whiteKiller[real_depth].enable) {
-					whiteSecondKiller[real_depth] = Killer(whiteKiller[real_depth].move);
-				}*/
-				whiteKiller[real_depth] = Killer(*local_move);
+				
+					whiteKiller[real_depth] = Killer(*local_move);
 				} else {
-					/*if(blackKiller[real_depth].enable) {
-						blackSecondKiller[real_depth] = Killer(blackKiller[real_depth].move);
-					}*/
 					blackKiller[real_depth] = Killer(*local_move);
 				}
 			}
