@@ -42,7 +42,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		return quies(b, alpha, beta, rule, real_depth);
 	}
 
-	if(depth > 3) {
+	if(depth > 4) {
 		if(is_input_available()) {
 			std::string input_str;
 			std::getline(std::cin, input_str);
@@ -77,11 +77,10 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	bool inCheck = b.inCheck(color);
 	bool onPV = (beta - alpha) > 1;
 
-	int R = 2;
+	int R = 2 + depth / 6;
 
 	if(!inNullMove && !inCheck && depth > R && real_depth > 0 && !onPV) {
 		b.makeNullMove();
-
 		int eval = -negamax(b, -beta, -beta + 1, nextDepth - R, real_depth + 1, rule, true, true);
 		b.unMakeNullMove();
 
