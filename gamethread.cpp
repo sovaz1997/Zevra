@@ -34,31 +34,32 @@ void Game::goFixedDepth() {
 	bestMove = moveCritical;
 	hasBestMove = true;
 	bestScore = 0;
-
-	int window = 30;
-	int a = -window, b = window;
+	int f = 0;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
+		int window = 30;
+		
 		flattenHistory();
 
-		int f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
+		int a = f - window, b = f + window;
+		while(true) {
+			f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
 
-		if(f <= a) {
-			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_DEPTH, false, true);
-
-			if(f > a) {
-				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			if (f > a && f < b) {
+				break;
 			}
-		} else if(f >= b) {
-			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 
-			if(f < b) {
-				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			if(f <= a) {
+				b = (a + b) / 2;
+				a = std::max(-WHITE_WIN, a - window);
 			}
+
+			if(f >= b) {
+				b = std::min(WHITE_WIN, b + window);
+			}
+
+			window = window + window / 2;
 		}
-
-		a = f - window;
-		b = f + window;
 
 		hasBestMove = true;
 
