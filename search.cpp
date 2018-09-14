@@ -120,7 +120,6 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 			++extensions;
 		}
 		nextDepth = depth - 1;
-		nextDepth += extensions;
 
 		//Futility Pruning
 		if(!inNullMove && nextDepth <= 2 && !moveArray[real_depth].moveArray[i].isAttack && !extensions) {
@@ -131,13 +130,24 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 			}
 		}
 
+		if(!extensions && !moveArray[real_depth].moveArray[i].isAttack) {
+			++low_moves_count;
+		}
+
+		int reductions = 0;
+
+		if(low_moves_count > 3) {
+			reductions = 1 + low_moves_count / 6;
+		}
+
+
 		if(num_moves == 1) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);	
+			tmp = -negamax(b, -beta, -alpha, nextDepth + extensions - reductions, real_depth + 1, rule, inNullMove, true);	
 		} else {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth + extensions - reductions, real_depth + 1, rule, inNullMove, true);
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);
+				tmp = -negamax(b, -beta, -alpha, nextDepth + extensions - reductions, real_depth + 1, rule, inNullMove, true);
 			}
 		}
 
