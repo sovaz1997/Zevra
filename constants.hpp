@@ -71,6 +71,11 @@ const int EXACT = 1;
 const int ALPHA = 2;
 const int BETA = 3;
 
+//Тип оценки
+const int UPPERBOUND = 0;
+const int LOWERBOUND = 1;
+const int NORMAL = 2;
+
 // Таблицы PST
 
 //Пешки

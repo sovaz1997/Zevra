@@ -87,7 +87,7 @@ public:
 	bool insufficientMaterial(std::vector<uint64_t>figureMask);
   	int quies(BitBoard & b, int alpha, int beta, int rule, int real_depth);
 	int startGame();
-	void printScore(double score);
+	void printScore(double score, int score_type);
 	std::vector<std::string> getStringArray(std::string str);
 	bool move(std::string mv);
 	void printBitBitBoard(uint64_t bit_BitBoard);

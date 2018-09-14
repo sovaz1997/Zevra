@@ -34,33 +34,40 @@ void Game::goFixedDepth() {
 	bestMove = moveCritical;
 	hasBestMove = true;
 	bestScore = 0;
-
-	int window = 30;
-	int a = -window, b = window;
+	int f = 0;
 
 	for(; max_depth <= max_depth_global; ++max_depth) {
+		int window = 30;
+		
 		flattenHistory();
 
-		/*int f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
+		int a = f - window, b = f + window;
+		a = std::max(-WHITE_WIN, a);
+		b = std::min(WHITE_WIN, b);
+		while(true) {
+			f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
 
-		if(f <= a) {
-			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_DEPTH, false, true);
-
-			if(f > a) {
-				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			if (f > a && f < b) {
+				break;
 			}
-		} else if(f >= b) {
-			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 
-			if(f < b) {
-				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			if(f <= a) {
+				b = (a + b) / 2;
+				a = std::max(-WHITE_WIN, a - window);
 			}
-		}*/
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			if(f >= b) {
+				b = std::min(WHITE_WIN, b + window);
+			}
 
-		//a = f - window;
-		//b = f + window;
+			if(window < WHITE_WIN) {
+				window = window + window / 2;
+			}
+
+			if(stopped) {
+				break;
+			}
+		}
 
 		hasBestMove = true;
 
@@ -104,10 +111,15 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 	max_depth = 1;
 
 	std::vector<BitMove> bestPV;
-	int window = 30;
-	int a = -window, b = window;
+
+	int f = 0;
 
 	for(; timer.getTime() < time; ) {
+		int window = 30;
+		int a = -window, b = window;
+		a = std::max(-WHITE_WIN, a);
+		b = std::min(WHITE_WIN, b);
+
 		flattenHistory();
 
 		if(tournamentTimeControll) {
@@ -141,27 +153,31 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 				}
 			}
 		}
+		
+		flattenHistory();
 
-		/*int f = negamax(game_board, a, b, max_depth, 0, FIXED_TIME, false, true);
+		while(true) {
+			f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
 
-		if(f <= a) {
-			f = negamax(game_board, -WHITE_WIN, a, max_depth, 0, FIXED_TIME, false, true);
-
-			if(f > a) {
-				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+			if (f > a && f < b) {
+				break;
 			}
-		} else if(f >= b) {
-			f = negamax(game_board, b, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
 
-			if(f < b) {
-				f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+			if(f <= a) {
+				b = (a + b) / 2;
+				a = std::max(-WHITE_WIN, a - window);
 			}
-		}*/
 
-		//a = f - window;
-		//b = f + window;
+			if(f >= b) {
+				b = std::min(WHITE_WIN, b + window);
+			}
 
-		negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_TIME, false, true);
+			window = window + window / 2;
+			
+			if(stopped) {
+				break;
+			}
+		}
 		
 		if(stopped) {
 			break;

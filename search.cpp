@@ -8,6 +8,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 	int oldAlpha = alpha;
 
+
 	if((currentHash->flag != EMPTY && currentHash->key == hash) && b.third_repeat[hash & hash_cutter] <= 1) {
 		if(real_depth > 0 && currentHash->depth >= depth) {
 			int score = currentHash->score;
@@ -18,22 +19,12 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				score += real_depth;
 			}
 
-			if(currentHash->flag == BETA) {
-				alpha = std::max(score, alpha);
-				if(score >= beta) {
-					return beta;
-				}
-			} else if(currentHash->flag == ALPHA) {
-				beta = std::min(score, beta);
-				if(score <= alpha) {
-					return alpha;
-				}
+			if(currentHash->flag == BETA && score > beta) {
+				return beta;
+			} else if(currentHash->flag == ALPHA && score < alpha) {
+				return alpha;
 			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
 				return score;
-			}
-
-			if(alpha >= beta) {
-				return alpha;
 			}
 		}
 	}
@@ -75,7 +66,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 	int tmp;
 	bool inCheck = b.inCheck(color);
-	bool onPV = (beta - alpha) > 1;
+	bool onPV = ((beta - alpha) > 1 && real_depth > 0);
 
 	//Null Move Pruning
 	int R = 2 + depth / 6;
@@ -200,9 +191,16 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 	if(real_depth == 0) {
 		if(num_moves >= 0) {
+			int score_type = NORMAL;
+			if(eval >= beta) {
+				score_type = LOWERBOUND;
+			} else if(eval <= alpha) {
+				score_type = UPPERBOUND;
+			}
+
 			std::cout << "info depth " << max_depth << " time " << (int64_t)((clock() - start_timer) / (CLOCKS_PER_SEC / 1000)) << " nodes " << nodesCounter << " nps " << (int64_t)(nodesCounter / ((clock() - start_timer) / CLOCKS_PER_SEC)) << " hashfull " << (int)(hash_filled / max_hash_filled * 1000) << " seldepth " << max_real_depth;
 			std::cout << " ";
-			printScore(eval);
+			printScore(eval, NORMAL);
 			std::cout << " pv ";
 			printPV(depth);
 		} else {
