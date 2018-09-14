@@ -77,13 +77,13 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	bool inCheck = b.inCheck(color);
 	bool onPV = (beta - alpha) > 1;
 
+	//Null Move Pruning
 	int R = 2 + depth / 6;
 
 	if(!inNullMove && !inCheck && depth > R && real_depth > 0 && !onPV) {
 		b.makeNullMove();
 		int eval = -negamax(b, -beta, -beta + 1, nextDepth - R, real_depth + 1, rule, true, true);
 		b.unMakeNullMove();
-
 
 		if(eval >= beta) {
 			return eval;
@@ -128,10 +128,17 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		if(b.inCheck(enemyColor)) {
 			++extensions;
 		}
-
 		nextDepth = depth - 1;
 		nextDepth += extensions;
-		double reduction = 0;
+
+		//Futility Pruning
+		if(!inNullMove && nextDepth <= 2 && !moveArray[real_depth].moveArray[i].isAttack && !extensions) {
+			if(-b.getEvaluate() + PAWN_EV.mg / 2 <= alpha && !b.inCheck(color)) {
+				++nodesCounter;
+				b.goBack();
+				continue;
+			}
+		}
 
 		if(num_moves == 1) {
 			tmp = -negamax(b, -beta, -alpha, nextDepth, real_depth + 1, rule, inNullMove, true);	

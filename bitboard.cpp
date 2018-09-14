@@ -1826,12 +1826,12 @@ uint64_t BitBoard::magicGenerator() {
 
 void BitBoard::makeNullMove() {
 	currentState.color = !currentState.color;
-	currentState.hash ^= 747489434796739468;
+	//currentState.hash ^= 747489434796739468;
 }
 
 void BitBoard::unMakeNullMove() {
 	currentState.color = !currentState.color;
-	currentState.hash ^= 747489434796739468;
+	//currentState.hash ^= 747489434796739468;
 }
 
 double BitBoard::newEvaluateAll() {
