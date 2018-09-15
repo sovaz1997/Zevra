@@ -54,7 +54,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		max_real_depth = 0;
 	}
 
-	int eval = -WHITE_WIN;
+	int eval = alpha;
 	int nextDepth = depth - 1;
 	int extensions = 0;
 
