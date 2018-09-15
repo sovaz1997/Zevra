@@ -136,18 +136,25 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 		int reductions = 0;
 
-		if(low_moves_count > 3) {
+		/*if(low_moves_count > 3) {
 			reductions = 1 + low_moves_count / 6;
-		}
+		}*/
+
+		//nextDepth -= reductions;
 
 
 		if(num_moves == 1) {
-			tmp = -negamax(b, -beta, -alpha, nextDepth + extensions - reductions, real_depth + 1, rule, inNullMove, true);	
+			tmp = -negamax(b, -beta, -alpha, nextDepth + extensions, real_depth + 1, rule, inNullMove, true);	
 		} else {
-			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth + extensions - reductions, real_depth + 1, rule, inNullMove, true);
+			tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth + extensions, real_depth + 1, rule, inNullMove, true);
+
+			if(reductions > 0 && tmp > alpha) {
+				nextDepth += reductions;
+				tmp = -negamax(b, -(alpha + 1), -alpha, nextDepth + extensions, real_depth + 1, rule, inNullMove, true);
+			}
 
 			if(tmp > alpha && tmp < beta) {
-				tmp = -negamax(b, -beta, -alpha, nextDepth + extensions - reductions, real_depth + 1, rule, inNullMove, true);
+				tmp = -negamax(b, -beta, -alpha, nextDepth + extensions, real_depth + 1, rule, inNullMove, true);
 			}
 		}
 
