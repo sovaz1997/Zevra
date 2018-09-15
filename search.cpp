@@ -1,6 +1,9 @@
 #include "game.hpp"
 
 int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, int rule, bool inNullMove, bool cut) {
+	alpha = std::max(-WHITE_WIN, alpha);
+	beta = std::min(WHITE_WIN, beta);
+	
 	++nodesCounter;
 
 	uint64_t hash = b.getColorHash();
@@ -10,7 +13,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 
 	if((currentHash->flag != EMPTY && currentHash->key == hash) && b.third_repeat[hash & hash_cutter] <= 1) {
-		if(real_depth > 0 && currentHash->depth >= depth) {
+		if(real_depth > 0 && currentHash->depth >= depth || depth == 0) {
 			int score = currentHash->score;
 
 			if(score > WHITE_WIN - 100) {
@@ -19,27 +22,13 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				score += real_depth;
 			}
 
-			if(currentHash->flag == BETA) {
-				alpha = std::max(alpha, score);
-				//return beta;
-			} else if(currentHash->flag == ALPHA && score < alpha) {
-				beta = std::min(beta, score);
-				//return alpha;
-			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
+			if(currentHash->flag == BETA && score >= beta) {
+				return score;
+			} else if(currentHash->flag == ALPHA && score <= alpha) {
+				return score;
+			} else if(currentHash->flag == EXACT && score > alpha && score < beta) {
 				return score;
 			}
-
-			if(alpha >= beta) {
-				return beta;
-			}
-
-			/*if(currentHash->flag == BETA && score > beta) {
-				return beta;
-			} else if(currentHash->flag == ALPHA && score < alpha) {
-				return alpha;
-			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
-				return score;
-			}*/
 		}
 	}
 
@@ -150,11 +139,11 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 		int reductions = 0;
 
-		/*if(low_moves_count > 3) {
+		if(low_moves_count > 3) {
 			reductions = 1 + low_moves_count / 6;
-		}*/
+		}
 
-		//nextDepth -= reductions;
+		nextDepth -= reductions;
 
 
 		if(num_moves == 1) {
