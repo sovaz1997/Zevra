@@ -42,10 +42,9 @@ void Game::goFixedDepth() {
 		flattenHistory();
 
 		int a = f - window, b = f + window;
-		a = std::max(-WHITE_WIN, a);
-		b = std::min(WHITE_WIN, b);
+
 		while(true) {
-			f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
+			f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
 
 			if (f > a && f < b) {
 				break;
@@ -114,7 +113,7 @@ void Game::goFixedTime(int64_t tm, bool tournamentTimeControll) {
 
 	for(; timer.getTime() < time; ) {
 		int window = 30;
-		int a = -window, b = window;
+		int a = f - window, b = f + window;
 		a = std::max(-WHITE_WIN, a);
 		b = std::min(WHITE_WIN, b);
 
