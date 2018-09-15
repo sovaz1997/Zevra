@@ -47,7 +47,6 @@ void Game::goFixedDepth() {
 		b = std::min(WHITE_WIN, b);
 		while(true) {
 			f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
-			std::cout << "Score: " << f << "\n";
 
 			if (f > a && f < b) {
 				break;
