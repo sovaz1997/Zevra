@@ -42,7 +42,6 @@ void Game::goFixedDepth() {
 		flattenHistory();
 
 		int a = f - window, b = f + window;
-		std::cout << a << " " << b << "\n";
 		a = std::max(-WHITE_WIN, a);
 		b = std::min(WHITE_WIN, b);
 		while(true) {
