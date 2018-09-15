@@ -1876,10 +1876,10 @@ double BitBoard::newEvaluateAll() {
 	result += white_queen_count * QUEEN_EV.scoreCash[figuresCount];
 	result -= black_queen_count * QUEEN_EV.scoreCash[figuresCount];
 
-	//Бонус за 2-х слонов
+	/*//Бонус за 2-х слонов
 	result += DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide] & whiteCells) && (currentState.figures[BISHOP] & currentState.piece_bit_mask[whiteSide] & blackCells));
 	result -= DoubleBishopsBonus * (bool)((currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide] & whiteCells) && (currentState.figures[BISHOP] & currentState.piece_bit_mask[!whiteSide] & blackCells));
-	
+	*/
 	//Поле-Фигура
 	uint64_t mask = currentState.figures[PAWN] & currentState.piece_bit_mask[whiteSide];
 	while(mask) {

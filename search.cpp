@@ -19,13 +19,27 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 				score += real_depth;
 			}
 
-			if(currentHash->flag == BETA && score > beta) {
+			if(currentHash->flag == BETA) {
+				alpha = std::max(alpha, score);
+				//return beta;
+			} else if(currentHash->flag == ALPHA && score < alpha) {
+				beta = std::min(beta, score);
+				//return alpha;
+			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
+				return score;
+			}
+
+			if(alpha >= beta) {
+				return beta;
+			}
+
+			/*if(currentHash->flag == BETA && score > beta) {
 				return beta;
 			} else if(currentHash->flag == ALPHA && score < alpha) {
 				return alpha;
 			} else if(currentHash->flag == EXACT && score >= alpha && score <= beta) {
 				return score;
-			}
+			}*/
 		}
 	}
 
@@ -122,7 +136,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		nextDepth = depth - 1;
 
 		//Futility Pruning
-		if(!inNullMove && nextDepth <= 2 && !moveArray[real_depth].moveArray[i].isAttack && !extensions) {
+		if(!inNullMove && nextDepth <= 2 && !moveArray[real_depth].moveArray[i].isAttack && !extensions && !onPV) {
 			if(-b.getEvaluate() + PAWN_EV.mg / 2 <= alpha && !b.inCheck(color)) {
 				++nodesCounter;
 				b.goBack();
