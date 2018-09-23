@@ -44,7 +44,7 @@ void Game::goFixedDepth() {
 		int a = f - window, b = f + window;
 
 		while(true) {
-			f = negamax(game_board, -WHITE_WIN, WHITE_WIN, max_depth, 0, FIXED_DEPTH, false, true);
+			f = negamax(game_board, a, b, max_depth, 0, FIXED_DEPTH, false, true);
 
 			if (f > a && f < b) {
 				break;
