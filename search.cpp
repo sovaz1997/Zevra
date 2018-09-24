@@ -142,10 +142,10 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 		}
 		nextDepth = depth - 1;
 
-		bool quiteMove = (!moveArray[real_depth].moveArray[i].isAttack && !extensions && !whiteKiller[real_depth].move.equal(*local_move) && !blackKiller[real_depth].move.equal(*local_move) && !onPV);
+		bool quiteMove = (!moveArray[real_depth].moveArray[i].isAttack && !extensions && !onPV);// && !whiteKiller[real_depth].move.equal(*local_move) && !blackKiller[real_depth].move.equal(*local_move) && !onPV);
 
 		//Futility Pruning
-		if(!inNullMove && nextDepth <= 2 && quiteMove /*&& !onPV*/) {
+		if(!inNullMove && nextDepth <= 2 && quiteMove && !onPV) {
 			if(-b.getEvaluate() + PAWN_EV.mg / 2 <= alpha && !b.inCheck(color)) {
 				++nodesCounter;
 				b.goBack();
