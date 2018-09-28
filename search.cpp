@@ -156,7 +156,7 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 
 		//Futility Pruning
 		if(!inNullMove && nextDepth <= 2 && quiteMove && !onPV) {
-			if(-b.getEvaluate() + PAWN_EV.mg / 2 <= alpha && !b.inCheck(color)) {
+			if(-b.getEvaluate() + fp_margin[nextDepth] <= alpha && !b.inCheck(color)) {
 				++nodesCounter;
 				b.goBack();
 				continue;
