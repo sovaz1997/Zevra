@@ -151,8 +151,9 @@ const Score kingPST[BOARD_SIZE][BOARD_SIZE / 2] {
 
 const int pstIndex[8] = {0, 1, 2, 3, 3, 2, 1, 0};
 
-// Таблица отсечений Razoring (допуск отсечки) по глубине от 0-й до 9-й
-const double RAZOR_MARGIN[10] = {0, 10, 50, 200, 500, 750, 1000, 1500, 2000, 2500};
+
+const double fp_margin[10] = {0, 50, 500};
+
 
 // Бонусы
 const double IsolatedPawnBonus = -15; // изолированные пешки

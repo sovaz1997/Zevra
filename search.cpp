@@ -90,9 +90,11 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 	bool onPV = ((beta - alpha) > 1 && real_depth > 0);
 
 	//Null Move Pruning
-	int R = 2;// + depth / 6;
+	int R = 2 + depth / 6;
 
-	if(!inNullMove && !inCheck && depth > R && real_depth > 0 && !onPV) {
+	int numPieces = b.popcount64(b.currentState.piece_bit_mask[0] | b.currentState.piece_bit_mask[1]);
+
+	if(!inNullMove && !inCheck && depth > R && real_depth > 0 && !onPV && numPieces > 8) {
 		b.makeNullMove();
 		int eval = -negamax(b, -beta, -beta + 1, nextDepth - R, real_depth + 1, rule, true, true);
 		b.unMakeNullMove();
@@ -101,6 +103,14 @@ int Game::negamax(BitBoard & b, int alpha, int beta, int depth, int real_depth, 
 			return eval;
 		}
 	}
+
+	//Razoring
+	/*if(nextDepth <= 4 && !onPV && !inCheck) {
+		if(b.getEvaluate() - PAWN_EV.mg * 2 >= beta) {
+			--nextDepth;
+			//return quies(b, alpha, beta, rule, real_depth);
+		}
+	}*/
 
 	int num_moves = 0;
 

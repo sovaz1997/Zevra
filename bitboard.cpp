@@ -2078,8 +2078,8 @@ double BitBoard::newEvaluateAll() {
 	//Наличие роировки
 
 	result += (popcount64(currentState.piece_bit_mask[whiteSide] | currentState.piece_bit_mask[!whiteSide]) > 16) * (currentState.whitePassantMade * 50 - currentState.blackPassantMade * 50);
-
-	return result;
+	
+	return result;// / k;
 }
 
 BitMove BitBoard::getMove(uint8_t fromY, uint8_t fromX, uint8_t toY, uint8_t toX, bool replaced, uint8_t replacedFigure, bool& enable) {
